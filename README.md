@@ -3,11 +3,14 @@ v0.0.1
 
 ## Install
 
-    slnode install asteroid
+    slnode install asteroid -g
     
 ## Example
 
-    var Asteroid = require('asteroid');
-    var asteroid = Asteroid.create();
+    var asteroid = require('asteroid');
+    var app = asteroid();
 
-    asteroid.myMethod();
+    app.use(asteroid.configure());
+    app.use(asteroid.resources());
+
+    app.listen(3000);
