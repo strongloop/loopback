@@ -1,0 +1,22 @@
+{
+  "module": "model",
+  "options": {
+    "properties": [
+      {
+        "name": "title",
+  			"type": "string"
+      },
+      {
+        "name": "done",
+        "type": "boolean"
+      },
+      {
+        "name": "order",
+        "type": "number"
+      }
+    ]
+  },
+  "dependencies": {
+    "data-store": "db"
+  }
+}

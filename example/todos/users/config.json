@@ -1,0 +1,20 @@
+{
+  "module": "users-collection",
+  "options": {
+    "root": "/users",
+    "name": "users",
+    "properties": [
+      {
+        "name": "email",
+  			"type": "string"
+      },
+      {
+        "name": "password",
+        "type": "password"
+      }
+    ]
+  },
+  "dependencies": {
+    "store": "store"
+  }
+}

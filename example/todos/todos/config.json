@@ -1,0 +1,9 @@
+{
+  "module": "collection",
+  "options": {
+    "path": "/todos"
+  },
+  "dependencies": {
+    "model": "todos-model"
+  }
+}

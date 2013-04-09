@@ -1,0 +1,11 @@
+{
+  "module": "data-store",
+  "options": {
+    "database": "asteroid-examples-todos",
+    "port": 27017,
+    "host": "127.0.0.1"
+  },
+  "dependencies": {
+    "db": "memory"
+  }
+}
