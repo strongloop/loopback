@@ -6,5 +6,3 @@ app.use(asteroid.bodyParser());
 app.use(asteroid.resources());
 
 app.listen(3000);
-
-process.memory_store_cache = {};
