@@ -14,7 +14,7 @@ todos.on('before:validate', function (todo, ctx) {
   }
 });
 
-todos.on('before:create', function (todo, ctx, done) {
+todos.on('create', function (todo, ctx, done) {
   ctx.errorUnless(ctx.isEmail(todos.creator));
 
   todos.model.count({owner: todo.owner}, function (err) {
