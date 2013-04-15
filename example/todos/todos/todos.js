@@ -1,16 +1,16 @@
 var todos = require('.');
 
 todos.app.get('/completed', function (req, res) {
-  todos.store.all({where: {creator: req.me, done: true}}, todos.done);
+  todos.model.all({where: {creator: req.me, done: true}}, todos.done);
 });
 
-todos.on('before:validate', function (todo, ctx) {
-  if(!todo.name) {
-    throw new Error('name is required');
+todos.on('validate', function (todo, ctx) {
+  if(!todo.title) {
+    throw new Error('title is required');
   }
 
-  if(todo.name.length > 144) {
-    ctx.error('name must be shorter than 144 characters');
+  if(todo.title.length > 144) {
+    ctx.error('title must be shorter than 144 characters');
   }
 });
 
