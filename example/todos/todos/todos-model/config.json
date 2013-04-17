@@ -4,7 +4,7 @@
     "properties": [
       {
         "name": "title",
-  			"type": "string"
+        "type": "string"
       },
       {
         "name": "done",

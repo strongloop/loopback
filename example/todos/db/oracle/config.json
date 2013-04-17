@@ -1,7 +1,0 @@
-{
-  "module": "oracle-connection",
-  "options": {
-    "host": "127.0.0.1",
-    "port": 1234
-  }
-}
