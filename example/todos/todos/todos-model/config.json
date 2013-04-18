@@ -17,6 +17,6 @@
     ]
   },
   "dependencies": {
-    "store": "db"
+    "data-source": "db"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "module": "collection",
+  "module": "model-route",
   "options": {
     "path": "/todos"
   },
