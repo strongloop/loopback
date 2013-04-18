@@ -1,8 +1,0 @@
-{
-  "module": "resource",
-  "options": {
-    "path": "/example-resource",
-    "msg": "my message?"
-  },
-  "main": "example.js"
-}
