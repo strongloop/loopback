@@ -11,5 +11,13 @@
   },
   "devDependencies": {
     "mocha": "latest"
-  }
+  },
+  "bundleDependencies": [
+    "asteroid-module",
+    "data-source",
+    "model",
+    "model-route",
+    "oracle-data-source",
+    "route"
+  ]
 }
