@@ -4,13 +4,11 @@ v0.0.1
 ## Install
 
     slnode install asteroid -g
-    
-## Example
 
-    var asteroid = require('asteroid');
-    var app = asteroid();
+## Asteroid Modules
 
-    app.use(asteroid.configure());
-    app.use(asteroid.resources());
-
-    app.listen(3000);
+ - [Asteroid Module Base Class](node_modules/asteroid-module) 
+ - [Route](node_modules/route) 
+ - [Model Route](node_modules/model-route) 
+ - [Model](node_modules/model) 
+ - [Data Source](node_modules/data-source)
