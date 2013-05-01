@@ -3,6 +3,6 @@ var app = asteroid();
 
 app.use(asteroid.configure());
 app.use(asteroid.bodyParser());
-app.use(asteroid.routes());
+app.use(asteroid.rest());
 
 app.listen(3000);

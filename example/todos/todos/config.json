@@ -1,9 +1,23 @@
 {
-  "module": "model-route",
+  "module": "model",
+  "main": "./todos.js",
   "options": {
-    "path": "/todos"
+    "properties": [
+      {
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "name": "done",
+        "type": "boolean"
+      },
+      {
+        "name": "order",
+        "type": "number"
+      }
+    ]
   },
   "dependencies": {
-    "model": "todos-model"
+    "data-source": "db"
   }
 }
