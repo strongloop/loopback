@@ -8,7 +8,8 @@
   "dependencies": {
     "debug": "latest",
     "express": "~3.1.1",
-    "jugglingdb": "~0.2.0-30"
+    "jugglingdb": "~0.2.0-30",
+    "asteroid-module-loader": "git+ssh://git@github.com:strongloop/asteroid-module-loader.git"
   },
   "devDependencies": {
     "mocha": "latest"

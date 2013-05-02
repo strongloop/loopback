@@ -9,3 +9,7 @@
 *.swp
 *.swo
 /node_modules/*/node_modules
+/node_modules/debug
+/node_modules/jugglingdb
+/node_modules/mocha
+/node_modules/asteroid-module-loader
