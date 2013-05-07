@@ -1,8 +1,0 @@
-var qunit = require('./qunit/node_modules/qunit/index.js');
-
-qunit.run({
-
-	code: { path: '../merge.js', namespace: 'merge' },
-	tests: 'tests.js'
-
-});
