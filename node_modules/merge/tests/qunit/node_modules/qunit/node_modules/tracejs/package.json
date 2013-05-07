@@ -1,0 +1,28 @@
+{
+  "author": {
+    "name": "Chris Dickinson",
+    "email": "chris@neversaw.us",
+    "url": "http://neversaw.us/"
+  },
+  "name": "tracejs",
+  "description": "Expand Error.stack traces into usable objects providing context and highlighting",
+  "version": "0.1.4",
+  "homepage": "http://github.com/chrisdickinson/tracejs/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisdickinson/tracejs.git"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "main": "trace.js",
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "readme": "Trace.js\n========\n\nProviding better stack traces for V8 by giving you full-fledged objects for each frame in the trace.\n\nExamples\n========\n\nCreating a nice color trace with context, reversed so that the latest call is printed last:\n\n````javascript\nvar trace = require('tracejs').trace;\n\ntry {\n    somethingThatThrowsAnError();\n} catch(err) {\n    var stacktrace = trace(err);\n    console.error(stacktrace.toString());\n}\n````\n\nIterating through frames and grabbing the constituent files:\n\n````javascript\nvar trace = require('tracejs').trace;\n\ntry {\n    somethingThatThrowsAnError();\n} catch(err) {\n    var stacktrace = trace(err);\n    for(var i = 0, len = stacktrace.frames.length; i < len; ++i) {\n        console.error(stacktrace.frames[i].filename, stacktrace.frames[i].filedata());\n    }\n}\n````\n\nAPI\n===\n\ntrace(err)\n-----\n\nCreates and returns a `Trace` object by parsing an `Error` object.\n\nobject Trace\n------------\n\nHolds the original error, the first line of the trace (the message), and the frames that make up the stack trace. Returned by `trace`.\n\nMembers:\n\n*  `frames`: an `Array` of `Frame` objects.\n*  `first_line`: the first line of the original stack trace -- usually contains the error message, if any.\n*  `original_error`: the original `Error` object that the `Trace` was generated from.\n\nThe default output of `Trace#toString` looks like the following:\n\n![trace](http://neversaw.us/media/traces.png)\n\nTrace.defaults\n--------------\n\nThe default printing mode for the trace; an array of `[context_lines:int, `print_cursor:boolean`, `highlight_character_color:string`].\nDefaults to two lines of context with a cursor, with the character that caused the error appearing red.\n\nTrace#toString(reversed[, contextLines, showCursor, highlightErrorCharacterColor])\n--------------\n\nReturns the prettified stack trace as a string, using `Trace.defaults`. `reversed` defaults to `true`, meaning the most recent call is displayed last. The remaining arguments are passed to `Frame#toString` for each frame in `Trace#frames`. \n\nobject Frame\n------------ \n\nContains information about a specific stack frame.\n\nMembers:\n\n*  `named_location`: The name of the scope where the frame originated; e.g., `'ReadStream.emit'`.\n*  `filename`: The filename of the frame.\n*  `line`: The integer line number of the frame.\n*  `character`: The character at which the error occurred in the line of the frame.\n\nFrame#filedata()\n--------------\n\nReturns a string containing the text of the file the frame originated from. Works on both native modules as well as userland modules. Cached and synchronous.\n\nFrame#toString([contextLines, showCursor, highlightErrorCharacterColor])\n---------------\n\nWraps the output from `Frame#get_lines()` with information about the file, line number, character, and scope if available.\n\nFrame#get_lines(context, ascii_cursor, highlight_error_start)\n---------------\n\nReturns a string containing `context` lines surrounding the error line from the file of this frame. If `ascii_cursor` is `true`, it will\ninsert a `>` at the line where the error occurred, and a space before all other lines. `highlight_error_start` can be any value that [ansi-colors](https://github.com/loopj/commonjs-ansi-color) will accept, or false to avoid highlighting the character.\n\nLicense\n=======\n\nnew BSD.\n",
+  "readmeFilename": "README.md",
+  "_id": "tracejs@0.1.4",
+  "_from": "tracejs@0.1.4"
+}

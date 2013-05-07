@@ -1,0 +1,62 @@
+{
+  "name": "qunit",
+  "description": "QUnit testing framework for nodejs",
+  "version": "0.5.16",
+  "author": {
+    "name": "Oleg Slobodskoi",
+    "email": "oleg008@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Jonathan Buchanan"
+    },
+    {
+      "name": "Ashar Voultoiz"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http: //github.com/kof/node-qunit.git"
+  },
+  "keywords": [
+    "TDD",
+    "QUnit",
+    "unit",
+    "testing",
+    "tests",
+    "async"
+  ],
+  "bin": {
+    "qunit": "./bin/cli.js"
+  },
+  "engines": {
+    "node": ">=0.6.0 < 0.11.0"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "dependencies": {
+    "underscore": "1.3.3",
+    "argsparser": "0.0.6",
+    "cli-table": "0.0.2",
+    "tracejs": "0.1.4",
+    "bunker": "0.1.2"
+  },
+  "devDependencies": {
+    "chainer": "0.0.5",
+    "timekeeper": "0.0.2"
+  },
+  "optionalDependencies": {
+    "bunker": "0.1.2"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http: //www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "readme": "## QUnit testing framework for nodejs.\n\nhttp://qunitjs.com\n\nhttp://github.com/jquery/qunit\n\n### Features\n\n- cli\n- testrunner api\n- test coverage via jscoverage is removed, node-bunker have to be implemented #26\n- tests inside of one testfile run synchronous, but every testfile runs parallel\n- tests from each file run in its own spawned node process\n- same API for client and server side code (original QUnit is used)\n- the simplest API of the world, especially for asynchronous testing\n- you can write tests in TDD or BDD style depending on your task and test type\n- you can run the same tests in browser if there is no dependencies to node\n\n### Installation\n\n    npm i qunit\n\n### API\n\n    http://api.qunitjs.com\n\n#### The only exception\n\n    // Separate tests into modules.\n    // Use `QUnit` namespace, because `module` is reserved\n    QUnit.module(name, lifecycle)\n\n### Usage\n\n#### Command line\n\nRead full cli api doc using \"--help\" or \"-h\":\n\n    $ qunit -h\n\n    $ qunit -c ./code.js -t ./tests.js\n\nBy default, code and dependencies are added to the global scope. To specify\nrequiring them into a namespace object, prefix the path or module name with the\nvariable name to be used for the namespace object, followed by a colon:\n\n    $ qunit -c code:./code.js -d utils:utilmodule -t ./time.js\n\n#### via api\n\n    var testrunner = require(\"qunit\");\n\n    Defaults:\n\n        {\n            // logging options\n            log: {\n\n                // log assertions overview\n                assertions: true,\n\n                // log expected and actual values for failed tests\n                errors: true,\n\n                // log tests overview\n                tests: true,\n\n                // log summary\n                summary: true,\n\n                // log global summary (all files)\n                globalSummary: true,\n\n                // log currently testing code file\n                testing: true\n            },\n\n            // run test coverage tool\n            coverage: false,\n\n            // define dependencies, which are required then before code\n            deps: null,\n\n            // define namespace your code will be attached to on global['your namespace']\n            namespace: null\n        }\n\n\n    // change any option for all tests globally\n    testrunner.options.optionName = value;\n\n    // or use setup function\n    testrunner.setup({\n        log: {\n            summary: true\n        }\n    });\n\n\n    // one code and tests file\n    testrunner.run({\n        code: \"/path/to/your/code.js\",\n        tests: \"/path/to/your/tests.js\"\n    }, callback);\n\n    // require code into a namespace object, rather than globally\n    testrunner.run({\n        code: {path: \"/path/to/your/code.js\", namespace: \"code\"},\n        tests: \"/path/to/your/tests.js\"\n    }, callback);\n\n    // one code and multiple tests file\n    testrunner.run({\n        code: \"/path/to/your/code.js\",\n        tests: [\"/path/to/your/tests.js\", \"/path/to/your/tests1.js\"]\n    }, callback);\n\n    // array of code and test files\n    testrunner.run([\n        {\n            code: \"/path/to/your/code.js\",\n            tests: \"/path/to/your/tests.js\"\n        },\n        {\n            code: \"/path/to/your/code.js\",\n            tests: \"/path/to/your/tests.js\"\n        }\n    ], callback);\n\n    // using testrunner callback\n    testrunner.run({\n        code: \"/path/to/your/code.js\",\n        tests: \"/path/to/your/tests.js\"\n    }, function(err, report) {\n        console.dir(report);\n    });\n\n    // specify dependency\n    testrunner.run({\n        deps: \"/path/to/your/dependency.js\",\n        code: \"/path/to/your/code.js\",\n        tests: \"/path/to/your/tests.js\"\n    }, callback);\n\n    // dependencies can be modules or files\n    testrunner.run({\n        deps: \"modulename\",\n        code: \"/path/to/your/code.js\",\n        tests: \"/path/to/your/tests.js\"\n    }, callback);\n\n    // dependencies can required into a namespace object\n    testrunner.run({\n        deps: {path: \"utilmodule\", namespace: \"utils\"},\n        code: \"/path/to/your/code.js\",\n        tests: \"/path/to/your/tests.js\"\n    }, callback);\n\n    // specify multiple dependencies\n    testrunner.run({\n        deps: [\"/path/to/your/dependency1.js\", \"/path/to/your/dependency2.js\"],\n        code: \"/path/to/your/code.js\",\n        tests: \"/path/to/your/tests.js\"\n    }, callback);\n\n### Writing tests\n\nQUnit API and code which have to be tested are already loaded and attached to the global context.\n\nSome tests examples\n\n\n    test(\"a basic test example\", function (assert) {\n        ok(true, \"this test is fine\");\n        var value = \"hello\";\n        equal(\"hello\", value, \"We expect value to be hello\");\n    });\n\n    QUnit.module(\"Module A\");\n\n    test(\"first test within module\", 1, function (assert) {\n        ok(true, \"a dummy\");\n    });\n\n    test(\"second test within module\", 2, function (assert) {\n        ok(true, \"dummy 1 of 2\");\n        ok(true, \"dummy 2 of 2\");\n    });\n\n    QUnit.module(\"Module B\", {\n        setup: function () {\n            // do some initial stuff before every test for this module\n        },\n        teardown: function () {\n            // do some stuff after every test for this module\n        }\n    });\n\n    test(\"some other test\", function (assert) {\n        expect(2);\n        equal(true, false, \"failing test\");\n        equal(true, true, \"passing test\");\n    });\n\n    QUnit.module(\"Module C\", {\n        setup: function() {\n            // setup a shared environment for each test\n            this.options = { test: 123 };\n        }\n    });\n\n    test(\"this test is using shared environment\", 1, function (assert) {\n        deepEqual({ test: 123 }, this.options, \"passing test\");\n    });\n\n    test(\"this is an async test example\", function (assert) {\n        expect(2);\n        stop();\n        setTimeout(function () {\n            ok(true, \"finished async test\");\n            strictEqual(true, true, \"Strict equal assertion uses ===\");\n            start();\n        }, 100);\n    });\n\n\n### Run tests\n\n    git submodule init\n    git submodule update\n    npm i\n    make test\n\n### Coverage\n\nJscoverage is removed due to a lot of installation problems and bad api,\nnode-bunker is planned to use but not implemented yet.\n",
+  "readmeFilename": "readme.md",
+  "_id": "qunit@0.5.16",
+  "_from": "qunit@"
+}

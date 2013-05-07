@@ -1,0 +1,3 @@
+/* JavaScript/NodeJS Merge v1.1.0 - https://github.com/yeikos/js.merge */
+
+;(function(e){function t(){var e=Array.prototype.slice.call(arguments),t=e.shift(),i=t===true,s=e.length,o,u,a;if(i||r(t)!=="object")t={};for(u=0;u<s;++u)if(r(o=e[u])==="object")for(a in o)t[a]=i?n(o[a]):o[a];return t}function n(e){var t=e,i=r(e),s,o;if(i==="array"){t=[];o=e.length;for(s=0;s<o;++s)t[s]=n(e[s])}else if(i==="object"){t={};for(s in e)t[s]=n(e[s])}return t}function r(e){return{}.toString.call(e).match(/\s([\w]+)/)[1].toLowerCase()}if(e){module.exports=t}else{window.merge=t}})(typeof module==="object"&&module&&typeof module.exports==="object"&&module.exports);
