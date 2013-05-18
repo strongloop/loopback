@@ -1,0 +1,6 @@
+{
+  "module": "memory-store",
+  "options": {
+    "database": "my-memory-db"
+  }
+}

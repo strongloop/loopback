@@ -1,0 +1,9 @@
+{
+  "module": "data-model",
+  "options": {
+    "collection": "users"
+  },
+  "dependencies": {
+    "store": "memory"
+  }
+}

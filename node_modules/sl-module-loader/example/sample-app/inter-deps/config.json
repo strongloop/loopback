@@ -1,0 +1,6 @@
+{
+  "module": "./my-module",
+  "dependencies": {
+    "custom-dep": "hello"
+  }
+}

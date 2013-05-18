@@ -1,0 +1,6 @@
+{
+  "module": "./users-route.js",
+  "dependencies": {
+    "user": "user"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "module": "./my-module-class.js",
+  "main": "main.js",
+  "options": {
+    "msg": "hello world",
+    "name": "my-module"
+  }
+}

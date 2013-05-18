@@ -1,0 +1,6 @@
+{
+  "module": "module",
+  "scripts": {
+    "constructed": "construction.js"
+  }
+}

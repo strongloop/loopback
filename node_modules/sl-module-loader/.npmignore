@@ -1,0 +1,11 @@
+.DS_Store
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.swp
+*.swo
+node_modules/
+.idea

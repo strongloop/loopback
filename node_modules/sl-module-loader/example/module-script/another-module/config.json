@@ -1,0 +1,7 @@
+{
+  "module": "./another-module-class.js",
+  "options": {
+    "msg": "bar bat baz",
+    "name": "another-module"
+  }
+}
