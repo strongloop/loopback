@@ -9,8 +9,8 @@
     "debug": "latest",
     "express": "~3.1.1",
     "jugglingdb": "~0.2.0-30",
-    "asteroid-module-loader": "git+ssh://git@github.com:strongloop/asteroid-module-loader.git",
-    "merge": "~1.1.0"
+    "merge": "~1.1.0",
+    "sl-module-loader": "git+ssh://git@github.com:strongloop/sl-module-loader.git"
   },
   "devDependencies": {
     "mocha": "latest"
