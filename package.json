@@ -8,9 +8,10 @@
   "dependencies": {
     "debug": "latest",
     "express": "~3.1.1",
-    "jugglingdb": "~0.2.0-30",
+    "jugglingdb": "git@github.com:strongloop/jugglingdb.git",
     "merge": "~1.1.0",
     "sl-module-loader": "git+ssh://git@github.com:strongloop/sl-module-loader.git"
+    "sl-remoting": "git+ssh://git@github.com:strongloop/sl-remoting.git"
   },
   "devDependencies": {
     "mocha": "latest"
