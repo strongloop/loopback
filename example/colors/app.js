@@ -3,16 +3,19 @@ var app = asteroid();
 
 app.use(asteroid.rest());
 
-var Color = app.model('color');
+var schema = {
+  name: String
+};
 
-Color.defineSchema({
-  'name': String
-});
+var Color = app.model('color', schema);
 
-Color
-  .create({name: 'red'})
-  .create({name: 'green'})
-  .create({name: 'blue'});
+app.dataSource('db', {adapter: 'memory'});
+
+Color.dataSource('db');
+
+Color.create({name: 'red'});
+Color.create({name: 'green'});
+Color.create({name: 'blue'});
 
 app.listen(3000);
 
