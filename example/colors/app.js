@@ -3,11 +3,10 @@ var app = asteroid();
 
 app.use(asteroid.rest());
 
-var Color = app.define('color');
+var Color = app.model('color');
 
 Color.defineSchema({
-  'id': 'Number',
-  'name': 'String'
+  'name': String
 });
 
 Color
