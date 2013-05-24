@@ -1,4 +1,5 @@
-
+.idea
+.project
 .DS_Store
 *.seed
 *.log
@@ -10,7 +11,8 @@
 *.swo
 /node_modules/*/node_modules
 /node_modules/debug
-/node_modules/jugglingdb
+/node_modules/express
+/node_modules/jugglingdb*
 /node_modules/mocha
 /node_modules/sl-module-loader
 /node_modules/sl-remoting
