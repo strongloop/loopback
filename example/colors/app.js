@@ -19,4 +19,4 @@ Color.create({name: 'blue'});
 
 app.listen(3000);
 
-console.log('a list of colors is available at http://localhost:300/colors');
+console.log('a list of colors is available at http://localhost:3000/colors');
