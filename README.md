@@ -10,8 +10,9 @@ v0.0.1
  - [App](#app)
  - [asteroid.Model](#model)
  - [asteroid.DataSource](#data-source)
- - [asteroid.RemoteObject](#data-source)
+ - [asteroid.GeoPoint](#geo-point)
  - [asteroid.rest](#rest)
+ - [Asteroid Types](#asteroid-types)
 
 ## Client APIs
 
@@ -117,14 +118,15 @@ Define a static model method.
       });
     }
     
-Expose the static model method to clients using remoting.
+Expose the static model method to clients as a [remotable method](#remotable-method).
 
-    User.login.shared = true;
-    User.login.accepts = [
-      {arg: 'username', type: 'string', required: true},
-      {arg: 'password', type: 'string', required: true}
-    ];
-    User.login.returns = {arg: 'sessionId', type: 'any'};
+    User.expose('login', {
+      accepts: [
+        {arg: 'username', type: 'string', required: true},
+        {arg: 'password', type: 'string', required: true}
+      ],
+      returns: {arg: 'sessionId', type: 'any'}
+    });
     
 #### Instance Methods
 
@@ -137,6 +139,55 @@ Define an instance method
 Expose the model instance method to clients using remoting.
 
     User.prototype.logout.shared = true;
+    User.expose('logout', {instance: true});
+
+#### Remotable Methods
+
+Both instance and static methods may be shared exposed to clients using remoting. A remotable method must accept a callback with the conventional `fn(err, result, ...)` signature. 
+
+##### Model.expose(method, [options]);
+
+Expose a remotable method.
+
+    Product.stats = function(fn) {
+      myApi.getStats('products', fn);
+    }
+    
+    Product.expose('stats', {
+      returns: {arg: 'stats', type: 'array'},
+      http: {path: '/info', verb: 'get'}
+    });
+
+**Options**
+
+ - **instance** - (default: false) specify the remotable method is an [instance method](#instance-method)
+ - **accepts** - (optional) an arguments description specifying the remotable method's arguments. A
+ - **returns** - (optional) an arguments description specifying the remotable methods callback arguments.
+ - **http** - (advanced / optional, object) http routing info
+  - **http.path** - the relative path the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description.
+  - **http.verb** - (get, post, put, del, all) - the route verb the method will be available from.
+  
+ 
+**Argument Description**
+
+An arguments description defines either a single argument as an object or an ordered set of arguments as an array.
+
+  // examples
+  {arg: 'myArg', type: 'number'}
+  
+  [
+    {arg: 'arg1', type: 'number', required: true},
+    {arg: 'arg2', type: 'array'}
+  ]
+
+**Types**
+
+Each argument may define any of the [asteroid types](#asteroid-types).
+
+**Notes:**
+
+  - The callback is an assumed argument and does not need to be specified in the accepts array.
+  - The err argument is also assumed and does not need to be specified in the returns array.
 
 #### Hooks
 
@@ -157,7 +208,7 @@ Prevent the method from being called by proding an error.
 
 #### Remote Hooks
 
-Run a function before or after a method is called remotely by a client.
+Run a function before or after a remote method is called by a client.
 
     User.beforeRemote('save', function(ctx, user, next) {
       if(ctx.user.id === user.id) {
@@ -166,6 +217,68 @@ Run a function before or after a method is called remotely by a client.
         next(new Error('must be logged in to update'))
       }
     });
+    
+#### Context
+
+Remote hooks are provided with a Context `ctx` that contains raw access to the transport specific objects. The `ctx` object also has a set of consistent apis that are consistent across transports.
+
+##### ctx.me
+
+The id of the user calling the method remotely. **Note:** this is undefined if a user is not logged in.
+
+##### Rest
+
+When [asteroid.rest](#asteroidrest) is used the following `ctx` properties are available.
+
+###### ctx.req
+
+The express ServerRequest object. [See full documentation](http://expressjs.com/api.html#req).
+
+###### ctx.res
+
+The express ServerResponse object. [See full documentation](http://expressjs.com/api.html#res).
+
+Access the raw `req` object for the remote method call.
+    
+#### Relationships
+
+##### Model.hasMany(Model)
+
+Define a "one to many" relationship.
+
+    // by referencing model
+    Book.hasMany(Chapter);
+    // specify the name
+    Book.hasMany('chapters', {model: Chapter});
+    
+Query and create the related models.
+
+    Book.create(function(err, book) {
+      // using 'chapters' scope for build:
+      var c = book.chapters.build({name: 'Chapter 1'});
+      
+      // same as:
+      c = new Chapter({name: 'Chapter 1', bookId: book.id});
+      
+      // using 'chapters' scope for create:
+      book.chapters.create();
+      
+      // same as:
+      Chapter.create({bookId: book.id});
+
+      // using scope for querying:
+      book.chapters(function(err, chapters) {
+        /* all chapters with bookId = book.id */
+      });
+      
+      book.chapters({where: {name: 'test'}, function(err, chapters) {
+        // all chapters with bookId = book.id and name = 'test'
+      });
+    });
+    
+##### Model.hasAndBelongsToMany()
+
+TODO: implement / document
     
 #### Model.availableHooks()
 
@@ -200,7 +313,7 @@ Output:
 
 ### Data Source
 
-An Asteroid `DataSource` provides [Models](#model) with the ability to manipulate data.
+An Asteroid `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remotable methods](#remotable-methods).
 
 Define a data source for persisting models.
 
@@ -218,65 +331,96 @@ Define a model and attach it to a `DataSource`.
 
     var Color = oracle.createModel('color', {name: String});
 
-#### dataSource.discoverSchemas(options, fn)
+#### dataSource.discover(options, fn)
 
 Discover an object containing properties and settings for an existing data source.
 
-    module.exports = oracle.discoverSchemasSync({table: 'PRODUCTS', owner: 'MYORG'});    
+    oracle.discover({owner: 'MYORG'}, function(err, tables) {
+      var productSchema = tables.PRODUCTS;
+      var ProductModel = oracle.createModel('product', productSchema.properties, productSchema.settings);
+    });
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-#### dataSource.discoverSchemaSync(options)
+#### dataSource.discoverSync(options)
 
-A synchronous version of the above. 
+Synchronously discover an object containing properties and settings for an existing data source tables or collections.
 
-    var desc = oracle.discoverSchemaSync({table: 'PRODUCTS'});
+    var tables = oracle.discover({owner: 'MYORG'});
+    var productSchema = tables.PRODUCTS;
+    var ProductModel = oracle.createModel('product', productSchema.properties, productSchema.settings);
     
-**Note:** Not available for all adapters.
+#### dataSource.discoverModels(options, fn) 
 
-#### dataSource.discoverModel(options, fn)
+Discover a set of models based on tables or collections in a data source.
+  
+    oracle.discoverModels({owner: 'MYORG'}, function(err, models) {
+      var ProductModel = models.Product;
+    });
+    
+**Note:** The `models` will contain all properties and settings discovered from the data source. It will also automatically discover and create relationships.
+    
+#### dataSource.discoverModelsSync(options) 
 
-Discover schema and create model.
+Synchronously Discover a set of models based on tables or collections in a data source.
 
-#### dataSource.discoverModelSync(options, fn)
+    var models = oracle.discoverModels({owner: 'MYORG'});
+    var ProductModel = models.Product;
 
-Sync discover schema and create model.
+### GeoPoint
 
-#### dataSource.discoverModels(options, fn)
+Embed a latitude / longitude point in a [Model](#model).
 
-TODO define.
+    var CoffeeShop = asteroid.createModel('coffee-shop', {
+      location: 'GeoPoint'
+    });
 
-#### dataSource.discoverModelSync(options)
+Asteroid Model's with a GeoPoint property and an attached DataSource may be queried using geo spatial filters and sorting.
 
+Find the 3 nearest coffee shops.
 
+    CoffeeShop.attach(oracle);
+    var here = new GeoPoint({lat: 10.32424, long: 5.84978});
+    CoffeeShop.all({where: {location: {near: here}}}, function(err, nearbyShops) {
+      console.info(nearbyShops); // [CoffeeShop, ...]
+    });
 
-#### dataSource.createLocation(name, options, settings)
+#### geoPoint.distanceTo(geoPoint, options)
 
+Get the distance to another `GeoPoint`.
 
-other option
+    var here = new GeoPoint({lat: 10, long: 10});
+    var there = new GeoPoint({lat: 5, long: 5});
+    console.log(here.distanceTo(there, {type: 'miles'})); // 438
+ 
+#### GeoPoint.distanceBetween(a, b, options)
 
-RentalLocation = asteroid.createModel('rental-location', {
-  location: Location
-});
+Get the distance between two points.
 
-Location.distanceTo({lat: 22, long: 55}, fn);
+    GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
 
-Location.all({where: {geo: {near: {lat: 22, long: 55}}}, limit: 10, sort: 'distance DESC'}, fn)
+#### Distance Types
+
+     - `miles`
+     - `radians`
+     - `kilometers`
+
+#### geoPoint.lat
+
+The latitude point in degrees. Range: -90 to 90.
+
+#### geoPoint.long
+
+The longitude point in degrees. Range: -180 to 180.
+
+### Asteroid Types
+
+Various APIs in Asteroid accept type descriptions (eg. [remotable methods](#remotable-methods), [asteroid.createModel()](#asteroidcreateModel)). The following is a list of supported types.
+
+ - `null` - JSON null
+ - `Boolean` - JSON boolean
+ - `Number` - JSON number
+ - `String` - JSON string
+ - `Object` - JSON object
+ - `Array` - JSON array
+ - `Date` - a JavaScript date object
+ - `Buffer` - a node.js Buffer object
+ - [GeoPoint](#geopoint) - an asteroid GeoPoint object.
