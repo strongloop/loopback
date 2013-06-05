@@ -118,7 +118,7 @@ Define a static model method.
       });
     }
     
-Expose the static model method to clients as a [remotable method](#remotable-method).
+Expose the static model method to clients as a [remote method](#remote-method).
 
     User.expose('login', {
       accepts: [
@@ -141,13 +141,13 @@ Expose the model instance method to clients using remoting.
     User.prototype.logout.shared = true;
     User.expose('logout', {instance: true});
 
-#### Remotable Methods
+#### Remote Methods
 
-Both instance and static methods may be shared exposed to clients using remoting. A remotable method must accept a callback with the conventional `fn(err, result, ...)` signature. 
+Both instance and static methods may be shared exposed to clients using remoting. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
 ##### Model.expose(method, [options]);
 
-Expose a remotable method.
+Expose a remote method.
 
     Product.stats = function(fn) {
       myApi.getStats('products', fn);
@@ -160,9 +160,9 @@ Expose a remotable method.
 
 **Options**
 
- - **instance** - (default: false) specify the remotable method is an [instance method](#instance-method)
- - **accepts** - (optional) an arguments description specifying the remotable method's arguments. A
- - **returns** - (optional) an arguments description specifying the remotable methods callback arguments.
+ - **instance** - (default: false) specify the remote method is an [instance method](#instance-method)
+ - **accepts** - (optional) an arguments description specifying the remote method's arguments. A
+ - **returns** - (optional) an arguments description specifying the remote methods callback arguments.
  - **http** - (advanced / optional, object) http routing info
   - **http.path** - the relative path the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description.
   - **http.verb** - (get, post, put, del, all) - the route verb the method will be available from.
@@ -313,7 +313,7 @@ Output:
 
 ### Data Source
 
-An Asteroid `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remotable methods](#remotable-methods).
+An Asteroid `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
 
 Define a data source for persisting models.
 
@@ -413,7 +413,7 @@ The longitude point in degrees. Range: -180 to 180.
 
 ### Asteroid Types
 
-Various APIs in Asteroid accept type descriptions (eg. [remotable methods](#remotable-methods), [asteroid.createModel()](#asteroidcreateModel)). The following is a list of supported types.
+Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-methods), [asteroid.createModel()](#asteroidcreateModel)). The following is a list of supported types.
 
  - `null` - JSON null
  - `Boolean` - JSON boolean
