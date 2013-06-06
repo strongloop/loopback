@@ -62,7 +62,10 @@ Get the app's exposed models.
     
 ### Model
 
-An Asteroid `Model` is a vanilla JavaScript class constructor with an attached set of properties and settings.
+An Asteroid `Model` is a vanilla JavaScript class constructor with an attached set of properties and settings. A `Model` instance is created by passing a data object containing properties to the `Model` constructor.
+
+    var Color = asteroid.createModel({name: 'string'});
+    var red = new Color({name: 'red'});
 
 **Properties**
 
@@ -79,7 +82,55 @@ Define an asteroid model.
       last: String,
       age: Number
     });
-    
+
+#### Model.validatesPresenceOf(properties...)
+
+Require a model to include a property to be considered valid.
+
+    User.validatesPresenceOf('first', 'last', 'age');
+
+#### Model.validatesLengthOf(property, options)
+
+Require a property length to be within a specified range.
+
+    User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
+
+#### Model.validatesInclusionOf(property, options)
+
+Require a value for `property` to be in the specified array.
+
+    User.validatesInclusionOf('gender', {in: ['male', 'female']});
+
+#### Model.validatesExclusionOf(property, options)
+
+Require a value for `property` to not exist in the specified array.
+
+    User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
+
+#### Model.validatesNumericalityOf(property, options)
+
+Require a value for `property` to be a specific type of `Number`.
+
+    User.validatesNumericalityOf('age', {int: true});
+
+#### Model.validatesUniquenessOf(property, options)
+
+Ensure the value for `property` is unique.
+
+    User.validatesUniquenessOf('email', {message: 'email is not unique'});
+
+**Note:** not available for all [connectors](#connectors).
+
+#### myModel.isValid()
+
+Validate the model instance.
+
+    user.isValid(function (valid) {
+        if (!valid) {
+            user.errors // hash of errors {attr: [errmessage, errmessage, ...], attr: ...}    
+        }
+    });
+
 #### Model.attachTo(dataSource)
 
 Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
@@ -98,7 +149,7 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
 
 #### Attached Methods
 
-Attached methods are added by attaching a vanilla model to a data source with a connector.
+Attached methods are added by attaching a vanilla model to a data source with a connector. Each [connector](#connectors) enables its own set of operations that are attached to a `Model` as methods. To see available methods for a data source with a connector call `dataSource.operations()`.
 
 ##### Model.create([data], [callback])
 
@@ -517,7 +568,7 @@ Output:
       ...
     }
 
-#### Connector
+#### Connectors
 
 Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
 
