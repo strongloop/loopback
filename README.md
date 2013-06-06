@@ -10,7 +10,7 @@ v0.0.1
  - [App](#app)
  - [asteroid.Model](#model)
  - [asteroid.DataSource](#data-source)
- - [Adapters](#adapters)
+ - [Connectors](#connectors)
  - [asteroid.GeoPoint](#geo-point)
  - [Asteroid Types](#asteroid-types)
  - [asteroid.rest](#rest-middleware)
@@ -42,7 +42,7 @@ Create an asteroid application.
 
 Expose a `Model` to remote clients.
 
-    var memory = asteroid.createDataSource({adapter: 'memory'});
+    var memory = asteroid.createDataSource({connector: 'memory'});
     var Color = memory.defineModel({name: String});
 
     app.model(Color);
@@ -85,7 +85,7 @@ Define an asteroid model.
 Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
 
     var oracle = asteroid.createDataSource({
-      adapter: 'oracle',
+      connector: 'oracle',
       host: '111.22.333.44',
       database: 'MYDB',
       username: 'username',
@@ -98,7 +98,7 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
 
 #### Attached Methods
 
-Attached methods are added by attaching a vanilla model to a data source with an adapter.
+Attached methods are added by attaching a vanilla model to a data source with a connector.
 
 ##### Model.create([data], [callback])
 
@@ -160,11 +160,11 @@ Find all instances of Model, matched by query. Fields used for filter and sort s
 
 **filter**
 
-where: `Object` { key: val, key2: {gt: 'val2'}}
-include: `String`, `Object` or `Array`.
-order: `String`
-limit: `Number`
-skip: `Number`
+ - **where** `Object` { key: val, key2: {gt: 'val2'}}
+ - **include** `String`, `Object` or `Array`.
+ - **order** `String`
+ - **limit** `Number`
+ - **skip** `Number`
 
     User.all({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 20})
 
@@ -173,7 +173,7 @@ skip: `Number`
 Query count of Model instances in data source. Optional query param allows to count filtered set of Model instances.
 
     User.count({approved: true}, function(err, count) {
-      console.log(count); // 1983
+      console.log(count); // 2081
     });
 
 #### Static Methods
@@ -286,7 +286,7 @@ Run a function before or after a model method is called.
       next();
     });
     
-Prevent the method from being called by proding an error.
+Prevent the method from being called by passing an error to `next()`.
 
     User.before('delete', function(user, next) {
       // prevent all delete calls
@@ -405,7 +405,7 @@ An Asteroid `DataSource` provides [Models](#model) with the ability to manipulat
 Define a data source for persisting models.
 
     var oracle = asteroid.createDataSource({
-      adapter: 'oracle',
+      connector: 'oracle',
       host: '111.22.333.44',
       database: 'MYDB',
       username: 'username',
@@ -452,29 +452,101 @@ Synchronously Discover a set of models based on tables or collections in a data 
     var models = oracle.discoverModels({owner: 'MYORG'});
     var ProductModel = models.Product;
 
-#### Adapters
+#### dataSource.enable(operation)
 
-Create a data source with a specific adapter.
+Enable a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
 
-    var memory = asteroid.createDataSource({
-      adapter: require('asteroid-memory')
+    // all rest data source operations are
+    // disabled by default
+    var rest = asteroid.createDataSource({
+      connector: require('asteroid-rest'),
+      url: 'http://maps.googleapis.com/maps/api'
+      enableAll: true
     });
     
-**Available Adapters**
+    // enable an operation
+    twitter.enable('find');
+    
+    // enable remote access
+    twitter.enableRemote('find')
+    
+**Notes:**
+
+ - only enabled operations will be added to attached models
+ - data sources must enable / disable operations before attaching or creating models
+
+#### dataSource.disable(operation)
+
+Disable a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
+
+    // all rest data source operations are
+    // disabled by default
+    var oracle = asteroid.createDataSource({
+      connector: require('asteroid-oracle'),
+      host: '...',
+      ...
+    });
+
+    // disable an operation completely
+    oracle.disable('destroyAll');
+    
+    // or only disable it as a remote method
+    oracle.disableRemote('destroyAll');
+
+**Notes:**
+
+ - disabled operations will not be added to attached models
+ - disabling the remoting for a method only affects client access (it will still be available from server models)
+ - data sources must enable / disable operations before attaching or creating models
+
+#### dataSource.operations()
+
+List the enabled and disabled operations.
+
+    console.log(oracle.operations());
+    
+Output:
+
+    {
+      find: {
+        allowRemote: true,
+        accepts: [...],
+        returns: [...]
+        enabled: true
+      },
+      ...
+    }
+
+#### Connector
+
+Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
+
+    var memory = asteroid.createDataSource({
+      connector: require('asteroid-memory')
+    });
+    
+**Available Connectors**
  
- - [Oracle](http://github.com/strongloop/asteroid-adapters/oracle)
- - [In Memory](http://github.com/strongloop/asteroid-adapters/memory)
- - TODO - [MySQL](http://github.com/strongloop/asteroid-adapters/mysql)
- - TODO - [SQLite3](http://github.com/strongloop/asteroid-adapters/sqlite)
- - TODO - [Postgres](http://github.com/strongloop/asteroid-adapters/postgres)
- - TODO - [Redis](http://github.com/strongloop/asteroid-adapters/redis)
- - TODO - [MongoDB](http://github.com/strongloop/asteroid-adapters/mongo)
- - TODO - [CouchDB](http://github.com/strongloop/asteroid-adapters/couch)
- - TODO - [Firebird](http://github.com/strongloop/asteroid-adapters/firebird)
+ - [Oracle](http://github.com/strongloop/asteroid-connectors/oracle)
+ - [In Memory](http://github.com/strongloop/asteroid-connectors/memory)
+ - TODO - [REST](http://github.com/strongloop/asteroid-connectors/rest)
+ - TODO - [MySQL](http://github.com/strongloop/asteroid-connectors/mysql)
+ - TODO - [SQLite3](http://github.com/strongloop/asteroid-connectors/sqlite)
+ - TODO - [Postgres](http://github.com/strongloop/asteroid-connectors/postgres)
+ - TODO - [Redis](http://github.com/strongloop/asteroid-connectors/redis)
+ - TODO - [MongoDB](http://github.com/strongloop/asteroid-connectors/mongo)
+ - TODO - [CouchDB](http://github.com/strongloop/asteroid-connectors/couch)
+ - TODO - [Firebird](http://github.com/strongloop/asteroid-connectors/firebird)
 
-**Installing Adapters**
+**Installing Connectors**
 
-Include the adapter in your package.json dependencies and run `npm install`.
+Include the connector in your package.json dependencies and run `npm install`.
+
+    {
+      "dependencies": {
+        "asteroid-oracle": "latest"
+      }
+    }
 
 ### GeoPoint
 
