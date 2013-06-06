@@ -96,6 +96,86 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
     
 **Note:** until a model is attached to a data source it will only expose the API defined below.
 
+#### Attached Methods
+
+Attached methods are added by attaching a vanilla model to a data source with an adapter.
+
+##### Model.create([data], [callback])
+
+Create an instance of Model with given data and save to the attached data source.
+
+    User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
+      console.log(user instanceof User); // true
+    });
+
+##### model.save([options], [callback])
+
+Save an instance of a Model to the attached data source.
+
+    var joe = new User({first: 'Joe', last: 'Bob'});
+    joe.save(function(err, user) {
+      if(user.errors) {
+        console.log(user.errors);
+      } else {
+        console.log(user.id);
+      }
+    });
+
+##### model.updateAttributes(data, [callback])
+    
+Save specified attributes to the attached data source.
+
+    user.updateAttributes({
+      first: 'updatedFirst',
+      name: 'updatedLast'
+    }, fn);
+
+##### model.upsert(data, callback)
+    
+Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
+
+##### model.destroy([callback])
+
+Remove a model from the attached data source.
+
+    model.destroy(function(err) {
+      // model instance destroyed
+    });
+    
+##### Model.destroyAll(callback)
+
+Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
+
+##### Model.find(id, callback)
+
+Find instance by id.
+
+    User.find(23, function(err, user) {
+      console.info(user.id); // 23
+    });
+
+Model.all(filter, callback);
+
+Find all instances of Model, matched by query. Fields used for filter and sort should be declared with `{index: true}` in model definition.
+
+**filter**
+
+where: `Object` { key: val, key2: {gt: 'val2'}}
+include: `String`, `Object` or `Array`.
+order: `String`
+limit: `Number`
+skip: `Number`
+
+    User.all({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 20})
+
+##### Model.count([query], callback)
+
+Query count of Model instances in data source. Optional query param allows to count filtered set of Model instances.
+
+    User.count({approved: true}, function(err, count) {
+      console.log(count); // 1983
+    });
+
 #### Static Methods
 
 Define a static model method.
