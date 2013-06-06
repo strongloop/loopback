@@ -10,9 +10,10 @@ v0.0.1
  - [App](#app)
  - [asteroid.Model](#model)
  - [asteroid.DataSource](#data-source)
+ - [Adapters](#adapters)
  - [asteroid.GeoPoint](#geo-point)
- - [asteroid.rest](#rest)
  - [Asteroid Types](#asteroid-types)
+ - [asteroid.rest](#rest-middleware)
 
 ## Client APIs
 
@@ -20,7 +21,7 @@ _TODO_
 
 ### App
 
-Create an asteroid application. 
+Create an asteroid application.
 
     var asteroid = require('asteroid');
     var app = asteroid();
@@ -120,30 +121,34 @@ Define a static model method.
     
 Expose the static model method to clients as a [remote method](#remote-method).
 
-    User.expose('login', {
-      accepts: [
-        {arg: 'username', type: 'string', required: true},
-        {arg: 'password', type: 'string', required: true}
-      ],
-      returns: {arg: 'sessionId', type: 'any'}
-    });
+    asteroid.remoteMethod(
+      User,
+      User.login,
+      {
+        accepts: [
+          {arg: 'username', type: 'string', required: true},
+          {arg: 'password', type: 'string', required: true}
+        ],
+        returns: {arg: 'sessionId', type: 'any'},
+        http: {path: '/sign-in'}
+      }
+    );
     
 #### Instance Methods
 
-Define an instance method
+Define an instance method.
 
     User.prototype.logout = function (fn) {
       MySessionModel.destroyAll({userId: this.id}, fn);
     }
     
-Expose the model instance method to clients using remoting.
+Define a remote model instance method.
 
-    User.prototype.logout.shared = true;
-    User.expose('logout', {instance: true});
+    asteroid.remoteMethod(User, User.prototype.logout);
 
 #### Remote Methods
 
-Both instance and static methods may be shared exposed to clients using remoting. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
+Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
 ##### Model.expose(method, [options]);
 
@@ -153,7 +158,7 @@ Expose a remote method.
       myApi.getStats('products', fn);
     }
     
-    Product.expose('stats', {
+    asteroid.remoteMethod('stats', {
       returns: {arg: 'stats', type: 'array'},
       http: {path: '/info', verb: 'get'}
     });
@@ -166,19 +171,18 @@ Expose a remote method.
  - **http** - (advanced / optional, object) http routing info
   - **http.path** - the relative path the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description.
   - **http.verb** - (get, post, put, del, all) - the route verb the method will be available from.
-  
  
 **Argument Description**
 
 An arguments description defines either a single argument as an object or an ordered set of arguments as an array.
 
-  // examples
-  {arg: 'myArg', type: 'number'}
-  
-  [
-    {arg: 'arg1', type: 'number', required: true},
-    {arg: 'arg2', type: 'array'}
-  ]
+    // examples
+    {arg: 'myArg', type: 'number'}
+
+    [
+      {arg: 'arg1', type: 'number', required: true},
+      {arg: 'arg2', type: 'array'}
+    ]
 
 **Types**
 
@@ -358,12 +362,38 @@ Discover a set of models based on tables or collections in a data source.
     
 **Note:** The `models` will contain all properties and settings discovered from the data source. It will also automatically discover and create relationships.
     
-#### dataSource.discoverModelsSync(options) 
+#### dataSource.discoverModelsSync(options)
 
 Synchronously Discover a set of models based on tables or collections in a data source.
 
     var models = oracle.discoverModels({owner: 'MYORG'});
     var ProductModel = models.Product;
+
+#### Adapters
+
+Create a data source with a specific adapter.
+
+    var memory = asteroid.createDataSource({
+      adapter: require('asteroid-memory')
+    });
+    
+**Available Adapters**
+ 
+ - [Oracle](http://github.com/strongloop/asteroid-adapters/oracle)
+ - [In Memory](http://github.com/strongloop/asteroid-adapters/memory)
+<!--
+ - [MySQL](http://github.com/strongloop/asteroid-adapters/mysql)
+ - [SQLite3](http://github.com/strongloop/asteroid-adapters/sqlite)
+ - [Postgres](http://github.com/strongloop/asteroid-adapters/postgres)
+ - [Redis](http://github.com/strongloop/asteroid-adapters/redis)
+ - [MongoDB](http://github.com/strongloop/asteroid-adapters/mongo)
+ - [CouchDB](http://github.com/strongloop/asteroid-adapters/couch)
+ - [Firebird](http://github.com/strongloop/asteroid-adapters/firebird)
+-->
+
+**Installing Adapters**
+
+Include the adapter in your package.json dependencies and run `npm install`.
 
 ### GeoPoint
 
@@ -413,7 +443,7 @@ The longitude point in degrees. Range: -180 to 180.
 
 ### Asteroid Types
 
-Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-methods), [asteroid.createModel()](#asteroidcreateModel)). The following is a list of supported types.
+Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-methods), [asteroid.createModel()](#model)). The following is a list of supported types.
 
  - `null` - JSON null
  - `Boolean` - JSON boolean
@@ -424,3 +454,16 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - an asteroid GeoPoint object.
+ 
+### Rest Middleware
+
+Expose models over rest using the `asteroid.rest` middleware.
+
+    app.use(asteroid.rest());
+    
+### SocketIO Middleware **Not Available**
+
+**Coming Soon** - Expose models over socket.io using the `asteroid.sio()` middleware.
+
+    app.use(asteroid.sio);
+    
