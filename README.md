@@ -464,15 +464,13 @@ Create a data source with a specific adapter.
  
  - [Oracle](http://github.com/strongloop/asteroid-adapters/oracle)
  - [In Memory](http://github.com/strongloop/asteroid-adapters/memory)
-<!--
- - [MySQL](http://github.com/strongloop/asteroid-adapters/mysql)
- - [SQLite3](http://github.com/strongloop/asteroid-adapters/sqlite)
- - [Postgres](http://github.com/strongloop/asteroid-adapters/postgres)
- - [Redis](http://github.com/strongloop/asteroid-adapters/redis)
- - [MongoDB](http://github.com/strongloop/asteroid-adapters/mongo)
- - [CouchDB](http://github.com/strongloop/asteroid-adapters/couch)
- - [Firebird](http://github.com/strongloop/asteroid-adapters/firebird)
--->
+ - TODO - [MySQL](http://github.com/strongloop/asteroid-adapters/mysql)
+ - TODO - [SQLite3](http://github.com/strongloop/asteroid-adapters/sqlite)
+ - TODO - [Postgres](http://github.com/strongloop/asteroid-adapters/postgres)
+ - TODO - [Redis](http://github.com/strongloop/asteroid-adapters/redis)
+ - TODO - [MongoDB](http://github.com/strongloop/asteroid-adapters/mongo)
+ - TODO - [CouchDB](http://github.com/strongloop/asteroid-adapters/couch)
+ - TODO - [Firebird](http://github.com/strongloop/asteroid-adapters/firebird)
 
 **Installing Adapters**
 
