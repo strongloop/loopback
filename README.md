@@ -150,7 +150,7 @@ Define a remote model instance method.
 
 Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
-##### Model.expose(method, [options]);
+##### asteroid.remoteMethod(Model, fn, [options]);
 
 Expose a remote method.
 
@@ -158,14 +158,17 @@ Expose a remote method.
       myApi.getStats('products', fn);
     }
     
-    asteroid.remoteMethod('stats', {
-      returns: {arg: 'stats', type: 'array'},
-      http: {path: '/info', verb: 'get'}
-    });
+    asteroid.remoteMethod(
+      Product,
+      Product.stats,
+      {
+        returns: {arg: 'stats', type: 'array'},
+        http: {path: '/info', verb: 'get'}
+      }
+    );
 
 **Options**
 
- - **instance** - (default: false) specify the remote method is an [instance method](#instance-method)
  - **accepts** - (optional) an arguments description specifying the remote method's arguments. A
  - **returns** - (optional) an arguments description specifying the remote methods callback arguments.
  - **http** - (advanced / optional, object) http routing info
