@@ -5,17 +5,17 @@ v0.0.1
 
     slnode install asteroid -g
     
-## Server APIs
+## Server API
 
  - [App](#app)
- - [asteroid.Model](#model)
- - [asteroid.DataSource](#data-source)
+ - [Model](#model)
+ - [DataSource](#data-source)
  - [Connectors](#connectors)
- - [asteroid.GeoPoint](#geo-point)
+ - [GeoPoint](#geo-point)
  - [Asteroid Types](#asteroid-types)
- - [asteroid.rest](#rest-middleware)
+ - [REST Router](#rest-router)
 
-## Client APIs
+## Client API
 
 _TODO_
 
@@ -145,7 +145,7 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
 
     User.attachTo(oracle);
     
-**Note:** until a model is attached to a data source it will only expose the API defined below.
+**Note:** until a model is attached to a data source it will **not** have any **attached methods**.
 
 #### Attached Methods
 
@@ -217,7 +217,11 @@ Find all instances of Model, matched by query. Fields used for filter and sort s
  - **limit** `Number`
  - **skip** `Number`
 
-    User.all({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 20})
+Find the second page of 10 users over age 21 in descending order.
+
+    User.all({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 10})
+
+**Note:** See the specific connector's [docs](#connectors) for more info.
 
 ##### Model.count([query], callback)
 
@@ -659,11 +663,15 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - an asteroid GeoPoint object.
  
-### Rest Middleware
+### REST Router
 
-Expose models over rest using the `asteroid.rest` middleware.
+Expose models over rest using the `asteroid.rest` router.
 
     app.use(asteroid.rest());
+    
+**REST Documentation**
+
+View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
     
 ### SocketIO Middleware **Not Available**
 
