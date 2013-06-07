@@ -637,9 +637,9 @@ Get the distance between two points.
 
 #### Distance Types
 
-     - `miles`
-     - `radians`
-     - `kilometers`
+ - `miles`
+ - `radians`
+ - `kilometers`
 
 #### geoPoint.lat
 
