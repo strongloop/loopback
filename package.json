@@ -3,7 +3,7 @@
   "description": "asteroid",
   "version": "0.0.1",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -R spec"
   },
   "dependencies": {
     "debug": "latest",

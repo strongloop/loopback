@@ -1,12 +1,12 @@
 /**
- * Generate asteroid unit tests from documentation...
+ * Generate asteroid unit tests from README...
  */
 
 fs = require('fs')
 
-readme = fs.readFileSync('./README.md').toString();
+readme = fs.readFileSync('../README.md').toString();
 
-var alias = {
+alias = {
   myModel: 'Model',
   model: 'Model',
   ctx: 'Model',
@@ -24,6 +24,9 @@ function getName(line) {
 
 function Doc(line, lineNum, docIndex) {
   this.name = getName(line);
+  
+  line = line.replace(/#+\s/, '');
+  
   this.line = line;
   this.lineNum = lineNum;
   this.docIndex = docIndex;
@@ -59,7 +62,30 @@ Doc.prototype.example = function () {
     }
   });
   
-  return result.join('\n');
+  return result;
+}
+
+Doc.prototype.desc = function () {
+  var content = this.contents();
+  var result = [];
+  var first;
+  
+  content.forEach(function (line) {
+    if(first) {
+      // ignore
+    } else if(line[0] === '#' || line[0] === ' ') {
+      // ignore
+    } else {
+      first = line;
+    }
+  });
+  
+  // only want the first sentence (to keep it brief)
+  if(first) {
+    first = first.split(/\.\s|\n/)[0]
+  }
+  
+  return first;
 }
 
 lines = readme.split('\n')
@@ -84,27 +110,35 @@ sh.rm('-rf', 'g-tests');
 sh.mkdir('g-tests');
 
 Object.keys(byName).forEach(function (group) {
-  var testFile = 
-  "var asteroid = require('../');" +
-  "\n" + 
-  "describe('app', function(){"
-  testFile
-
-  describe('app', function(){
-    var app;
-
-    beforeEach(function () {
-      app = asteroid();
-    });
-
-    describe('asteroid.createModel(name, properties, settings)', function(){
-      var User = asteroid.createModel('user', {
-        first: String,
-        last: String,
-        age: Number
-      });
-    });
+  var testFile = [
+  "describe('" + group + "', function() {",
+  ""];
+  
+  byName[group].forEach(function (doc) {
+    var example = doc.example();
+    var exampleLines = example && example.length && example;
+    
+    testFile = testFile.concat([
+      "  describe('" + doc.line + "', function() {",
+      "    it(\"" + doc.desc() + "\", function(done) {"]);
+      
+      if(exampleLines) {
+        exampleLines.unshift("/* example - ");
+        exampleLines.push("*/")
+        testFile = testFile.concat(
+          exampleLines.map(function (l) {
+            return '      ' + l;
+          })
+        )
+      }
+      
+    testFile.push(
+      "      done(new Error('test not implemented'));",
+      "    });",
+      "  });",
+      "});"
+    );
   });
   
-  
-})
+  testFile.join('\n').to('g-tests/' + group + '.test.js');
+});
