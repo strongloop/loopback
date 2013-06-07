@@ -1,7 +1,7 @@
 {
   "name": "asteroid",
   "description": "asteroid",
-  "version": "0.0.1",
+  "version": "0.7.0",
   "scripts": {
     "test": "mocha -R spec"
   },
@@ -10,21 +10,12 @@
     "express": "~3.1.1",
     "jugglingdb": "git+ssh://git@github.com:strongloop/jugglingdb.git",
     "merge": "~1.1.0",
-    "sl-module-loader": "git+ssh://git@github.com:strongloop/sl-module-loader.git",
     "sl-remoting": "git+ssh://git@github.com:strongloop/sl-remoting.git",
     "inflection": "~1.2.5"
   },
   "devDependencies": {
     "mocha": "latest"
   },
-  "bundleDependencies": [
-    "asteroid-module",
-    "data-source",
-    "model",
-    "model-route",
-    "oracle-data-source",
-    "route"
-  ],
   "optionalDependencies": {
     "jugglingdb-oracle": "git+ssh://git@github.com:strongloop/jugglingdb-oracle.git"
   }

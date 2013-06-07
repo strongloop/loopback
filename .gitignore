@@ -9,12 +9,4 @@
 *.pid
 *.swp
 *.swo
-/node_modules/*/node_modules
-/node_modules/debug
-/node_modules/express
-/node_modules/jugglingdb*
-/node_modules/mocha
-/node_modules/sl-module-loader
-/node_modules/sl-remoting
-/node_modules/merge
-/node_modules/inflection
+node_modules

@@ -1,5 +1,5 @@
 # asteroid
-v0.0.1
+v0.7.0
 
 ## Install
 
