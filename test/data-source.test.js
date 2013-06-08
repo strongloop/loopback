@@ -1,6 +1,6 @@
 describe('DataSource', function() {
 
-  describe('dataSource.createModel(name, options, settings)', function() {
+  describe('dataSource.createModel(name, properties, settings)', function() {
     it("Define a model and attach it to a `DataSource`.", function(done) {
       /* example - 
       var Color = oracle.createModel('color', {name: String});

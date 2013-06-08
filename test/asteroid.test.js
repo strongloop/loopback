@@ -1,5 +1,10 @@
 describe('asteroid', function() {
-
+  describe('asteroid.createDataSource(options)', function(){
+    it('Create a data sources with a connector.', function(done) {
+      done(new Error('not implemented'));
+    });
+  });
+  
   describe('asteroid.remoteMethod(Model, fn, [options]);', function() {
     it("Expose a remote method.", function(done) {
       /* example - 

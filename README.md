@@ -467,7 +467,7 @@ Define a data source for persisting models.
       password: 'password'
     });
     
-#### dataSource.createModel(name, options, settings)
+#### dataSource.createModel(name, properties, settings)
 
 Define a model and attach it to a `DataSource`.
 
