@@ -5,10 +5,10 @@
 assert = require('assert');
 asteroid = require('../');
 memoryConnector = asteroid.Memory;
+app = null;
 
 beforeEach(function () {
   app = asteroid();
-  memoryDataSource = asteroid.createDataSource({connector: memoryConnector});
 });
 
 assertValidDataSource = function (dataSource) {
