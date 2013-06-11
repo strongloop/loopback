@@ -5,13 +5,8 @@
 var asteroid = module.exports = require('./lib/asteroid');
 
 /**
- * Connector
+ * Connectors
  */
 
-asteroid.Connector = require('./lib/connector');
-
-/**
- * JugglingDB Connector
- */
-
-asteroid.JdbConnector = require('./lib/jdb-connector');
+asteroid.Connector = require('./lib/connectors/base-connector');
+asteroid.Memory = require('./lib/connectors/memory');

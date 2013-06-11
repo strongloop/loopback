@@ -315,4 +315,49 @@ describe('Model', function() {
       done(new Error('test not implemented'));
     });
   });
+  
+  describe('Model.before(name, fn)', function(){
+    it('Run a function before a method is called.', function() {
+      // User.before('save', function(user, next) {
+//         console.log('about to save', user);
+//         
+//         next();
+//       });
+//       
+//       User.before('delete', function(user, next) {
+//         // prevent all delete calls
+//         next(new Error('deleting is disabled'));
+//       });
+//       User.beforeRemote('save', function(ctx, user, next) {
+//         if(ctx.user.id === user.id) {
+//           next();
+//         } else {
+//           next(new Error('must be logged in to update'))
+//         }
+//       });
+
+      throw new Error('not implemented');
+    });
+  });
+  
+  describe('Model.after(name, fn)', function(){
+    it('Run a function after a method is called.', function() {
+
+      throw new Error('not implemented');
+    });
+  });
+  
+  describe('Model.beforeRemote(name, fn)', function(){
+    it('Run a function before a remote method is called by a client.', function() {
+
+      throw new Error('not implemented');
+    });
+  });
+  
+  describe('Model.afterRemote(name, fn)', function(){
+    it('Run a function after a remote method is called by a client.', function() {
+
+      throw new Error('not implemented');
+    });
+  });
 });

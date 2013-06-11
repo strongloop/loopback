@@ -1,11 +1,30 @@
 describe('DataSource', function() {
 
   describe('dataSource.createModel(name, properties, settings)', function() {
-    it("Define a model and attach it to a `DataSource`.", function(done) {
-      /* example - 
-      var Color = oracle.createModel('color', {name: String});
-      */
-      done(new Error('test not implemented'));
+    it("Define a model and attach it to a `DataSource`.", function() {
+      var memory = asteroid.createDataSource({connector: asteroid.Memory});
+      var Color = memory.createModel('color', {name: String});
+      assert.isFunc(Color, 'all');
+      assert.isFunc(Color, 'create');
+      assert.isFunc(Color, 'updateOrCreate');
+      assert.isFunc(Color, 'upsert');
+      assert.isFunc(Color, 'findOrCreate');
+      assert.isFunc(Color, 'exists');
+      assert.isFunc(Color, 'find');
+      assert.isFunc(Color, 'findOne');
+      assert.isFunc(Color, 'destroyAll');
+      assert.isFunc(Color, 'count');
+      assert.isFunc(Color, 'include');
+      assert.isFunc(Color, 'relationNameFor');
+      assert.isFunc(Color, 'hasMany');
+      assert.isFunc(Color, 'belongsTo');
+      assert.isFunc(Color, 'hasAndBelongsToMany');
+      assert.isFunc(Color.prototype, 'save');
+      assert.isFunc(Color.prototype, 'isNewRecord');
+      assert.isFunc(Color.prototype, 'destroy');
+      assert.isFunc(Color.prototype, 'updateAttribute');
+      assert.isFunc(Color.prototype, 'updateAttributes');
+      assert.isFunc(Color.prototype, 'reload');  
     });
   });
 
@@ -114,7 +133,7 @@ describe('DataSource', function() {
         ...
       }
       var memory = asteroid.createDataSource({
-        connector: require('asteroid-memory')
+        connector: asteroid.Memory
       });
       
       {

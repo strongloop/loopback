@@ -42,8 +42,8 @@ Create an asteroid application.
 
 Expose a `Model` to remote clients.
 
-    var memory = asteroid.createDataSource({connector: 'memory'});
-    var Color = memory.defineModel({name: String});
+    var memory = asteroid.createDataSource({connector: asteroid.Memory});
+    var Color = memory.createModel('color', {name: String});
 
     app.model(Color);
     app.use(asteroid.rest());
@@ -57,23 +57,29 @@ Get the app's exposed models.
     var models = app.models();
     
     models.forEach(function (Model) {
-      console.log(Model.name); // color
+      console.log(Model.modelName); // color
     });
     
 ### Model
 
-An Asteroid `Model` is a vanilla JavaScript class constructor with an attached set of properties and settings. A `Model` instance is created by passing a data object containing properties to the `Model` constructor.
+An Asteroid `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
 
-    var Color = asteroid.createModel({name: 'string'});
+    // valid color
+    var Color = asteroid.createModel('color', {name: String});
     var red = new Color({name: 'red'});
+    console.log(red.name); // red
+    
+    // invalid color
+    var foo = new Color({bar: 'bat baz'});
+    console.log(foo.bar); // undefined
 
 **Properties**
 
 A model defines a list of property names, types and other validation metadata. A [DataSource](#data-source) uses this definition to validate a `Model` during operations such as `save()`.
 
-**Settings**
+**Options**
 
-Some [DataSources](#data-source) may support additional `Model` settings.
+Some [DataSources](#data-source) may support additional `Model` options.
 
 Define an asteroid model.
 
@@ -254,10 +260,9 @@ Define a static model method.
       });
     }
     
-Expose the static model method to clients as a [remote method](#remote-method).
+Setup the static model method to be exposed to clients as a [remote method](#remote-method).
 
     asteroid.remoteMethod(
-      User,
       User.login,
       {
         accepts: [
@@ -279,13 +284,13 @@ Define an instance method.
     
 Define a remote model instance method.
 
-    asteroid.remoteMethod(User, User.prototype.logout);
+    asteroid.remoteMethod(User.prototype.logout);
 
 #### Remote Methods
 
 Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
-##### asteroid.remoteMethod(Model, fn, [options]);
+##### asteroid.remoteMethod(fn, [options]);
 
 Expose a remote method.
 
@@ -294,7 +299,6 @@ Expose a remote method.
     }
     
     asteroid.remoteMethod(
-      Product,
       Product.stats,
       {
         returns: {arg: 'stats', type: 'array'},
@@ -341,11 +345,22 @@ Run a function before or after a model method is called.
       next();
     });
     
+    User.after('save', function(user, next) {
+      console.log('after save complete', user);
+      
+      next();
+    });
+    
 Prevent the method from being called by passing an error to `next()`.
 
     User.before('delete', function(user, next) {
       // prevent all delete calls
       next(new Error('deleting is disabled'));
+    });
+    
+    User.after('delete', function(user, next) {
+      console.log('deleted', user);
+      next();
     });
 
 #### Remote Hooks
@@ -358,6 +373,11 @@ Run a function before or after a remote method is called by a client.
       } else {
         next(new Error('must be logged in to update'))
       }
+    });
+    
+    User.afterRemote('save', function(ctx, user, next) {
+      console.log('user has been saved', user);
+      next();
     });
     
 #### Context
@@ -467,45 +487,60 @@ Define a data source for persisting models.
       password: 'password'
     });
     
-#### dataSource.createModel(name, properties, settings)
+#### dataSource.createModel(name, properties, options)
 
 Define a model and attach it to a `DataSource`.
 
     var Color = oracle.createModel('color', {name: String});
 
-#### dataSource.discover(options, fn)
-
-Discover an object containing properties and settings for an existing data source.
-
-    oracle.discover({owner: 'MYORG'}, function(err, tables) {
-      var productSchema = tables.PRODUCTS;
-      var ProductModel = oracle.createModel('product', productSchema.properties, productSchema.settings);
-    });
-    
-#### dataSource.discoverSync(options)
-
-Synchronously discover an object containing properties and settings for an existing data source tables or collections.
-
-    var tables = oracle.discover({owner: 'MYORG'});
-    var productSchema = tables.PRODUCTS;
-    var ProductModel = oracle.createModel('product', productSchema.properties, productSchema.settings);
-    
-#### dataSource.discoverModels(options, fn) 
+#### dataSource.discoverAndBuildModels(owner, tableOrView, options, fn) 
 
 Discover a set of models based on tables or collections in a data source.
   
-    oracle.discoverModels({owner: 'MYORG'}, function(err, models) {
+    oracle.discoverAndBuildModels('MYORG', function(err, models) {
       var ProductModel = models.Product;
     });
     
-**Note:** The `models` will contain all properties and settings discovered from the data source. It will also automatically discover and create relationships.
+**Note:** The `models` will contain all properties and options discovered from the data source. It will also automatically discover and create relationships.
     
-#### dataSource.discoverModelsSync(options)
+#### dataSource.discoverAndBuildModelsSync(owner, tableOrView, options)
 
 Synchronously Discover a set of models based on tables or collections in a data source.
 
-    var models = oracle.discoverModels({owner: 'MYORG'});
+    var models = oracle.discoverAndBuildModelsSync('MYORG');
     var ProductModel = models.Product;
+
+#### dataSource.defineOperation(name, options, fn)
+
+Define and enable a new operation available to all model's attached to the data source.
+
+    var maps = asteroid.createDataSource({
+      connector: require('asteroid-rest'),
+      url: 'http://api.googleapis.com/maps/api'
+    });
+
+    rest.defineOperation('geocode', {
+      url: '/geocode/json',
+      verb: 'get',
+      accepts: [
+        {arg: 'address', type: 'string'},
+        {arg: 'sensor', default: 'true'}
+      ],
+      returns: {arg: 'location', type: asteroid.GeoPoint, transform: transform},
+      json: true,
+      enableRemote: true
+    });
+    
+    function transform(res) {
+      var geo = res.body.results[0].geometry;
+      return new asteroid.GeoPoint({lat: geo.lat, long: geo.lng});
+    }
+    
+    var GeoCoder = rest.createModel('geocoder');
+    
+    GeoCoder.geocode('123 fake street', function(err, point) {
+      console.log(point.lat, point.long); // 24.224424 44.444445
+    });
 
 #### dataSource.enable(operation)
 
@@ -513,10 +548,9 @@ Enable a data source operation. Each [connector](#connector) has its own set of 
 
     // all rest data source operations are
     // disabled by default
-    var rest = asteroid.createDataSource({
+    var twitter = asteroid.createDataSource({
       connector: require('asteroid-rest'),
-      url: 'http://maps.googleapis.com/maps/api'
-      enableAll: true
+      url: 'http://api.twitter.com'
     });
     
     // enable an operation
@@ -564,9 +598,16 @@ Output:
 
     {
       find: {
-        allowRemote: true,
+        remoteEnabled: true,
         accepts: [...],
         returns: [...]
+        enabled: true
+      },
+      save: {
+        remoteEnabled: true,
+        prototype: true,
+        accepts: [...],
+        returns: [...],
         enabled: true
       },
       ...
@@ -577,7 +618,7 @@ Output:
 Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
 
     var memory = asteroid.createDataSource({
-      connector: require('asteroid-memory')
+      connector: asteroid.Memory
     });
     
 **Available Connectors**
