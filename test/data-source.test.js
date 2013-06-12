@@ -81,53 +81,12 @@ describe('DataSource', function() {
   //   });
   // });
 
-  describe('dataSource.enable(operation)', function() {
-    it("Enable a data source operation", function() {
-      // enable an operation
-      memory.disable('find');
-      
-      var find = memory.getOperation('find');
-      
-      assert.equal(find.name, 'find');
-      assert.equal(find.enabled, false);
-      assert.equal(find.remoteEnabled, false);
-      
-      memory.enable('find');
-      
-      assert.equal(find.name, 'find');
-      assert.equal(find.enabled, true);
-      assert.equal(find.remoteEnabled, false);
-      
-      memory.enableRemote('find');
-      
-      assert.equal(find.remoteEnabled, true);
-    });
-  });
-
-  describe('dataSource.disable(operation)', function() {
-    it("Disable a data source operation", function() {
-        var find = memory.getOperation('all');
-
-        assert.equal(find.name, 'all');
-        assert.equal(find.enabled, true);
-        assert.equal(find.remoteEnabled, true);
-
-        memory.disableRemote('all');
-
-        assert.equal(find.name, 'all');
-        assert.equal(find.enabled, true);
-        assert.equal(find.remoteEnabled, false);
-
-        memory.disable('all');
-
-        assert.equal(find.name, 'all');
-        assert.equal(find.enabled, false);
-        assert.equal(find.remoteEnabled, false);
-    });
-  });
-
   describe('dataSource.operations()', function() {
     it("List the enabled and disabled operations.", function() {
+      // assert the defaults
+      // - true: the method should be remote enabled
+      // - false: the method should not be remote enabled
+      // - 
       existsAndShared('_forDB', false);
       existsAndShared('create', true);
       existsAndShared('updateOrCreate', false);
@@ -154,7 +113,6 @@ describe('DataSource', function() {
       
       function existsAndShared(name, isRemoteEnabled) {
         var op = memory.getOperation(name);
-        console.log(op.name, op.remoteEnabled, isRemoteEnabled);
         assert(op.remoteEnabled === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
       }
     });

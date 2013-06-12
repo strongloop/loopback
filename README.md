@@ -142,7 +142,7 @@ Validate the model instance.
 Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
 
     var oracle = asteroid.createDataSource({
-      connector: 'oracle',
+      connector: require('asteroid-oracle'),
       host: '111.22.333.44',
       database: 'MYDB',
       username: 'username',
@@ -187,7 +187,7 @@ Save specified attributes to the attached data source.
       name: 'updatedLast'
     }, fn);
 
-##### model.upsert(data, callback)
+##### Model.upsert(data, callback)
     
 Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
 
@@ -335,58 +335,47 @@ Each argument may define any of the [asteroid types](#asteroid-types).
   - The callback is an assumed argument and does not need to be specified in the accepts array.
   - The err argument is also assumed and does not need to be specified in the returns array.
 
-#### Hooks
-
-Run a function before or after a model method is called.
-
-    User.before('save', function(user, next) {
-      console.log('about to save', user);
-      
-      next();
-    });
-    
-    User.after('save', function(user, next) {
-      console.log('after save complete', user);
-      
-      next();
-    });
-    
-Prevent the method from being called by passing an error to `next()`.
-
-    User.before('delete', function(user, next) {
-      // prevent all delete calls
-      next(new Error('deleting is disabled'));
-    });
-    
-    User.after('delete', function(user, next) {
-      console.log('deleted', user);
-      next();
-    });
-
 #### Remote Hooks
 
 Run a function before or after a remote method is called by a client.
 
-    User.beforeRemote('save', function(ctx, user, next) {
-      if(ctx.user.id === user.id) {
+    // *.save === prototype.save
+    User.beforeRemote('*.save', function(ctx, user, next) {
+      if(ctx.user) {
         next();
       } else {
         next(new Error('must be logged in to update'))
       }
     });
     
-    User.afterRemote('save', function(ctx, user, next) {
+    User.afterRemote('*.save', function(ctx, user, next) {
       console.log('user has been saved', user);
       next();
     });
     
+Remote hooks also support wildcards. Run a function before any remote method is called.
+
+    // ** will match both prototype.* and *.*
+    User.beforeRemote('**', function(ctx, user, next) {
+      console.log(ctx.methodString, 'was invoked remotely'); // users.prototype.save was invoked remotely
+      next();
+    });
+    
+Other wildcard examples
+
+    // run before any static method eg. User.all
+    User.beforeRemote('*', ...);
+    
+    // run before any instance method eg. User.prototype.save
+    User.beforeRemote('prototype.*', ...);
+    
 #### Context
 
-Remote hooks are provided with a Context `ctx` that contains raw access to the transport specific objects. The `ctx` object also has a set of consistent apis that are consistent across transports.
+Remote hooks are provided with a Context `ctx` object which contains transport specific data (eg. for http: `req` and `res`). The `ctx` object also has a set of consistent apis across transports.
 
-##### ctx.me
+##### ctx.user
 
-The id of the user calling the method remotely. **Note:** this is undefined if a user is not logged in.
+A `Model` representing the user calling the method remotely. **Note:** this is undefined if the remote method is not invoked by a logged in user.
 
 ##### Rest
 
@@ -442,36 +431,10 @@ Query and create the related models.
 
 TODO: implement / document
     
-#### Model.availableHooks()
-
-Return a list of available hooks.
-
-    console.log(User.availableHooks()); // ['save', ...]
-
 #### Shared Methods
 
 Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [asteroid.rest](#rest)).
     
-#### Model.availableMethods()
-
-Returns the currently available api of a model as well as descriptions of any modified behavior or methods from attached data sources.
-
-    User.attachTo(oracle);
-    console.log(User.availableMethods());
-    
-Output:
-
-    {
-      'User.all': {
-        accepts: [{arg: 'filter', type: 'object', description: '...'}],
-        returns: [{arg: 'users', type: ['User']}]
-      },
-      'User.find': {
-        accepts: [{arg: 'id', type: 'any'}],
-        returns: [{arg: 'items', type: 'User'}]
-      },
-      ...
-    }
 
 ### Data Source
 
@@ -512,7 +475,7 @@ Synchronously Discover a set of models based on tables or collections in a data 
 
 #### dataSource.defineOperation(name, options, fn)
 
-Define and enable a new operation available to all model's attached to the data source.
+Define a new operation available to all model's attached to the data source.
 
     var maps = asteroid.createDataSource({
       connector: require('asteroid-rest'),
@@ -542,31 +505,14 @@ Define and enable a new operation available to all model's attached to the data 
       console.log(point.lat, point.long); // 24.224424 44.444445
     });
 
-#### dataSource.enable(operation)
+#### dataSource.enableRemote(operation)
 
-Enable a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
-
-    // all rest data source operations are
-    // disabled by default
-    var twitter = asteroid.createDataSource({
-      connector: require('asteroid-rest'),
-      url: 'http://api.twitter.com'
-    });
+Enable remote access to a data source operation. Each [connector](#connector) has its own set of set remotely enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
     
-    // enable an operation
-    twitter.enable('find');
-    
-    // enable remote access
-    twitter.enableRemote('find')
-    
-**Notes:**
 
- - only enabled operations will be added to attached models
- - data sources must enable / disable operations before attaching or creating models
+#### dataSource.disableRemote(operation)
 
-#### dataSource.disable(operation)
-
-Disable a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
+Disable remote access to a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
 
     // all rest data source operations are
     // disabled by default
@@ -575,9 +521,6 @@ Disable a data source operation. Each [connector](#connector) has its own set of
       host: '...',
       ...
     });
-
-    // disable an operation completely
-    oracle.disable('destroyAll');
     
     // or only disable it as a remote method
     oracle.disableRemote('destroyAll');

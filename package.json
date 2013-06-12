@@ -14,7 +14,9 @@
     "inflection": "~1.2.5"
   },
   "devDependencies": {
-    "mocha": "latest"
+    "mocha": "latest",
+    "sl-task-emitter": "0.0.x",
+    "supertest": "latest"
   },
   "optionalDependencies": {
     "jugglingdb-oracle": "git+ssh://git@github.com:strongloop/jugglingdb-oracle.git"
