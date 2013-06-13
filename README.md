@@ -369,6 +369,21 @@ Other wildcard examples
     // run before any instance method eg. User.prototype.save
     User.beforeRemote('prototype.*', ...);
     
+    // prevent password hashes from being sent to clients
+    User.afterRemote('**', function (ctx, user, next) {
+      if(ctx.result) {
+        if(Array.isArray(ctx.result)) {
+          ctx.result.forEach(function (result) {
+            result.password = undefined;
+          });
+        } else {
+          ctx.result.password = undefined;
+        }
+      }
+  
+      next();
+    });
+    
 #### Context
 
 Remote hooks are provided with a Context `ctx` object which contains transport specific data (eg. for http: `req` and `res`). The `ctx` object also has a set of consistent apis across transports.
@@ -376,6 +391,10 @@ Remote hooks are provided with a Context `ctx` object which contains transport s
 ##### ctx.user
 
 A `Model` representing the user calling the method remotely. **Note:** this is undefined if the remote method is not invoked by a logged in user.
+
+##### ctx.result
+
+During `afterRemote` hooks, `ctx.result` will contain the data about to be sent to a client. Modify this object to transform data before it is sent. 
 
 ##### Rest
 
