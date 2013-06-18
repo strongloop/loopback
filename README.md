@@ -90,6 +90,8 @@ Define an asteroid model.
       age: Number
     });
 
+### Validation (expiremental)
+
 #### Model.validatesPresenceOf(properties...)
 
 Require a model to include a property to be considered valid.
@@ -154,9 +156,11 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
     
 **Note:** until a model is attached to a data source it will **not** have any **attached methods**.
 
-#### Attached Methods
+#### CRUD and Query Mixins
 
-Attached methods are added by attaching a vanilla model to a data source with a connector. Each [connector](#connectors) enables its own set of operations that are attached to a `Model` as methods. To see available methods for a data source with a connector call `dataSource.operations()`.
+Mixins are added by attaching a vanilla model to a data source with a connector. Each [connector](#connectors) enables its own set of operations that are attached to a `Model` as methods. To see available methods for a data source with a connector call `dataSource.operations()`.
+
+#### Static Methods
 
 ##### Model.create([data], [callback])
 
@@ -166,53 +170,15 @@ Create an instance of Model with given data and save to the attached data source
       console.log(user instanceof User); // true
     });
 
-##### model.save([options], [callback])
+##### Model.count([query], callback)
 
-Save an instance of a Model to the attached data source.
+Query count of Model instances in data source. Optional query param allows to count filtered set of Model instances.
 
-    var joe = new User({first: 'Joe', last: 'Bob'});
-    joe.save(function(err, user) {
-      if(user.errors) {
-        console.log(user.errors);
-      } else {
-        console.log(user.id);
-      }
+    User.count({approved: true}, function(err, count) {
+      console.log(count); // 2081
     });
 
-##### model.updateAttributes(data, [callback])
-    
-Save specified attributes to the attached data source.
-
-    user.updateAttributes({
-      first: 'updatedFirst',
-      name: 'updatedLast'
-    }, fn);
-
-##### Model.upsert(data, callback)
-    
-Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
-
-##### model.destroy([callback])
-
-Remove a model from the attached data source.
-
-    model.destroy(function(err) {
-      // model instance destroyed
-    });
-    
-##### Model.destroyAll(callback)
-
-Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
-
-##### Model.find(id, callback)
-
-Find instance by id.
-
-    User.find(23, function(err, user) {
-      console.info(user.id); // 23
-    });
-
-Model.all(filter, callback);
+##### Model.all(filter, callback)
 
 Find all instances of Model, matched by query. Fields used for filter and sort should be declared with `{index: true}` in model definition.
 
@@ -230,15 +196,31 @@ Find the second page of 10 users over age 21 in descending order.
 
 **Note:** See the specific connector's [docs](#connectors) for more info.
 
-##### Model.count([query], callback)
+##### Model.destroyAll(callback)
 
-Query count of Model instances in data source. Optional query param allows to count filtered set of Model instances.
+Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
 
-    User.count({approved: true}, function(err, count) {
-      console.log(count); // 2081
+##### Model.find(id, callback)
+
+Find instance by id.
+
+    User.find(23, function(err, user) {
+      console.info(user.id); // 23
     });
 
-#### Static Methods
+##### Model.findOne(filter, callback)
+
+Find a single instance that matches the given filter.
+
+    User.find(23, function(err, user) {
+      console.info(user.id); // 23
+    });
+    
+##### Model.upsert(data, callback)
+
+Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
+
+##### Custom Static Methods
 
 Define a static model method.
 
@@ -277,6 +259,38 @@ Setup the static model method to be exposed to clients as a [remote method](#rem
     
 #### Instance Methods
 
+##### model.save([options], [callback])
+
+Save an instance of a Model to the attached data source.
+
+    var joe = new User({first: 'Joe', last: 'Bob'});
+    joe.save(function(err, user) {
+      if(user.errors) {
+        console.log(user.errors);
+      } else {
+        console.log(user.id);
+      }
+    });
+
+##### model.updateAttributes(data, [callback])
+    
+Save specified attributes to the attached data source.
+
+    user.updateAttributes({
+      first: 'updatedFirst',
+      name: 'updatedLast'
+    }, fn);
+
+##### model.destroy([callback])
+
+Remove a model from the attached data source.
+
+    model.destroy(function(err) {
+      // model instance destroyed
+    });
+
+##### Custom Instance Methods
+
 Define an instance method.
 
     User.prototype.logout = function (fn) {
@@ -289,7 +303,7 @@ Define a remote model instance method.
 
 #### Remote Methods
 
-Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
+Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature.
 
 ##### asteroid.remoteMethod(fn, [options]);
 
@@ -312,7 +326,7 @@ Expose a remote method.
  - **accepts** - (optional) an arguments description specifying the remote method's arguments. A
  - **returns** - (optional) an arguments description specifying the remote methods callback arguments.
  - **http** - (advanced / optional, object) http routing info
-  - **http.path** - the relative path the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description.
+  - **http.path** - the path relative to the model the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description. For example the stats method above will be at the whole path `/products/stats`.
   - **http.verb** - (get, post, put, del, all) - the route verb the method will be available from.
  
 **Argument Description**
