@@ -145,7 +145,7 @@ Validate the model instance.
 Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
 
     var oracle = asteroid.createDataSource({
-      connector: require('asteroid-oracle'),
+      connector: require('asteroid-connector-oracle'),
       host: '111.22.333.44',
       database: 'MYDB',
       username: 'username',
@@ -224,6 +224,8 @@ Update when record with id=data.id found, insert otherwise. **Note:** no setters
 
 Define a static model method.
 
+
+
     User.login = function (username, password, fn) {
       var passwordHash = hashPassword(password);
       this.findOne({username: username}, function (err, user) {
@@ -243,7 +245,7 @@ Define a static model method.
       });
     }
     
-Setup the static model method to be exposed to clients as a [remote method](#remote-method).
+Setup the static model method to be exposed to clients as a [remote method](#remote-method). 
 
     asteroid.remoteMethod(
       User.login,
@@ -303,7 +305,7 @@ Define a remote model instance method.
 
 #### Remote Methods
 
-Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature.
+Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
 ##### asteroid.remoteMethod(fn, [options]);
 
@@ -439,25 +441,29 @@ Define a "one to many" relationship.
 Query and create the related models.
 
     Book.create(function(err, book) {
-      // using 'chapters' scope for build:
-      var c = book.chapters.build({name: 'Chapter 1'});
+      // create a chapter instance
+      // ready to be saved in the data source
+      var chapter = book.chapters.build({name: 'Chapter 1'});
       
-      // same as:
-      c = new Chapter({name: 'Chapter 1', bookId: book.id});
+      // save the new chapter
+      chapter.save();
       
-      // using 'chapters' scope for create:
-      book.chapters.create();
-      
-      // same as:
-      Chapter.create({bookId: book.id});
+      // you can also call the Chapter.create method with
+      // the `chapters` property which will build a chapter
+      // instance and save the it in the data source
+      book.chapters.create({name: 'Chapter 2'}, function(err, savedChapter) {
+        // this callback is optional
+      });
 
-      // using scope for querying:
+      // query chapters for the book using the 
       book.chapters(function(err, chapters) {
-        /* all chapters with bookId = book.id */
+        // all chapters with bookId = book.id
+        console.log(chapters);
       });
       
       book.chapters({where: {name: 'test'}, function(err, chapters) {
         // all chapters with bookId = book.id and name = 'test'
+        console.log(chapters);
       });
     });
     
@@ -468,7 +474,6 @@ TODO: implement / document
 #### Shared Methods
 
 Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [asteroid.rest](#rest)).
-    
 
 ### Data Source
 
@@ -490,28 +495,11 @@ Define a model and attach it to a `DataSource`.
 
     var Color = oracle.createModel('color', {name: String});
 
-#### dataSource.discoverAndBuildModels(owner, tableOrView, options, fn) 
+#### dataSource.discoverModelDefinitions([username], fn)
 
-Discover a set of models based on tables or collections in a data source.
-  
-    oracle.discoverAndBuildModels('MYORG', function(err, models) {
-      var ProductModel = models.Product;
-    });
-    
-**Note:** The `models` will contain all properties and options discovered from the data source. It will also automatically discover and create relationships.
-    
-#### dataSource.discoverAndBuildModelsSync(owner, tableOrView, options)
+Discover a set of model definitions (table or collection names) based on tables or collections in a data source.
 
-Synchronously Discover a set of models based on tables or collections in a data source.
-
-    var models = oracle.discoverAndBuildModelsSync('MYORG');
-    var ProductModel = models.Product;
-    
-#### dataSource.discoverModelDefinitions([owner], fn)
-
-Discover a set of model definitions based on tables or collections in a data source.
-
-    oracle.discoverModelDefinitions(null, function (err, models) {
+    oracle.discoverModelDefinitions(function (err, models) {
       models.forEach(function (def) {
         // def.name ~ the model name
         oracle.discoverSchema(null, def.name, function (err, schema) {
@@ -522,39 +510,100 @@ Discover a set of model definitions based on tables or collections in a data sou
     
 #### dataSource.discoverSchema([owner], name, fn)
 
-Discover the schema of a data source.
+Discover the schema of a specific table or collection.
 
-#### dataSource.defineOperation(name, options, fn)
+**Example schema from oracle connector:**
 
-Define a new operation available to all model's attached to the data source.
-
-    var maps = asteroid.createDataSource({
-      connector: require('asteroid-rest'),
-      url: 'http://api.googleapis.com/maps/api'
-    });
-
-    rest.defineOperation('geocode', {
-      url: '/geocode/json',
-      verb: 'get',
-      accepts: [
-        {arg: 'address', type: 'string'},
-        {arg: 'sensor', default: 'true'}
-      ],
-      returns: {arg: 'location', type: asteroid.GeoPoint, transform: transform},
-      json: true,
-      enableRemote: true
-    });
-    
-    function transform(res) {
-      var geo = res.body.results[0].geometry;
-      return new asteroid.GeoPoint({lat: geo.lat, long: geo.lng});
+    {
+      "name": "Product",
+      "options": {
+        "idInjection": false,
+        "oracle": {
+          "schema": "BLACKPOOL",
+          "table": "PRODUCT"
+        }
+      },
+      "properties": {
+        "id": {
+          "type": "String",
+          "required": true,
+          "length": 20,
+          "id": 1,
+          "oracle": {
+            "columnName": "ID",
+            "dataType": "VARCHAR2",
+            "dataLength": 20,
+            "nullable": "N"
+          }
+        },
+        "name": {
+          "type": "String",
+          "required": false,
+          "length": 64,
+          "oracle": {
+            "columnName": "NAME",
+            "dataType": "VARCHAR2",
+            "dataLength": 64,
+            "nullable": "Y"
+          }
+        },
+        "audibleRange": {
+          "type": "Number",
+          "required": false,
+          "length": 22,
+          "oracle": {
+            "columnName": "AUDIBLE_RANGE",
+            "dataType": "NUMBER",
+            "dataLength": 22,
+            "nullable": "Y"
+          }
+        },
+        "effectiveRange": {
+          "type": "Number",
+          "required": false,
+          "length": 22,
+          "oracle": {
+            "columnName": "EFFECTIVE_RANGE",
+            "dataType": "NUMBER",
+            "dataLength": 22,
+            "nullable": "Y"
+          }
+        },
+        "rounds": {
+          "type": "Number",
+          "required": false,
+          "length": 22,
+          "oracle": {
+            "columnName": "ROUNDS",
+            "dataType": "NUMBER",
+            "dataLength": 22,
+            "nullable": "Y"
+          }
+        },
+        "extras": {
+          "type": "String",
+          "required": false,
+          "length": 64,
+          "oracle": {
+            "columnName": "EXTRAS",
+            "dataType": "VARCHAR2",
+            "dataLength": 64,
+            "nullable": "Y"
+          }
+        },
+        "fireModes": {
+          "type": "String",
+          "required": false,
+          "length": 64,
+          "oracle": {
+            "columnName": "FIRE_MODES",
+            "dataType": "VARCHAR2",
+            "dataLength": 64,
+            "nullable": "Y"
+          }
+        }
+      }
     }
-    
-    var GeoCoder = rest.createModel('geocoder');
-    
-    GeoCoder.geocode('123 fake street', function(err, point) {
-      console.log(point.lat, point.long); // 24.224424 44.444445
-    });
 
 #### dataSource.enableRemote(operation)
 
@@ -568,7 +617,7 @@ Disable remote access to a data source operation. Each [connector](#connector) h
     // all rest data source operations are
     // disabled by default
     var oracle = asteroid.createDataSource({
-      connector: require('asteroid-oracle'),
+      connector: require('asteroid-connector-oracle'),
       host: '...',
       ...
     });
@@ -634,11 +683,11 @@ Include the connector in your package.json dependencies and run `npm install`.
 
     {
       "dependencies": {
-        "asteroid-oracle": "latest"
+        "asteroid-connector-oracle": "latest"
       }
     }
 
-### GeoPoint
+### GeoPoint TODO
 
 Embed a latitude / longitude point in a [Model](#model).
 
@@ -696,7 +745,7 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Array` - JSON array
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
- - [GeoPoint](#geopoint) - an asteroid GeoPoint object.
+ - [GeoPoint](#geopoint) - an asteroid GeoPoint object. TODO
  
 ### REST Router
 
