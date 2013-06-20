@@ -492,6 +492,23 @@ Synchronously Discover a set of models based on tables or collections in a data 
 
     var models = oracle.discoverAndBuildModelsSync('MYORG');
     var ProductModel = models.Product;
+    
+#### dataSource.discoverModelDefinitions([owner], fn)
+
+Discover a set of model definitions based on tables or collections in a data source.
+
+    oracle.discoverModelDefinitions(null, function (err, models) {
+      models.forEach(function (def) {
+        // def.name ~ the model name
+        oracle.discoverSchema(null, def.name, function (err, schema) {
+          console.log(schema);
+        });
+      });
+    });
+    
+#### dataSource.discoverSchema([owner], name, fn)
+
+Discover the schema of a data source.
 
 #### dataSource.defineOperation(name, options, fn)
 
