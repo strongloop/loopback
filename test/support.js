@@ -16,10 +16,8 @@ beforeEach(function () {
 assertValidDataSource = function (dataSource) {
   // has methods
   assert.isFunc(dataSource, 'createModel');
-  // assert.isFunc(dataSource, 'discover');
-  // assert.isFunc(dataSource, 'discoverSync');
-  assert.isFunc(dataSource, 'discoverAndBuildModels');
-  assert.isFunc(dataSource, 'discoverAndBuildModelsSync');
+  assert.isFunc(dataSource, 'discoverModelDefinitions');
+  assert.isFunc(dataSource, 'discoverSchema');
   assert.isFunc(dataSource, 'enable');
   assert.isFunc(dataSource, 'disable');
   assert.isFunc(dataSource, 'defineOperation');

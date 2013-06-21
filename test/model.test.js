@@ -270,8 +270,8 @@ describe('Model', function() {
       app.model(User);
     });
     
-    describe('example remote method', function () {
-      it('should allow calling remotely', function(done) {
+    describe('Example Remote Method', function () {
+      it('Call the method using HTTP / REST', function(done) {
         request(app)
           .get('/users/sign-in?username=foo&password=bar')
           .expect('Content-Type', /json/)

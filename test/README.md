@@ -26,7 +26,7 @@
      - [Model.find(id, callback)](#model-modelfindid-callback)
      - [Model.count([query], callback)](#model-modelcountquery-callback)
      - [Remote Methods](#model-remote-methods)
-       - [example remote method](#model-remote-methods-example-remote-method)
+       - [Example Remote Method](#model-remote-methods-example-remote-method)
        - [Model.beforeRemote(name, fn)](#model-remote-methods-modelbeforeremotename-fn)
        - [Model.afterRemote(name, fn)](#model-remote-methods-modelafterremotename-fn)
        - [Remote Method invoking context](#model-remote-methods-remote-method-invoking-context)
@@ -437,8 +437,8 @@ Query count of Model instances in data source.
 <a name="model-remote-methods"></a>
 ## Remote Methods
 <a name="model-remote-methods-example-remote-method"></a>
-### example remote method
-should allow calling remotely.
+### Example Remote Method
+Call the method using HTTP / REST.
 
 ```js
 request(app)
