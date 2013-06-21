@@ -162,13 +162,15 @@ Mixins are added by attaching a vanilla model to a data source with a connector.
 
 #### Static Methods
 
-##### Model.create([data], [callback])
+##### Model.create(data, [callback])
 
-Create an instance of Model with given data and save to the attached data source.
+Create an instance of Model with given data and save to the attached data source. Callback is optional.
 
     User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
       console.log(user instanceof User); // true
     });
+    
+**Note:** You must include a callback and use the created model provided in the callback if your code depends on your model being saved or having an `id`.
 
 ##### Model.count([query], callback)
 
