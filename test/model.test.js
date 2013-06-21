@@ -95,6 +95,16 @@ describe('Model', function() {
       assert(valid === false);
       assert(user.errors.age, 'model should have age error');
     });
+    
+    it('Asynchronously validate the model.', function(done) {
+      User.validatesNumericalityOf('age', {int: true});
+      var user = new User({first: 'joe', age: 'flarg'})
+      user.isValid(function (valid) {
+        assert(valid === false);
+        assert(user.errors.age, 'model should have age error');
+        done();
+      });
+    });
   });
 
   describe('Model.attachTo(dataSource)', function() {
