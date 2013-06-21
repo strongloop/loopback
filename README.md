@@ -208,11 +208,11 @@ Find instance by id.
       console.info(user.id); // 23
     });
 
-##### Model.findOne(filter, callback)
+##### Model.findOne(where, callback)
 
-Find a single instance that matches the given filter.
+Find a single instance that matches the given where expression.
 
-    User.find(23, function(err, user) {
+    User.findOne({id: 23}, function(err, user) {
       console.info(user.id); // 23
     });
     
