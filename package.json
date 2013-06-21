@@ -19,6 +19,6 @@
     "supertest": "latest"
   },
   "optionalDependencies": {
-    "jugglingdb-oracle": "git+ssh://git@github.com:strongloop/jugglingdb-oracle.git"
+    "asteroid-connector-oracle": "git+ssh://git@github.com:strongloop/asteroid-connector-oracle.git"
   }
 }
