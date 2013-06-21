@@ -34,53 +34,6 @@ describe('DataSource', function() {
     });
   });
 
-  // describe('dataSource.discover(options, fn)', function() {
-  //   it("Discover an object containing properties and settings for an existing data source.", function(done) {
-  //     /* example - 
-  //     oracle.discover({owner: 'MYORG'}, function(err, tables) {
-  //       var productSchema = tables.PRODUCTS;
-  //       var ProductModel = oracle.createModel('product', productSchema.properties, productSchema.settings);
-  //     });
-  //     
-  //     */
-  //     done(new Error('test not implemented'));
-  //   });
-  // });
-  // 
-  // describe('dataSource.discoverSync(options)', function() {
-  //   it("Synchronously discover an object containing properties and settings for an existing data source tables or collections.", function(done) {
-  //     /* example - 
-  //     var tables = oracle.discover({owner: 'MYORG'});
-  //     var productSchema = tables.PRODUCTS;
-  //     var ProductModel = oracle.createModel('product', productSchema.properties, productSchema.settings);
-  //     
-  //     */
-  //     done(new Error('test not implemented'));
-  //   });
-  // });
-
-  // describe('dataSource.discoverModels(options, fn) ', function() {
-  //   it("Discover a set of models based on tables or collections in a data source.", function(done) {
-  //     /* example - 
-  //     oracle.discoverModels({owner: 'MYORG'}, function(err, models) {
-  //       var ProductModel = models.Product;
-  //     });
-  //     
-  //     */
-  //     done(new Error('test not implemented'));
-  //   });
-  // });
-  // 
-  // describe('dataSource.discoverModelsSync(options)', function() {
-  //   it("Synchronously Discover a set of models based on tables or collections in a data source.", function(done) {
-  //     /* example - 
-  //     var models = oracle.discoverModels({owner: 'MYORG'});
-  //     var ProductModel = models.Product;
-  //     */
-  //     done(new Error('test not implemented'));
-  //   });
-  // });
-
   describe('dataSource.operations()', function() {
     it("List the enabled and disabled operations.", function() {
       // assert the defaults

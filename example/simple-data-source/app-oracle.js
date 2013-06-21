@@ -5,7 +5,7 @@ app.use(asteroid.rest());
 
 
 var dataSource = app.dataSource('db',
-    {   adapter: 'oracle',
+    {   adapter: require('asteroid-connector-oracle'),
         host: '166.78.158.45',
         database: 'XE',
         username: 'strongloop',
