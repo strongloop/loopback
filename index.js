@@ -10,3 +10,9 @@ var asteroid = module.exports = require('./lib/asteroid');
 
 asteroid.Connector = require('./lib/connectors/base-connector');
 asteroid.Memory = require('./lib/connectors/memory');
+
+/**
+ * Types
+ */
+
+asteroid.GeoPoint = require('./lib/geo-point');

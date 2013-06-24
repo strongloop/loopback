@@ -701,7 +701,7 @@ Asteroid Model's with a GeoPoint property and an attached DataSource may be quer
 
 Find the 3 nearest coffee shops.
 
-    CoffeeShop.attach(oracle);
+    CoffeeShop.attachTo(oracle);
     var here = new GeoPoint({lat: 10.32424, long: 5.84978});
     CoffeeShop.find({where: {location: {near: here}}}, function(err, nearbyShops) {
       console.info(nearbyShops); // [CoffeeShop, ...]
