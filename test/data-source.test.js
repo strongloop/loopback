@@ -10,14 +10,14 @@ describe('DataSource', function() {
   describe('dataSource.createModel(name, properties, settings)', function() {
     it("Define a model and attach it to a `DataSource`.", function() {
       var Color = memory.createModel('color', {name: String});
-      assert.isFunc(Color, 'all');
+      assert.isFunc(Color, 'find');
+      assert.isFunc(Color, 'findById');
+      assert.isFunc(Color, 'findOne');
       assert.isFunc(Color, 'create');
       assert.isFunc(Color, 'updateOrCreate');
       assert.isFunc(Color, 'upsert');
       assert.isFunc(Color, 'findOrCreate');
       assert.isFunc(Color, 'exists');
-      assert.isFunc(Color, 'find');
-      assert.isFunc(Color, 'findOne');
       assert.isFunc(Color, 'destroyAll');
       assert.isFunc(Color, 'count');
       assert.isFunc(Color, 'include');
@@ -47,7 +47,6 @@ describe('DataSource', function() {
       existsAndShared('findOrCreate', false);
       existsAndShared('exists', true);
       existsAndShared('find', true);
-      existsAndShared('all', true);
       existsAndShared('findOne', true);
       existsAndShared('destroyAll', false);
       existsAndShared('count', true);

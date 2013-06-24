@@ -180,7 +180,7 @@ Query count of Model instances in data source. Optional query param allows to co
       console.log(count); // 2081
     });
 
-##### Model.all(filter, callback)
+##### Model.find(filter, callback)
 
 Find all instances of Model, matched by query. Fields used for filter and sort should be declared with `{index: true}` in model definition.
 
@@ -194,7 +194,7 @@ Find all instances of Model, matched by query. Fields used for filter and sort s
 
 Find the second page of 10 users over age 21 in descending order.
 
-    User.all({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 10})
+    User.find({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 10})
 
 **Note:** See the specific connector's [docs](#connectors) for more info.
 
@@ -202,11 +202,11 @@ Find the second page of 10 users over age 21 in descending order.
 
 Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
 
-##### Model.find(id, callback)
+##### Model.findById(id, callback)
 
 Find instance by id.
 
-    User.find(23, function(err, user) {
+    User.findById(23, function(err, user) {
       console.info(user.id); // 23
     });
 
@@ -382,7 +382,7 @@ Remote hooks also support wildcards. Run a function before any remote method is 
     
 Other wildcard examples
 
-    // run before any static method eg. User.all
+    // run before any static method eg. User.find
     User.beforeRemote('*', ...);
     
     // run before any instance method eg. User.prototype.save
@@ -703,7 +703,7 @@ Find the 3 nearest coffee shops.
 
     CoffeeShop.attach(oracle);
     var here = new GeoPoint({lat: 10.32424, long: 5.84978});
-    CoffeeShop.all({where: {location: {near: here}}}, function(err, nearbyShops) {
+    CoffeeShop.find({where: {location: {near: here}}}, function(err, nearbyShops) {
       console.info(nearbyShops); // [CoffeeShop, ...]
     });
 

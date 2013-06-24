@@ -13,7 +13,7 @@ describe('Model', function() {
       'domain': String,
       'email': String
     });
-  })
+  });
 
   describe('Model.validatesPresenceOf(properties...)', function() {
     it("Require a model to include a property to be considered valid.", function() {
@@ -111,11 +111,11 @@ describe('Model', function() {
     it("Attach a model to a [DataSource](#data-source)", function() {
       var MyModel = asteroid.createModel('my-model', {name: String});
       
-      assert(MyModel.all === undefined, 'should not have data access methods');
+      assert(MyModel.find === undefined, 'should not have data access methods');
       
       MyModel.attachTo(memory);
       
-      assert(typeof MyModel.all === 'function', 'should have data access methods after attaching to a data source');
+      assert(typeof MyModel.find === 'function', 'should have data access methods after attaching to a data source');
     });
   });
 
@@ -178,10 +178,10 @@ describe('Model', function() {
   describe('model.destroy([callback])', function() {
     it("Remove a model from the attached data source.", function(done) {
       User.create({first: 'joe', last: 'bob'}, function (err, user) {
-        User.find(user.id, function (err, foundUser) {
+        User.findById(user.id, function (err, foundUser) {
           assert.equal(user.id, foundUser.id);
           foundUser.destroy(function () {
-            User.find(user.id, function (err, notFound) {
+            User.findById(user.id, function (err, notFound) {
               assert(!err);
               assert.equal(notFound, null);
               done();
@@ -214,10 +214,10 @@ describe('Model', function() {
     });
   });
 
-  describe('Model.find(id, callback)', function() {
-    it("Find instance by id.", function(done) {
+  describe('Model.findById(id, callback)', function() {
+    it("Find an instance by id.", function(done) {
       User.create({first: 'michael', last: 'jordan', id: 23}, function () {
-        User.find(23, function (err, user) {
+        User.findById(23, function (err, user) {
           assert.equal(user.id, 23);
           assert.equal(user.first, 'michael');
           assert.equal(user.last, 'jordan');
