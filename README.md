@@ -702,7 +702,7 @@ Asteroid Model's with a GeoPoint property and an attached DataSource may be quer
 Find the 3 nearest coffee shops.
 
     CoffeeShop.attachTo(oracle);
-    var here = new GeoPoint({lat: 10.32424, long: 5.84978});
+    var here = new GeoPoint({lat: 10.32424, lng: 5.84978});
     CoffeeShop.find({where: {location: {near: here}}}, function(err, nearbyShops) {
       console.info(nearbyShops); // [CoffeeShop, ...]
     });
@@ -711,8 +711,8 @@ Find the 3 nearest coffee shops.
 
 Get the distance to another `GeoPoint`.
 
-    var here = new GeoPoint({lat: 10, long: 10});
-    var there = new GeoPoint({lat: 5, long: 5});
+    var here = new GeoPoint({lat: 10, lng: 10});
+    var there = new GeoPoint({lat: 5, lng: 5});
     console.log(here.distanceTo(there, {type: 'miles'})); // 438
  
 #### GeoPoint.distanceBetween(a, b, options)
@@ -731,7 +731,7 @@ Get the distance between two points.
 
 The latitude point in degrees. Range: -90 to 90.
 
-#### geoPoint.long
+#### geoPoint.lng
 
 The longitude point in degrees. Range: -180 to 180.
 
