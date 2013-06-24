@@ -17,8 +17,5 @@
     "mocha": "latest",
     "sl-task-emitter": "0.0.x",
     "supertest": "latest"
-  },
-  "optionalDependencies": {
-    "asteroid-connector-oracle": "git+ssh://git@github.com:strongloop/asteroid-connector-oracle.git"
   }
 }
