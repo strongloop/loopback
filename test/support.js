@@ -5,6 +5,7 @@
 assert = require('assert');
 asteroid = require('../');
 memoryConnector = asteroid.Memory;
+GeoPoint = asteroid.GeoPoint;
 app = null;
 TaskEmitter = require('sl-task-emitter');
 request = require('supertest');

@@ -689,7 +689,11 @@ Include the connector in your package.json dependencies and run `npm install`.
       }
     }
 
-### GeoPoint TODO
+### GeoPoint
+
+Use the `GeoPoint` class.
+
+    var GeoPoint = require('asteroid').GeoPoint;
 
 Embed a latitude / longitude point in a [Model](#model).
 
@@ -723,9 +727,15 @@ Get the distance between two points.
 
 #### Distance Types
 
+**Note:** all distance methods use `miles` by default.
+
  - `miles`
  - `radians`
  - `kilometers`
+ - `meters`
+ - `miles`
+ - `feet`
+ - `degrees`
 
 #### geoPoint.lat
 

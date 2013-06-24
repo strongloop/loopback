@@ -15,4 +15,4 @@ asteroid.Memory = require('./lib/connectors/memory');
  * Types
  */
 
-asteroid.GeoPoint = require('./lib/geo-point');
+asteroid.GeoPoint = require('jugglingdb/lib/geo').GeoPoint;
