@@ -758,7 +758,42 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - an asteroid GeoPoint object. TODO
- 
+
+### User Model
+
+Allow users of your asteroid app to register and authenticate.
+
+    // define a User model
+    var User = asteroid.createModel(
+      'user',
+      {
+        email: 'EmailAddress',
+        password: {
+          type: 'Password',
+          min: 4,
+          max: 26
+        }
+      },
+      {
+        username: 'email',
+        extend: 'User'
+      }
+    );
+    
+    // attach to the memory connector
+    User.attachTo(memory);
+    
+    // create a user
+    User.create({
+      email: 'foo@bar.com',
+      password: '123456'
+    });
+    
+
+### Email Model
+
+Send emails from your asteroid app.
+
 ### REST Router
 
 Expose models over rest using the `asteroid.rest` router.
