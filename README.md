@@ -742,7 +742,7 @@ Find the 3 nearest coffee shops.
 
     CoffeeShop.attachTo(oracle);
     var here = new GeoPoint({lat: 10.32424, lng: 5.84978});
-    CoffeeShop.find({where: {location: {near: here}}}, function(err, nearbyShops) {
+    CoffeeShop.find({where: {location: {near: here}}, limit:3}, function(err, nearbyShops) {
       console.info(nearbyShops); // [CoffeeShop, ...]
     });
 
