@@ -142,7 +142,7 @@ Validate the model instance.
 
 #### Model.properties
 
-The an object containing a normalized set of properties supplied to `asteroid.createModel(name, properties)`.
+An object containing a normalized set of properties supplied to `asteroid.createModel(name, properties)`.
 
 Example:
 
