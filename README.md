@@ -174,8 +174,6 @@ Outputs:
         "id": 1
       }
     }
-    
-assert(MyModel.properties);
 
 #### Model.attachTo(dataSource)
 
