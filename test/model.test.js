@@ -431,6 +431,38 @@ describe('Model', function() {
       });
     });
   });
+  
+  describe('Model.properties', function(){
+    it('Normalized properties passed in originally by asteroid.createModel().', function() {
+      var props = {
+        s: String,
+        n: {type: 'Number'},
+        o: {type: 'String', min: 10, max: 100},
+        d: Date,
+        g: asteroid.GeoPoint
+      };
+      
+      var MyModel = asteroid.createModel('foo', props);
+      
+      Object.keys(MyModel.properties).forEach(function (key) {
+        var p = MyModel.properties[key];
+        var o = MyModel.properties[key];
+        assert(p);
+        assert(o);
+        assert(typeof p.type === 'function');
+        
+        if(typeof o === 'function') {
+          // the normalized property
+          // should match the given property
+          assert(
+            p.type.name === o.name
+            ||
+            p.type.name === o
+          )
+        }
+      });
+    });
+  });
 
   // describe('Model.hasAndBelongsToMany()', function() {
   //   it("TODO: implement / document", function(done) {

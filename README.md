@@ -140,6 +140,43 @@ Validate the model instance.
         }
     });
 
+#### Model.properties
+
+The an object containing a normalized set of properties supplied to `asteroid.createModel(name, properties)`.
+
+Example:
+
+    var props = {
+      a: String,
+      b: {type: 'Number'},
+      c: {type: 'String', min: 10, max: 100},
+      d: Date,
+      e: asteroid.GeoPoint
+    };
+
+    var MyModel = asteroid.createModel('foo', props);
+
+    console.log(MyModel.properties);
+    
+Outputs:
+
+    {
+      "a": {type: String},
+      "b": {type: Number},
+      "c": {
+        "type": String,
+        "min": 10,
+        "max": 100
+      },
+      "d": {type: Date},
+      "e": {type: GeoPoint},
+      "id": {
+        "id": 1
+      }
+    }
+    
+assert(MyModel.properties);
+
 #### Model.attachTo(dataSource)
 
 Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
