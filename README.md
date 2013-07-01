@@ -814,21 +814,7 @@ Register and authenticate users of your app locally or against 3rd party service
 Extend a vanilla Asteroid model using the built in User model.
 
     // define a User model
-    var User = asteroid.User.extend(
-      'user',
-      {
-        email: {
-          type: 'EmailAddress',
-          username: true
-        },
-        password: {
-          hideRemotely: true, // default for Password
-          type: 'Password',
-          min: 4,
-          max: 26
-        }
-      }
-    );
+    var User = asteroid.User.extend('user');
   
     // attach to the memory connector
     User.attachTo(memory);
@@ -862,7 +848,7 @@ Setup an authentication strategy.
     
     // create a custom strategy
     var LocalStrategy = require('passport-local').Strategy;
-    User.use(new LocalStrategy(function(username, password, done) {
+    passport.use(new LocalStrategy(function(username, password, done) {
       User.findOne({ username: username }, function(err, user) {
         if (err) { return done(err); }
         if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
@@ -943,7 +929,8 @@ To require email verification before a user is allowed to login, supply a verifi
             // that contains the email
             // to verify
             email: 'email',
-            template: 'email.ejs'
+            template: 'email.ejs',
+            redirect: '/'
           }
         }
       },
