@@ -802,6 +802,8 @@ The Asteroid library is unopinioned in the way you define your app's data and lo
  - Notification - _TODO_ create, store, schedule and send push notifications to your app users.
  - Email - _TODO_ schedule and send emails to your app users using smtp or 3rd party services.
  - Job - _TODO_ schedule arbitrary code to run at a given time.
+
+Defining a model with `asteroid.createModel()` is really just extending the base `asteroid.Model` type using `asteroid.Model.extend()`. The bundled models extend from the base `asteroid.Model` allowing you to extend them arbitrarily.
  
 ### User Model
 
@@ -812,7 +814,7 @@ Register and authenticate users of your app locally or against 3rd party service
 Extend a vanilla Asteroid model using the built in User model.
 
     // define a User model
-    var User = asteroid.createModel(
+    var User = asteroid.User.extend(
       'user',
       {
         email: {
@@ -825,9 +827,6 @@ Extend a vanilla Asteroid model using the built in User model.
           min: 4,
           max: 26
         }
-      },
-      {
-        extend: 'User',
       }
     );
   
@@ -923,7 +922,7 @@ You must provide a username and password over rest. To ensure these values are e
 To require email verification before a user is allowed to login, supply a verification property with a `verify` settings object.
 
     // define a User model
-    var User = asteroid.createModel(
+    var User = asteroid.User.extend(
       'user',
       {
         email: {
@@ -949,7 +948,6 @@ To require email verification before a user is allowed to login, supply a verifi
         }
       },
       {
-        extend: 'User',
         // the model field
         // that contains the user's email
         // for verification and password reset
@@ -959,7 +957,7 @@ To require email verification before a user is allowed to login, supply a verifi
       }
     );
     
-When a user is created (on the server or remotely) an email is sent to the field that corresponds to `verify.email` or `options.email`. The email contains a link the user must navigate to in order to verify their email address. Once they verify, users are allowed to login normally. Otherwise login attempts will respond with a 'must verify' error.
+When a user is created (on the server or remotely) and the verification property exists, an email is sent to the field that corresponds to `verify.email` or `options.email`. The email contains a link the user must navigate to in order to verify their email address. Once they verify, users are allowed to login normally. Otherwise login attempts will respond with a 'must verify' error.
 
 #### Send Reset Password Email
 

@@ -463,6 +463,40 @@ describe('Model', function() {
       });
     });
   });
+  
+  // describe('Model.extend()', function(){
+  //   it('Create a new model by extending an existing model.', function(done) {
+  //     var User = asteroid.Model.extend('user', {
+  //       email: String
+  //     });
+  //     
+  //     User.foo = function () {
+  //       return 'bar';
+  //     }
+  //     
+  //     User.prototype.bar = function () {
+  //       return 'foo';
+  //     }
+  //     
+  //     var MyUser = User.extend('my-user', {
+  //       foo: String,
+  //       bar: String
+  //     });
+  //     
+  //     assert(MyUser.prototype.bar === User.prototype.bar);
+  //     assert(MyUser.foo === User.foo);
+  //     
+  //     var user = new MyUser({
+  //       email: 'foo@bar.com',
+  //       foo: 'foo',
+  //       bar: 'bar'
+  //     });
+  //     
+  //     assert.equal(user.email, 'foo@bar.com');
+  //     assert.equal(user.foo, 'foo');
+  //     assert.equal(user.bar, 'bar');
+  //   });
+  // });
 
   // describe('Model.hasAndBelongsToMany()', function() {
   //   it("TODO: implement / document", function(done) {
