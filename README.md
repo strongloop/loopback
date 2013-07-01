@@ -794,36 +794,184 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - an asteroid GeoPoint object. TODO
 
+#### Bundled Models
+
+The Asteroid library is unopinioned in the way you define your app's data and logic. Asteroid also bundles useful pre-built models for common use cases.
+
+ - User - _TODO_ register and authenticate users of your app locally or against 3rd party services.
+ - Notification - _TODO_ create, store, schedule and send push notifications to your app users.
+ - Email - _TODO_ schedule and send emails to your app users using smtp or 3rd party services.
+ - Job - _TODO_ schedule arbitrary code to run at a given time.
+ 
 ### User Model
 
-Allow users of your asteroid app to register and authenticate.
+Register and authenticate users of your app locally or against 3rd party services.
+
+#### Create a User Model
+
+Extend a vanilla Asteroid model using the built in User model.
 
     // define a User model
     var User = asteroid.createModel(
       'user',
       {
-        email: 'EmailAddress',
+        email: {
+          type: 'EmailAddress',
+          username: true
+        },
         password: {
+          hideRemotely: true, // default for Password
           type: 'Password',
           min: 4,
           max: 26
         }
       },
       {
-        username: 'email',
-        extend: 'User'
+        extend: 'User',
       }
     );
-    
+  
     // attach to the memory connector
     User.attachTo(memory);
     
-    // create a user
-    User.create({
-      email: 'foo@bar.com',
-      password: '123456'
+    // expose over the app's api
+    app.model(User);
+    
+#### User Creation
+
+Create a user like any other model.
+
+    // username and password are not required
+    User.create({email: 'foo@bar.com', password: 'bar'}, function(err, user) {
+      console.log(user);
+    });
+
+#### Authentication Strategies (Using Passport.js)
+
+Setup an authentication strategy.
+
+[See all available providers from passport.js](http://passportjs.org/guide/providers/).
+
+    // first add your model to your app
+    app.model(User);
+    
+    // by default your User model has a local strategy similar to below
+
+    // customize your own
+    // disable the default local strategy
+    User.useLocalStrategy(false);
+    
+    // create a custom strategy
+    var LocalStrategy = require('passport-local').Strategy;
+    User.use(new LocalStrategy(function(username, password, done) {
+      User.findOne({ username: username }, function(err, user) {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
+        user.comparePassword(password, function(err, isMatch) {
+          if (err) return done(err);
+          if(isMatch) {
+            return done(null, user);
+          } else {
+            return done(null, false, { message: 'Invalid password' });
+          }
+        });
+      });
+    }));
+
+    
+#### Login a User
+
+Create a session for a user. When called remotely the password is required.
+
+    User.login({username: 'foo', password: 'bar'}, function(err, session) {
+      console.log(session);
     });
     
+**REST**
+
+You must provide a username and password over rest. To ensure these values are encrypted, include these as part of the body and make sure you are serving your app over https (through a proxy or using the https node server).
+
+    POST
+
+      /users/login
+      ...
+      {
+        "email": "foo@bar.com",
+        "password": "bar"
+      }
+  
+      ...
+  
+      200 OK
+      {
+        "sid": "1234abcdefg",
+        "uid": "123"
+      }
+
+**Note:** The `uid` type will be the same type you specify when creating your model. In this case it is a string.
+
+#### Logout a User
+
+    User.logout({username: 'foo'}, function(err) {
+      console.log(err);
+    });
+
+**Note:** When calling this method remotely, the first argument will automatically be populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
+
+#### Verify Email Addresses
+
+To require email verification before a user is allowed to login, supply a verification property with a `verify` settings object.
+
+    // define a User model
+    var User = asteroid.createModel(
+      'user',
+      {
+        email: {
+          type: 'EmailAddress',
+          username: true
+        },
+        password: {
+          hideRemotely: true, // default for Password
+          type: 'Password',
+          min: 4,
+          max: 26
+        },
+        verified: {
+          hideRemotely: true,
+          type: 'Boolean',
+          verify: {
+            // the model field
+            // that contains the email
+            // to verify
+            email: 'email',
+            template: 'email.ejs'
+          }
+        }
+      },
+      {
+        extend: 'User',
+        // the model field
+        // that contains the user's email
+        // for verification and password reset
+        // defaults to 'email'
+        email: 'email',
+        resetTemplate: 'reset.ejs'
+      }
+    );
+    
+When a user is created (on the server or remotely) an email is sent to the field that corresponds to `verify.email` or `options.email`. The email contains a link the user must navigate to in order to verify their email address. Once they verify, users are allowed to login normally. Otherwise login attempts will respond with a 'must verify' error.
+
+#### Send Reset Password Email
+
+Send an email to the user's supplied email address containing a link to reset their password.
+
+    User.sendResetPasswordEmail(email, function(err) {
+      // email sent
+    });
+    
+#### Remote Password Reset
+
+The password reset email will send users to a page rendered by asteroid with fields required to reset the user's password. You may customize this template by providing a  `resetTemplate` option when defining your user model.
 
 ### Email Model
 
