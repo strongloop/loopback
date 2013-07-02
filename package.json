@@ -10,7 +10,10 @@
     "express": "~3.1.1",
     "jugglingdb": "git+ssh://git@github.com:strongloop/jugglingdb.git",
     "sl-remoting": "git+ssh://git@github.com:strongloop/sl-remoting.git",
-    "inflection": "~1.2.5"
+    "inflection": "~1.2.5",
+    "bcrypt": "~0.7.6",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6"
   },
   "devDependencies": {
     "mocha": "latest",
