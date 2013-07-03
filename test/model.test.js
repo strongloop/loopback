@@ -288,7 +288,7 @@ describe('Model', function() {
       it('Run a function before a remote method is called by a client.', function(done) {
         var hookCalled = false;
         
-        User.beforeRemote('*.save', function(ctx, user, next) {
+        User.beforeRemote('create', function(ctx, user, next) {
           hookCalled = true;
           next();
         });
@@ -312,12 +312,12 @@ describe('Model', function() {
         var beforeCalled = false;
         var afterCalled = false;
         
-        User.beforeRemote('*.save', function(ctx, user, next) {
+        User.beforeRemote('create', function(ctx, user, next) {
           assert(!afterCalled);
           beforeCalled = true;
           next();
         });
-        User.afterRemote('*.save', function(ctx, user, next) {
+        User.afterRemote('create', function(ctx, user, next) {
           assert(beforeCalled);
           afterCalled = true;
           next();
@@ -349,7 +349,7 @@ describe('Model', function() {
         it("The express ServerRequest object", function(done) {
           var hookCalled = false;
           
-          User.beforeRemote('*.save', function(ctx, user, next) {
+          User.beforeRemote('create', function(ctx, user, next) {
             hookCalled = true;
             assert(ctx.req);
             assert(ctx.req.url);
@@ -378,7 +378,7 @@ describe('Model', function() {
         it("The express ServerResponse object", function(done) {
           var hookCalled = false;
           
-          User.beforeRemote('*.save', function(ctx, user, next) {
+          User.beforeRemote('create', function(ctx, user, next) {
             hookCalled = true;
             assert(ctx.req);
             assert(ctx.req.url);
@@ -466,7 +466,7 @@ describe('Model', function() {
     
   describe('Model.extend()', function(){
     it('Create a new model by extending an existing model.', function() {
-      var User = asteroid.Model.extend('user', {
+      var User = asteroid.Model.extend('test-user', {
         email: String
       });
       
@@ -486,7 +486,6 @@ describe('Model', function() {
       assert.equal(MyUser.prototype.bar, User.prototype.bar);
       assert.equal(MyUser.foo, User.foo);
       
-      debugger;
       var user = new MyUser({
         email: 'foo@bar.com',
         a: 'foo',

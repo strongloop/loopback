@@ -866,7 +866,7 @@ Setup an authentication strategy.
     
 #### Login a User
 
-Create a session for a user. When called remotely the password is required.
+Create a session for a user.
 
     User.login({username: 'foo', password: 'bar'}, function(err, session) {
       console.log(session);
@@ -893,70 +893,55 @@ You must provide a username and password over rest. To ensure these values are e
         "uid": "123"
       }
 
-**Note:** The `uid` type will be the same type you specify when creating your model. In this case it is a string.
-
 #### Logout a User
 
     User.logout({username: 'foo'}, function(err) {
       console.log(err);
     });
 
-**Note:** When calling this method remotely, the first argument will automatically be populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
+**Note:** When calling this method remotely, the first argument will be  populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
 
 #### Verify Email Addresses
 
-To require email verification before a user is allowed to login, supply a verification property with a `verify` settings object.
+Require a user to verify their email address before being able to login. This will send an email to the user containing a link to verify their address. Once the user follows the link they will be redirected to `/` and be able to login normally.
 
-    // define a User model
-    var User = asteroid.User.extend(
-      'user',
-      {
-        email: {
-          type: 'EmailAddress',
-          username: true
-        },
-        password: {
-          hideRemotely: true, // default for Password
-          type: 'Password',
-          min: 4,
-          max: 26
-        },
-        verified: {
-          hideRemotely: true,
-          type: 'Boolean',
-          verify: {
-            // the model field
-            // that contains the email
-            // to verify
-            email: 'email',
-            template: 'email.ejs',
-            redirect: '/'
-          }
-        }
-      },
-      {
-        // the model field
-        // that contains the user's email
-        // for verification and password reset
-        // defaults to 'email'
-        email: 'email',
-        resetTemplate: 'reset.ejs'
-      }
-    );
+    User.requireEmailVerfication = true;
+    User.afterRemote('create', function(ctx, user, next) {
+      var options = {
+        type: 'email',
+        to: user.email,
+        from: 'noreply@myapp.com',
+        subject: 'Thanks for Registering at FooBar',
+        text: 'Please verify your email address!'
+        template: 'verify.ejs',
+        redirect: '/'
+      };
+      
+      user.verify(options, next);
+    });
     
-When a user is created (on the server or remotely) and the verification property exists, an email is sent to the field that corresponds to `verify.email` or `options.email`. The email contains a link the user must navigate to in order to verify their email address. Once they verify, users are allowed to login normally. Otherwise login attempts will respond with a 'must verify' error.
 
 #### Send Reset Password Email
 
 Send an email to the user's supplied email address containing a link to reset their password.
-
-    User.sendResetPasswordEmail(email, function(err) {
-      // email sent
+  
+    User.reset(email, function(err) {
+      console.log('email sent');
     });
     
 #### Remote Password Reset
 
-The password reset email will send users to a page rendered by asteroid with fields required to reset the user's password. You may customize this template by providing a  `resetTemplate` option when defining your user model.
+The password reset email will send users to a page rendered by asteroid with fields required to reset the user's password. You may customize this template by defining a `resetTemplate` setting.
+
+    User.settings.resetTemplate = 'reset.ejs';
+    
+#### Remote Password Reset Confirmation
+
+Confirm the password reset.
+
+    User.confirmReset(token, function(err) {
+      console.log(err || 'your password was reset');
+    });
 
 ### Email Model
 
