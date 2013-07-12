@@ -37,6 +37,7 @@ describe('User', function(){
           
           assert(session.uid);
           assert(session.id);
+          assert.equal((new Buffer(session.id, 'base64')).length, 64);
           
           done();
         });
