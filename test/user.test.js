@@ -6,8 +6,8 @@ var userMemory = asteroid.createDataSource({
   connector: asteroid.Memory
 });
 asteroid.User.attachTo(userMemory);
-asteroid.Session.attachTo(userMemory);
-asteroid.Email.setup({transports: [{type: 'STUB'}]});
+asteroid.User.session.attachTo(userMemory);
+asteroid.User.email.setup({transports: [{type: 'STUB'}]});
 
 describe('User', function(){
   

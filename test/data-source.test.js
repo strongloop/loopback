@@ -5,6 +5,8 @@ describe('DataSource', function() {
     memory = asteroid.createDataSource({
       connector: asteroid.Memory
     });
+    
+    assertValidDataSource(memory);
   });
 
   describe('dataSource.createModel(name, properties, settings)', function() {

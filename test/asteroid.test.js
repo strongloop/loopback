@@ -31,4 +31,18 @@ describe('asteroid', function() {
       assert.equal(Product.stats.shared, true);
     });
   });
+  
+  describe('asteroid.memory([name])', function(){
+    it('Get an in-memory data source. Use one if it already exists.', function() {
+      var memory = asteroid.memory();
+      assertValidDataSource(memory);
+      var m1 = asteroid.memory();
+      var m2 = asteroid.memory('m2');
+      var alsoM2 = asteroid.memory('m2');
+      
+      assert(m1 === memory);
+      assert(m1 !== m2);
+      assert(alsoM2 === m2);
+    });
+  });
 });

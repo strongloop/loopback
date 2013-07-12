@@ -12,9 +12,13 @@ v0.9.0
  - [Model](#model)
  - [DataSource](#data-source)
  - [Connectors](#connectors)
- - [GeoPoint](#geo-point)
  - [Asteroid Types](#asteroid-types)
+  - [GeoPoint](#geo-point)  
  - [REST Router](#rest-router)
+ - [Bundled Models](#bundled-models)
+  - [User](#user-model)
+  - [Session](#session-model) 
+  - [Email](#email-model)
 
 ## Client API
 
@@ -43,8 +47,10 @@ Create an asteroid application.
 
 Expose a `Model` to remote clients.
 
-    var memory = asteroid.createDataSource({connector: asteroid.Memory});
+    // create a testing data source
+    var memory = asteroid.memory();
     var Color = memory.createModel('color', {name: String});
+    Color.attachTo(memory);
 
     app.model(Color);
     app.use(asteroid.rest());
@@ -794,13 +800,13 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - an asteroid GeoPoint object. TODO
 
-#### Bundled Models
+## Bundled Models
 
 The Asteroid library is unopinioned in the way you define your app's data and logic. Asteroid also bundles useful pre-built models for common use cases.
 
- - User - _TODO_ register and authenticate users of your app locally or against 3rd party services.
+ - User - register and authenticate users of your app locally or against 3rd party services.
  - Notification - _TODO_ create, store, schedule and send push notifications to your app users.
- - Email - _TODO_ schedule and send emails to your app users using smtp or 3rd party services.
+ - Email - send emails to your app users using smtp or 3rd party services.
  - Job - _TODO_ schedule arbitrary code to run at a given time.
 
 Defining a model with `asteroid.createModel()` is really just extending the base `asteroid.Model` type using `asteroid.Model.extend()`. The bundled models extend from the base `asteroid.Model` allowing you to extend them arbitrarily.
@@ -813,14 +819,37 @@ Register and authenticate users of your app locally or against 3rd party service
 
 Extend a vanilla Asteroid model using the built in User model.
 
+    // create a data source
+    var memory = asteroid.memory();
+ 
     // define a User model
     var User = asteroid.User.extend('user');
   
     // attach to the memory connector
     User.attachTo(memory);
     
+    // also attach the session model to a data source
+    User.session.attachTo(memory);
+    
     // expose over the app's api
     app.model(User);
+    
+**Note:** By default the `asteroid.User` model uses the `asteroid.Session` model to persist sessions. You can change this by setting the `session` property.
+
+**Note:** You must attach both the `User` and `User.session` model's to a data source!
+
+    // define a custom session model    
+    var MySession = asteroid.Session.extend('my-session');
+    
+    // define a custom User model
+    var User = asteroid.User.extend('user');
+    
+    // use the custom session model
+    User.session = MySession;
+    
+    // attaching to 
+    
+    
     
 #### User Creation
 
@@ -943,6 +972,24 @@ Confirm the password reset.
       console.log(err || 'your password was reset');
     });
 
+
+### Session Model
+
+Identify users by creating sessions when they connect to your asteroid app. By default the `asteroid.User` model uses the `asteroid.Session` model to persist sessions. You can change this by setting the `session` property.
+
+    // define a custom session model    
+    var MySession = asteroid.Session.extend('my-session');
+    
+    // define a custom User model
+    var User = asteroid.User.extend('user');
+    
+    // use the custom session model
+    User.session = MySession;
+    
+    // attach both Session and User to a data source
+    User.attachTo(asteroid.memory());
+    MySession.attachTo(asteroid.memory());
+    
 ### Email Model
 
 Send emails from your asteroid app.

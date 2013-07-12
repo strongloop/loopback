@@ -19,8 +19,8 @@ assertValidDataSource = function (dataSource) {
   assert.isFunc(dataSource, 'createModel');
   assert.isFunc(dataSource, 'discoverModelDefinitions');
   assert.isFunc(dataSource, 'discoverSchema');
-  assert.isFunc(dataSource, 'enable');
-  assert.isFunc(dataSource, 'disable');
+  assert.isFunc(dataSource, 'enableRemote');
+  assert.isFunc(dataSource, 'disableRemote');
   assert.isFunc(dataSource, 'defineOperation');
   assert.isFunc(dataSource, 'operations');
 }
