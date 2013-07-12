@@ -45,7 +45,19 @@ describe('User', function(){
   });
   
   describe('User.logout', function() {
-    it('Logout a user by providing the current session id.', function(done) {
+    it('Logout a user by providing the current session id (using node).', function(done) {
+      login(logout);
+      
+      function login(fn) {
+        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+      }
+      
+      function logout(err, session) {
+        User.logout(session.id, verify(session.id, done));
+      }
+    });
+    
+    it('Logout a user by providing the current session id (over rest).', function(done) {
       login(logout);
       
       function login(fn) {
@@ -70,19 +82,36 @@ describe('User', function(){
           .post('/users/logout') 
           .expect(200)
           .send({sid: sid})
-          .end(verify(sid));
-      }
-      
-      function verify(sid) {
-        return function (err) {
-          if(err) return done(err);
-          Session.findById(sid, function (err, session) {
-            assert(!session, 'session should not exist after logging out');
-            done(err);
-          });
-        }
+          .end(verify(sid, done));
       }
     });
+    
+    it('Logout a user using the instance method.', function(done) {
+      login(logout);
+      
+      function login(fn) {
+        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+      }
+      
+      function logout(err, session) {
+        User.findOne({email: 'foo@bar.com'}, function (err, user) {
+          user.logout(verify(session.id, done));
+        });
+      }
+    });
+    
+    function verify(sid, done) {
+      assert(sid);
+      
+      return function (err) {
+        if(err) return done(err);
+        
+        Session.findById(sid, function (err, session) {
+          assert(!session, 'session should not exist after logging out');
+          done(err);
+        });
+      }
+    }
   });
   
   describe('user.hasPassword(plain, fn)', function(){

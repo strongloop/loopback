@@ -924,9 +924,19 @@ You must provide a username and password over rest. To ensure these values are e
 
 #### Logout a User
 
-    User.logout({username: 'foo'}, function(err) {
-      console.log(err);
-    });
+**NODE**
+
+// login a user and logout
+User.login({"email": "foo@bar.com", "password": "bar"}, function(err, session) {
+  User.logout(session.id, function(err) {
+    // user logged out
+  });
+});
+
+// logout a user by username (server side only)
+
+    
+**REST**
 
 **Note:** When calling this method remotely, the first argument will be  populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
 
