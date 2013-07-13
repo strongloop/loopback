@@ -10,6 +10,8 @@ asteroid.User.session.attachTo(userMemory);
 asteroid.User.email.setup({transports: [{type: 'STUB'}]});
 
 describe('User', function(){
+
+
   
   beforeEach(function (done) {
     app.use(asteroid.cookieParser());
@@ -21,7 +23,49 @@ describe('User', function(){
   });
   
   afterEach(function (done) {
-    Session.destroyAll(done);
+    asteroid.User.destroyAll(function (err) {
+      Session.destroyAll(done);
+    });
+  });
+  
+  describe('User.create', function(){
+    it('Create a new user.', function(done) {
+      User.create({email: 'f@b.com'}, function (err, user) {
+        assert(!err);
+        assert(user.id);
+        assert(user.email);
+        done();
+      });
+    });
+    
+    it('Requires a valid email.', function(done) {
+      User.create({}, function (err) {
+        assert(err);
+        User.create({email: 'foo@'}, function (err) {
+          assert(err);
+          done();
+        });
+      });
+    });
+    
+    it('Requires a unique email.', function(done) {
+      User.create({email: 'a@b.com'}, function () {
+        User.create({email: 'a@b.com'}, function (err) {
+          assert(err, 'should error because the email is not unique!');
+          done();
+        });
+      });
+    });
+    
+    it('Requires a password to login with basic auth.', function(done) {
+      User.create({email: 'b@c.com'}, function (err) {
+        User.login({email: 'b@c.com'}, function (err, session) {
+          assert(!session, 'should not create a session without a valid password');
+          assert(err, 'should not login without a password');
+          done();
+        });
+      });
+    });
   });
   
   describe('User.login', function() {

@@ -98,6 +98,12 @@ Define an asteroid model.
 
 ### Validation (expiremental)
 
+#### Model.validatesFormatOf(property, options)
+
+Require a model to include a property that matches the given format.
+
+    User.validatesFormat('name', {with: /\w+/});
+
 #### Model.validatesPresenceOf(properties...)
 
 Require a model to include a property to be considered valid.
@@ -933,8 +939,10 @@ User.login({"email": "foo@bar.com", "password": "bar"}, function(err, session) {
   });
 });
 
-// logout a user by username (server side only)
-
+// logout a user (server side only)
+User.findOne({email: 'foo@bar.com'}, function(err, user) {
+  user.logout();
+});
     
 **REST**
 
