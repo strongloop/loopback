@@ -162,11 +162,33 @@ describe('User', function(){
   describe('user.hasPassword(plain, fn)', function(){
     it('Determine if the password matches the stored password.', function(done) {
       var u = new User({username: 'foo', password: 'bar'});
-      
       u.hasPassword('bar', function (err, isMatch) {
         assert(isMatch, 'password doesnt match');
         done();
-      });
+      });  
+    });
+    
+    it('should match a password after it is changed', function(done) {
+       User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function (err, user) {
+         User.findById(user.id, function (err, foundUser) {
+           assert(foundUser);
+           foundUser.hasPassword('baz', function (err, isMatch) {
+             assert(isMatch);
+             foundUser.password = 'baz2';
+             foundUser.save(function (err, updatedUser) {
+               updatedUser.hasPassword('baz2', function (err, isMatch) {
+                 assert(isMatch);
+                 User.findById(user.id, function (err, uu) {
+                   uu.hasPassword('baz2', function (err, isMatch) {
+                     assert(isMatch);
+                     done();
+                   });
+                 });
+               });
+             });
+           });
+         });
+       });
     });
   });
   
