@@ -5,6 +5,7 @@ var passport = require('passport');
 var userMemory = asteroid.createDataSource({
   connector: asteroid.Memory
 });
+
 asteroid.User.attachTo(userMemory);
 asteroid.User.session.attachTo(userMemory);
 asteroid.User.email.setup({transports: [{type: 'STUB'}]});
@@ -201,7 +202,7 @@ describe('User', function(){
           .post('/users')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({data: {email: 'bar@bat.com', password: 'bar'}})
+          .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res){
             if(err) return done(err);
           });
@@ -240,7 +241,7 @@ describe('User', function(){
           .post('/users')
           .expect('Content-Type', /json/)
           .expect(302)
-          .send({data: {email: 'bar@bat.com', password: 'bar'}})
+          .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res){
             if(err) return done(err);
           });
