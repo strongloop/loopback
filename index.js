@@ -15,4 +15,4 @@ loopback.Memory = require('./lib/connectors/memory');
  * Types
  */
 
-loopback.GeoPoint = require('jugglingdb/lib/geo').GeoPoint;
+loopback.GeoPoint = require('loopback-data/lib/geo').GeoPoint;
