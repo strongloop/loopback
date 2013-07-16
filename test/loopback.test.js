@@ -1,6 +1,6 @@
 describe('loopback', function() {
   describe('loopback.createDataSource(options)', function(){
-    it('Create a data source with a connector.', function() {
+    it('Create a data source with a connector', function() {
       var dataSource = loopback.createDataSource({
         connector: loopback.Memory
       });
@@ -33,7 +33,7 @@ describe('loopback', function() {
   });
   
   describe('loopback.memory([name])', function(){
-    it('Get an in-memory data source. Use one if it already exists.', function() {
+    it('Get an in-memory data source. Use one if it already exists', function() {
       var memory = loopback.memory();
       assertValidDataSource(memory);
       var m1 = loopback.memory();

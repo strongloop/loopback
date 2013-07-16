@@ -2,10 +2,6 @@
    - [app](#app)
      - [app.model(Model)](#app-appmodelmodel)
      - [app.models()](#app-appmodels)
-   - [loopback](#loopback)
-     - [loopback.createDataSource(options)](#loopback-loopbackcreatedatasourceoptions)
-     - [loopback.remoteMethod(Model, fn, [options]);](#loopback-loopbackremotemethodmodel-fn-options)
-     - [loopback.memory([name])](#loopback-loopbackmemoryname)
    - [DataSource](#datasource)
      - [dataSource.createModel(name, properties, settings)](#datasource-datasourcecreatemodelname-properties-settings)
      - [dataSource.operations()](#datasource-datasourceoperations)
@@ -13,6 +9,11 @@
      - [geoPoint.distanceTo(geoPoint, options)](#geopoint-geopointdistancetogeopoint-options)
      - [GeoPoint.distanceBetween(a, b, options)](#geopoint-geopointdistancebetweena-b-options)
      - [GeoPoint()](#geopoint-geopoint)
+   - [loopback](#loopback)
+     - [loopback.createDataSource(options)](#loopback-loopbackcreatedatasourceoptions)
+     - [loopback.remoteMethod(Model, fn, [options]);](#loopback-loopbackremotemethodmodel-fn-options)
+     - [loopback.memory([name])](#loopback-loopbackmemoryname)
+   - [Memory Connector](#memory-connector)
    - [Model](#model)
      - [Model.validatesPresenceOf(properties...)](#model-modelvalidatespresenceofproperties)
      - [Model.validatesLengthOf(property, options)](#model-modelvalidateslengthofproperty-options)
@@ -41,6 +42,7 @@
      - [Model.properties](#model-modelproperties)
      - [Model.extend()](#model-modelextend)
    - [User](#user)
+     - [User.create](#user-usercreate)
      - [User.login](#user-userlogin)
      - [User.logout](#user-userlogout)
      - [user.hasPassword(plain, fn)](#user-userhaspasswordplain-fn)
@@ -72,61 +74,6 @@ var models = app.models();
 
 assert.equal(models.length, 1);
 assert.equal(models[0].modelName, 'color');
-```
-
-<a name="loopback"></a>
-# loopback
-<a name="loopback-loopbackcreatedatasourceoptions"></a>
-## loopback.createDataSource(options)
-Create a data source with a connector..
-
-```js
-var dataSource = loopback.createDataSource({
-  connector: loopback.Memory
-});
-assert(dataSource.connector());
-```
-
-<a name="loopback-loopbackremotemethodmodel-fn-options"></a>
-## loopback.remoteMethod(Model, fn, [options]);
-Setup a remote method..
-
-```js
-var Product = loopback.createModel('product', {price: Number});
-
-Product.stats = function(fn) {
-  // ...
-}
-
-loopback.remoteMethod(
-  Product.stats,
-  {
-    returns: {arg: 'stats', type: 'array'},
-    http: {path: '/info', verb: 'get'}
-  }
-);
-
-assert.equal(Product.stats.returns.arg, 'stats');
-assert.equal(Product.stats.returns.type, 'array');
-assert.equal(Product.stats.http.path, '/info');
-assert.equal(Product.stats.http.verb, 'get');
-assert.equal(Product.stats.shared, true);
-```
-
-<a name="loopback-loopbackmemoryname"></a>
-## loopback.memory([name])
-Get an in-memory data source. Use one if it already exists..
-
-```js
-var memory = loopback.memory();
-assertValidDataSource(memory);
-var m1 = loopback.memory();
-var m2 = loopback.memory('m2');
-var alsoM2 = loopback.memory('m2');
-
-assert(m1 === memory);
-assert(m1 !== m2);
-assert(alsoM2 === m2);
 ```
 
 <a name="datasource"></a>
@@ -188,7 +135,6 @@ existsAndShared('save', true);
 existsAndShared('isNewRecord', false);
 existsAndShared('_adapter', false);
 existsAndShared('destroy', true);
-existsAndShared('updateAttribute', true);
 existsAndShared('updateAttributes', true);
 existsAndShared('reload', true);
 
@@ -224,7 +170,7 @@ assert.equal(GeoPoint.distanceBetween(here, there, {type: 'feet'}), 2568169.0388
 
 <a name="geopoint-geopoint"></a>
 ## GeoPoint()
-Create from string..
+Create from string.
 
 ```js
 var point = new GeoPoint('1.234,5.678');
@@ -238,7 +184,7 @@ assert.equal(point3.lng, 1.333);
 assert.equal(point3.lat, 5.111);
 ```
 
-Serialize as string..
+Serialize as string.
 
 ```js
 var str = '1.234,5.678';
@@ -246,7 +192,7 @@ var point = new GeoPoint(str);
 assert.equal(point.toString(), str);
 ```
 
-Create from array..
+Create from array.
 
 ```js
 var point = new GeoPoint([5.555, 6.777]);
@@ -268,6 +214,99 @@ var m = new Model({
 assert(m.geo instanceof GeoPoint);
 assert.equal(m.geo.lng, 1.222);
 assert.equal(m.geo.lat, 3.444);
+```
+
+<a name="loopback"></a>
+# loopback
+<a name="loopback-loopbackcreatedatasourceoptions"></a>
+## loopback.createDataSource(options)
+Create a data source with a connector.
+
+```js
+var dataSource = loopback.createDataSource({
+  connector: loopback.Memory
+});
+assert(dataSource.connector());
+```
+
+<a name="loopback-loopbackremotemethodmodel-fn-options"></a>
+## loopback.remoteMethod(Model, fn, [options]);
+Setup a remote method..
+
+```js
+var Product = loopback.createModel('product', {price: Number});
+
+Product.stats = function(fn) {
+  // ...
+}
+
+loopback.remoteMethod(
+  Product.stats,
+  {
+    returns: {arg: 'stats', type: 'array'},
+    http: {path: '/info', verb: 'get'}
+  }
+);
+
+assert.equal(Product.stats.returns.arg, 'stats');
+assert.equal(Product.stats.returns.type, 'array');
+assert.equal(Product.stats.http.path, '/info');
+assert.equal(Product.stats.http.verb, 'get');
+assert.equal(Product.stats.shared, true);
+```
+
+<a name="loopback-loopbackmemoryname"></a>
+## loopback.memory([name])
+Get an in-memory data source. Use one if it already exists.
+
+```js
+var memory = loopback.memory();
+assertValidDataSource(memory);
+var m1 = loopback.memory();
+var m2 = loopback.memory('m2');
+var alsoM2 = loopback.memory('m2');
+
+assert(m1 === memory);
+assert(m1 !== m2);
+assert(alsoM2 === m2);
+```
+
+<a name="memory-connector"></a>
+# Memory Connector
+Create a model using the memory connector.
+
+```js
+// use the built in memory function
+// to create a memory data source
+var memory = loopback.memory();
+
+// or create it using the standard
+// data source creation api
+var memory = loopback.createDataSource({
+  connector: loopback.Memory
+});
+
+// create a model using the
+// memory data source
+var properties = {
+  name: String,
+  price: Number
+};
+
+var Product = memory.createModel('product', properties);
+
+Product.create([
+  {name: 'apple', price: 0.79},
+  {name: 'pear', price: 1.29},
+  {name: 'orange', price: 0.59},
+], count);
+
+function count() {
+  Product.count(function (err, count) {
+    assert.equal(count, 3);
+    done();
+  });
+}
 ```
 
 <a name="model"></a>
@@ -368,7 +407,7 @@ assert(valid === false);
 assert(user.errors.age, 'model should have age error');
 ```
 
-Asynchronously validate the model..
+Asynchronously validate the model.
 
 ```js
 User.validatesNumericalityOf('age', {int: true});
@@ -555,7 +594,7 @@ request(app)
 
 <a name="model-remote-methods-modelbeforeremotename-fn"></a>
 ### Model.beforeRemote(name, fn)
-Run a function before a remote method is called by a client..
+Run a function before a remote method is called by a client.
 
 ```js
 var hookCalled = false;
@@ -580,7 +619,7 @@ request(app)
 
 <a name="model-remote-methods-modelafterremotename-fn"></a>
 ### Model.afterRemote(name, fn)
-Run a function after a remote method is called by a client..
+Run a function after a remote method is called by a client.
 
 ```js
 var beforeCalled = false;
@@ -706,7 +745,7 @@ Book.create({title: 'Into the Wild', author: 'Jon Krakauer'}, function(err, book
 
 <a name="model-modelproperties"></a>
 ## Model.properties
-Normalized properties passed in originally by loopback.createModel()..
+Normalized properties passed in originally by loopback.createModel().
 
 ```js
 var props = {
@@ -740,7 +779,7 @@ Object.keys(MyModel.properties).forEach(function (key) {
 
 <a name="model-modelextend"></a>
 ## Model.extend()
-Create a new model by extending an existing model..
+Create a new model by extending an existing model.
 
 ```js
 var User = loopback.Model.extend('test-user', {
@@ -776,9 +815,64 @@ assert.equal(user.b, 'bar');
 
 <a name="user"></a>
 # User
+<a name="user-usercreate"></a>
+## User.create
+Create a new user.
+
+```js
+User.create({email: 'f@b.com'}, function (err, user) {
+  assert(!err);
+  assert(user.id);
+  assert(user.email);
+  done();
+});
+```
+
+Requires a valid email.
+
+```js
+User.create({}, function (err) {
+  assert(err);
+  User.create({email: 'foo@'}, function (err) {
+    assert(err);
+    done();
+  });
+});
+```
+
+Requires a unique email.
+
+```js
+User.create({email: 'a@b.com'}, function () {
+  User.create({email: 'a@b.com'}, function (err) {
+    assert(err, 'should error because the email is not unique!');
+    done();
+  });
+});
+```
+
+Requires a password to login with basic auth.
+
+```js
+User.create({email: 'b@c.com'}, function (err) {
+  User.login({email: 'b@c.com'}, function (err, session) {
+    assert(!session, 'should not create a session without a valid password');
+    assert(err, 'should not login without a password');
+    done();
+  });
+});
+```
+
+Hashes the given password.
+
+```js
+var u = new User({username: 'foo', password: 'bar'});
+assert(u.password !== 'bar');
+```
+
 <a name="user-userlogin"></a>
 ## User.login
-Login a user by providing credentials..
+Login a user by providing credentials.
 
 ```js
 request(app)
@@ -792,6 +886,7 @@ request(app)
     
     assert(session.uid);
     assert(session.id);
+    assert.equal((new Buffer(session.id, 'base64')).length, 64);
     
     done();
   });
@@ -799,7 +894,21 @@ request(app)
 
 <a name="user-userlogout"></a>
 ## User.logout
-Logout a user by providing the current session id..
+Logout a user by providing the current session id (using node).
+
+```js
+login(logout);
+
+function login(fn) {
+  User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+}
+
+function logout(err, session) {
+  User.logout(session.id, verify(session.id, done));
+}
+```
+
+Logout a user by providing the current session id (over rest).
 
 ```js
 login(logout);
@@ -826,30 +935,75 @@ function logout(err, sid) {
     .post('/users/logout') 
     .expect(200)
     .send({sid: sid})
-    .end(verify(sid));
+    .end(verify(sid, done));
+}
+```
+
+Logout a user using the instance method.
+
+```js
+login(logout);
+
+function login(fn) {
+  User.login({email: 'foo@bar.com', password: 'bar'}, fn);
 }
 
-function verify(sid) {
-  return function (err) {
-    if(err) return done(err);
-    Session.findById(sid, function (err, session) {
-      assert(!session, 'session should not exist after logging out');
-      done(err);
-    });
-  }
+function logout(err, session) {
+  User.findOne({email: 'foo@bar.com'}, function (err, user) {
+    user.logout(verify(session.id, done));
+  });
 }
 ```
 
 <a name="user-userhaspasswordplain-fn"></a>
 ## user.hasPassword(plain, fn)
-Determine if the password matches the stored password..
+Determine if the password matches the stored password.
 
 ```js
 var u = new User({username: 'foo', password: 'bar'});
-
 u.hasPassword('bar', function (err, isMatch) {
   assert(isMatch, 'password doesnt match');
   done();
+});
+```
+
+should match a password when saved.
+
+```js
+var u = new User({username: 'a', password: 'b', email: 'z@z.net'});
+
+u.save(function (err, user) {
+  User.findById(user.id, function (err, uu) {
+    uu.hasPassword('b', function (err, isMatch) {
+      assert(isMatch);
+      done();
+    });
+  });
+});
+```
+
+should match a password after it is changed.
+
+```js
+User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function (err, user) {
+  User.findById(user.id, function (err, foundUser) {
+    assert(foundUser);
+    foundUser.hasPassword('baz', function (err, isMatch) {
+      assert(isMatch);
+      foundUser.password = 'baz2';
+      foundUser.save(function (err, updatedUser) {
+        updatedUser.hasPassword('baz2', function (err, isMatch) {
+          assert(isMatch);
+          User.findById(user.id, function (err, uu) {
+            uu.hasPassword('baz2', function (err, isMatch) {
+              assert(isMatch);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
 });
 ```
 
@@ -888,7 +1042,7 @@ request(app)
   .post('/users')
   .expect('Content-Type', /json/)
   .expect(200)
-  .send({data: {email: 'bar@bat.com', password: 'bar'}})
+  .send({email: 'bar@bat.com', password: 'bar'})
   .end(function(err, res){
     if(err) return done(err);
   });
@@ -929,7 +1083,7 @@ request(app)
   .post('/users')
   .expect('Content-Type', /json/)
   .expect(302)
-  .send({data: {email: 'bar@bat.com', password: 'bar'}})
+  .send({email: 'bar@bat.com', password: 'bar'})
   .end(function(err, res){
     if(err) return done(err);
   });

@@ -32,7 +32,7 @@ describe('User', function(){
   });
   
   describe('User.create', function(){
-    it('Create a new user.', function(done) {
+    it('Create a new user', function(done) {
       User.create({email: 'f@b.com'}, function (err, user) {
         assert(!err);
         assert(user.id);
@@ -41,7 +41,7 @@ describe('User', function(){
       });
     });
     
-    it('Requires a valid email.', function(done) {
+    it('Requires a valid email', function(done) {
       User.create({}, function (err) {
         assert(err);
         User.create({email: 'foo@'}, function (err) {
@@ -51,7 +51,7 @@ describe('User', function(){
       });
     });
     
-    it('Requires a unique email.', function(done) {
+    it('Requires a unique email', function(done) {
       User.create({email: 'a@b.com'}, function () {
         User.create({email: 'a@b.com'}, function (err) {
           assert(err, 'should error because the email is not unique!');
@@ -60,7 +60,7 @@ describe('User', function(){
       });
     });
     
-    it('Requires a password to login with basic auth.', function(done) {
+    it('Requires a password to login with basic auth', function(done) {
       User.create({email: 'b@c.com'}, function (err) {
         User.login({email: 'b@c.com'}, function (err, session) {
           assert(!session, 'should not create a session without a valid password');
@@ -70,14 +70,14 @@ describe('User', function(){
       });
     });
     
-    it('Hashes the given password.', function() {
+    it('Hashes the given password', function() {
       var u = new User({username: 'foo', password: 'bar'});
       assert(u.password !== 'bar');
     });
   });
   
   describe('User.login', function() {
-    it('Login a user by providing credentials.', function(done) {
+    it('Login a user by providing credentials', function(done) {
       request(app)
         .post('/users/login')
         .expect('Content-Type', /json/)
@@ -97,7 +97,7 @@ describe('User', function(){
   });
   
   describe('User.logout', function() {
-    it('Logout a user by providing the current session id (using node).', function(done) {
+    it('Logout a user by providing the current session id (using node)', function(done) {
       login(logout);
       
       function login(fn) {
@@ -109,7 +109,7 @@ describe('User', function(){
       }
     });
     
-    it('Logout a user by providing the current session id (over rest).', function(done) {
+    it('Logout a user by providing the current session id (over rest)', function(done) {
       login(logout);
       
       function login(fn) {
@@ -138,7 +138,7 @@ describe('User', function(){
       }
     });
     
-    it('Logout a user using the instance method.', function(done) {
+    it('Logout a user using the instance method', function(done) {
       login(logout);
       
       function login(fn) {
@@ -167,7 +167,7 @@ describe('User', function(){
   });
   
   describe('user.hasPassword(plain, fn)', function(){
-    it('Determine if the password matches the stored password.', function(done) {
+    it('Determine if the password matches the stored password', function(done) {
       var u = new User({username: 'foo', password: 'bar'});
       u.hasPassword('bar', function (err, isMatch) {
         assert(isMatch, 'password doesnt match');

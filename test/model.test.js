@@ -96,7 +96,7 @@ describe('Model', function() {
       assert(user.errors.age, 'model should have age error');
     });
     
-    it('Asynchronously validate the model.', function(done) {
+    it('Asynchronously validate the model', function(done) {
       User.validatesNumericalityOf('age', {int: true});
       var user = new User({first: 'joe', age: 'flarg'})
       user.isValid(function (valid) {
@@ -285,7 +285,7 @@ describe('Model', function() {
     });
   
     describe('Model.beforeRemote(name, fn)', function(){
-      it('Run a function before a remote method is called by a client.', function(done) {
+      it('Run a function before a remote method is called by a client', function(done) {
         var hookCalled = false;
         
         User.beforeRemote('create', function(ctx, user, next) {
@@ -308,7 +308,7 @@ describe('Model', function() {
     });
   
     describe('Model.afterRemote(name, fn)', function(){
-      it('Run a function after a remote method is called by a client.', function(done) {
+      it('Run a function after a remote method is called by a client', function(done) {
         var beforeCalled = false;
         var afterCalled = false;
         
@@ -433,7 +433,7 @@ describe('Model', function() {
   });
   
   describe('Model.properties', function(){
-    it('Normalized properties passed in originally by loopback.createModel().', function() {
+    it('Normalized properties passed in originally by loopback.createModel()', function() {
       var props = {
         s: String,
         n: {type: 'Number'},
@@ -465,7 +465,7 @@ describe('Model', function() {
   });
     
   describe('Model.extend()', function(){
-    it('Create a new model by extending an existing model.', function() {
+    it('Create a new model by extending an existing model', function() {
       var User = loopback.Model.extend('test-user', {
         email: String
       });
@@ -545,7 +545,7 @@ describe('Model', function() {
   // });
   
 //   describe('Model.before(name, fn)', function(){
-//     it('Run a function before a method is called.', function() {
+//     it('Run a function before a method is called', function() {
 //       // User.before('save', function(user, next) {
 // //         console.log('about to save', user);
 // //         
@@ -569,7 +569,7 @@ describe('Model', function() {
 //   });
 //   
 //   describe('Model.after(name, fn)', function(){
-//     it('Run a function after a method is called.', function() {
+//     it('Run a function after a method is called', function() {
 // 
 //       throw new Error('not implemented');
 //     });

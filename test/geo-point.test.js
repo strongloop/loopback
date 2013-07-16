@@ -18,7 +18,7 @@ describe('GeoPoint', function() {
   });
   
   describe('GeoPoint()', function(){
-    it('Create from string.', function() {
+    it('Create from string', function() {
       var point = new GeoPoint('1.234,5.678');
       assert.equal(point.lng, 1.234);
       assert.equal(point.lat, 5.678);
@@ -29,12 +29,12 @@ describe('GeoPoint', function() {
       assert.equal(point3.lng, 1.333);
       assert.equal(point3.lat, 5.111);
     });
-    it('Serialize as string.', function() {
+    it('Serialize as string', function() {
       var str = '1.234,5.678';
       var point = new GeoPoint(str);
       assert.equal(point.toString(), str);
     });
-    it('Create from array.', function() {
+    it('Create from array', function() {
       var point = new GeoPoint([5.555, 6.777]);
       assert.equal(point.lng, 5.555);
       assert.equal(point.lat, 6.777);
