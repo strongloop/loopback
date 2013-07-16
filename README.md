@@ -205,9 +205,55 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
 
 #### CRUD and Query Mixins
 
-Mixins are added by attaching a vanilla model to a data source with a connector. Each [connector](#connectors) enables its own set of operations that are attached to a `Model` as methods. To see available methods for a data source with a connector call `dataSource.operations()`.
+Mixins are added by attaching a vanilla model to a [data source](#data-source) with a [connector](#connectors). Each [connector](#connectors) enables its own set of operations that are mixed into a `Model` as methods. To see available methods for a data source call `dataSource.operations()`.
+
+Log the available methods for a memory data source.
+
+    var ops = loopback
+        .createDataSource({connector: loopback.Memory})
+        .operations();
+    
+    console.log(Object.keys(ops));
+    
+Outputs:
+
+    [ 'create',
+      'updateOrCreate',
+      'upsert',
+      'findOrCreate',
+      'exists',
+      'findById',
+      'find',
+      'all',
+      'findOne',
+      'destroyAll',
+      'deleteAll',
+      'count',
+      'include',
+      'relationNameFor',
+      'hasMany',
+      'belongsTo',
+      'hasAndBelongsToMany',
+      'save',
+      'isNewRecord',
+      'destroy',
+      'delete',
+      'updateAttribute',
+      'updateAttributes',
+      'reload' ]
+      
+Here is the definition of the `count()` operation.
+
+    {
+      accepts: [ { arg: 'where', type: 'object' } ],
+      http: { verb: 'get', path: '/count' },
+      remoteEnabled: true,
+      name: 'count'
+    }
 
 #### Static Methods
+
+**Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
 ##### Model.create(data, [callback])
 
@@ -310,6 +356,8 @@ Setup the static model method to be exposed to clients as a [remote method](#rem
     
 #### Instance Methods
 
+**Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
+
 ##### model.save([options], [callback])
 
 Save an instance of a Model to the attached data source.
@@ -361,13 +409,18 @@ Both instance and static methods can be exposed to clients. A remote method must
 Expose a remote method.
 
     Product.stats = function(fn) {
-      myApi.getStats('products', fn);
+      var calc = require('./stats');
+      
+      Product.find(function(err, products) {
+        var productStats = calc(products);
+        fn(null, productStats);
+      });
     }
     
     loopback.remoteMethod(
       Product.stats,
       {
-        returns: {arg: 'stats', type: 'array'},
+        returns: {arg: 'stats', type: 'object'},
         http: {path: '/info', verb: 'get'}
       }
     );
@@ -715,16 +768,16 @@ Create a data source with a specific connector. See **available connectors** for
     
 **Available Connectors**
  
- - [Oracle](http://github.com/strongloop/loopback-connectors/oracle)
- - [In Memory](http://github.com/strongloop/loopback-connectors/memory)
- - TODO - [REST](http://github.com/strongloop/loopback-connectors/rest)
- - TODO - [MySQL](http://github.com/strongloop/loopback-connectors/mysql)
- - TODO - [SQLite3](http://github.com/strongloop/loopback-connectors/sqlite)
- - TODO - [Postgres](http://github.com/strongloop/loopback-connectors/postgres)
- - TODO - [Redis](http://github.com/strongloop/loopback-connectors/redis)
- - TODO - [MongoDB](http://github.com/strongloop/loopback-connectors/mongo)
- - TODO - [CouchDB](http://github.com/strongloop/loopback-connectors/couch)
- - TODO - [Firebird](http://github.com/strongloop/loopback-connectors/firebird)
+ - [In Memory](#memory-connector)
+ - [REST](http://github.com/strongloop/loopback-connector-rest)
+ - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
+ - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
+ - TODO - [MySQL](http://github.com/strongloop/loopback-connector-mysql)
+ - TODO - [SQLite3](http://github.com/strongloop/loopback-connector-sqlite)
+ - TODO - [Postgres](http://github.com/strongloop/loopback-connector-postgres)
+ - TODO - [Redis](http://github.com/strongloop/loopback-connector-redis)
+ - TODO - [CouchDB](http://github.com/strongloop/loopback-connector-couch)
+ - TODO - [Firebird](http://github.com/strongloop/loopback-connector-firebird)
 
 **Installing Connectors**
 
@@ -735,6 +788,49 @@ Include the connector in your package.json dependencies and run `npm install`.
         "loopback-connector-oracle": "latest"
       }
     }
+
+##### Memory Connector
+
+The built-in memory connector allows you to test your application without connecting to an actual persistent data source, such as a database. Although the memory connector is very well tested it is not recommended to be used in production. Creating a data source using the memory connector is very simple.
+
+    // use the built in memory function
+    // to create a memory data source
+    var memory = loopback.memory();
+
+    // or create it using the standard
+    // data source creation api
+    var memory = loopback.createDataSource({
+      connector: loopback.Memory
+    });
+    
+    // create a model using the
+    // memory data source
+    var properties = {
+      name: String,
+      price: Number
+    };
+    
+    var Product = memory.createModel('product', properties);
+    
+    Product.create([
+      {name: 'apple', price: 0.79},
+      {name: 'pear', price: 1.29},
+      {name: 'orange', price: 0.59},
+    ], count);
+    
+    function count() {
+      Product.count(console.log); // 3
+    }
+
+###### Operations
+
+**CRUD / Query**
+
+The memory connector supports all the standard [query and crud operations](#crud-and-query-mixins) to allow you to test your models against an in memory data source.
+
+**GeoPoint Filtering**
+
+The memory connector also supports geo-filtering when using the `find()` operation with an attached model. See [GeoPoint](#geopoint) for more information on geo-filtering.
 
 ### GeoPoint
 
