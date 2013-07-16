@@ -2,9 +2,9 @@
    - [app](#app)
      - [app.model(Model)](#app-appmodelmodel)
      - [app.models()](#app-appmodels)
-   - [asteroid](#asteroid)
-     - [asteroid.createDataSource(options)](#asteroid-asteroidcreatedatasourceoptions)
-     - [asteroid.remoteMethod(Model, fn, [options]);](#asteroid-asteroidremotemethodmodel-fn-options)
+   - [loopback](#loopback)
+     - [loopback.createDataSource(options)](#loopback-loopbackcreatedatasourceoptions)
+     - [loopback.remoteMethod(Model, fn, [options]);](#loopback-loopbackremotemethodmodel-fn-options)
    - [DataSource](#datasource)
      - [dataSource.createModel(name, properties, settings)](#datasource-datasourcecreatemodelname-properties-settings)
      - [dataSource.operations()](#datasource-datasourceoperations)
@@ -42,7 +42,7 @@
 Expose a `Model` to remote clients..
 
 ```js
-var memory = asteroid.createDataSource({connector: asteroid.Memory});
+var memory = loopback.createDataSource({connector: loopback.Memory});
 var Color = memory.createModel('color', {name: String});
 app.model(Color);
 assert.equal(app.models().length, 1);
@@ -53,38 +53,38 @@ assert.equal(app.models().length, 1);
 Get the app's exposed models..
 
 ```js
-var Color = asteroid.createModel('color', {name: String});
+var Color = loopback.createModel('color', {name: String});
 var models = app.models();
 
 assert.equal(models.length, 1);
 assert.equal(models[0].modelName, 'color');
 ```
 
-<a name="asteroid"></a>
-# asteroid
-<a name="asteroid-asteroidcreatedatasourceoptions"></a>
-## asteroid.createDataSource(options)
+<a name="loopback"></a>
+# loopback
+<a name="loopback-loopbackcreatedatasourceoptions"></a>
+## loopback.createDataSource(options)
 Create a data source with a connector..
 
 ```js
-var dataSource = asteroid.createDataSource({
-  connector: asteroid.Memory
+var dataSource = loopback.createDataSource({
+  connector: loopback.Memory
 });
 assert(dataSource.connector());
 ```
 
-<a name="asteroid-asteroidremotemethodmodel-fn-options"></a>
-## asteroid.remoteMethod(Model, fn, [options]);
+<a name="loopback-loopbackremotemethodmodel-fn-options"></a>
+## loopback.remoteMethod(Model, fn, [options]);
 Setup a remote method..
 
 ```js
-var Product = asteroid.createModel('product', {price: Number});
+var Product = loopback.createModel('product', {price: Number});
 
 Product.stats = function(fn) {
   // ...
 }
 
-asteroid.remoteMethod(
+loopback.remoteMethod(
   Product.stats,
   {
     returns: {arg: 'stats', type: 'array'},
@@ -284,7 +284,7 @@ user.isValid(function (valid) {
 Attach a model to a [DataSource](#data-source).
 
 ```js
-var MyModel = asteroid.createModel('my-model', {name: String});
+var MyModel = loopback.createModel('my-model', {name: String});
 
 assert(MyModel.all === undefined, 'should not have data access methods');
 

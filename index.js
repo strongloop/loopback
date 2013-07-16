@@ -1,18 +1,18 @@
 /**
- * asteroid ~ public api
+ * loopback ~ public api
  */
  
-var asteroid = module.exports = require('./lib/asteroid');
+var loopback = module.exports = require('./lib/loopback');
 
 /**
  * Connectors
  */
 
-asteroid.Connector = require('./lib/connectors/base-connector');
-asteroid.Memory = require('./lib/connectors/memory');
+loopback.Connector = require('./lib/connectors/base-connector');
+loopback.Memory = require('./lib/connectors/memory');
 
 /**
  * Types
  */
 
-asteroid.GeoPoint = require('jugglingdb/lib/geo').GeoPoint;
+loopback.GeoPoint = require('jugglingdb/lib/geo').GeoPoint;

@@ -1,11 +1,11 @@
 var models = require('../../lib/models');
 
-var asteroid = require('../../');
-var app = asteroid();
+var loopback = require('../../');
+var app = loopback();
 
-app.use(asteroid.rest());
+app.use(loopback.rest());
 
-var dataSource = asteroid.createDataSource('db', {connector: asteroid.Memory});
+var dataSource = loopback.createDataSource('db', {connector: loopback.Memory});
 
 var Application = models.Application(dataSource);
 

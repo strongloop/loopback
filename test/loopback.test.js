@@ -1,22 +1,22 @@
-describe('asteroid', function() {
-  describe('asteroid.createDataSource(options)', function(){
+describe('loopback', function() {
+  describe('loopback.createDataSource(options)', function(){
     it('Create a data source with a connector.', function() {
-      var dataSource = asteroid.createDataSource({
-        connector: asteroid.Memory
+      var dataSource = loopback.createDataSource({
+        connector: loopback.Memory
       });
       assert(dataSource.connector());
     });
   });
   
-  describe('asteroid.remoteMethod(Model, fn, [options]);', function() {
+  describe('loopback.remoteMethod(Model, fn, [options]);', function() {
     it("Setup a remote method.", function() {
-      var Product = asteroid.createModel('product', {price: Number});
+      var Product = loopback.createModel('product', {price: Number});
       
       Product.stats = function(fn) {
         // ...
       }
       
-      asteroid.remoteMethod(
+      loopback.remoteMethod(
         Product.stats,
         {
           returns: {arg: 'stats', type: 'array'},
