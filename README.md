@@ -1,10 +1,10 @@
-# asteroid
+# loopback
 
 v0.9.0
 
 ## Install
 
-    slnode install asteroid -g
+    slnode install loopback -g
     
 ## Server API
 
@@ -12,7 +12,7 @@ v0.9.0
  - [Model](#model)
  - [DataSource](#data-source)
  - [Connectors](#connectors)
- - [Asteroid Types](#asteroid-types)
+ - [Loopback Types](#loopback-types)
   - [GeoPoint](#geo-point)  
  - [REST Router](#rest-router)
  - [Bundled Models](#bundled-models)
@@ -26,10 +26,10 @@ _TODO_
 
 ### App
 
-Create an asteroid application.
+Create an loopback application.
 
-    var asteroid = require('asteroid');
-    var app = asteroid();
+    var loopback = require('loopback');
+    var app = loopback();
 
     app.get('/', function(req, res){
       res.send('hello world');
@@ -48,12 +48,12 @@ Create an asteroid application.
 Expose a `Model` to remote clients.
 
     // create a testing data source
-    var memory = asteroid.memory();
+    var memory = loopback.memory();
     var Color = memory.createModel('color', {name: String});
     Color.attachTo(memory);
 
     app.model(Color);
-    app.use(asteroid.rest());
+    app.use(loopback.rest());
     
 **Note:** this will expose all [shared methods](#shared-methods) on the model.
     
@@ -69,10 +69,10 @@ Get the app's exposed models.
     
 ### Model
 
-An Asteroid `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
+An Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
 
     // valid color
-    var Color = asteroid.createModel('color', {name: String});
+    var Color = loopback.createModel('color', {name: String});
     var red = new Color({name: 'red'});
     console.log(red.name); // red
     
@@ -88,9 +88,9 @@ A model defines a list of property names, types and other validation metadata. A
 
 Some [DataSources](#data-source) may support additional `Model` options.
 
-Define an asteroid model.
+Define an loopback model.
 
-    var User = asteroid.createModel('user', {
+    var User = loopback.createModel('user', {
       first: String,
       last: String,
       age: Number
@@ -154,7 +154,7 @@ Validate the model instance.
 
 #### Model.properties
 
-An object containing a normalized set of properties supplied to `asteroid.createModel(name, properties)`.
+An object containing a normalized set of properties supplied to `loopback.createModel(name, properties)`.
 
 Example:
 
@@ -163,10 +163,10 @@ Example:
       b: {type: 'Number'},
       c: {type: 'String', min: 10, max: 100},
       d: Date,
-      e: asteroid.GeoPoint
+      e: loopback.GeoPoint
     };
 
-    var MyModel = asteroid.createModel('foo', props);
+    var MyModel = loopback.createModel('foo', props);
 
     console.log(MyModel.properties);
     
@@ -191,8 +191,8 @@ Outputs:
 
 Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
 
-    var oracle = asteroid.createDataSource({
-      connector: require('asteroid-connector-oracle'),
+    var oracle = loopback.createDataSource({
+      connector: require('loopback-connector-oracle'),
       host: '111.22.333.44',
       database: 'MYDB',
       username: 'username',
@@ -296,7 +296,7 @@ Define a static model method.
     
 Setup the static model method to be exposed to clients as a [remote method](#remote-method). 
 
-    asteroid.remoteMethod(
+    loopback.remoteMethod(
       User.login,
       {
         accepts: [
@@ -350,13 +350,13 @@ Define an instance method.
     
 Define a remote model instance method.
 
-    asteroid.remoteMethod(User.prototype.logout);
+    loopback.remoteMethod(User.prototype.logout);
 
 #### Remote Methods
 
 Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
-##### asteroid.remoteMethod(fn, [options]);
+##### loopback.remoteMethod(fn, [options]);
 
 Expose a remote method.
 
@@ -364,7 +364,7 @@ Expose a remote method.
       myApi.getStats('products', fn);
     }
     
-    asteroid.remoteMethod(
+    loopback.remoteMethod(
       Product.stats,
       {
         returns: {arg: 'stats', type: 'array'},
@@ -394,7 +394,7 @@ An arguments description defines either a single argument as an object or an ord
 
 **Types**
 
-Each argument may define any of the [asteroid types](#asteroid-types).
+Each argument may define any of the [loopback types](#loopback-types).
 
 **Notes:**
 
@@ -464,7 +464,7 @@ During `afterRemote` hooks, `ctx.result` will contain the data about to be sent 
 
 ##### Rest
 
-When [asteroid.rest](#asteroidrest) is used the following `ctx` properties are available.
+When [loopback.rest](#loopbackrest) is used the following `ctx` properties are available.
 
 ###### ctx.req
 
@@ -522,15 +522,15 @@ TODO: implement / document
     
 #### Shared Methods
 
-Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [asteroid.rest](#rest)).
+Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [loopback.rest](#rest)).
 
 ### Data Source
 
-An Asteroid `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
+An Loopback `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
 
 Define a data source for persisting models.
 
-    var oracle = asteroid.createDataSource({
+    var oracle = loopback.createDataSource({
       connector: 'oracle',
       host: '111.22.333.44',
       database: 'MYDB',
@@ -665,8 +665,8 @@ Disable remote access to a data source operation. Each [connector](#connector) h
 
     // all rest data source operations are
     // disabled by default
-    var oracle = asteroid.createDataSource({
-      connector: require('asteroid-connector-oracle'),
+    var oracle = loopback.createDataSource({
+      connector: require('loopback-connector-oracle'),
       host: '...',
       ...
     });
@@ -709,22 +709,22 @@ Output:
 
 Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
 
-    var memory = asteroid.createDataSource({
-      connector: asteroid.Memory
+    var memory = loopback.createDataSource({
+      connector: loopback.Memory
     });
     
 **Available Connectors**
  
- - [Oracle](http://github.com/strongloop/asteroid-connectors/oracle)
- - [In Memory](http://github.com/strongloop/asteroid-connectors/memory)
- - TODO - [REST](http://github.com/strongloop/asteroid-connectors/rest)
- - TODO - [MySQL](http://github.com/strongloop/asteroid-connectors/mysql)
- - TODO - [SQLite3](http://github.com/strongloop/asteroid-connectors/sqlite)
- - TODO - [Postgres](http://github.com/strongloop/asteroid-connectors/postgres)
- - TODO - [Redis](http://github.com/strongloop/asteroid-connectors/redis)
- - TODO - [MongoDB](http://github.com/strongloop/asteroid-connectors/mongo)
- - TODO - [CouchDB](http://github.com/strongloop/asteroid-connectors/couch)
- - TODO - [Firebird](http://github.com/strongloop/asteroid-connectors/firebird)
+ - [Oracle](http://github.com/strongloop/loopback-connectors/oracle)
+ - [In Memory](http://github.com/strongloop/loopback-connectors/memory)
+ - TODO - [REST](http://github.com/strongloop/loopback-connectors/rest)
+ - TODO - [MySQL](http://github.com/strongloop/loopback-connectors/mysql)
+ - TODO - [SQLite3](http://github.com/strongloop/loopback-connectors/sqlite)
+ - TODO - [Postgres](http://github.com/strongloop/loopback-connectors/postgres)
+ - TODO - [Redis](http://github.com/strongloop/loopback-connectors/redis)
+ - TODO - [MongoDB](http://github.com/strongloop/loopback-connectors/mongo)
+ - TODO - [CouchDB](http://github.com/strongloop/loopback-connectors/couch)
+ - TODO - [Firebird](http://github.com/strongloop/loopback-connectors/firebird)
 
 **Installing Connectors**
 
@@ -732,7 +732,7 @@ Include the connector in your package.json dependencies and run `npm install`.
 
     {
       "dependencies": {
-        "asteroid-connector-oracle": "latest"
+        "loopback-connector-oracle": "latest"
       }
     }
 
@@ -740,15 +740,15 @@ Include the connector in your package.json dependencies and run `npm install`.
 
 Use the `GeoPoint` class.
 
-    var GeoPoint = require('asteroid').GeoPoint;
+    var GeoPoint = require('loopback').GeoPoint;
 
 Embed a latitude / longitude point in a [Model](#model).
 
-    var CoffeeShop = asteroid.createModel('coffee-shop', {
+    var CoffeeShop = loopback.createModel('coffee-shop', {
       location: 'GeoPoint'
     });
 
-Asteroid Model's with a GeoPoint property and an attached DataSource may be queried using geo spatial filters and sorting.
+Loopback Model's with a GeoPoint property and an attached DataSource may be queried using geo spatial filters and sorting.
 
 Find the 3 nearest coffee shops.
 
@@ -792,9 +792,9 @@ The latitude point in degrees. Range: -90 to 90.
 
 The longitude point in degrees. Range: -180 to 180.
 
-### Asteroid Types
+### Loopback Types
 
-Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-methods), [asteroid.createModel()](#model)). The following is a list of supported types.
+Various APIs in Loopback accept type descriptions (eg. [remote methods](#remote-methods), [loopback.createModel()](#model)). The following is a list of supported types.
 
  - `null` - JSON null
  - `Boolean` - JSON boolean
@@ -804,18 +804,18 @@ Various APIs in Asteroid accept type descriptions (eg. [remote methods](#remote-
  - `Array` - JSON array
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
- - [GeoPoint](#geopoint) - an asteroid GeoPoint object. TODO
+ - [GeoPoint](#geopoint) - an loopback GeoPoint object. TODO
 
 ## Bundled Models
 
-The Asteroid library is unopinioned in the way you define your app's data and logic. Asteroid also bundles useful pre-built models for common use cases.
+The Loopback library is unopinioned in the way you define your app's data and logic. Loopback also bundles useful pre-built models for common use cases.
 
  - User - register and authenticate users of your app locally or against 3rd party services.
  - Notification - _TODO_ create, store, schedule and send push notifications to your app users.
  - Email - send emails to your app users using smtp or 3rd party services.
  - Job - _TODO_ schedule arbitrary code to run at a given time.
 
-Defining a model with `asteroid.createModel()` is really just extending the base `asteroid.Model` type using `asteroid.Model.extend()`. The bundled models extend from the base `asteroid.Model` allowing you to extend them arbitrarily.
+Defining a model with `loopback.createModel()` is really just extending the base `loopback.Model` type using `loopback.Model.extend()`. The bundled models extend from the base `loopback.Model` allowing you to extend them arbitrarily.
  
 ### User Model
 
@@ -823,13 +823,13 @@ Register and authenticate users of your app locally or against 3rd party service
 
 #### Create a User Model
 
-Extend a vanilla Asteroid model using the built in User model.
+Extend a vanilla Loopback model using the built in User model.
 
     // create a data source
-    var memory = asteroid.memory();
+    var memory = loopback.memory();
  
     // define a User model
-    var User = asteroid.User.extend('user');
+    var User = loopback.User.extend('user');
   
     // attach to the memory connector
     User.attachTo(memory);
@@ -840,15 +840,15 @@ Extend a vanilla Asteroid model using the built in User model.
     // expose over the app's api
     app.model(User);
     
-**Note:** By default the `asteroid.User` model uses the `asteroid.Session` model to persist sessions. You can change this by setting the `session` property.
+**Note:** By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
 
 **Note:** You must attach both the `User` and `User.session` model's to a data source!
 
     // define a custom session model    
-    var MySession = asteroid.Session.extend('my-session');
+    var MySession = loopback.Session.extend('my-session');
     
     // define a custom User model
-    var User = asteroid.User.extend('user');
+    var User = loopback.User.extend('user');
     
     // use the custom session model
     User.session = MySession;
@@ -978,7 +978,7 @@ Send an email to the user's supplied email address containing a link to reset th
     
 #### Remote Password Reset
 
-The password reset email will send users to a page rendered by asteroid with fields required to reset the user's password. You may customize this template by defining a `resetTemplate` setting.
+The password reset email will send users to a page rendered by loopback with fields required to reset the user's password. You may customize this template by defining a `resetTemplate` setting.
 
     User.settings.resetTemplate = 'reset.ejs';
     
@@ -993,30 +993,30 @@ Confirm the password reset.
 
 ### Session Model
 
-Identify users by creating sessions when they connect to your asteroid app. By default the `asteroid.User` model uses the `asteroid.Session` model to persist sessions. You can change this by setting the `session` property.
+Identify users by creating sessions when they connect to your loopback app. By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
 
     // define a custom session model    
-    var MySession = asteroid.Session.extend('my-session');
+    var MySession = loopback.Session.extend('my-session');
     
     // define a custom User model
-    var User = asteroid.User.extend('user');
+    var User = loopback.User.extend('user');
     
     // use the custom session model
     User.session = MySession;
     
     // attach both Session and User to a data source
-    User.attachTo(asteroid.memory());
-    MySession.attachTo(asteroid.memory());
+    User.attachTo(loopback.memory());
+    MySession.attachTo(loopback.memory());
     
 ### Email Model
 
-Send emails from your asteroid app.
+Send emails from your loopback app.
 
 ### REST Router
 
-Expose models over rest using the `asteroid.rest` router.
+Expose models over rest using the `loopback.rest` router.
 
-    app.use(asteroid.rest());
+    app.use(loopback.rest());
     
 **REST Documentation**
 
@@ -1024,7 +1024,7 @@ View generated REST documentation by visiting: [http://localhost:3000/_docs](htt
     
 ### SocketIO Middleware **Not Available**
 
-**Coming Soon** - Expose models over socket.io using the `asteroid.sio()` middleware.
+**Coming Soon** - Expose models over socket.io using the `loopback.sio()` middleware.
 
-    app.use(asteroid.sio);
+    app.use(loopback.sio);
     

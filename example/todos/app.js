@@ -1,8 +1,8 @@
-var asteroid = require('../../');
-var app = asteroid();
+var loopback = require('../../');
+var app = loopback();
 
-app.use(asteroid.configure());
-app.use(asteroid.bodyParser());
-app.use(asteroid.routes());
+app.use(loopback.configure());
+app.use(loopback.bodyParser());
+app.use(loopback.routes());
 
 app.listen(3000);

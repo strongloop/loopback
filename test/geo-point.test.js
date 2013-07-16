@@ -40,7 +40,7 @@ describe('GeoPoint', function() {
       assert.equal(point.lat, 6.777);
     });
     it('Create as Model property', function() {
-      var Model = asteroid.createModel('geo-model', {
+      var Model = loopback.createModel('geo-model', {
         geo: {type: 'GeoPoint'}
       });
       

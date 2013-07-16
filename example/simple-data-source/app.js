@@ -1,7 +1,7 @@
-var asteroid = require('../../');
-var app = asteroid();
+var loopback = require('../../');
+var app = loopback();
 
-app.use(asteroid.rest());
+app.use(loopback.rest());
 
 
 var dataSource = app.dataSource('db', {adapter: 'memory'});

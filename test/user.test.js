@@ -1,9 +1,9 @@
-var User = asteroid.User.extend('user');
-var Session = asteroid.Session;
+var User = loopback.User.extend('user');
+var Session = loopback.Session;
 var passport = require('passport');
 
-var userMemory = asteroid.createDataSource({
-  connector: asteroid.Memory
+var userMemory = loopback.createDataSource({
+  connector: loopback.Memory
 });
 
 
@@ -17,9 +17,9 @@ describe('User', function(){
   User.setMaxListeners(22);
   
   beforeEach(function (done) {
-    app.use(asteroid.cookieParser());
-    app.use(asteroid.auth());
-    app.use(asteroid.rest());
+    app.use(loopback.cookieParser());
+    app.use(loopback.auth());
+    app.use(loopback.rest());
     app.model(User);
     
     User.create({email: 'foo@bar.com', password: 'bar'}, done);

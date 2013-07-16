@@ -3,7 +3,7 @@ describe('Model', function() {
   var User, memory;
 
   beforeEach(function () {
-    memory = asteroid.createDataSource({connector: asteroid.Memory});
+    memory = loopback.createDataSource({connector: loopback.Memory});
     User = memory.createModel('user', {
       'first': String,
       'last': String,
@@ -109,7 +109,7 @@ describe('Model', function() {
 
   describe('Model.attachTo(dataSource)', function() {
     it("Attach a model to a [DataSource](#data-source)", function() {
-      var MyModel = asteroid.createModel('my-model', {name: String});
+      var MyModel = loopback.createModel('my-model', {name: String});
       
       assert(MyModel.find === undefined, 'should not have data access methods');
       
@@ -254,7 +254,7 @@ describe('Model', function() {
         }
       }
 
-      asteroid.remoteMethod(
+      loopback.remoteMethod(
         User.login,
         {
           accepts: [
@@ -266,7 +266,7 @@ describe('Model', function() {
         }
       );
       
-      app.use(asteroid.rest());
+      app.use(loopback.rest());
       app.model(User);
     });
     
@@ -433,16 +433,16 @@ describe('Model', function() {
   });
   
   describe('Model.properties', function(){
-    it('Normalized properties passed in originally by asteroid.createModel().', function() {
+    it('Normalized properties passed in originally by loopback.createModel().', function() {
       var props = {
         s: String,
         n: {type: 'Number'},
         o: {type: 'String', min: 10, max: 100},
         d: Date,
-        g: asteroid.GeoPoint
+        g: loopback.GeoPoint
       };
       
-      var MyModel = asteroid.createModel('foo', props);
+      var MyModel = loopback.createModel('foo', props);
       
       Object.keys(MyModel.properties).forEach(function (key) {
         var p = MyModel.properties[key];
@@ -466,7 +466,7 @@ describe('Model', function() {
     
   describe('Model.extend()', function(){
     it('Create a new model by extending an existing model.', function() {
-      var User = asteroid.Model.extend('test-user', {
+      var User = loopback.Model.extend('test-user', {
         email: String
       });
       
@@ -531,7 +531,7 @@ describe('Model', function() {
   //       },
   //       ...
   //     }
-  //     var oracle = asteroid.createDataSource({
+  //     var oracle = loopback.createDataSource({
   //       connector: 'oracle',
   //       host: '111.22.333.44',
   //       database: 'MYDB',

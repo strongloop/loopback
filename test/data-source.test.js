@@ -2,8 +2,8 @@ describe('DataSource', function() {
   var memory;
   
   beforeEach(function(){
-    memory = asteroid.createDataSource({
-      connector: asteroid.Memory
+    memory = loopback.createDataSource({
+      connector: loopback.Memory
     });
     
     assertValidDataSource(memory);

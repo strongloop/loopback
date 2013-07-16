@@ -1,17 +1,17 @@
 /**
- * asteroid test setup and support.
+ * loopback test setup and support.
  */
  
 assert = require('assert');
-asteroid = require('../');
-memoryConnector = asteroid.Memory;
-GeoPoint = asteroid.GeoPoint;
+loopback = require('../');
+memoryConnector = loopback.Memory;
+GeoPoint = loopback.GeoPoint;
 app = null;
 TaskEmitter = require('sl-task-emitter');
 request = require('supertest');
 
 beforeEach(function () {
-  app = asteroid();
+  app = loopback();
 });
 
 assertValidDataSource = function (dataSource) {

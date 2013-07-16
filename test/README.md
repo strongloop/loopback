@@ -2,10 +2,10 @@
    - [app](#app)
      - [app.model(Model)](#app-appmodelmodel)
      - [app.models()](#app-appmodels)
-   - [asteroid](#asteroid)
-     - [asteroid.createDataSource(options)](#asteroid-asteroidcreatedatasourceoptions)
-     - [asteroid.remoteMethod(Model, fn, [options]);](#asteroid-asteroidremotemethodmodel-fn-options)
-     - [asteroid.memory([name])](#asteroid-asteroidmemoryname)
+   - [loopback](#loopback)
+     - [loopback.createDataSource(options)](#loopback-loopbackcreatedatasourceoptions)
+     - [loopback.remoteMethod(Model, fn, [options]);](#loopback-loopbackremotemethodmodel-fn-options)
+     - [loopback.memory([name])](#loopback-loopbackmemoryname)
    - [DataSource](#datasource)
      - [dataSource.createModel(name, properties, settings)](#datasource-datasourcecreatemodelname-properties-settings)
      - [dataSource.operations()](#datasource-datasourceoperations)
@@ -56,7 +56,7 @@
 Expose a `Model` to remote clients..
 
 ```js
-var memory = asteroid.createDataSource({connector: asteroid.Memory});
+var memory = loopback.createDataSource({connector: loopback.Memory});
 var Color = memory.createModel('color', {name: String});
 app.model(Color);
 assert.equal(app.models().length, 1);
@@ -67,38 +67,38 @@ assert.equal(app.models().length, 1);
 Get the app's exposed models..
 
 ```js
-var Color = asteroid.createModel('color', {name: String});
+var Color = loopback.createModel('color', {name: String});
 var models = app.models();
 
 assert.equal(models.length, 1);
 assert.equal(models[0].modelName, 'color');
 ```
 
-<a name="asteroid"></a>
-# asteroid
-<a name="asteroid-asteroidcreatedatasourceoptions"></a>
-## asteroid.createDataSource(options)
+<a name="loopback"></a>
+# loopback
+<a name="loopback-loopbackcreatedatasourceoptions"></a>
+## loopback.createDataSource(options)
 Create a data source with a connector..
 
 ```js
-var dataSource = asteroid.createDataSource({
-  connector: asteroid.Memory
+var dataSource = loopback.createDataSource({
+  connector: loopback.Memory
 });
 assert(dataSource.connector());
 ```
 
-<a name="asteroid-asteroidremotemethodmodel-fn-options"></a>
-## asteroid.remoteMethod(Model, fn, [options]);
+<a name="loopback-loopbackremotemethodmodel-fn-options"></a>
+## loopback.remoteMethod(Model, fn, [options]);
 Setup a remote method..
 
 ```js
-var Product = asteroid.createModel('product', {price: Number});
+var Product = loopback.createModel('product', {price: Number});
 
 Product.stats = function(fn) {
   // ...
 }
 
-asteroid.remoteMethod(
+loopback.remoteMethod(
   Product.stats,
   {
     returns: {arg: 'stats', type: 'array'},
@@ -113,16 +113,16 @@ assert.equal(Product.stats.http.verb, 'get');
 assert.equal(Product.stats.shared, true);
 ```
 
-<a name="asteroid-asteroidmemoryname"></a>
-## asteroid.memory([name])
+<a name="loopback-loopbackmemoryname"></a>
+## loopback.memory([name])
 Get an in-memory data source. Use one if it already exists..
 
 ```js
-var memory = asteroid.memory();
+var memory = loopback.memory();
 assertValidDataSource(memory);
-var m1 = asteroid.memory();
-var m2 = asteroid.memory('m2');
-var alsoM2 = asteroid.memory('m2');
+var m1 = loopback.memory();
+var m2 = loopback.memory('m2');
+var alsoM2 = loopback.memory('m2');
 
 assert(m1 === memory);
 assert(m1 !== m2);
@@ -257,7 +257,7 @@ assert.equal(point.lat, 6.777);
 Create as Model property.
 
 ```js
-var Model = asteroid.createModel('geo-model', {
+var Model = loopback.createModel('geo-model', {
   geo: {type: 'GeoPoint'}
 });
 
@@ -385,7 +385,7 @@ user.isValid(function (valid) {
 Attach a model to a [DataSource](#data-source).
 
 ```js
-var MyModel = asteroid.createModel('my-model', {name: String});
+var MyModel = loopback.createModel('my-model', {name: String});
 
 assert(MyModel.find === undefined, 'should not have data access methods');
 
@@ -706,7 +706,7 @@ Book.create({title: 'Into the Wild', author: 'Jon Krakauer'}, function(err, book
 
 <a name="model-modelproperties"></a>
 ## Model.properties
-Normalized properties passed in originally by asteroid.createModel()..
+Normalized properties passed in originally by loopback.createModel()..
 
 ```js
 var props = {
@@ -714,10 +714,10 @@ var props = {
   n: {type: 'Number'},
   o: {type: 'String', min: 10, max: 100},
   d: Date,
-  g: asteroid.GeoPoint
+  g: loopback.GeoPoint
 };
 
-var MyModel = asteroid.createModel('foo', props);
+var MyModel = loopback.createModel('foo', props);
 
 Object.keys(MyModel.properties).forEach(function (key) {
   var p = MyModel.properties[key];
@@ -743,7 +743,7 @@ Object.keys(MyModel.properties).forEach(function (key) {
 Create a new model by extending an existing model..
 
 ```js
-var User = asteroid.Model.extend('test-user', {
+var User = loopback.Model.extend('test-user', {
   email: String
 });
 

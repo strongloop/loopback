@@ -1,6 +1,6 @@
 {
-  "name": "asteroid",
-  "description": "asteroid",
+  "name": "loopback",
+  "description": "loopback",
   "version": "0.9.0",
   "scripts": {
     "test": "mocha -R spec"
