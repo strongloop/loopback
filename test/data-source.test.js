@@ -10,7 +10,7 @@ describe('DataSource', function() {
   });
 
   describe('dataSource.createModel(name, properties, settings)', function() {
-    it("Define a model and attach it to a `DataSource`.", function() {
+    it("Define a model and attach it to a `DataSource`", function() {
       var Color = memory.createModel('color', {name: String});
       assert.isFunc(Color, 'find');
       assert.isFunc(Color, 'findById');
@@ -37,7 +37,7 @@ describe('DataSource', function() {
   });
 
   describe('dataSource.operations()', function() {
-    it("List the enabled and disabled operations.", function() {
+    it("List the enabled and disabled operations", function() {
       // assert the defaults
       // - true: the method should be remote enabled
       // - false: the method should not be remote enabled

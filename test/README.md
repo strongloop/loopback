@@ -55,7 +55,7 @@
 # app
 <a name="app-appmodelmodel"></a>
 ## app.model(Model)
-Expose a `Model` to remote clients..
+Expose a `Model` to remote clients.
 
 ```js
 var memory = loopback.createDataSource({connector: loopback.Memory});
@@ -66,7 +66,7 @@ assert.equal(app.models().length, 1);
 
 <a name="app-appmodels"></a>
 ## app.models()
-Get the app's exposed models..
+Get the app's exposed models.
 
 ```js
 var Color = loopback.createModel('color', {name: String});
@@ -80,7 +80,7 @@ assert.equal(models[0].modelName, 'color');
 # DataSource
 <a name="datasource-datasourcecreatemodelname-properties-settings"></a>
 ## dataSource.createModel(name, properties, settings)
-Define a model and attach it to a `DataSource`..
+Define a model and attach it to a `DataSource`.
 
 ```js
 var Color = memory.createModel('color', {name: String});
@@ -109,7 +109,7 @@ assert.isFunc(Color.prototype, 'reload');
 
 <a name="datasource-datasourceoperations"></a>
 ## dataSource.operations()
-List the enabled and disabled operations..
+List the enabled and disabled operations.
 
 ```js
 // assert the defaults
@@ -148,7 +148,7 @@ function existsAndShared(name, isRemoteEnabled) {
 # GeoPoint
 <a name="geopoint-geopointdistancetogeopoint-options"></a>
 ## geoPoint.distanceTo(geoPoint, options)
-Get the distance to another `GeoPoint`..
+Get the distance to another `GeoPoint`.
 
 ```js
 var here = new GeoPoint({lat: 10, lng: 10});
@@ -159,7 +159,7 @@ assert.equal(here.distanceTo(there, {type: 'meters'}), 782777.923052584);
 
 <a name="geopoint-geopointdistancebetweena-b-options"></a>
 ## GeoPoint.distanceBetween(a, b, options)
-Get the distance between two points..
+Get the distance between two points.
 
 ```js
 var here = new GeoPoint({lat: 10, lng: 10});
@@ -231,7 +231,7 @@ assert(dataSource.connector());
 
 <a name="loopback-loopbackremotemethodmodel-fn-options"></a>
 ## loopback.remoteMethod(Model, fn, [options]);
-Setup a remote method..
+Setup a remote method.
 
 ```js
 var Product = loopback.createModel('product', {price: Number});
@@ -313,7 +313,7 @@ function count() {
 # Model
 <a name="model-modelvalidatespresenceofproperties"></a>
 ## Model.validatesPresenceOf(properties...)
-Require a model to include a property to be considered valid..
+Require a model to include a property to be considered valid.
 
 ```js
 User.validatesPresenceOf('first', 'last', 'age');
@@ -325,7 +325,7 @@ assert(joe.errors.age, 'should have a missing age error');
 
 <a name="model-modelvalidateslengthofproperty-options"></a>
 ## Model.validatesLengthOf(property, options)
-Require a property length to be within a specified range..
+Require a property length to be within a specified range.
 
 ```js
 User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
@@ -336,7 +336,7 @@ assert(joe.errors.password, 'should have password error');
 
 <a name="model-modelvalidatesinclusionofproperty-options"></a>
 ## Model.validatesInclusionOf(property, options)
-Require a value for `property` to be in the specified array..
+Require a value for `property` to be in the specified array.
 
 ```js
 User.validatesInclusionOf('gender', {in: ['male', 'female']});
@@ -347,7 +347,7 @@ assert(foo.errors.gender, 'should have gender error');
 
 <a name="model-modelvalidatesexclusionofproperty-options"></a>
 ## Model.validatesExclusionOf(property, options)
-Require a value for `property` to not exist in the specified array..
+Require a value for `property` to not exist in the specified array.
 
 ```js
 User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
@@ -364,7 +364,7 @@ assert(bat.errors.domain, 'model should have a domain error');
 
 <a name="model-modelvalidatesnumericalityofproperty-options"></a>
 ## Model.validatesNumericalityOf(property, options)
-Require a value for `property` to be a specific type of `Number`..
+Require a value for `property` to be a specific type of `Number`.
 
 ```js
 User.validatesNumericalityOf('age', {int: true});
@@ -377,7 +377,7 @@ assert(joe.errors.age, 'model should have an age error');
 
 <a name="model-modelvalidatesuniquenessofproperty-options"></a>
 ## Model.validatesUniquenessOf(property, options)
-Ensure the value for `property` is unique..
+Ensure the value for `property` is unique.
 
 ```js
 User.validatesUniquenessOf('email', {message: 'email is not unique'});
@@ -397,7 +397,7 @@ joe.save(function () {
 
 <a name="model-mymodelisvalid"></a>
 ## myModel.isValid()
-Validate the model instance..
+Validate the model instance.
 
 ```js
 User.validatesNumericalityOf('age', {int: true});
@@ -435,7 +435,7 @@ assert(typeof MyModel.find === 'function', 'should have data access methods afte
 
 <a name="model-modelcreatedata-callback"></a>
 ## Model.create([data], [callback])
-Create an instance of Model with given data and save to the attached data source..
+Create an instance of Model with given data and save to the attached data source.
 
 ```js
 User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
@@ -446,7 +446,7 @@ User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
 
 <a name="model-modelsaveoptions-callback"></a>
 ## model.save([options], [callback])
-Save an instance of a Model to the attached data source..
+Save an instance of a Model to the attached data source.
 
 ```js
 var joe = new User({first: 'Joe', last: 'Bob'});
@@ -460,7 +460,7 @@ joe.save(function(err, user) {
 
 <a name="model-modelupdateattributesdata-callback"></a>
 ## model.updateAttributes(data, [callback])
-Save specified attributes to the attached data source..
+Save specified attributes to the attached data source.
 
 ```js
 User.create({first: 'joe', age: 100}, function (err, user) {
@@ -499,7 +499,7 @@ User.upsert({first: 'joe', id: 7}, function (err, user) {
 
 <a name="model-modeldestroycallback"></a>
 ## model.destroy([callback])
-Remove a model from the attached data source..
+Remove a model from the attached data source.
 
 ```js
 User.create({first: 'joe', last: 'bob'}, function (err, user) {
@@ -542,7 +542,7 @@ Delete all Model instances from data source.
 
 <a name="model-modelfindbyidid-callback"></a>
 ## Model.findById(id, callback)
-Find an instance by id..
+Find an instance by id.
 
 ```js
 User.create({first: 'michael', last: 'jordan', id: 23}, function () {
@@ -716,7 +716,7 @@ request(app)
 
 <a name="model-modelhasmanymodel"></a>
 ## Model.hasMany(Model)
-Define a one to many relationship..
+Define a one to many relationship.
 
 ```js
 var Book = memory.createModel('book', {title: String, author: String});
