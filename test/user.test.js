@@ -1,4 +1,4 @@
-var User = asteroid.User;
+var User = asteroid.User.extend('user');
 var Session = asteroid.Session;
 var passport = require('passport');
 
@@ -6,26 +6,28 @@ var userMemory = asteroid.createDataSource({
   connector: asteroid.Memory
 });
 
-asteroid.User.attachTo(userMemory);
-asteroid.User.session.attachTo(userMemory);
-asteroid.User.email.setup({transports: [{type: 'STUB'}]});
 
 describe('User', function(){
-
-
+  
+  User.attachTo(userMemory);
+  User.session.attachTo(userMemory);
+  User.email.setup({transports: [{type: 'STUB'}]});
+  
+  // allow many User.afterRemote's to be called
+  User.setMaxListeners(22);
   
   beforeEach(function (done) {
     app.use(asteroid.cookieParser());
     app.use(asteroid.auth());
     app.use(asteroid.rest());
-    app.model(asteroid.User);
+    app.model(User);
     
-    asteroid.User.create({email: 'foo@bar.com', password: 'bar'}, done);
+    User.create({email: 'foo@bar.com', password: 'bar'}, done);
   });
   
   afterEach(function (done) {
-    asteroid.User.destroyAll(function (err) {
-      Session.destroyAll(done);
+    User.destroyAll(function (err) {
+      User.session.destroyAll(done);
     });
   });
   
@@ -66,6 +68,11 @@ describe('User', function(){
           done();
         });
       });
+    });
+    
+    it('Hashes the given password.', function() {
+      var u = new User({username: 'foo', password: 'bar'});
+      assert(u.password !== 'bar');
     });
   });
   
@@ -166,6 +173,19 @@ describe('User', function(){
         assert(isMatch, 'password doesnt match');
         done();
       });  
+    });
+    
+    it('should match a password when saved', function(done) {
+      var u = new User({username: 'a', password: 'b', email: 'z@z.net'});
+      
+      u.save(function (err, user) {
+        User.findById(user.id, function (err, uu) {
+          uu.hasPassword('b', function (err, isMatch) {
+            assert(isMatch);
+            done();
+          });
+        });
+      });
     });
     
     it('should match a password after it is changed', function(done) {
