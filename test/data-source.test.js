@@ -61,7 +61,6 @@ describe('DataSource', function() {
       existsAndShared('isNewRecord', false);
       existsAndShared('_adapter', false);
       existsAndShared('destroy', true);
-      existsAndShared('updateAttribute', true);
       existsAndShared('updateAttributes', true);
       existsAndShared('reload', true);
       
