@@ -2,6 +2,12 @@
    - [app](#app)
      - [app.model(Model)](#app-appmodelmodel)
      - [app.models()](#app-appmodels)
+<<<<<<< HEAD
+=======
+   - [loopback](#loopback)
+     - [loopback.createDataSource(options)](#loopback-loopbackcreatedatasourceoptions)
+     - [loopback.remoteMethod(Model, fn, [options]);](#loopback-loopbackremotemethodmodel-fn-options)
+>>>>>>> master
    - [DataSource](#datasource)
      - [dataSource.createModel(name, properties, settings)](#datasource-datasourcecreatemodelname-properties-settings)
      - [dataSource.operations()](#datasource-datasourceoperations)
@@ -76,6 +82,48 @@ assert.equal(models.length, 1);
 assert.equal(models[0].modelName, 'color');
 ```
 
+<<<<<<< HEAD
+=======
+<a name="loopback"></a>
+# loopback
+<a name="loopback-loopbackcreatedatasourceoptions"></a>
+## loopback.createDataSource(options)
+Create a data source with a connector..
+
+```js
+var dataSource = loopback.createDataSource({
+  connector: loopback.Memory
+});
+assert(dataSource.connector());
+```
+
+<a name="loopback-loopbackremotemethodmodel-fn-options"></a>
+## loopback.remoteMethod(Model, fn, [options]);
+Setup a remote method..
+
+```js
+var Product = loopback.createModel('product', {price: Number});
+
+Product.stats = function(fn) {
+  // ...
+}
+
+loopback.remoteMethod(
+  Product.stats,
+  {
+    returns: {arg: 'stats', type: 'array'},
+    http: {path: '/info', verb: 'get'}
+  }
+);
+
+assert.equal(Product.stats.returns.arg, 'stats');
+assert.equal(Product.stats.returns.type, 'array');
+assert.equal(Product.stats.http.path, '/info');
+assert.equal(Product.stats.http.verb, 'get');
+assert.equal(Product.stats.shared, true);
+```
+
+>>>>>>> master
 <a name="datasource"></a>
 # DataSource
 <a name="datasource-datasourcecreatemodelname-properties-settings"></a>

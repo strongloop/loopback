@@ -13,7 +13,7 @@ v0.9.0
  - [DataSource](#data-source)
  - [Connectors](#connectors)
  - [Loopback Types](#loopback-types)
-  - [GeoPoint](#geo-point)  
+  - [GeoPoint](#geo-point)
  - [REST Router](#rest-router)
  - [Bundled Models](#bundled-models)
   - [User](#user-model)
