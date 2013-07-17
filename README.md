@@ -1124,7 +1124,7 @@ Expose models over rest using the `loopback.rest` router.
 
 View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
     
-### SocketIO Middleware **Not Available**
+### SocketIO Middleware (Not Available)
 
 **Coming Soon** - Expose models over socket.io using the `loopback.sio()` middleware.
 
