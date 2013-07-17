@@ -284,10 +284,24 @@ Find all instances of Model, matched by query. Fields used for filter and sort s
  - **order** `String`
  - **limit** `Number`
  - **skip** `Number`
+ - **fields** `Object|Array|String`
+  - `['foo']` or `'foo'` - include only the foo property 
+  - `['foo', 'bar']` - include the foo and bar properties
+  - `{foo: true}` - include only foo
+  - `{bat: false}` - include all properties, exclude bat
 
-Find the second page of 10 users over age 21 in descending order.
+Find the second page of 10 users over age 21 in descending order exluding the password property.
 
-    User.find({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 10})
+    User.find({
+      where: {
+        age: {gt: 21}},
+        order: 'age DESC',
+        limit: 10,
+        skip: 10,
+        fields: {password: false}
+      },
+      console.log
+    );
 
 **Note:** See the specific connector's [docs](#connectors) for more info.
 
@@ -318,8 +332,6 @@ Update when record with id=data.id found, insert otherwise. **Note:** no setters
 ##### Custom Static Methods
 
 Define a static model method.
-
-
 
     User.login = function (username, password, fn) {
       var passwordHash = hashPassword(password);
