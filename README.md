@@ -26,7 +26,7 @@ _TODO_
 
 ### App
 
-Create a loopback application.
+Create A Loopbackapplication.
 
     var loopback = require('loopback');
     var app = loopback();
@@ -69,7 +69,7 @@ Get the app's exposed models.
     
 ### Model
 
-An Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
+A Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
 
     // valid color
     var Color = loopback.createModel('color', {name: String});
@@ -88,7 +88,7 @@ A model defines a list of property names, types and other validation metadata. A
 
 Some [DataSources](#data-source) may support additional `Model` options.
 
-Define a loopback model.
+Define A Loopbackmodel.
 
     var User = loopback.createModel('user', {
       first: String,
@@ -581,17 +581,13 @@ Query and create the related models.
       });
     });
     
-##### Model.hasAndBelongsToMany()
-
-TODO: implement / document
-    
 #### Shared Methods
 
 Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [loopback.rest](#rest)).
 
 ### Data Source
 
-An Loopback `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
+A Loopback `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
 
 Define a data source for persisting models.
 
@@ -912,16 +908,14 @@ Various APIs in Loopback accept type descriptions (eg. [remote methods](#remote-
  - `Array` - JSON array
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
- - [GeoPoint](#geopoint) - a loopback GeoPoint object. TODO
+ - [GeoPoint](#geopoint) - A Loopback GeoPoint object.
 
 ## Bundled Models
 
 The Loopback library is unopinioned in the way you define your app's data and logic. Loopback also bundles useful pre-built models for common use cases.
 
  - User - register and authenticate users of your app locally or against 3rd party services.
- - Notification - _TODO_ create, store, schedule and send push notifications to your app users.
  - Email - send emails to your app users using smtp or 3rd party services.
- - Job - _TODO_ schedule arbitrary code to run at a given time.
 
 Defining a model with `loopback.createModel()` is really just extending the base `loopback.Model` type using `loopback.Model.extend()`. The bundled models extend from the base `loopback.Model` allowing you to extend them arbitrarily.
  
