@@ -16,7 +16,7 @@ describe('Model', function() {
   });
 
   describe('Model.validatesPresenceOf(properties...)', function() {
-    it("Require a model to include a property to be considered valid.", function() {
+    it("Require a model to include a property to be considered valid", function() {
       User.validatesPresenceOf('first', 'last', 'age');
       var joe = new User({first: 'joe'});
       assert(joe.isValid() === false, 'model should not validate');
@@ -26,7 +26,7 @@ describe('Model', function() {
   });
 
   describe('Model.validatesLengthOf(property, options)', function() {
-    it("Require a property length to be within a specified range.", function() {
+    it("Require a property length to be within a specified range", function() {
       User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
       var joe = new User({password: '1234'});
       assert(joe.isValid() === false, 'model should not be valid');
@@ -35,7 +35,7 @@ describe('Model', function() {
   });
 
   describe('Model.validatesInclusionOf(property, options)', function() {
-    it("Require a value for `property` to be in the specified array.", function() {
+    it("Require a value for `property` to be in the specified array", function() {
       User.validatesInclusionOf('gender', {in: ['male', 'female']});
       var foo = new User({gender: 'bar'});
       assert(foo.isValid() === false, 'model should not be valid');
@@ -44,7 +44,7 @@ describe('Model', function() {
   });
 
   describe('Model.validatesExclusionOf(property, options)', function() {
-    it("Require a value for `property` to not exist in the specified array.", function() {
+    it("Require a value for `property` to not exist in the specified array", function() {
       User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
       var foo = new User({domain: 'www'});
       var bar = new User({domain: 'billing'});
@@ -59,7 +59,7 @@ describe('Model', function() {
   });
 
   describe('Model.validatesNumericalityOf(property, options)', function() {
-    it("Require a value for `property` to be a specific type of `Number`.", function() {
+    it("Require a value for `property` to be a specific type of `Number`", function() {
       User.validatesNumericalityOf('age', {int: true});
       var joe = new User({age: 10.2});
       assert(joe.isValid() === false);
@@ -70,7 +70,7 @@ describe('Model', function() {
   });
 
   describe('Model.validatesUniquenessOf(property, options)', function() {
-    it("Ensure the value for `property` is unique.", function(done) {
+    it("Ensure the value for `property` is unique", function(done) {
       User.validatesUniquenessOf('email', {message: 'email is not unique'});
       
       var joe = new User({email: 'joe@joe.com'});
@@ -88,7 +88,7 @@ describe('Model', function() {
   });
 
   describe('myModel.isValid()', function() {
-    it("Validate the model instance.", function() {
+    it("Validate the model instance", function() {
       User.validatesNumericalityOf('age', {int: true});
       var user = new User({first: 'joe', age: 'flarg'})
       var valid = user.isValid();
@@ -96,7 +96,7 @@ describe('Model', function() {
       assert(user.errors.age, 'model should have age error');
     });
     
-    it('Asynchronously validate the model.', function(done) {
+    it('Asynchronously validate the model', function(done) {
       User.validatesNumericalityOf('age', {int: true});
       var user = new User({first: 'joe', age: 'flarg'})
       user.isValid(function (valid) {
@@ -120,7 +120,7 @@ describe('Model', function() {
   });
 
   describe('Model.create([data], [callback])', function() {
-    it("Create an instance of Model with given data and save to the attached data source.", function(done) {
+    it("Create an instance of Model with given data and save to the attached data source", function(done) {
       User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
         assert(user instanceof User);
         done();
@@ -129,7 +129,7 @@ describe('Model', function() {
   });
 
   describe('model.save([options], [callback])', function() {
-    it("Save an instance of a Model to the attached data source.", function(done) {
+    it("Save an instance of a Model to the attached data source", function(done) {
       var joe = new User({first: 'Joe', last: 'Bob'});
       joe.save(function(err, user) {
         assert(user.id);
@@ -141,7 +141,7 @@ describe('Model', function() {
   });
 
   describe('model.updateAttributes(data, [callback])', function() {
-    it("Save specified attributes to the attached data source.", function(done) {
+    it("Save specified attributes to the attached data source", function(done) {
       User.create({first: 'joe', age: 100}, function (err, user) {
         assert(!err);
         assert.equal(user.first, 'joe');
@@ -176,7 +176,7 @@ describe('Model', function() {
   });
 
   describe('model.destroy([callback])', function() {
-    it("Remove a model from the attached data source.", function(done) {
+    it("Remove a model from the attached data source", function(done) {
       User.create({first: 'joe', last: 'bob'}, function (err, user) {
         User.findById(user.id, function (err, foundUser) {
           assert.equal(user.id, foundUser.id);
@@ -215,7 +215,7 @@ describe('Model', function() {
   });
 
   describe('Model.findById(id, callback)', function() {
-    it("Find an instance by id.", function(done) {
+    it("Find an instance by id", function(done) {
       User.create({first: 'michael', last: 'jordan', id: 23}, function () {
         User.findById(23, function (err, user) {
           assert.equal(user.id, 23);
@@ -285,10 +285,10 @@ describe('Model', function() {
     });
   
     describe('Model.beforeRemote(name, fn)', function(){
-      it('Run a function before a remote method is called by a client.', function(done) {
+      it('Run a function before a remote method is called by a client', function(done) {
         var hookCalled = false;
         
-        User.beforeRemote('*.save', function(ctx, user, next) {
+        User.beforeRemote('create', function(ctx, user, next) {
           hookCalled = true;
           next();
         });
@@ -308,16 +308,16 @@ describe('Model', function() {
     });
   
     describe('Model.afterRemote(name, fn)', function(){
-      it('Run a function after a remote method is called by a client.', function(done) {
+      it('Run a function after a remote method is called by a client', function(done) {
         var beforeCalled = false;
         var afterCalled = false;
         
-        User.beforeRemote('*.save', function(ctx, user, next) {
+        User.beforeRemote('create', function(ctx, user, next) {
           assert(!afterCalled);
           beforeCalled = true;
           next();
         });
-        User.afterRemote('*.save', function(ctx, user, next) {
+        User.afterRemote('create', function(ctx, user, next) {
           assert(beforeCalled);
           afterCalled = true;
           next();
@@ -349,7 +349,7 @@ describe('Model', function() {
         it("The express ServerRequest object", function(done) {
           var hookCalled = false;
           
-          User.beforeRemote('*.save', function(ctx, user, next) {
+          User.beforeRemote('create', function(ctx, user, next) {
             hookCalled = true;
             assert(ctx.req);
             assert(ctx.req.url);
@@ -378,7 +378,7 @@ describe('Model', function() {
         it("The express ServerResponse object", function(done) {
           var hookCalled = false;
           
-          User.beforeRemote('*.save', function(ctx, user, next) {
+          User.beforeRemote('create', function(ctx, user, next) {
             hookCalled = true;
             assert(ctx.req);
             assert(ctx.req.url);
@@ -406,7 +406,7 @@ describe('Model', function() {
   });
 
   describe('Model.hasMany(Model)', function() {
-    it("Define a one to many relationship.", function(done) {
+    it("Define a one to many relationship", function(done) {
       var Book = memory.createModel('book', {title: String, author: String});
       var Chapter = memory.createModel('chapter', {title: String});
       
@@ -433,7 +433,7 @@ describe('Model', function() {
   });
   
   describe('Model.properties', function(){
-    it('Normalized properties passed in originally by loopback.createModel().', function() {
+    it('Normalized properties passed in originally by loopback.createModel()', function() {
       var props = {
         s: String,
         n: {type: 'Number'},
@@ -463,6 +463,40 @@ describe('Model', function() {
       });
     });
   });
+    
+  describe('Model.extend()', function(){
+    it('Create a new model by extending an existing model', function() {
+      var User = loopback.Model.extend('test-user', {
+        email: String
+      });
+      
+      User.foo = function () {
+        return 'bar';
+      }
+      
+      User.prototype.bar = function () {
+        return 'foo';
+      }
+      
+      var MyUser = User.extend('my-user', {
+        a: String,
+        b: String
+      });
+      
+      assert.equal(MyUser.prototype.bar, User.prototype.bar);
+      assert.equal(MyUser.foo, User.foo);
+      
+      var user = new MyUser({
+        email: 'foo@bar.com',
+        a: 'foo',
+        b: 'bar'
+      });
+      
+      assert.equal(user.email, 'foo@bar.com');
+      assert.equal(user.a, 'foo');
+      assert.equal(user.b, 'bar');
+    });
+  });
 
   // describe('Model.hasAndBelongsToMany()', function() {
   //   it("TODO: implement / document", function(done) {
@@ -474,14 +508,14 @@ describe('Model', function() {
   // });
 
   // describe('Model.remoteMethods()', function() {
-  //   it("Return a list of enabled remote methods.", function() {
+  //   it("Return a list of enabled remote methods", function() {
   //     app.model(User);
   //     User.remoteMethods(); // ['save', ...]
   //   });
   // });
 
   // describe('Model.availableMethods()', function() {
-  //   it("Returns the currently available api of a model as well as descriptions of any modified behavior or methods from attached data sources.", function(done) {
+  //   it("Returns the currently available api of a model as well as descriptions of any modified behavior or methods from attached data sources", function(done) {
   //     /* example - 
   //     User.attachTo(oracle);
   //     console.log(User.availableMethods());
@@ -511,7 +545,7 @@ describe('Model', function() {
   // });
   
 //   describe('Model.before(name, fn)', function(){
-//     it('Run a function before a method is called.', function() {
+//     it('Run a function before a method is called', function() {
 //       // User.before('save', function(user, next) {
 // //         console.log('about to save', user);
 // //         
@@ -535,7 +569,7 @@ describe('Model', function() {
 //   });
 //   
 //   describe('Model.after(name, fn)', function(){
-//     it('Run a function after a method is called.', function() {
+//     it('Run a function after a method is called', function() {
 // 
 //       throw new Error('not implemented');
 //     });

@@ -5,10 +5,12 @@ describe('DataSource', function() {
     memory = loopback.createDataSource({
       connector: loopback.Memory
     });
+    
+    assertValidDataSource(memory);
   });
 
   describe('dataSource.createModel(name, properties, settings)', function() {
-    it("Define a model and attach it to a `DataSource`.", function() {
+    it("Define a model and attach it to a `DataSource`", function() {
       var Color = memory.createModel('color', {name: String});
       assert.isFunc(Color, 'find');
       assert.isFunc(Color, 'findById');
@@ -35,7 +37,7 @@ describe('DataSource', function() {
   });
 
   describe('dataSource.operations()', function() {
-    it("List the enabled and disabled operations.", function() {
+    it("List the enabled and disabled operations", function() {
       // assert the defaults
       // - true: the method should be remote enabled
       // - false: the method should not be remote enabled
@@ -59,7 +61,6 @@ describe('DataSource', function() {
       existsAndShared('isNewRecord', false);
       existsAndShared('_adapter', false);
       existsAndShared('destroy', true);
-      existsAndShared('updateAttribute', true);
       existsAndShared('updateAttributes', true);
       existsAndShared('reload', true);
       

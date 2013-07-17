@@ -1,7 +1,7 @@
 describe('app', function() {
 
   describe('app.model(Model)', function() {
-    it("Expose a `Model` to remote clients.", function() {
+    it("Expose a `Model` to remote clients", function() {
       var memory = loopback.createDataSource({connector: loopback.Memory});
       var Color = memory.createModel('color', {name: String});
       app.model(Color);
@@ -10,7 +10,7 @@ describe('app', function() {
   });
 
   describe('app.models()', function() {
-    it("Get the app's exposed models.", function() {
+    it("Get the app's exposed models", function() {
       var Color = loopback.createModel('color', {name: String});
       var models = app.models();
       

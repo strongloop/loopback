@@ -12,9 +12,13 @@ v0.9.0
  - [Model](#model)
  - [DataSource](#data-source)
  - [Connectors](#connectors)
- - [GeoPoint](#geo-point)
  - [Loopback Types](#loopback-types)
+  - [GeoPoint](#geo-point)
  - [REST Router](#rest-router)
+ - [Bundled Models](#bundled-models)
+  - [User](#user-model)
+  - [Session](#session-model) 
+  - [Email](#email-model)
 
 ## Client API
 
@@ -43,8 +47,10 @@ Create an loopback application.
 
 Expose a `Model` to remote clients.
 
-    var memory = loopback.createDataSource({connector: loopback.Memory});
+    // create a testing data source
+    var memory = loopback.memory();
     var Color = memory.createModel('color', {name: String});
+    Color.attachTo(memory);
 
     app.model(Color);
     app.use(loopback.rest());
@@ -91,6 +97,12 @@ Define an loopback model.
     });
 
 ### Validation (expiremental)
+
+#### Model.validatesFormatOf(property, options)
+
+Require a model to include a property that matches the given format.
+
+    User.validatesFormat('name', {with: /\w+/});
 
 #### Model.validatesPresenceOf(properties...)
 
@@ -193,9 +205,55 @@ Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-s
 
 #### CRUD and Query Mixins
 
-Mixins are added by attaching a vanilla model to a data source with a connector. Each [connector](#connectors) enables its own set of operations that are attached to a `Model` as methods. To see available methods for a data source with a connector call `dataSource.operations()`.
+Mixins are added by attaching a vanilla model to a [data source](#data-source) with a [connector](#connectors). Each [connector](#connectors) enables its own set of operations that are mixed into a `Model` as methods. To see available methods for a data source call `dataSource.operations()`.
+
+Log the available methods for a memory data source.
+
+    var ops = loopback
+        .createDataSource({connector: loopback.Memory})
+        .operations();
+    
+    console.log(Object.keys(ops));
+    
+Outputs:
+
+    [ 'create',
+      'updateOrCreate',
+      'upsert',
+      'findOrCreate',
+      'exists',
+      'findById',
+      'find',
+      'all',
+      'findOne',
+      'destroyAll',
+      'deleteAll',
+      'count',
+      'include',
+      'relationNameFor',
+      'hasMany',
+      'belongsTo',
+      'hasAndBelongsToMany',
+      'save',
+      'isNewRecord',
+      'destroy',
+      'delete',
+      'updateAttribute',
+      'updateAttributes',
+      'reload' ]
+      
+Here is the definition of the `count()` operation.
+
+    {
+      accepts: [ { arg: 'where', type: 'object' } ],
+      http: { verb: 'get', path: '/count' },
+      remoteEnabled: true,
+      name: 'count'
+    }
 
 #### Static Methods
+
+**Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
 ##### Model.create(data, [callback])
 
@@ -226,10 +284,24 @@ Find all instances of Model, matched by query. Fields used for filter and sort s
  - **order** `String`
  - **limit** `Number`
  - **skip** `Number`
+ - **fields** `Object|Array|String`
+  - `['foo']` or `'foo'` - include only the foo property 
+  - `['foo', 'bar']` - include the foo and bar properties
+  - `{foo: true}` - include only foo
+  - `{bat: false}` - include all properties, exclude bat
 
-Find the second page of 10 users over age 21 in descending order.
+Find the second page of 10 users over age 21 in descending order exluding the password property.
 
-    User.find({where: {age: {gt: 21}}, order: 'age DESC', limit: 10, skip: 10})
+    User.find({
+      where: {
+        age: {gt: 21}},
+        order: 'age DESC',
+        limit: 10,
+        skip: 10,
+        fields: {password: false}
+      },
+      console.log
+    );
 
 **Note:** See the specific connector's [docs](#connectors) for more info.
 
@@ -260,8 +332,6 @@ Update when record with id=data.id found, insert otherwise. **Note:** no setters
 ##### Custom Static Methods
 
 Define a static model method.
-
-
 
     User.login = function (username, password, fn) {
       var passwordHash = hashPassword(password);
@@ -297,6 +367,8 @@ Setup the static model method to be exposed to clients as a [remote method](#rem
     );
     
 #### Instance Methods
+
+**Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
 ##### model.save([options], [callback])
 
@@ -349,13 +421,18 @@ Both instance and static methods can be exposed to clients. A remote method must
 Expose a remote method.
 
     Product.stats = function(fn) {
-      myApi.getStats('products', fn);
+      var calc = require('./stats');
+      
+      Product.find(function(err, products) {
+        var productStats = calc(products);
+        fn(null, productStats);
+      });
     }
     
     loopback.remoteMethod(
       Product.stats,
       {
-        returns: {arg: 'stats', type: 'array'},
+        returns: {arg: 'stats', type: 'object'},
         http: {path: '/info', verb: 'get'}
       }
     );
@@ -703,16 +780,16 @@ Create a data source with a specific connector. See **available connectors** for
     
 **Available Connectors**
  
- - [Oracle](http://github.com/strongloop/loopback-connectors/oracle)
- - [In Memory](http://github.com/strongloop/loopback-connectors/memory)
- - TODO - [REST](http://github.com/strongloop/loopback-connectors/rest)
- - TODO - [MySQL](http://github.com/strongloop/loopback-connectors/mysql)
- - TODO - [SQLite3](http://github.com/strongloop/loopback-connectors/sqlite)
- - TODO - [Postgres](http://github.com/strongloop/loopback-connectors/postgres)
- - TODO - [Redis](http://github.com/strongloop/loopback-connectors/redis)
- - TODO - [MongoDB](http://github.com/strongloop/loopback-connectors/mongo)
- - TODO - [CouchDB](http://github.com/strongloop/loopback-connectors/couch)
- - TODO - [Firebird](http://github.com/strongloop/loopback-connectors/firebird)
+ - [In Memory](#memory-connector)
+ - [REST](http://github.com/strongloop/loopback-connector-rest)
+ - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
+ - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
+ - TODO - [MySQL](http://github.com/strongloop/loopback-connector-mysql)
+ - TODO - [SQLite3](http://github.com/strongloop/loopback-connector-sqlite)
+ - TODO - [Postgres](http://github.com/strongloop/loopback-connector-postgres)
+ - TODO - [Redis](http://github.com/strongloop/loopback-connector-redis)
+ - TODO - [CouchDB](http://github.com/strongloop/loopback-connector-couch)
+ - TODO - [Firebird](http://github.com/strongloop/loopback-connector-firebird)
 
 **Installing Connectors**
 
@@ -723,6 +800,49 @@ Include the connector in your package.json dependencies and run `npm install`.
         "loopback-connector-oracle": "latest"
       }
     }
+
+##### Memory Connector
+
+The built-in memory connector allows you to test your application without connecting to an actual persistent data source, such as a database. Although the memory connector is very well tested it is not recommended to be used in production. Creating a data source using the memory connector is very simple.
+
+    // use the built in memory function
+    // to create a memory data source
+    var memory = loopback.memory();
+
+    // or create it using the standard
+    // data source creation api
+    var memory = loopback.createDataSource({
+      connector: loopback.Memory
+    });
+    
+    // create a model using the
+    // memory data source
+    var properties = {
+      name: String,
+      price: Number
+    };
+    
+    var Product = memory.createModel('product', properties);
+    
+    Product.create([
+      {name: 'apple', price: 0.79},
+      {name: 'pear', price: 1.29},
+      {name: 'orange', price: 0.59},
+    ], count);
+    
+    function count() {
+      Product.count(console.log); // 3
+    }
+
+###### Operations
+
+**CRUD / Query**
+
+The memory connector supports all the standard [query and crud operations](#crud-and-query-mixins) to allow you to test your models against an in memory data source.
+
+**GeoPoint Filtering**
+
+The memory connector also supports geo-filtering when using the `find()` operation with an attached model. See [GeoPoint](#geopoint) for more information on geo-filtering.
 
 ### GeoPoint
 
@@ -794,14 +914,16 @@ Various APIs in Loopback accept type descriptions (eg. [remote methods](#remote-
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - an loopback GeoPoint object. TODO
 
-#### Bundled Models
+## Bundled Models
 
 The Loopback library is unopinioned in the way you define your app's data and logic. Loopback also bundles useful pre-built models for common use cases.
 
- - User - _TODO_ register and authenticate users of your app locally or against 3rd party services.
+ - User - register and authenticate users of your app locally or against 3rd party services.
  - Notification - _TODO_ create, store, schedule and send push notifications to your app users.
- - Email - _TODO_ schedule and send emails to your app users using smtp or 3rd party services.
+ - Email - send emails to your app users using smtp or 3rd party services.
  - Job - _TODO_ schedule arbitrary code to run at a given time.
+
+Defining a model with `loopback.createModel()` is really just extending the base `loopback.Model` type using `loopback.Model.extend()`. The bundled models extend from the base `loopback.Model` allowing you to extend them arbitrarily.
  
 ### User Model
 
@@ -811,31 +933,37 @@ Register and authenticate users of your app locally or against 3rd party service
 
 Extend a vanilla Loopback model using the built in User model.
 
+    // create a data source
+    var memory = loopback.memory();
+ 
     // define a User model
-    var User = loopback.createModel(
-      'user',
-      {
-        email: {
-          type: 'EmailAddress',
-          username: true
-        },
-        password: {
-          hideRemotely: true, // default for Password
-          type: 'Password',
-          min: 4,
-          max: 26
-        }
-      },
-      {
-        extend: 'User',
-      }
-    );
+    var User = loopback.User.extend('user');
   
     // attach to the memory connector
     User.attachTo(memory);
     
+    // also attach the session model to a data source
+    User.session.attachTo(memory);
+    
     // expose over the app's api
     app.model(User);
+    
+**Note:** By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
+
+**Note:** You must attach both the `User` and `User.session` model's to a data source!
+
+    // define a custom session model    
+    var MySession = loopback.Session.extend('my-session');
+    
+    // define a custom User model
+    var User = loopback.User.extend('user');
+    
+    // use the custom session model
+    User.session = MySession;
+    
+    // attaching to 
+    
+    
     
 #### User Creation
 
@@ -863,7 +991,7 @@ Setup an authentication strategy.
     
     // create a custom strategy
     var LocalStrategy = require('passport-local').Strategy;
-    User.use(new LocalStrategy(function(username, password, done) {
+    passport.use(new LocalStrategy(function(username, password, done) {
       User.findOne({ username: username }, function(err, user) {
         if (err) { return done(err); }
         if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
@@ -881,7 +1009,7 @@ Setup an authentication strategy.
     
 #### Login a User
 
-Create a session for a user. When called remotely the password is required.
+Create a session for a user.
 
     User.login({username: 'foo', password: 'bar'}, function(err, session) {
       console.log(session);
@@ -908,71 +1036,86 @@ You must provide a username and password over rest. To ensure these values are e
         "uid": "123"
       }
 
-**Note:** The `uid` type will be the same type you specify when creating your model. In this case it is a string.
-
 #### Logout a User
 
-    User.logout({username: 'foo'}, function(err) {
-      console.log(err);
-    });
+**NODE**
 
-**Note:** When calling this method remotely, the first argument will automatically be populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
+// login a user and logout
+User.login({"email": "foo@bar.com", "password": "bar"}, function(err, session) {
+  User.logout(session.id, function(err) {
+    // user logged out
+  });
+});
+
+// logout a user (server side only)
+User.findOne({email: 'foo@bar.com'}, function(err, user) {
+  user.logout();
+});
+    
+**REST**
+
+**Note:** When calling this method remotely, the first argument will be  populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
 
 #### Verify Email Addresses
 
-To require email verification before a user is allowed to login, supply a verification property with a `verify` settings object.
+Require a user to verify their email address before being able to login. This will send an email to the user containing a link to verify their address. Once the user follows the link they will be redirected to `/` and be able to login normally.
 
-    // define a User model
-    var User = loopback.createModel(
-      'user',
-      {
-        email: {
-          type: 'EmailAddress',
-          username: true
-        },
-        password: {
-          hideRemotely: true, // default for Password
-          type: 'Password',
-          min: 4,
-          max: 26
-        },
-        verified: {
-          hideRemotely: true,
-          type: 'Boolean',
-          verify: {
-            // the model field
-            // that contains the email
-            // to verify
-            email: 'email',
-            template: 'email.ejs'
-          }
-        }
-      },
-      {
-        extend: 'User',
-        // the model field
-        // that contains the user's email
-        // for verification and password reset
-        // defaults to 'email'
-        email: 'email',
-        resetTemplate: 'reset.ejs'
-      }
-    );
+    User.requireEmailVerfication = true;
+    User.afterRemote('create', function(ctx, user, next) {
+      var options = {
+        type: 'email',
+        to: user.email,
+        from: 'noreply@myapp.com',
+        subject: 'Thanks for Registering at FooBar',
+        text: 'Please verify your email address!'
+        template: 'verify.ejs',
+        redirect: '/'
+      };
+      
+      user.verify(options, next);
+    });
     
-When a user is created (on the server or remotely) an email is sent to the field that corresponds to `verify.email` or `options.email`. The email contains a link the user must navigate to in order to verify their email address. Once they verify, users are allowed to login normally. Otherwise login attempts will respond with a 'must verify' error.
 
 #### Send Reset Password Email
 
 Send an email to the user's supplied email address containing a link to reset their password.
-
-    User.sendResetPasswordEmail(email, function(err) {
-      // email sent
+  
+    User.reset(email, function(err) {
+      console.log('email sent');
     });
     
 #### Remote Password Reset
 
-The password reset email will send users to a page rendered by loopback with fields required to reset the user's password. You may customize this template by providing a  `resetTemplate` option when defining your user model.
+The password reset email will send users to a page rendered by loopback with fields required to reset the user's password. You may customize this template by defining a `resetTemplate` setting.
 
+    User.settings.resetTemplate = 'reset.ejs';
+    
+#### Remote Password Reset Confirmation
+
+Confirm the password reset.
+
+    User.confirmReset(token, function(err) {
+      console.log(err || 'your password was reset');
+    });
+
+
+### Session Model
+
+Identify users by creating sessions when they connect to your loopback app. By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
+
+    // define a custom session model    
+    var MySession = loopback.Session.extend('my-session');
+    
+    // define a custom User model
+    var User = loopback.User.extend('user');
+    
+    // use the custom session model
+    User.session = MySession;
+    
+    // attach both Session and User to a data source
+    User.attachTo(loopback.memory());
+    MySession.attachTo(loopback.memory());
+    
 ### Email Model
 
 Send emails from your loopback app.
