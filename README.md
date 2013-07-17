@@ -26,7 +26,7 @@ _TODO_
 
 ### App
 
-Create an loopback application.
+Create a loopback application.
 
     var loopback = require('loopback');
     var app = loopback();
@@ -88,7 +88,7 @@ A model defines a list of property names, types and other validation metadata. A
 
 Some [DataSources](#data-source) may support additional `Model` options.
 
-Define an loopback model.
+Define a loopback model.
 
     var User = loopback.createModel('user', {
       first: String,
@@ -912,7 +912,7 @@ Various APIs in Loopback accept type descriptions (eg. [remote methods](#remote-
  - `Array` - JSON array
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
- - [GeoPoint](#geopoint) - an loopback GeoPoint object. TODO
+ - [GeoPoint](#geopoint) - a loopback GeoPoint object. TODO
 
 ## Bundled Models
 
