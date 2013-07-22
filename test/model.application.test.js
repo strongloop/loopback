@@ -67,7 +67,55 @@ describe('Application', function () {
 
             assert(app.created);
             assert(app.modified);
+            registeredApp = app;
             done(err, result);
         });
     });
+
+    it('Authenticate with application id & clientKey', function (done) {
+
+        Application.authenticate(registeredApp.id, registeredApp.clientKey, function (err, result) {
+            assert.equal(result, 'clientKey');
+            done(err, result);
+        });
+    });
+
+    it('Authenticate with application id & javaScriptKey', function (done) {
+
+        Application.authenticate(registeredApp.id, registeredApp.javaScriptKey, function (err, result) {
+            assert.equal(result, 'javaScriptKey');
+            done(err, result);
+        });
+    });
+
+    it('Authenticate with application id & restApiKey', function (done) {
+        Application.authenticate(registeredApp.id, registeredApp.restApiKey, function (err, result) {
+            assert.equal(result, 'restApiKey');
+            done(err, result);
+        });
+    });
+
+    it('Authenticate with application id & masterKey', function (done) {
+        Application.authenticate(registeredApp.id, registeredApp.masterKey, function (err, result) {
+            assert.equal(result, 'masterKey');
+            done(err, result);
+        });
+    });
+
+
+    it('Authenticate with application id & windowsKey', function (done) {
+        Application.authenticate(registeredApp.id, registeredApp.windowsKey, function (err, result) {
+            assert.equal(result, 'windowsKey');
+            done(err, result);
+        });
+    });
+
+    it('Fail to authenticate with application id & invalid key', function (done) {
+        Application.authenticate(registeredApp.id, 'invalid-key', function (err, result) {
+            assert(!result);
+            done(err, result);
+        });
+    });
+
 });
+
