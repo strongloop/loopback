@@ -4,7 +4,7 @@ describe('loopback', function() {
       var dataSource = loopback.createDataSource({
         connector: loopback.Memory
       });
-      assert(dataSource.connector());
+      assert(dataSource.connector);
     });
   });
   
