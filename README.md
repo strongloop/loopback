@@ -26,7 +26,7 @@ _TODO_
 
 ### App
 
-Create A Loopbackapplication.
+Create a Loopback application.
 
     var loopback = require('loopback');
     var app = loopback();
