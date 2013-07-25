@@ -67,6 +67,21 @@ Get the app's exposed models.
       console.log(Model.modelName); // color
     });
     
+#### app.docs(options)
+
+Enable swagger REST api documentation.
+
+**Options**
+
+ - `basePath` The basepath for your API - eg. 'http://localhost:3000'.
+
+**Example**
+   
+    // enable docs
+    app.docs({basePath: 'http://localhost:3000'});
+    
+Run your app then navigate to [the api explorer](http://petstore.swagger.wordnik.com/). Enter your API basepath to view your generated docs.
+    
 ### Model
 
 A Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
