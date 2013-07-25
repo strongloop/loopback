@@ -132,7 +132,7 @@ describe('User', function(){
       function logout(err, sid) {
         request(app)
           .post('/users/logout') 
-          .expect(200)
+          .expect(204)
           .send({sid: sid})
           .end(verify(sid, done));
       }

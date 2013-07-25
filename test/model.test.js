@@ -275,7 +275,7 @@ describe('Model', function() {
             {arg: 'username', type: 'string', required: true},
             {arg: 'password', type: 'string', required: true}
           ],
-          returns: {arg: 'sessionId', type: 'any'},
+          returns: {arg: 'sessionId', type: 'any', root: true},
           http: {path: '/sign-in', verb: 'get'}
         }
       );
@@ -292,7 +292,7 @@ describe('Model', function() {
           .expect(200)
           .end(function(err, res){
             if(err) return done(err);
-            assert(res.body.$data === 123);
+            assert.equal(res.body, 123);
             done();
           });
       });
