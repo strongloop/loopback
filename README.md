@@ -136,11 +136,17 @@ Require a value for `property` to be a specific type of `Number`.
 
 #### Model.validatesUniquenessOf(property, options)
 
-Ensure the value for `property` is unique.
+Ensure the value for `property` is unique in the collection of models.
 
     User.validatesUniquenessOf('email', {message: 'email is not unique'});
 
 **Note:** not available for all [connectors](#connectors).
+
+Currently supported in these connectors:
+
+ - [In Memory](#memory-connector)
+ - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
+ - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
 
 #### myModel.isValid()
 
