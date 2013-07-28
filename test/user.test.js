@@ -14,7 +14,7 @@ describe('User', function(){
   User.email.setup({transports: [{type: 'STUB'}]});
   
   // allow many User.afterRemote's to be called
-  User.setMaxListeners(22);
+  User.setMaxListeners(0);
   
   beforeEach(function (done) {
     app.use(loopback.rest());
@@ -31,7 +31,7 @@ describe('User', function(){
   
   describe('User.create', function(){
     it('Create a new user', function(done) {
-      User.create({email: 'f@b.com'}, function (err, user) {
+      User.create({email: 'f@b.com', password: 'bar'}, function (err, user) {
         assert(!err);
         assert(user.id);
         assert(user.email);
@@ -39,19 +39,38 @@ describe('User', function(){
       });
     });
     
-    it('Requires a valid email', function(done) {
-      User.create({}, function (err) {
+    it('Email is required', function(done) {
+      User.create({password: '123'}, function (err) {
+        assert.deepEqual(err, { name: 'ValidationError',
+          message: 'Validation error',
+          statusCode: 400,
+          codes: { email: [ 'presence', 'format.blank' ] },
+          context: 'user' });
+        
+        done();
+      });
+    });
+    
+    // will change in future versions where password will be optional by default
+    it('Password is required', function(done) {
+      var u = new User({email: "123@456.com"});
+      
+      User.create({email: 'c@d.com'}, function (err) {
         assert(err);
-        User.create({email: 'foo@'}, function (err) {
-          assert(err);
-          done();
-        });
+        done();
+      });
+    });
+    
+    it('Requires a valid email', function(done) {
+      User.create({email: 'foo@', password: '123'}, function (err) {
+        assert(err);
+        done();
       });
     });
     
     it('Requires a unique email', function(done) {
-      User.create({email: 'a@b.com'}, function () {
-        User.create({email: 'a@b.com'}, function (err) {
+      User.create({email: 'a@b.com', password: 'foobar'}, function () {
+        User.create({email: 'a@b.com', password: 'batbaz'}, function (err) {
           assert(err, 'should error because the email is not unique!');
           done();
         });
@@ -76,6 +95,16 @@ describe('User', function(){
   
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
+      User.login({email: 'foo@bar.com', password: 'bar'}, function (err, session) {
+        assert(session.uid);
+        assert(session.id);
+        assert.equal((new Buffer(session.id, 'base64')).length, 64);
+        
+        done();
+      });
+    });
+    
+    it('Login a user over REST by providing credentials', function(done) {
       request(app)
         .post('/users/login')
         .expect('Content-Type', /json/)
