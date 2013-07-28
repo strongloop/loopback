@@ -976,38 +976,6 @@ Create a user like any other model.
       console.log(user);
     });
 
-#### Authentication Strategies (Using Passport.js)
-
-Setup an authentication strategy.
-
-[See all available providers from passport.js](http://passportjs.org/guide/providers/).
-
-    // first add your model to your app
-    app.model(User);
-    
-    // by default your User model has a local strategy similar to below
-
-    // customize your own
-    // disable the default local strategy
-    User.useLocalStrategy(false);
-    
-    // create a custom strategy
-    var LocalStrategy = require('passport-local').Strategy;
-    passport.use(new LocalStrategy(function(username, password, done) {
-      User.findOne({ username: username }, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false, { message: 'Unknown user ' + username }); }
-        user.comparePassword(password, function(err, isMatch) {
-          if (err) return done(err);
-          if(isMatch) {
-            return done(null, user);
-          } else {
-            return done(null, false, { message: 'Invalid password' });
-          }
-        });
-      });
-    }));
-
     
 #### Login a User
 

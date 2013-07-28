@@ -17,8 +17,6 @@ describe('User', function(){
   User.setMaxListeners(22);
   
   beforeEach(function (done) {
-    app.use(loopback.cookieParser());
-    app.use(loopback.auth());
     app.use(loopback.rest());
     app.model(User);
     
