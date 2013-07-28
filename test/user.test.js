@@ -138,20 +138,6 @@ describe('User', function(){
       }
     });
     
-    it('Logout a user using the instance method', function(done) {
-      login(logout);
-      
-      function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
-      }
-      
-      function logout(err, session) {
-        User.findOne({email: 'foo@bar.com'}, function (err, user) {
-          user.logout(verify(session.id, done));
-        });
-      }
-    });
-    
     function verify(sid, done) {
       assert(sid);
       

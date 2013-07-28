@@ -944,7 +944,7 @@ Defining a model with `loopback.createModel()` is really just extending the base
 
 Register and authenticate users of your app locally or against 3rd party services.
 
-#### Create a User Model
+#### Define a User Model
 
 Extend a vanilla Loopback model using the built in User model.
 
@@ -966,19 +966,6 @@ Extend a vanilla Loopback model using the built in User model.
 **Note:** By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
 
 **Note:** You must attach both the `User` and `User.session` model's to a data source!
-
-    // define a custom session model    
-    var MySession = loopback.Session.extend('my-session');
-    
-    // define a custom User model
-    var User = loopback.User.extend('user');
-    
-    // use the custom session model
-    User.session = MySession;
-    
-    // attaching to 
-    
-    
     
 #### User Creation
 
@@ -1024,7 +1011,9 @@ Setup an authentication strategy.
     
 #### Login a User
 
-Create a session for a user.
+Create a session for a user using the local auth strategy.
+
+**Node.js**
 
     User.login({username: 'foo', password: 'bar'}, function(err, session) {
       console.log(session);
@@ -1053,23 +1042,27 @@ You must provide a username and password over rest. To ensure these values are e
 
 #### Logout a User
 
-**NODE**
+**Node.js**
 
-// login a user and logout
-User.login({"email": "foo@bar.com", "password": "bar"}, function(err, session) {
-  User.logout(session.id, function(err) {
-    // user logged out
-  });
-});
+    // login a user and logout
+    User.login({"email": "foo@bar.com", "password": "bar"}, function(err, session) {
+      User.logout(session.id, function(err) {
+        // user logged out
+      });
+    });
 
-// logout a user (server side only)
-User.findOne({email: 'foo@bar.com'}, function(err, user) {
-  user.logout();
-});
+    // logout a user (server side only)
+    User.findOne({email: 'foo@bar.com'}, function(err, user) {
+      user.logout();
+    });
     
 **REST**
 
-**Note:** When calling this method remotely, the first argument will be  populated with the current user's id. If the caller is not logged in the method will fail with an error status code `401`.
+    POST /users/logout
+    ...
+    {
+      "sid": "<session id from user login>"
+    }
 
 #### Verify Email Addresses
 
