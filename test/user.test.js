@@ -121,6 +121,16 @@ describe('User', function(){
           done();
         });
     });
+    
+    it('Login should only allow correct credentials', function(done) {
+      User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
+        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, session) { 
+          assert(err);
+          assert(!session);
+          done();
+        });
+      });
+    });
   });
   
   describe('User.logout', function() {
