@@ -7,7 +7,7 @@ loopback = require('../');
 memoryConnector = loopback.Memory;
 GeoPoint = loopback.GeoPoint;
 app = null;
-TaskEmitter = require('sl-task-emitter');
+TaskEmitter = require('strong-task-emitter');
 request = require('supertest');
 
 beforeEach(function () {

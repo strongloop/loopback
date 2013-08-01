@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "mocha": "latest",
-    "sl-task-emitter": "0.0.x",
+    "strong-task-emitter": "0.0.x",
     "supertest": "latest"
   }
 }
