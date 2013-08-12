@@ -1,6 +1,7 @@
 .idea
 .project
 .DS_Store
+*.sublime*
 *.seed
 *.log
 *.csv
