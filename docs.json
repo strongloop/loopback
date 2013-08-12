@@ -1,6 +1,10 @@
 {
+  "title": "LoopBack",
   "content": [
-    "docs/loopback.md",
+    "docs/intro.md",
+    "docs/quickstart.md",
+    "docs/gettingstarted.md",
+    "docs/resources.md",
     "docs/concepts.md",
     "docs/api.md"
   ]
