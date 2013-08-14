@@ -3,7 +3,11 @@
   "description": "loopback",
   "version": "0.9.0",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "blanket": {
+      "pattern": "//^((?!(node_modules|test)).)*$/"
+    },
+    "coverage": "mocha -r blanket -R html-cov > coverage_loopback.html"
   },
   "dependencies": {
     "debug": "latest",
@@ -15,7 +19,9 @@
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
     "nodemailer": "~0.4.4",
-    "ejs": "~0.8.4"
+    "ejs": "~0.8.4",
+    "blanket": "latest",
+     "mocha": "~1.8.2"
   },
   "devDependencies": {
     "mocha": "latest",
