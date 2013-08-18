@@ -44,8 +44,8 @@ describe('DataSource', function() {
       // - 
       existsAndShared('_forDB', false);
       existsAndShared('create', true);
-      existsAndShared('updateOrCreate', false);
-      existsAndShared('upsert', false);
+      existsAndShared('updateOrCreate', true);
+      existsAndShared('upsert', true);
       existsAndShared('findOrCreate', false);
       existsAndShared('exists', true);
       existsAndShared('find', true);
@@ -57,10 +57,11 @@ describe('DataSource', function() {
       existsAndShared('hasMany', false);
       existsAndShared('belongsTo', false);
       existsAndShared('hasAndBelongsToMany', false);
-      existsAndShared('save', true);
+      existsAndShared('save', false);
       existsAndShared('isNewRecord', false);
       existsAndShared('_adapter', false);
-      existsAndShared('destroy', true);
+      existsAndShared('destroyById', true);
+      existsAndShared('destroy', false);
       existsAndShared('updateAttributes', true);
       existsAndShared('reload', true);
       
