@@ -1,6 +1,6 @@
 ##Concepts
 
-###What is a Model?
+###Model
 
 LoopBack is centered around models.  A model is an object that encapsulates data.  A model is usually named after its real life counterpart.  Like its real life counterpart a model has properties or attributes.
 
@@ -19,7 +19,7 @@ A model can also do things as actions and behavior.
 
 When developing your mobile applications, think of models being the "M" in your MVC framework.  Models in LoopBack have backend connectivty built in already, so that you can save data back to your backend and call actions or functions run on the backend seamlessly from your mobile application.
 
-###What is LoopBack Definition Language (LDL)?
+###LoopBack Definition Language (LDL)
 All models in LoopBack can be represented as JSON objects.  LoopBack has utilized and extended JSON to define a model's properties and structure.  The JSON that is utilized to help define a model's properties and stucture or schema is called LoopBack Definition Language (LDL).  LDL is a type of domain specific language <insert link>
 
   Example)
@@ -27,7 +27,7 @@ All models in LoopBack can be represented as JSON objects.  LoopBack has utilize
   model = person
   {firstname : string, lastname : string, age: number}
 
-###What is a Datasource and Connector?
+###Datasources and Connectors
 
 LoopBack allows you to connect to many sources of data and services in the cloud and on premise in your datacenter.  These sources of data and services are called Datasources.  
 
