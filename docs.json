@@ -6,6 +6,7 @@
     "docs/gettingstarted.md",
     "docs/resources.md",
     "docs/concepts.md",
-    "docs/api.md"
+    "docs/api.md",
+    "docs/rest.md"
   ]
 }
