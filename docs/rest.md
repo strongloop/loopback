@@ -3,18 +3,94 @@
 LoopBack automatically binds a model to a list of HTTP endpoints that provide REST APIs for CRUD and other remote
 operations.
 
-##General Considerations
+##Sample Model
 
+We use the following `Location` model as an example to illustrate generated REST APIs.
 
-##APIs
+    {
+      "name": "Location",
+      "options": {
+        "idInjection": false
+      },
+      "properties": {
+        "id": {
+          "type": "String",
+          "length": 20,
+          "id": 1
+        },
+        "street": {
+          "type": "String",
+          "required": false,
+          "length": 20
+        },
+        "city": {
+          "type": "String",
+          "required": false,
+          "length": 20
+        },
+        "zipcode": {
+          "type": "Number",
+          "required": false,
+          "length": 20
+        },
+        "name": {
+          "type": "String",
+          "required": false,
+          "length": 20
+        },
+        "geo": {
+          "type": "GeoPoint"
+        }
+      }
+    }
+
+By default, the REST APIs are mounted to `/pluralFormOfTheModelName`, for example, `/locations`.
+
+### CRUD remote methods
+
+- Model.create
+- Model.upsert
+- Model.exists
+- Model.findById
+- Model.find
+- Model.findOne
+- Model.deleteById
+- Model.count
+- Model.prototype.updateAttributes
+- Model.prototype.reload
+
+### Custom remote methods
+
+To expose a JavaScript method as REST API, we can simply describe the method as follows:
+
+    loopback.remoteMethod(
+      RentalLocation.nearby,
+      {
+        description: 'Find nearby locations around the given geo point',
+        accepts: [
+          {arg: 'here', type: 'GeoPoint', required: true},
+          {arg: 'page', type: 'Number'},
+          {arg: 'max', type: 'Number', description: 'max distance in miles'}
+        ],
+        returns: {arg: 'locations', root: true},
+        http: {verb: 'POST', path: '/nearby'}
+      }
+    );
+
+The remoting is defined using the following properties:
+- description: Description of the REST API
+- accepts: An array of parameter description
+- returns: Description of the return value
+- http: Binding to the HTTP endpoint
+
+##Generated APIs
+
 
 ###create
 
-
-Create a new model instance
+Create a new instance of the model and persist it into the data source
 
 ####Definition
-
 
     POST /locations
 
@@ -26,7 +102,7 @@ Create a new model instance
     curl -X POST -H "Content-Type:application/json" -d '' http://localhost:3000/locations
 
 ####Example Response
-    undefined
+
 
 ####Potential Errors
 * None
@@ -50,7 +126,7 @@ Update or create a model instance
     curl -X PUT -H "Content-Type:application/json" -d '' http://localhost:3000/locations
 
 ####Example Response
-    undefined
+
 
 ####Potential Errors
 * None
@@ -322,7 +398,7 @@ Update a model instance by id
     curl -X PUT -H "Content-Type:application/json" -d '' http://localhost:3000/locations/{id}
 
 ####Example Response
-    undefined
+
 
 ####Potential Errors
 * None
@@ -346,7 +422,7 @@ Reload a model instance by id
     curl -X POST -H "Content-Type:application/json" -d '' http://localhost:3000/locations/{id}/reload
 
 ####Example Response
-    undefined
+
 
 ####Potential Errors
 * None
