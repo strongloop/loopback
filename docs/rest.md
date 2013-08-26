@@ -48,16 +48,15 @@ By default, the REST APIs are mounted to `/pluralFormOfTheModelName`, for exampl
 
 ### CRUD remote methods
 
-- Model.create
-- Model.upsert
-- Model.exists
-- Model.findById
-- Model.find
-- Model.findOne
-- Model.deleteById
-- Model.count
-- Model.prototype.updateAttributes
-- Model.prototype.reload
+- Model.create: POST /locations
+- Model.upsert: PUT /locations
+- Model.exists: GET /locations/:id/exists
+- Model.findById: GET /locations/:id
+- Model.find: GET /locations
+- Model.findOne: GET /locations/findOne
+- Model.deleteById: DELETE /locations/:id
+- Model.count: GET /locations/count
+- Model.prototype.updateAttributes: PUT /locations/:id
 
 ### Custom remote methods
 
@@ -78,6 +77,7 @@ To expose a JavaScript method as REST API, we can simply describe the method as 
     );
 
 The remoting is defined using the following properties:
+
 - description: Description of the REST API
 - accepts: An array of parameter description
 - returns: Description of the return value
@@ -95,11 +95,11 @@ Create a new instance of the model and persist it into the data source
     POST /locations
 
 ####Arguments
-* **data**
+* **data** The model instance data
 
 
 ####Example Request
-    curl -X POST -H "Content-Type:application/json" -d '' http://localhost:3000/locations
+    curl -X POST -H "Content-Type:application/json" -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' http://localhost:3000/locations
 
 ####Example Response
 
@@ -111,7 +111,7 @@ Create a new instance of the model and persist it into the data source
 ###upsert
 
 
-Update or create a model instance
+Update an existing model instance or insert a new one into the data source
 
 ####Definition
 
@@ -119,11 +119,11 @@ Update or create a model instance
     PUT /locations
 
 ####Arguments
-* **data**
+* **data** The model instance data
 
 
 ####Example Request
-    curl -X PUT -H "Content-Type:application/json" -d '' http://localhost:3000/locations
+    curl -X PUT -H "Content-Type:application/json" -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' http://localhost:3000/locations
 
 ####Example Response
 
@@ -135,7 +135,7 @@ Update or create a model instance
 ###exists
 
 
-Check the existence of a model instance by id
+Check whether a model instance exists by id in the data source
 
 ####Definition
 
@@ -143,7 +143,7 @@ Check the existence of a model instance by id
     GET /locations/exists
 
 ####Arguments
-* **id**
+* **id** The model id
 
 
 ####Example Request
@@ -162,7 +162,7 @@ Check the existence of a model instance by id
 ###findById
 
 
-Retrieve a model instance by id
+Find a model instance by id from the data source
 
 ####Definition
 
@@ -170,7 +170,7 @@ Retrieve a model instance by id
     GET /locations/{id}
 
 ####Arguments
-* **id**
+* **id** The model id
 
 
 ####Example Request
@@ -197,7 +197,7 @@ Retrieve a model instance by id
 ###find
 
 
-Find all model instances matching the filter
+Find all instances of the model matched by filter from the data source
 
 ####Definition
 
@@ -205,8 +205,20 @@ Find all model instances matching the filter
     GET /locations
 
 ####Arguments
-* **filter**
+* **filter** The filter that defines where, order, fields, skip, and limit
 
+Properties for the filter object:
+
+    where - Object { key: val, key2: {gt: 'val2'}}
+    include - String, Object or Array.
+    order - String "key1 ASC, key2 DESC"
+    limit - Number The max number of items
+    skip - Number The number of items to be skipped
+    fields - Object|Array|String A list of properties to be included or excluded
+        ['foo'] or 'foo' - include only the foo property
+        ['foo', 'bar'] - include the foo and bar properties
+        {foo: true} - include only foo
+        {bat: false} - include all properties, exclude bat
 
 ####Example Request
     curl http://localhost:3000/locations
@@ -245,7 +257,7 @@ Find all model instances matching the filter
 ###findOne
 
 
-Find one model instance matching the filter
+Find first instance of the model matched by filter from the data source
 
 
 ####Definition
@@ -254,7 +266,20 @@ Find one model instance matching the filter
     GET /locations/findOne
 
 ####Arguments
-* **filter**
+* **filter** The filter that defines where, order, fields, skip, and limit
+
+Properties for the filter object:
+
+    where - Object { key: val, key2: {gt: 'val2'}}
+    include - String, Object or Array.
+    order - String "key1 ASC, key2 DESC"
+    limit - Number The max number of items
+    skip - Number The number of items to be skipped
+    fields - Object|Array|String A list of properties to be included or excluded
+        ['foo'] or 'foo' - include only the foo property
+        ['foo', 'bar'] - include the foo and bar properties
+        {foo: true} - include only foo
+        {bat: false} - include all properties, exclude bat
 
 
 ####Example Request
@@ -281,7 +306,7 @@ Find one model instance matching the filter
 ###deleteById
 
 
-Delete a model instance by id
+Delete a model instance by id from the data source
 
 ####Definition
 
@@ -289,7 +314,7 @@ Delete a model instance by id
     DELETE /locations/{id}
 
 ####Arguments
-* **id**
+* **id** The model id
 
 
 ####Example Request
@@ -305,7 +330,7 @@ Delete a model instance by id
 ###count
 
 
-Count the number of model instances matching the where criteria
+Count instances of the model matched by where from the data source
 
 ####Definition
 
@@ -313,7 +338,7 @@ Count the number of model instances matching the where criteria
     GET /locations/count
 
 ####Arguments
-* **where**
+* **where** The criteria to match model instances
 
 
 ####Example Request
@@ -332,7 +357,7 @@ Count the number of model instances matching the where criteria
 ###nearby
 
 
-Find nearby locations around a given geolocation
+Find nearby locations around the geo point
 
 ####Definition
 
@@ -340,9 +365,9 @@ Find nearby locations around a given geolocation
     GET /locations/nearby
 
 ####Arguments
-* **here**
-* **page**
-* **max** - max distance in miles
+* **here** geo location object with `lat` and `lng` properties
+* **page** number of pages (page size=10)
+* **max** max distance in miles
 
 
 ####Example Request
@@ -379,10 +404,10 @@ Find nearby locations around a given geolocation
 * None
 
 
-###update
+###updateAttributes
 
 
-Update a model instance by id
+Update attributes for a model instance and persist it into the data source
 
 ####Definition
 
@@ -390,36 +415,12 @@ Update a model instance by id
     PUT /locations/{id}
 
 ####Arguments
-* **data**
-* **id**
+* **data** An object containing property name/value pairs
+* **id** The model id
 
 
 ####Example Request
-    curl -X PUT -H "Content-Type:application/json" -d '' http://localhost:3000/locations/{id}
-
-####Example Response
-
-
-####Potential Errors
-* None
-
-
-###reload
-
-
-Reload a model instance by id
-
-####Definition
-
-
-    POST /locations/{id}/reload
-
-####Arguments
-* **id**
-
-
-####Example Request
-    curl -X POST -H "Content-Type:application/json" -d '' http://localhost:3000/locations/{id}/reload
+    curl -X PUT -H "Content-Type:application/json" -d '{"name': "L2"}' http://localhost:3000/locations/88
 
 ####Example Response
 
