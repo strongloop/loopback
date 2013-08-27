@@ -79,7 +79,7 @@ REST endpoint is automatically created for you.  You can see and experiment with
 
 LoopBack also supports other protocols for your API as well.  Socket.io is another protocol that is currently being developed. 
 
-For more information, please read [Model REST APIs](/loopback#model-rest-api).
+For more information, please read [Model REST APIs](#model-rest-api).
 
 ### Mix In
 
