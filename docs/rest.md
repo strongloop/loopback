@@ -1,9 +1,9 @@
-#Model REST API
+## REST API
 
 LoopBack automatically binds a model to a list of HTTP endpoints that provide REST APIs for CRUD and other remote
 operations.
 
-##Sample Model
+### Sample Model
 
 We use the following `Location` model as an example to illustrate generated REST APIs.
 
@@ -83,7 +83,7 @@ The remoting is defined using the following properties:
 - returns: Description of the return value
 - http: Binding to the HTTP endpoint
 
-##Generated APIs
+###Generated APIs
 
 
 ###create

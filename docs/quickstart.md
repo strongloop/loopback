@@ -21,3 +21,5 @@ $ slc run app
 **Step 5** Try out the various REST apis by clicking the button below.
 
 <a href="http://localhost:3000/explorer" class="status btn btn-primary">Explore the REST APIs</a>
+
+---
