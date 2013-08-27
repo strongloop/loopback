@@ -1,5 +1,9 @@
 ##Concepts
 
+###SDKs
+
+**PLACEHOLDER FOR SDK INTRO**
+
 ###Model
 
 LoopBack is centered around models.  A model is an object that encapsulates data.  A model is usually named after its real life counterpart.  Like its real life counterpart a model has properties or attributes.
