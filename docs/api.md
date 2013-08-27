@@ -276,13 +276,37 @@ Find all instances of Model, matched by query. Fields used for filter and sort s
 
 **filter**
 
- - **where** `Object` { key: val, key2: {gt: 'val2'}}
- - **include** `String`, `Object` or `Array`.
- - **order** `String`
- - **limit** `Number`
- - **skip** `Number`
- - **fields** `Object|Array|String`
-  - `['foo']` or `'foo'` - include only the foo property 
+ - **where** `Object` { key: val, key2: {gt: 'val2'}} The search criteria
+   - Format: {key: val} or {key: {op: val}}
+   - Operations:
+     - gt: >
+     - gte: >=
+     - lt: <
+     - lte: <=
+     - between
+     - inq: IN
+     - nin: NOT IN
+     - neq: !=
+     - like: LIKE
+     - nlike: NOT LIKE
+
+ - **include** `String`, `Object` or `Array` Allows you to load relations of several objects and optimize numbers of requests.
+    - Format:
+      - 'posts': Load posts
+      - ['posts', 'passports']: Load posts and passports
+      - {'owner': 'posts'}: Load owner and owner's posts
+      - {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
+      - {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
+
+ - **order** `String` The sorting order
+   - Format: 'key1 ASC, key2 DESC'
+
+ - **limit** `Number` The maximum number of instances to be returned
+ - **skip** `Number` Skip the number of instances
+ - **offset** `Number` Alias for skip
+
+ - **fields** `Object|Array|String` The included/excluded fields
+  - `['foo']` or `'foo'` - include only the foo property
   - `['foo', 'bar']` - include the foo and bar properties
   - `{foo: true}` - include only foo
   - `{bat: false}` - include all properties, exclude bat
