@@ -63,7 +63,7 @@ describe('DataSource', function() {
       existsAndShared('destroyById', true);
       existsAndShared('destroy', false);
       existsAndShared('updateAttributes', true);
-      existsAndShared('reload', true);
+      existsAndShared('reload', false);
       
       function existsAndShared(name, isRemoteEnabled) {
         var op = memory.getOperation(name);
