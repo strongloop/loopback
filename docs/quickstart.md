@@ -1,4 +1,4 @@
-##Quick Start
+###Quick Start
 
 **Step 1** Install the [StrongLoop Suite](#NEED_LINK)
 
