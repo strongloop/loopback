@@ -324,24 +324,12 @@ Find first instance of the model matched by filter from the data source
     GET /locations/findOne
 
 ####Arguments
-* **filter** The filter that defines where, order, fields, skip, and limit
-
-Properties for the filter object:
-
-    where - Object { key: val, key2: {gt: 'val2'}}
-    include - String, Object or Array.
-    order - String "key1 ASC, key2 DESC"
-    limit - Number The max number of items
-    skip - Number The number of items to be skipped
-    fields - Object|Array|String A list of properties to be included or excluded
-        ['foo'] or 'foo' - include only the foo property
-        ['foo', 'bar'] - include the foo and bar properties
-        {foo: true} - include only foo
-        {bat: false} - include all properties, exclude bat
+* **filter** The filter that defines where, order, fields, skip, and limit. It's
+same as find's filter argument. Please see [find](#find) for more details.
 
 
 ####Example Request
-    curl http://localhost:3000/locations/findOne
+    curl http://localhost:3000/locations/findOne?filter[where][city]=Scottsdale
 
 ####Example Response
 
