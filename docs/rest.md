@@ -1,52 +1,23 @@
 ## REST API
 
-LoopBack automatically binds a model to a list of HTTP endpoints that provide REST APIs for CRUD and other remote
+The REST API allows clients to interact with the LoopBack models using HTTP.
+The clients can be a web browser, a JavaScript program, a mobile SDK, a curl
+script, or anything that can act as an HTTP client.
+
+LoopBack automatically binds a model to a list of HTTP endpoints that provide
+REST APIs for model instance data manipulations (CRUD) and other remote
 operations.
 
-### Sample Model
+We'll use a simple model called `Location` (locations for rental) to illustrate
+what REST APIs are exposed by LoopBack.
 
-We use the following `Location` model as an example to illustrate generated REST APIs.
-
-    {
-      "name": "Location",
-      "options": {
-        "idInjection": false
-      },
-      "properties": {
-        "id": {
-          "type": "String",
-          "length": 20,
-          "id": 1
-        },
-        "street": {
-          "type": "String",
-          "required": false,
-          "length": 20
-        },
-        "city": {
-          "type": "String",
-          "required": false,
-          "length": 20
-        },
-        "zipcode": {
-          "type": "Number",
-          "required": false,
-          "length": 20
-        },
-        "name": {
-          "type": "String",
-          "required": false,
-          "length": 20
-        },
-        "geo": {
-          "type": "GeoPoint"
-        }
-      }
-    }
-
-By default, the REST APIs are mounted to `/pluralFormOfTheModelName`, for example, `/locations`.
+By default, the REST APIs are mounted to `/<pluralFormOfTheModelName>`, for
+example, `/locations`, to the base URL such as http://localhost:3000/.
 
 ### CRUD remote methods
+
+For a model backed by a data source that supports CRUD operations, you'll see
+the following endpoints:
 
 - Model.create: POST /locations
 - Model.upsert: PUT /locations
@@ -60,15 +31,16 @@ By default, the REST APIs are mounted to `/pluralFormOfTheModelName`, for exampl
 
 ### Custom remote methods
 
-To expose a JavaScript method as REST API, we can simply describe the method as follows:
+To expose a JavaScript method as REST API, we can simply describe the method as
+follows:
 
     loopback.remoteMethod(
       RentalLocation.nearby,
       {
-        description: 'Find nearby locations around the given geo point',
+        description: 'Find nearby locations around the geo point',
         accepts: [
-          {arg: 'here', type: 'GeoPoint', required: true},
-          {arg: 'page', type: 'Number'},
+          {arg: 'here', type: 'GeoPoint', required: true, description: 'geo location (lat & lng)'},
+          {arg: 'page', type: 'Number', description: 'number of pages (page size=10)'},
           {arg: 'max', type: 'Number', description: 'max distance in miles'}
         ],
         returns: {arg: 'locations', root: true},
@@ -79,9 +51,33 @@ To expose a JavaScript method as REST API, we can simply describe the method as 
 The remoting is defined using the following properties:
 
 - description: Description of the REST API
-- accepts: An array of parameter description
+- accepts: An array of parameters, each parameter has a name, a type, and an
+optional description
 - returns: Description of the return value
-- http: Binding to the HTTP endpoint
+- http: Binding to the HTTP endpoint, including the verb and path
+
+### Request Format
+
+For POST and PUT requests, the request body must be JSON, with the Content-Type
+header set to application/json.
+
+### Response Format
+
+The response format for all requests is a JSON object or array if present. Some
+responses have an empty body.
+
+Whether a request succeeded is indicated by the HTTP status code. A 2xx status
+code indicates success, whereas a 4xx status code indicates request related
+issues. 5xx status code reports server side problems.
+
+The response for an error is in the following format:
+
+    {
+    "error": {
+    "message": "could not find a model with id 1",
+    "stack": "Error: could not find a model with id 1\n ...",
+    "statusCode": 404
+    }
 
 ###Generated APIs
 
@@ -99,7 +95,9 @@ Create a new instance of the model and persist it into the data source
 
 
 ####Example Request
-    curl -X POST -H "Content-Type:application/json" -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' http://localhost:3000/locations
+    curl -X POST -H "Content-Type:application/json" \
+    -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' \
+    http://localhost:3000/locations
 
 ####Example Response
 
@@ -123,7 +121,9 @@ Update an existing model instance or insert a new one into the data source
 
 
 ####Example Request
-    curl -X PUT -H "Content-Type:application/json" -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' http://localhost:3000/locations
+    curl -X PUT -H "Content-Type:application/json" \
+    -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' \
+    http://localhost:3000/locations
 
 ####Example Response
 
@@ -420,19 +420,21 @@ Update attributes for a model instance and persist it into the data source
 
 
 ####Example Request
-    curl -X PUT -H "Content-Type:application/json" -d '{"name': "L2"}' http://localhost:3000/locations/88
+    curl -X PUT -H "Content-Type:application/json" -d '{"name': "L2"}' \
+    http://localhost:3000/locations/88
 
 ####Example Response
 
 
 ####Potential Errors
-* None
+* 404 No instance found for the given id
 
 
 ###getInventory
 
 
-Follow the relations from location to inventory to get a list of items for a given location
+Follow the relations from location to inventory to get a list of inventory items
+for a given location
 
 ####Definition
 
@@ -440,8 +442,8 @@ Follow the relations from location to inventory to get a list of items for a giv
     GET /locations/{id}/inventory
 
 ####Arguments
-* **where**
-* **id**
+* **where** The search criteria for inventory items
+* **id** The id for the location model
 
 
 ####Example Request
