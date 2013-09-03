@@ -1,10 +1,49 @@
 ##Concepts
 
+###What is LoopBack?
+
+ - a component in the StrongLoop Suite
+ - a library of Node.js modules for connecting mobile apps to various data
+ sources
+ - a command line tool `slc lb` for generating applications and models 
+
 ###SDKs
 
 **PLACEHOLDER FOR SDK INTRO**
 
-###Model
+###Building Your App
+
+LoopBack apps are made up of three components: mobile clients, data sources, and
+models. Clients use LoopBack SDKS to interact with data sources, such as a
+database or REST api. Models define how clients are allowed to interact with
+these data sources.
+
+Any mobile or web application can interact with a LoopBack data source through
+the model API. The model API is available over REST and as native mobile SDKs
+for iOS, Android, and HTML5. LoopBack 
+
+
+
+
+- LoopBack apps are made up of models.
+- Models
+ - namespaced api to a data source
+  - Product model => Product Table
+ - Schemaless by default...
+ - You can define two styles of validation
+  - LDL
+  - validate*
+ - Ecommerce example
+  - Product
+  - Customer
+  - Inventory
+  - Location
+ - Custom behavior
+ - Relationships
+ - Bundled Models
+  - User
+  - Email
+  - Session
 
 LoopBack is centered around models.  A model is an object that encapsulates
 data.  A model is usually named after its real life counterpart.  Like its real
