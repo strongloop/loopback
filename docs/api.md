@@ -29,7 +29,6 @@ Expose a `Model` to remote clients.
 // create a testing data source
 var memory = loopback.memory();
 var Color = memory.createModel('color', {name: String});
-Color.attachTo(memory);
 
 app.model(Color);
 app.use(loopback.rest());
