@@ -111,6 +111,6 @@ LoopBack takes this one step further by allowing you to seamlessly
 invoke server side code running in LoopBack in the backend from the
 your client on the front end.
 
-For more information, please read the [Remoting Guide](/strong-remoting.README.md).
+For more information, please read the [Remoting Guide](/strong-remoting).
 
 ---
