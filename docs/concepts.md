@@ -6,94 +6,125 @@
  - a library of Node.js modules for connecting mobile apps to various data
  sources
  - a command line tool `slc lb` for generating applications and models 
+ - a set of SDKs for native and web mobile clients
 
-###SDKs
+###How it Works
+
+LoopBack apps are made up of three components: mobile clients, data sources, and
+models. Clients, such as mobile or web apps, use LoopBack mobile SDKs to
+interact with data sources, such as a database or REST API. Access to these
+data sources is provided by models, which control how a data source is exposed
+to a mobile client.
+
+Any mobile or web app can interact with a LoopBack data source through
+the model API. The model API is available in Node.js, over REST, and as
+native mobile SDKs for iOS, Android, and HTML5. Using the API, clients can query
+databases, store data, upload files, send emails, create push notifications,
+register users, and any other behavior provided by data sources.
+
+### Mobile Clients
 
 **PLACEHOLDER FOR SDK INTRO**
 
-###Building Your App
+###Models
 
-LoopBack apps are made up of three components: mobile clients, data sources, and
-models. Clients use LoopBack SDKS to interact with data sources, such as a
-database or REST api. Models define how clients are allowed to interact with
-these data sources.
+**What is a Model?**
 
-Any mobile or web application can interact with a LoopBack data source through
-the model API. The model API is available over REST and as native mobile SDKs
-for iOS, Android, and HTML5. LoopBack 
+In LoopBack, a **Model** consists of the following.
 
+ - application data
+ - business rules
+ - logic
+ - functions
 
+A mobile client uses APIs provided by **Models** to request any information
+needed to display a useful interface to the user.
 
+**A Simple Example**
 
-- LoopBack apps are made up of models.
-- Models
- - namespaced api to a data source
-  - Product model => Product Table
- - Schemaless by default...
- - You can define two styles of validation
-  - LDL
-  - validate*
- - Ecommerce example
-  - Product
-  - Customer
-  - Inventory
-  - Location
- - Custom behavior
- - Relationships
- - Bundled Models
-  - User
-  - Email
-  - Session
+For example, an e-commerce app might have `Product` and `Inventory` models.
+A mobile client could use the `Product` model API to search all the products in
+a database. A client could join the `Product` and `Inventory` data to determine
+what products are in-stock, or the `Product` model could provide a server-side
+function (or [remote method](#remote-methods)) that returns this information.
 
-LoopBack is centered around models.  A model is an object that encapsulates
-data.  A model is usually named after its real life counterpart.  Like its real
-life counterpart, a model has some properties. Each property has a name, a type,
-and other attributes. For example,
+```js
+var loopback = require('loopback');
+var Model = loopback.Model;
+var Product = Model.extend('product');
+var Inventory = Model.extend('customer');
+```
 
-    model: Person
+> - Models are **schema-less** by default.
+> - Some data sources, such as relational databases, require schemas.
+> - Adding a schema allows you to sanitize data coming from mobile clients.
 
-    properties:
-    - a Person model has properties such as First Name, Last Name and Birthday.
-    - First Name and Last Name are strings while Birthday is date.
+**Attaching Data Sources**
 
-A model can also do things as actions and behaviors. Some actions are common to
-all instances of the same model while others are specific to a given instance.
-For example,
+Attaching a model to a data source gives you access to the data source's API.
+Using the MongoDB connector, this data source provides a `create` method. This
+example uses the `create` method to store a new product.
 
-    model: Person
+```js
+var db = loopback.createDataSource({
+  connector: require('loopback-connector-mongodb')
+});
 
-    actions:
-    - a Person model can say his/her Full Name (relying on a given instance)
-    - a Person model can find people by Last Name (independent of instances)
+// enables the model to use
+// the mongodb api
+Product.attachTo(db);
 
-Models are the vehicle for data exchange and data representation across
-different layers in LoopBack. For example, the Person model is available as
-database tables, Node.js classes, REST resources, and mobile SDK objects.
+// create a new product in the database
+Product.create({name: 'widget', price: 99.99}, function(err, widget) {
+  console.log(widget.id); // the product's id
+});
+```
 
-When developing your mobile applications, think of models being the "M" in your
-MVC framework.  Models in LoopBack have backend connectivity built in already,
-so that you can save data back to your backend and call actions or functions run
-on the backend seamlessly from your mobile application.
+**Exposing to Mobile Clients**
 
-###LoopBack Definition Language (LDL)
+Models can be exposed to mobile clients using one of the remoting middlewares.
+This example uses the `app.rest` middleware to expose the `Product` model's API
+over REST.
 
-All models in LoopBack can be described as JSON objects.  LoopBack has utilized
-and extended JSON to define a model's properties and structure. The JSON that is
-utilized to help define a model's properties and structure or schema is called
-LoopBack Definition Language (LDL). LDL is simple DSL to define data models in
-JavaScript or plain JSON. The model definitions establish common knowledge of
-data in LoopBack. For example,
+```js
+// create a loopback app
+var app = loopback();
 
-    model: Person
+// use the REST remoting middleware
+app.use(loopback.rest());
 
-    definition in LDL:
-    {
-        "firstName" : "string",
-        "lastName" : "string",
-        "birthday": "date"
-    }
+// expose the `Product` model
+app.model(Product);
+```
 
-For more information, please read [LoopBack Definition Language Guide](/loopback-datasource-juggler/#loopback-definition-language-guide).
+**Sanitizing and Validating Models**
+
+Once a schema is added to a model, it will validate and sanitize data before
+giving it to a data source. For example, the `Product` model has a schema that
+will not change. The example below updates the `Product` model with a schema
+written in **LoopBack Definition Language**, a well documented flavor of JSON.
+
+```js
+var productSchema = {
+  "name": {"type": "string", "required": true},
+  "price": "number"
+};
+var Product = Model.extend('product', productSchema);
+```
+
+If a remote client tries to save a product with extra properties, they will be
+removed. The model will only be saved if the product contains the required
+`name` property.
+
+**Learn more about models**
+
+- Check out the model [REST API](#rest-api)
+- Read the
+[LoopBack Definition Language Guide](http://docs.strongloop.com/loopback-datasource-juggler#loopback-definition-language-guide).
+- Browse the [Node.js Model API](#model).
+- Before you build your own, check out the [bundled models](#bundled-models).
+- Expose custom behavior to clients using [remote methods](#remote-methods).
+- See how to [define relationships](#relationships) between models.
 
 ###Datasources and Connectors
 
@@ -115,11 +146,11 @@ using database drivers or other client APIs. In general, connectors are not used
 directly by application code. The DataSource class provides APIs to configure
 the underlying connector and exposes functions via DataSource or model classes.
 
-#### LoopBack Connector Modules
+**LoopBack Connector Modules**
 
 |    Type   | Package Name                                                                           |
-| --------- |:--------------------------------------------------------------------------------------:|
-| Memory    | [Built-in](https://github.com/strongloop/loopback-datasource-juggler) |
+| --------- | -------------------------------------------------------------------------------------- |
+| Memory    | [Built-in](https://github.com/strongloop/loopback-datasource-juggler)                  |
 | MongoDB   | [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb) |
 | Oracle    | [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)   |
 | REST      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
