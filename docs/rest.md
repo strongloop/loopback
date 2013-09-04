@@ -120,7 +120,17 @@ Create a new instance of the model and persist it into the data source
     http://localhost:3000/locations
 
 ####Example Response
-
+    {
+      "id": "96",
+      "street": "107 S B St",
+      "city": "San Mateo",
+      "zipcode": 94401,
+      "name": "L1",
+      "geo": {
+        "lat": 37.5670042,
+        "lng": -122.3240212
+      }
+    }
 
 ####Potential Errors
 * None
@@ -141,11 +151,40 @@ Update an existing model instance or insert a new one into the data source
 
 
 ####Example Request
+
+#####Insert
     curl -X PUT -H "Content-Type:application/json" \
     -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' \
     http://localhost:3000/locations
 
+#####Update
+    curl -X PUT -H "Content-Type:applicatin/json" \
+    -d '{"id": "98", "name": "L4", "street": "107 S B St", "city": "San Mateo", \
+    "zipcode": "94401"}' http://localhost:3000/locations
+
 ####Example Response
+
+#####Insert
+    {
+      "id": "98",
+      "street": "107 S B St",
+      "city": "San Mateo",
+      "zipcode": 94401,
+      "name": "L1",
+      "geo": {
+        "lat": 37.5670042,
+        "lng": -122.3240212
+      }
+    }
+
+#####Update
+    {
+      "id": "98",
+      "street": "107 S B St",
+      "city": "San Mateo",
+      "zipcode": 94401,
+      "name": "L4"
+    }
 
 
 ####Potential Errors
@@ -167,7 +206,7 @@ Check whether a model instance exists by id in the data source
 
 
 ####Example Request
-    curl http://localhost:3000/locations/exists/88
+    curl http://localhost:3000/locations/88/exists
 
 ####Example Response
 
@@ -265,7 +304,6 @@ Find all instances of the model matched by filter from the data source
 For example,
 
  - '/weapons': Weapons
- - '/weapons/2': A weapon by id
  - '/weapons?filter[limit]=2&filter[offset]=5': Paginated Weapons
  - '/weapons?filter[where][name]=M1911': Weapons with name M1911
  - '/weapons?filter[where][audibleRange][lt]=10': Weapons with audioRange < 10
@@ -274,12 +312,18 @@ For example,
  - '/weapons?filter[order]=audibleRange%20DESC&filter[limit]=3': The loudest 3 weapons
 
  - '/locations': Locations
- - '/locations/nearby?here[lat]=37.587409&here[lng]=-122.338225': Locations nearby
  - '/locations?filter[where][geo][near]=153.536,-28.1&filter[limit]=3': The 3 closest locations to a given geo point
- - '/locations/87/inventory': The inventory for store 87
+
 
 ####Example Request
+
+#####Find without filter
     curl http://localhost:3000/locations
+
+#####Find with a filter
+    curl http://localhost:3000/locations?filter%5Blimit%5D=2
+
+**Note**: For curl, `[` needs to be encoded as `%5B`, and `]` as `%5D`.
 
 ####Example Response
 
@@ -329,7 +373,7 @@ same as find's filter argument. Please see [find](#find) for more details.
 
 
 ####Example Request
-    curl http://localhost:3000/locations/findOne?filter[where][city]=Scottsdale
+    curl http://localhost:3000/locations/findOne?filter%5Bwhere%5D%5Bcity%5D=Scottsdale
 
 ####Example Response
 
@@ -388,7 +432,12 @@ Count instances of the model matched by where from the data source
 
 
 ####Example Request
+
+#####Count without where
     curl http://localhost:3000/locations/count
+
+#####Count with a where filter
+    curl http://localhost:3000/locations/cunt?where%5bcity%5d=Burlingame
 
 ####Example Response
 
@@ -417,7 +466,7 @@ Find nearby locations around the geo point
 
 
 ####Example Request
-    curl http://localhost:3000/locations/nearby?here[lat]=37.587409&here[lng]=-122.338225
+    curl http://localhost:3000/locations/nearby?here%5Blat%5D=37.587409&here%5Blng%5D=-122.338225
 
 ####Example Response
 
@@ -466,21 +515,32 @@ Update attributes for a model instance and persist it into the data source
 
 
 ####Example Request
-    curl -X PUT -H "Content-Type:application/json" -d '{"name': "L2"}' \
+    curl -X PUT -H "Content-Type:application/json" -d '{"name": "L2"}' \
     http://localhost:3000/locations/88
 
 ####Example Response
-
+    {
+      "id": "88",
+      "street": "390 Lang Road",
+      "city": "Burlingame",
+      "zipcode": 94010,
+      "name": "L2",
+      "geo": {
+        "lat": 37.5874391,
+        "lng": -122.3381437
+      },
+      "state": "CA"
+    }
 
 ####Potential Errors
 * 404 No instance found for the given id
 
 
-###getInventory
+###getAssociatedModel
 
 
-Follow the relations from location to inventory to get a list of inventory items
-for a given location
+Follow the relations from one model (`location`) to another one (`inventory`) to
+get instances of the associated model.
 
 ####Definition
 
@@ -488,7 +548,6 @@ for a given location
     GET /locations/{id}/inventory
 
 ####Arguments
-* **where** The search criteria for inventory items
 * **id** The id for the location model
 
 
