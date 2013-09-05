@@ -19,11 +19,10 @@
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
     "nodemailer": "~0.4.4",
-    "ejs": "~0.8.4",
-    "blanket": "~1.1.5",
-    "mocha": "~1.8.2"
+    "ejs": "~0.8.4"
   },
   "devDependencies": {
+    "blanket": "~1.1.5",
     "mocha": "~1.12.1",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.7.1"
