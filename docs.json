@@ -8,6 +8,7 @@
     "docs/concepts.md",
     {"title": "API", "depth": 2},
     "docs/api.md",
-    "docs/rest.md"
+    "docs/rest.md",
+    "docs/cli.md"
   ]
 }
