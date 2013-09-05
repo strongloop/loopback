@@ -1,5 +1,6 @@
 {
   "title": "LoopBack",
+	"assets": "docs/assets",
   "content": [
     "docs/intro.md",
     "docs/quickstart.md",
