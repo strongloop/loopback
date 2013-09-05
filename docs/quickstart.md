@@ -50,6 +50,7 @@ API Explorer</a>
 
 > Check out the rest of the StrongLoop Suite.
 
+ - To see how to consume the API from mobile clients, check out the [Getting Started](#getting-started) guide.
  - To see the out-of-the-box scaling capability of the Suite, check out the
  [StrongNode Quick Start Guide](http://docs.strongloop.com/strongnode#quick-start).
  - To see the provided CPU profiling and path trace features, check out the
