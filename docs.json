@@ -12,5 +12,8 @@
     "docs/js.md",
     "docs/java.md",
     "docs/rest.md"
-  ]
+  ],
+  "assets": {
+    "/": "/docs"
+  }
 }
