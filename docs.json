@@ -6,9 +6,11 @@
     "docs/gettingstarted.md",
     "docs/resources.md",
     "docs/concepts.md",
-    {"title": "API", "depth": 2},
+    "docs/cli.md",
     "docs/api.md",
-    "docs/rest.md",
-    "docs/cli.md"
+    "docs/ios.md",
+    "docs/js.md",
+    "docs/java.md",
+    "docs/rest.md"
   ]
 }
