@@ -889,18 +889,26 @@ var memory = loopback.createDataSource({
 });
 ```
     
-**Available Connectors**
+**Database Connectors**
  
  - [In Memory](#memory-connector)
- - [REST](http://github.com/strongloop/loopback-connector-rest)
  - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
  - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
- - TODO - [MySQL](http://github.com/strongloop/loopback-connector-mysql)
- - TODO - [SQLite3](http://github.com/strongloop/loopback-connector-sqlite)
- - TODO - [Postgres](http://github.com/strongloop/loopback-connector-postgres)
- - TODO - [Redis](http://github.com/strongloop/loopback-connector-redis)
- - TODO - [CouchDB](http://github.com/strongloop/loopback-connector-couch)
- - TODO - [Firebird](http://github.com/strongloop/loopback-connector-firebird)
+ - [MySQL](http://github.com/strongloop/loopback-connector-mysql) - In Development
+ - [SQLite3](http://github.com/strongloop/loopback-connector-sqlite) - In Development
+ - [Postgres](http://github.com/strongloop/loopback-connector-postgres) - In Development
+ - [Redis](http://github.com/strongloop/loopback-connector-redis) - In Development
+ - [CouchDB](http://github.com/strongloop/loopback-connector-couch) - In Development
+ - [Firebird](http://github.com/strongloop/loopback-connector-firebird) - In Development
+
+**Other Connectors**
+
+ - [REST](http://github.com/strongloop/loopback-connector-rest)
+ - [Email](#email-model)
+ - [JSON RPC](http://github.com/strongloop/loopback-connector-jsonrpc) - In Development
+ - [SOAP](http://github.com/strongloop/loopback-connector-soap) - In Development
+ - [Push Notifications](https://github.com/strongloop/loopback-push-notification) - In Development
+ - [File Storage](https://github.com/strongloop/loopback-storage-service) - In Development
 
 **Installing Connectors**
 
@@ -948,8 +956,6 @@ function count() {
   Product.count(console.log); // 3
 }
 ```
-
-###### Operations
 
 **CRUD / Query**
 
