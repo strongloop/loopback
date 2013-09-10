@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "debug": "~0.7.2",
-    "express": "~3.1.1",
+    "express": "~3.4.0",
     "loopback-datasource-juggler": "git+ssh://git@github.com:strongloop/loopback-datasource-juggler.git",
     "strong-remoting": "git+ssh://git@github.com:strongloop/strong-remoting.git",
     "inflection": "~1.2.5",
