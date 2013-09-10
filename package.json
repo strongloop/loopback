@@ -27,5 +27,9 @@
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.7.1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strongloop/loopback"
+  },
   "license": "MIT"
 }
