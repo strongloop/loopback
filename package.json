@@ -12,8 +12,8 @@
   "dependencies": {
     "debug": "~0.7.2",
     "express": "~3.1.1",
-    "loopback-datasource-juggler": "git+ssh://git@github.com:strongloop/loopback-datasource-juggler.git#strongloopsuite-1.0.0-0",
-    "strong-remoting": "git+ssh://git@github.com:strongloop/strong-remoting.git#strongloopsuite-1.0.0-0",
+    "loopback-datasource-juggler": "git+ssh://git@github.com:strongloop/loopback-datasource-juggler.git#strongloopsuite-1.0.0-2",
+    "strong-remoting": "git+ssh://git@github.com:strongloop/strong-remoting.git#strongloopsuite-1.0.0-2",
     "inflection": "~1.2.5",
     "bcrypt": "~0.7.6",
     "passport": "~0.1.17",
