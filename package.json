@@ -1,6 +1,7 @@
 {
   "name": "loopback",
-  "description": "loopback",
+  "description": "LoopBack: Open Mobile Platform for Node.js",
+  "keywords": [ "StrongLoop", "LoopBack", "Mobile", "Backend", "Platform", "mBaaS" ],
   "version": "1.0.0",
   "scripts": {
     "test": "mocha -R spec",
