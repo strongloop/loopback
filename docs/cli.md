@@ -17,15 +17,15 @@ name. The default name is "loopback-workspace".
 $ slc lb workspace my-loopback-workspace
 ```
 
-#### api
+#### project
 
-Create a LoopBack application in a new directory within a workspace
+Create a LoopBack application in a new directory within the current directory
 using the given name. The name arg is required.
 
 ```sh
 $ cd my-loopback-workspace
-$ slc lb api my-app
-$ slc run app
+$ slc lb project my-app
+$ slc run my-app
 ```
 
 #### model
