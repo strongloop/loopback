@@ -16,11 +16,11 @@
     "loopback-datasource-juggler": "~1.0.0",
     "strong-remoting": "~1.0.0",
     "inflection": "~1.2.5",
-    "bcrypt": "~0.7.7",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
     "nodemailer": "~0.4.4",
-    "ejs": "~0.8.4"
+    "ejs": "~0.8.4",
+    "bcryptjs": "~0.7.10"
   },
   "devDependencies": {
     "blanket": "~1.1.5",
