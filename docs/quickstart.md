@@ -2,7 +2,7 @@
 
 <h4>Step 1</h4>
 
-> Install the [StrongLoop Suite](#NEED_LINK)
+> Install [StrongLoop Suite](http://www.strongloop.com/get-started)
 
 <h4>Step 2</h4>
 
