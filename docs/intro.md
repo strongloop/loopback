@@ -1,5 +1,4 @@
 # LoopBack
-**v1.0.0**
 
 LoopBack is part of the [StrongLoop Suite](www.strongloop.com/strongloop-suite).
 
