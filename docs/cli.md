@@ -29,7 +29,7 @@ $ slc run my-app
 ```
 
 #### model
-Create  a model in an existing LoopBack application. If you provide the
+Create a model in an existing LoopBack application. If you provide the
 `-i` or `--interactive` flags, you will be prompted through a model
 configuration. The `--data-source` flag allows you to specify the name of a
 custom data. Otheriwse it will use the data source named "db".
@@ -38,3 +38,5 @@ custom data. Otheriwse it will use the data source named "db".
 $ cd my-app
 $ slc lb model product
 ```
+
+---

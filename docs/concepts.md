@@ -27,7 +27,7 @@ mobile SDKs for [iOS, Android, and HTML5](#mobile-clients). Using the API,
 clients can query databases, store data, upload files, send emails, create push
 notifications, register users, and any other behavior provided by data sources.
 
-![concepts](loopback-concepts.png "LoopBack Concepts")
+![concepts](assets/loopback-concepts.png "LoopBack Concepts")
 
 ### Mobile Clients
 
@@ -215,5 +215,24 @@ invoke server side code running in LoopBack in the backend from the
 your client on the front end.
 
 For more information, please read the [Remoting Guide](/strong-remoting).
+
+### The Big Picture
+
+LoopBack's overall representation is illustrated below through its
+runtime sub-components:
+
+-  Mobile Clients
+- API Gateway - ***Coming Soon***
+- API Server
+- Enterprise Connectors
+
+As well as its management sub-components:
+
+- Editor - ***Coming Soon***
+- Admin Console - ***Coming Soon***
+- LoopBack Shell
+- Repository/Registry
+
+![loopback_overview](assets/loopback_ov.png "LoopBack Overview")
 
 ---
