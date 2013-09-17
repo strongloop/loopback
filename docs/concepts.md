@@ -31,11 +31,33 @@ notifications, register users, and any other behavior provided by data sources.
 
 ### Mobile Clients
 
-**PLACEHOLDER FOR SDK INTRO**
+Loopback Mobile Client SDKs give mobile developers direct access to
+mobile models and services from their native development environment and language.
 
-In summary, mobile clients work with objects that are connected to LoopBack
-to provide data and perform actions.Those objects are captured as models in
-LoopBack.
+LoopBack SDK's support both predefined static schema's and dynamic
+'schema-less'mobile models.
+
+A Dynamic or Schema-less model strategy allows mobile developer to
+define custom model definitions directly from the SDK that are often
+specific to a mobile application needs.  Similar to 'Document
+Storage' solutions such as Redis or MongoDB.  Dynamic models have
+the added benefit of allowing mobile developers to work with
+LoopBack as a Mobile back end-as-a-service (mBaaS) without having to
+predefine the model definition on the server.  This strategy is
+often leveraged for data that originates on the mobile device and
+then persisted in the Mobile backend for later mobile consumption or
+server side processing.
+
+Static or traditional schema strategies are also supported in
+LoopBack.  A static model configuration promote a consistency in
+mobile model data and provides easy integration or direct binding to
+traditional RDBMs such as Oracle and MySQL. The added governance and
+reliability in providing a 'rigid' model also promotes more robust
+data integrity, validation and standardization.
+
+The ability to leverage either or both strategies in a mobile middle
+tier allows developers to select the best implementation for their
+use case.
 
 ### Models
 
@@ -244,7 +266,7 @@ Loopback stand out as an api tier built for mobile:
 not only traditional RDBMS, but also noSQL and services
 3. As a mobile backend as a service (mBaaS) we help you leverage
 valuable existing data in your mobile app as well dynamically create
-new schema or schemaless data
+new schema or schema-less data
 
 <h4> Mobile clients </h4>
 We're putting a lot of effort into building flexibility and
