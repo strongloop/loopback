@@ -29,7 +29,7 @@ $ slc run app
 
 > Open the app in a browser.
 
-The sample app should now be running at <http://localhost:3000>. The homepage of
+The sample app should now be running at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>. The homepage of
 the sample app lists several sample requests you can make against the LoopBack
 REST API.
 
