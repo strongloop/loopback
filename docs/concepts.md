@@ -60,7 +60,6 @@ production and ruin everyone's launch day. Stop them before they start!)
 
 Use one strategy, or use both. Leverage them to fit your _use case_, rather than
 fitting your use case to some fixed modelling strategy. The choice is yours.
->>>>>>> 315218c79b59a51b5c3e2d93388ffb65d3510525
 
 ### Models
 
