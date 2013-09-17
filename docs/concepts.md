@@ -31,8 +31,9 @@ notifications, register users, and any other behavior provided by data sources.
 
 ### Mobile Clients
 
-Loopback Mobile Client SDKs give mobile developers direct access to
-mobile models and services from their native development environment and language.
+LoopBack Mobile Client SDKs give mobile developers access to
+mobile models and services from within their native
+development environment and language.
 
 LoopBack SDK's support both predefined static schema's and dynamic
 'schema-less'mobile models.
@@ -262,7 +263,7 @@ looks can be deceiving.  Here are some key differentiators that make
 Loopback stand out as an api tier built for mobile:
 
 1. Model APIS are surfaced over REST without writing code
-2. The Datasource Juggler is modern ORM that supports supports
+2. The Datasource Juggler is a modern ORM that supports
 not only traditional RDBMS, but also noSQL and services
 3. As a mobile backend as a service (mBaaS) we help you leverage
 valuable existing data in your mobile app as well dynamically create
@@ -274,15 +275,14 @@ functionality into our mobile client SDKs.  The ultimate goal is to
 preserve what's familiar to the mobile developer in their native
 platform and empower them with seamelss backend functionality.
 
-All mobile clients call into the mobile API tier through REST.
-Protocol binding within LoopBack actually has a plugin architecture
-so that you can switch to websockets for example for more real time
-capabilities in the future.
+Mobile clients call into LoopBack APIs surfaced by [strong-remoting](http://docs.strongloop.com/strong-remoting), a pluggable transport
+layer that supports surfacing backend APIs over REST, WebSockets,
+and other transports.
 
 <h4> API Gateway </h4>
 The first line of defense and entry is the  API gateway.  This
 sub-component of LoopBack acts as a reverse-proxy to the rest of
-LoopBack.  It provides OAuth2 base security, will mediate between
+LoopBack.  It provides OAuth2 based security, will mediate between
 multiple data formats and acts as a quality of service layer for your
 API providing instrumentation and other aspect level functionality.
 
@@ -313,7 +313,7 @@ from datasources to give you a headstart on building your app.
 Each LoopBack development environment is fully self contained.  When
 working in the enterprise, there is a need to distribute work much
 like how distributed source control systems like `git` have risen and
-evolved.  When combining the work ouput from multiple LoopBack
+evolved.  When combining the work output from multiple LoopBack
 development environments into a single enterprise runtime, the Admin
 Console helps with merging and maintaining configuration as well as
 deployment.
