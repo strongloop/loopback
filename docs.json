@@ -6,6 +6,7 @@
     "docs/gettingstarted.md",
     "docs/resources.md",
     "docs/concepts.md",
+    "docs/apiexplorer.md",
     "docs/cli.md",
     "docs/api.md",
     "docs/ios.md",
@@ -13,7 +14,5 @@
     "docs/java.md",
     "docs/rest.md"
   ],
-  "assets": {
-    "/": "/docs"
-  }
+  "assets": "/docs/assets"
 }

@@ -56,5 +56,4 @@ API Explorer</a>
  - To see the provided CPU profiling and path trace features, check out the
  [StrongOps Quick Start Guide](http://docs.strongloop.com/strongops#quick-start).
 
-
 ---
