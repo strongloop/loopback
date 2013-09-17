@@ -31,33 +31,35 @@ notifications, register users, and any other behavior provided by data sources.
 
 ### Mobile Clients
 
-Loopback Mobile Client SDKs give mobile developers direct access to
-mobile models and services from their native development environment and language.
+LoopBack provides native Client SDKs to give mobile developers access to remote,
+persistent data in a contextually-relevant way. The transport and marshalling of
+the data is taken care of, and mobile developers can leverage all of their
+existing tools (XCode, Eclipse, et al) to model their data on the client,
+persisting it to the server as needed.
 
-LoopBack SDK's support both predefined static schema's and dynamic
-'schema-less'mobile models.
+To achieve this, LoopBack supports both "Dynamic", schema-less Models and
+"Static", schema-driven Models. (See ["Models"](#models) for more specifics and
+how-tos around Model creation.)
 
-A Dynamic or Schema-less model strategy allows mobile developer to
-define custom model definitions directly from the SDK that are often
-specific to a mobile application needs.  Similar to 'Document
-Storage' solutions such as Redis or MongoDB.  Dynamic models have
-the added benefit of allowing mobile developers to work with
-LoopBack as a Mobile back end-as-a-service (mBaaS) without having to
-predefine the model definition on the server.  This strategy is
-often leveraged for data that originates on the mobile device and
-then persisted in the Mobile backend for later mobile consumption or
-server side processing.
+Dynamic Models require minimal server code up front (just a name!) to set-up,
+with the format of the data specified _completely_ and _flexibly_ by the client
+application. Well-suited for data that _originates on the client_, mobile
+developers can leverage Dynamic Models to persist data both between sessions and
+between _devices_ while obviating the need for outside engineering support.
+(Let's be honest - how many server programmers do you know that are _excited_
+when you ask them to add a field to some schema on the server? None? That's what
+we thought.)
 
-Static or traditional schema strategies are also supported in
-LoopBack.  A static model configuration promote a consistency in
-mobile model data and provides easy integration or direct binding to
-traditional RDBMs such as Oracle and MySQL. The added governance and
-reliability in providing a 'rigid' model also promotes more robust
-data integrity, validation and standardization.
+Static Models require more code up front in an extended grammar of JSON we call
+LDL, with the format of the data specified _completely_ in a _structured_ way by
+the server application. Well-suited to both existing data and large, intricate
+datasets, mobile developers can leverage Static Models to provide structure and
+consistency to their data, preventing the multitude of bugs that can result from
+unexpected data in their database. (These pesky bugs _love_ to show up in
+production and ruin everyone's launch day. Stop them before they start!)
 
-The ability to leverage either or both strategies in a mobile middle
-tier allows developers to select the best implementation for their
-use case.
+Use one strategy, or use both. Leverage them to fit your _use case_, rather than
+fitting your use case to some fixed modelling strategy. The choice is yours.
 
 ### Models
 
