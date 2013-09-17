@@ -4,7 +4,7 @@ LoopBack helps you build APIs for mobile applications. As you follow the steps
 to create a project and add models using the `slc lb` command line tool, REST
 APIs are automatically added to your application.
 
-Now we have handful of REST APIs. It would be nice to see the list of APIs and
+Now we have a handful of REST APIs. It would be nice to see the list of APIs and
 try them out without writing code. Sure, we can do that! LoopBack provides a
 Web based API explorer out of the box to document and explore REST APIs for the
 models.
