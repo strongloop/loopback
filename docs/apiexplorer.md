@@ -50,7 +50,7 @@ Here we go:
 
 Cool, we can invoke the REST APIs without writing code!
 
-You might be curious about the magic behind. Let's uncover a bit for you.
+You might be curious about the magic behind it all. Let's reveal a bit for you.
 
 ### REST API specs
 
