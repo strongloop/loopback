@@ -14,28 +14,28 @@ app.get('/', function(req, res){
 
 app.listen(3000);
 ```
-    
+
 > **Notes**
 >
 > - extends [express](http://expressjs.com/api.html#express)
 > - see [express docs](http://expressjs.com/api.html) for details
-> - supports [express / connect middleware](http://expressjs.com/api.html#middleware) 
+> - supports [express / connect middleware](http://expressjs.com/api.html#middleware)
 
 #### app.model(Model)
 
 Expose a `Model` to remote clients.
 
 ```js
-// create a testing data source
+// create a testing datasource
 var memory = loopback.memory();
 var Color = memory.createModel('color', {name: String});
 
 app.model(Color);
 app.use(loopback.rest());
 ```
-    
+
 > **Note** - this will expose all [shared methods](#shared-methods) on the model.
-    
+
 #### app.models()
 
 Get the app's exposed models.
@@ -47,7 +47,7 @@ models.forEach(function (Model) {
   console.log(Model.modelName); // color
 });
 ```
-    
+
 #### app.docs(options)
 
 Enable swagger REST api documentation.
@@ -64,7 +64,7 @@ app.docs({basePath: 'http://localhost:3000'});
 ```
 
 Run your app then navigate to [the api explorer](http://petstore.swagger.wordnik.com/). Enter your API basepath to view your generated docs.
-    
+
 ### Model
 
 A Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
@@ -82,11 +82,11 @@ console.log(foo.bar); // undefined
 
 **Properties**
 
-A model defines a list of property names, types and other validation metadata. A [DataSource](#data-source) uses this definition to validate a `Model` during operations such as `save()`.
+A model defines a list of property names, types and other validation metadata. A [DataSource](#datasource) uses this definition to validate a `Model` during operations such as `save()`.
 
 **Options**
 
-Some [DataSources](#data-source) may support additional `Model` options.
+Some [DataSources](#datasource) may support additional `Model` options.
 
 Define A Loopbackmodel.
 
@@ -176,7 +176,7 @@ user.isValid(function (valid) {
         // => {
         // =>   username: [errmessage, errmessage, ...],
         // =>   email: ...
-        // => }    
+        // => }
     }
 });
 ```
@@ -222,7 +222,7 @@ Outputs:
 
 #### Model.attachTo(dataSource)
 
-Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
+Attach a model to a [DataSource](#datasource). Attaching a [DataSource](#datasource) updates the model with additional methods and behaviors.
 
 ```js
 var oracle = loopback.createDataSource({
@@ -235,14 +235,14 @@ var oracle = loopback.createDataSource({
 
 User.attachTo(oracle);
 ```
-    
-**Note:** until a model is attached to a data source it will **not** have any **attached methods**.
+
+**Note:** until a model is attached to a datasource it will **not** have any **attached methods**.
 
 #### CRUD and Query Mixins
 
-Mixins are added by attaching a vanilla model to a [data source](#data-source) with a [connector](#connectors). Each [connector](#connectors) enables its own set of operations that are mixed into a `Model` as methods. To see available methods for a data source call `dataSource.operations()`.
+Mixins are added by attaching a vanilla model to a [datasource](#datasource) with a [connector](#connectors). Each [connector](#connectors) enables its own set of operations that are mixed into a `Model` as methods. To see available methods for a datasource call `dataSource.operations()`.
 
-Log the available methods for a memory data source.
+Log the available methods for a memory datasource.
 
 ```js
 var ops = loopback
@@ -280,7 +280,7 @@ Outputs:
   'updateAttributes',
   'reload' ]
 ```
-      
+
 Here is the definition of the `count()` operation.
 
 ```js
@@ -294,23 +294,23 @@ Here is the definition of the `count()` operation.
 
 #### Static Methods
 
-**Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
+**Note:** These are the default mixin methods for a `Model` attached to a datasource. See the specific connector for additional API documentation.
 
 ##### Model.create(data, [callback])
 
-Create an instance of Model with given data and save to the attached data source. Callback is optional.
+Create an instance of Model with given data and save to the attached datasource. Callback is optional.
 
 ```js
 User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
   console.log(user instanceof User); // true
 });
 ```
-    
+
 **Note:** You must include a callback and use the created model provided in the callback if your code depends on your model being saved or having an `id`.
 
 ##### Model.count([query], callback)
 
-Query count of Model instances in data source. Optional query param allows to count filtered set of Model instances.
+Query count of Model instances in datasource. Optional query param allows to count filtered set of Model instances.
 
 ```js
 User.count({approved: true}, function(err, count) {
@@ -378,7 +378,7 @@ User.find({
 
 ##### Model.destroyAll(callback)
 
-Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
+Delete all Model instances from datasource. **Note:** destroyAll method does not perform destroy hooks.
 
 ##### Model.findById(id, callback)
 
@@ -399,7 +399,7 @@ User.findOne({id: 23}, function(err, user) {
   console.info(user.id); // 23
 });
 ```
-    
+
 ##### Model.upsert(data, callback)
 
 Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
@@ -428,8 +428,8 @@ User.login = function (username, password, fn) {
   });
 }
 ```
-    
-Setup the static model method to be exposed to clients as a [remote method](#remote-method). 
+
+Setup the static model method to be exposed to clients as a [remote method](#remote-method).
 
 ```js
 loopback.remoteMethod(
@@ -444,14 +444,14 @@ loopback.remoteMethod(
   }
 );
 ```
-    
+
 #### Instance Methods
 
-**Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
+**Note:** These are the default mixin methods for a `Model` attached to a datasource. See the specific connector for additional API documentation.
 
 ##### model.save([options], [callback])
 
-Save an instance of a Model to the attached data source.
+Save an instance of a Model to the attached datasource.
 
 ```js
 var joe = new User({first: 'Joe', last: 'Bob'});
@@ -465,8 +465,8 @@ joe.save(function(err, user) {
 ```
 
 ##### model.updateAttributes(data, [callback])
-    
-Save specified attributes to the attached data source.
+
+Save specified attributes to the attached datasource.
 
 ```js
 user.updateAttributes({
@@ -477,7 +477,7 @@ user.updateAttributes({
 
 ##### model.destroy([callback])
 
-Remove a model from the attached data source.
+Remove a model from the attached datasource.
 
 ```js
 model.destroy(function(err) {
@@ -494,7 +494,7 @@ User.prototype.logout = function (fn) {
   MySessionModel.destroyAll({userId: this.id}, fn);
 }
 ```
-    
+
 Define a remote model instance method.
 
 ```js
@@ -503,7 +503,7 @@ loopback.remoteMethod(User.prototype.logout)
 
 #### Remote Methods
 
-Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
+Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature.
 
 ##### loopback.remoteMethod(fn, [options])
 
@@ -512,7 +512,7 @@ Expose a remote method.
 ```js
 Product.stats = function(fn) {
   var calc = require('./stats');
-  
+
   Product.find(function(err, products) {
     var productStats = calc(products);
     fn(null, productStats);
@@ -535,7 +535,7 @@ loopback.remoteMethod(
  - **http** - (advanced / optional, object) http routing info
   - **http.path** - the path relative to the model the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description. For example the stats method above will be at the whole path `/products/stats`.
   - **http.verb** - (get, post, put, del, all) - the route verb the method will be available from.
- 
+
 **Argument Description**
 
 An arguments description defines either a single argument as an object or an ordered set of arguments as an array.
@@ -578,7 +578,7 @@ User.afterRemote('*.save', function(ctx, user, next) {
   next();
 });
 ```
-    
+
 Remote hooks also support wildcards. Run a function before any remote method is called.
 
 ```js
@@ -588,7 +588,7 @@ User.beforeRemote('**', function(ctx, user, next) {
   next();
 });
 ```
-    
+
 Other wildcard examples
 
 ```js
@@ -613,7 +613,7 @@ User.afterRemote('**', function (ctx, user, next) {
   next();
 });
 ```
-    
+
 #### Context
 
 Remote hooks are provided with a Context `ctx` object which contains transport specific data (eg. for http: `req` and `res`). The `ctx` object also has a set of consistent apis across transports.
@@ -624,7 +624,7 @@ A `Model` representing the user calling the method remotely. **Note:** this is u
 
 ##### ctx.result
 
-During `afterRemote` hooks, `ctx.result` will contain the data about to be sent to a client. Modify this object to transform data before it is sent. 
+During `afterRemote` hooks, `ctx.result` will contain the data about to be sent to a client. Modify this object to transform data before it is sent.
 
 ##### Rest
 
@@ -637,7 +637,7 @@ The express ServerRequest object. [See full documentation](http://expressjs.com/
 ###### ctx.res
 
 The express ServerResponse object. [See full documentation](http://expressjs.com/api.html#res).
-    
+
 #### Relationships
 
 ##### Model.hasMany(Model)
@@ -650,47 +650,47 @@ Book.hasMany(Chapter);
 // specify the name
 Book.hasMany('chapters', {model: Chapter});
 ```
-    
+
 Query and create the related models.
 
 ```js
 Book.create(function(err, book) {
   // create a chapter instance
-  // ready to be saved in the data source
+  // ready to be saved in the datasource
   var chapter = book.chapters.build({name: 'Chapter 1'});
-  
+
   // save the new chapter
   chapter.save();
-  
+
   // you can also call the Chapter.create method with
   // the `chapters` property which will build a chapter
-  // instance and save the it in the data source
+  // instance and save the it in the datasource
   book.chapters.create({name: 'Chapter 2'}, function(err, savedChapter) {
     // this callback is optional
   });
 
-  // query chapters for the book using the 
+  // query chapters for the book using the
   book.chapters(function(err, chapters) {
     // all chapters with bookId = book.id
     console.log(chapters);
   });
-  
+
   book.chapters({where: {name: 'test'}, function(err, chapters) {
     // all chapters with bookId = book.id and name = 'test'
     console.log(chapters);
   });
 });
 ```
-    
+
 #### Shared Methods
 
 Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [loopback.rest](#rest)).
 
-### Data Source
+### DataSource
 
 A Loopback `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
 
-Define a data source for persisting models.
+Define a datasource for persisting models.
 
 ```js
 var oracle = loopback.createDataSource({
@@ -701,7 +701,7 @@ var oracle = loopback.createDataSource({
   password: 'password'
 });
 ```
-    
+
 #### dataSource.createModel(name, properties, options)
 
 Define a model and attach it to a `DataSource`.
@@ -712,7 +712,7 @@ var Color = oracle.createModel('color', {name: String});
 
 #### dataSource.discoverModelDefinitions([username], fn)
 
-Discover a set of model definitions (table or collection names) based on tables or collections in a data source.
+Discover a set of model definitions (table or collection names) based on tables or collections in a datasource.
 
 ```js
 oracle.discoverModelDefinitions(function (err, models) {
@@ -724,7 +724,7 @@ oracle.discoverModelDefinitions(function (err, models) {
   });
 });
 ```
-    
+
 #### dataSource.discoverSchema([owner], name, fn)
 
 Discover the schema of a specific table or collection.
@@ -826,15 +826,15 @@ Discover the schema of a specific table or collection.
 
 #### dataSource.enableRemote(operation)
 
-Enable remote access to a data source operation. Each [connector](#connector) has its own set of set remotely enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
-    
+Enable remote access to a datasource operation. Each [connector](#connector) has its own set of set remotely enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
+
 
 #### dataSource.disableRemote(operation)
 
-Disable remote access to a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
+Disable remote access to a datasource operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
 
 ```js
-// all rest data source operations are
+// all rest datasource operations are
 // disabled by default
 var oracle = loopback.createDataSource({
   connector: require('loopback-connector-oracle'),
@@ -850,14 +850,14 @@ oracle.disableRemote('destroyAll');
 
  - disabled operations will not be added to attached models
  - disabling the remoting for a method only affects client access (it will still be available from server models)
- - data sources must enable / disable operations before attaching or creating models
+ - datasources must enable / disable operations before attaching or creating models
 
 #### dataSource.operations()
 
 List the enabled and disabled operations.
 
     console.log(oracle.operations());
-    
+
 Output:
 
 ```js
@@ -881,16 +881,16 @@ Output:
 
 #### Connectors
 
-Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
+Create a datasource with a specific connector. See **available connectors** for specific connector documentation.
 
 ```js
 var memory = loopback.createDataSource({
   connector: loopback.Memory
 });
 ```
-    
+
 **Database Connectors**
- 
+
  - [In Memory](#memory-connector)
  - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
  - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
@@ -924,21 +924,21 @@ Include the connector in your package.json dependencies and run `npm install`.
 
 ##### Memory Connector
 
-The built-in memory connector allows you to test your application without connecting to an actual persistent data source, such as a database. Although the memory connector is very well tested it is not recommended to be used in production. Creating a data source using the memory connector is very simple.
+The built-in memory connector allows you to test your application without connecting to an actual persistent datasource, such as a database. Although the memory connector is very well tested it is not recommended to be used in production. Creating a datasource using the memory connector is very simple.
 
 ```js
 // use the built in memory function
-// to create a memory data source
+// to create a memory datasource
 var memory = loopback.memory();
 
 // or create it using the standard
-// data source creation api
+// datasource creation api
 var memory = loopback.createDataSource({
   connector: loopback.Memory
 });
 
 // create a model using the
-// memory data source
+// memory datasource
 var properties = {
   name: String,
   price: Number
@@ -959,7 +959,7 @@ function count() {
 
 **CRUD / Query**
 
-The memory connector supports all the standard [query and crud operations](#crud-and-query-mixins) to allow you to test your models against an in memory data source.
+The memory connector supports all the standard [query and crud operations](#crud-and-query-mixins) to allow you to test your models against an in memory datasource.
 
 **GeoPoint Filtering**
 
@@ -1002,7 +1002,7 @@ var here = new GeoPoint({lat: 10, lng: 10});
 var there = new GeoPoint({lat: 5, lng: 5});
 console.log(here.distanceTo(there, {type: 'miles'})); // 438
 ```
- 
+
 #### GeoPoint.distanceBetween(a, b, options)
 
 Get the distance between two points.
@@ -1053,7 +1053,7 @@ The Loopback library is unopinioned in the way you define your app's data and lo
  - Email - send emails to your app users using smtp or 3rd party services.
 
 Defining a model with `loopback.createModel()` is really just extending the base `loopback.Model` type using `loopback.Model.extend()`. The bundled models extend from the base `loopback.Model` allowing you to extend them arbitrarily.
- 
+
 #### User Model
 
 Register and authenticate users of your app locally or against 3rd party services.
@@ -1063,7 +1063,7 @@ Register and authenticate users of your app locally or against 3rd party service
 Extend a vanilla Loopback model using the built in User model.
 
 ```js
-// create a data source
+// create a datasource
 var memory = loopback.memory();
 
 // define a User model
@@ -1072,17 +1072,17 @@ var User = loopback.User.extend('user');
 // attach to the memory connector
 User.attachTo(memory);
 
-// also attach the session model to a data source
+// also attach the session model to a datasource
 User.session.attachTo(memory);
 
 // expose over the app's api
 app.model(User);
 ```
-    
+
 **Note:** By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
 
-**Note:** You must attach both the `User` and `User.session` model's to a data source!
-    
+**Note:** You must attach both the `User` and `User.session` model's to a datasource!
+
 ##### User Creation
 
 Create a user like any other model.
@@ -1094,7 +1094,7 @@ User.create({email: 'foo@bar.com', password: 'bar'}, function(err, user) {
 });
 ```
 
-    
+
 ##### Login a User
 
 Create a session for a user using the local auth strategy.
@@ -1106,7 +1106,7 @@ User.login({username: 'foo', password: 'bar'}, function(err, session) {
   console.log(session);
 });
 ```
-    
+
 **REST**
 
 You must provide a username and password over rest. To ensure these values are encrypted, include these as part of the body and make sure you are serving your app over https (through a proxy or using the https node server).
@@ -1147,7 +1147,7 @@ User.findOne({email: 'foo@bar.com'}, function(err, user) {
   user.logout();
 });
 ```
-    
+
 **REST**
 
 ```
@@ -1174,7 +1174,7 @@ User.afterRemote('create', function(ctx, user, next) {
     template: 'verify.ejs',
     redirect: '/'
   };
-  
+
   user.verify(options, next);
 });
 ```
@@ -1183,12 +1183,12 @@ User.afterRemote('create', function(ctx, user, next) {
 
 Send an email to the user's supplied email address containing a link to reset their password.
 
-```js  
+```js
 User.reset(email, function(err) {
   console.log('email sent');
 });
 ```
-    
+
 ##### Remote Password Reset
 
 The password reset email will send users to a page rendered by loopback with fields required to reset the user's password. You may customize this template by defining a `resetTemplate` setting.
@@ -1196,7 +1196,7 @@ The password reset email will send users to a page rendered by loopback with fie
 ```js
 User.settings.resetTemplate = 'reset.ejs';
 ```
-    
+
 ##### Remote Password Reset Confirmation
 
 Confirm the password reset.
@@ -1212,7 +1212,7 @@ User.confirmReset(token, function(err) {
 Identify users by creating sessions when they connect to your loopback app. By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
 
 ```js
-// define a custom session model    
+// define a custom session model
 var MySession = loopback.Session.extend('my-session');
 
 // define a custom User model
@@ -1221,11 +1221,11 @@ var User = loopback.User.extend('user');
 // use the custom session model
 User.session = MySession;
 
-// attach both Session and User to a data source
+// attach both Session and User to a datasource
 User.attachTo(loopback.memory());
 MySession.attachTo(loopback.memory());
 ```
-    
+
 #### Email Model
 
 Send emails from your loopback app.
@@ -1237,15 +1237,15 @@ Expose models over rest using the `loopback.rest` router.
 ```js
 app.use(loopback.rest());
 ```
-    
+
 **REST Documentation**
 
 View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
-    
+
 ### SocketIO Middleware (Not Available)
 
 **Coming Soon** - Expose models over socket.io using the `loopback.sio()` middleware.
 
 ```js
 app.use(loopback.sio);
-``` 
+```
