@@ -15,7 +15,7 @@ functionality and data that is in your datacenter and the cloud.
 Since LoopBack is built on open source, it is highly extensible and
 familiar with developers already using Node.
 Node.js leverages Javascript - the ubiquituous language of the web
-that most developers have already had familiarity with it's ease of
+that most developers have already had familiarity with its ease of
 use.
 
 ---
