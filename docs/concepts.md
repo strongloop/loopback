@@ -7,7 +7,7 @@ answer a couple of questions:
 
 > What _is_ LoopBack?
 
- - A component in the [StrongLoop Suite](http://www.strongloop.com/strongloop-suite).
+ - A component in [StrongLoop Suite](http://www.strongloop.com/strongloop-suite).
  - A library of Node.js modules for connecting mobile apps to a variety of data
  sources.
  - A command line tool, `slc lb`, for generating models and entire applications
@@ -152,7 +152,7 @@ data are not checked.
 
 #### Sanitizing and Validating Models
 
-A Model can be described in plain json or JavaScript. The description is called
+A Model can be described in plain JSON or JavaScript. The description is called
 schema. Once a schema is defined for a Model, it will validate and sanitize data
 before giving it to a Data Source. For example, the `Product` Model has a schema
 that will not change. The example below updates the `Product` Model with a schema
