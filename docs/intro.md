@@ -1,7 +1,7 @@
 # LoopBack
 
 LoopBack, part of the StrongLoop Suite, is a mobile backend framework that can run in the cloud or on your own servers.
-It is built on [StrongNode](http://www.strongloop.com/strongnode) and open-source Node.js modules, so
+It is built on [StrongNode](http://strongloop.com/strongloop-suite/strongnode/) and open-source Node.js modules, so
 it is highly extensible and familiar to developers already using Node.
 
 For more information on the advantages of using LoopBack, see 
