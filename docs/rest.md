@@ -437,7 +437,7 @@ Count instances of the model matched by where from the data source
     curl http://localhost:3000/locations/count
 
 #####Count with a where filter
-    curl http://localhost:3000/locations/cunt?where%5bcity%5d=Burlingame
+    curl http://localhost:3000/locations/count?where%5bcity%5d=Burlingame
 
 ####Example Response
 
