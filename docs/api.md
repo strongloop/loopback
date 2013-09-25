@@ -511,12 +511,13 @@ Expose a remote method.
 
 ```js
 Product.stats = function(fn) {
-  var calc = require('./stats');
+  var statsResult = {
+    totalPurchased: 123456
+  };
+  var err = null;
   
-  Product.find(function(err, products) {
-    var productStats = calc(products);
-    fn(null, productStats);
-  });
+  // callback with an error and the result
+  fn(err, statsResult);
 }
 
 loopback.remoteMethod(
