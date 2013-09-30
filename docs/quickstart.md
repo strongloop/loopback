@@ -22,7 +22,7 @@ $ slc run app
 
 <h4>Next Steps</h4>
 
-> Check out the rest of the StrongLoop Suite.
+Now that you've gotten a taste of LoopBack, check out the rest of the StrongLoop Suite:
 
  - To see how to consume the API from mobile clients, check out the [Getting Started](#getting-started) guide.
  - To see the out-of-the-box scaling capability of the Suite, check out the
