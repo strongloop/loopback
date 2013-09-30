@@ -1,33 +1,26 @@
 ##Quick Start
 
-<h4>Step 1</h4>
+This section will get you up and running with LoopBack and the StrongLoop sample app in just a few minutes.
 
-> Install [StrongLoop Suite](http://www.strongloop.com/get-started)
+1. If you have not already done so, download and install [StrongLoop Suite](http://www.strongloop.com/get-started) or set up your cloud development platform.
 
-<h4>Step 2</h4>
-
-> Setup the **StrongLoop Suite Sample App**.
+2. Setup the StrongLoop Suite sample app with these commands.
 
 ```sh
 $ slc example
 ```
 
-The command above takes care of cloning the sample app into a new directory
-named `sls-sample-app` and installing all of its dependencies.
+This command clones the sample app into a new directory
+named `sls-sample-app` and installs all of its dependencies.
 
-
-<h4>Step 3</h4>
-
-> Run the sample application.
+3. Run the sample application by entering this command:
 
 ```sh
 $ cd sls-sample-app
 $ slc run app
 ```
 
-<h4>Step 4</h4>
-
-> Open the app in a browser.
+4. Open the app in a browser.
 
 The sample app should now be running at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>. The homepage of
 the sample app lists several sample requests you can make against the LoopBack
@@ -36,9 +29,7 @@ REST API.
 <a href="http://localhost:3000" class="status btn btn-primary" target="_blank">
 View the Sample App</a>
 
-<h4>Step 5</h4>
-
-> Explore the REST API
+5. Explore the REST API
 
 To browse all the sample app's REST APIs,
 [open the API explorer](http://localhost:3000/explorer)
