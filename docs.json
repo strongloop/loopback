@@ -3,7 +3,6 @@
   "content": [
     "docs/intro.md",
     "docs/quickstart.md",
-    "docs/resources.md",
     "docs/concepts.md",
     "docs/cli.md",
     "docs/apiexplorer.md",
