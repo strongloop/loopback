@@ -15,17 +15,19 @@ named `sls-sample-app` and installs all of its dependencies.
 $ cd sls-sample-app
 $ slc run app
 ```
-4. Open http://localhost:3000 to see the app running in a browser. The app homepage lists sample requests you can make against the LoopBack REST API.
+4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.
 <a href="http://localhost:3000/" class="status btn btn-primary">View the Sample App</a>
-5. To browse all the sample app's REST APIs, [open the API explorer](http://localhost:3000/explorer).
+5. To browse all the sample app's REST APIs, open the API explorer at <http://localhost:3000/explorer>.
 <a href="http://localhost:3000/explorer" class="status btn btn-primary">View the API Explorer</a>
 
-<h4>Next Steps</h4>
+<h3>Next Steps</h3>
 
-Now that you've gotten a taste of LoopBack, check out the rest of the StrongLoop Suite:
+To gain a deeper understanding of what LoopBack is and how it works, read the following [Concepts](#concepts) section.
 
- - To see how to consume the API from mobile clients, check out the [Getting Started](#getting-started) guide.
- - To see the out-of-the-box scaling capability of the Suite, check out the
- [StrongNode Quick Start Guide](http://docs.strongloop.com/strongnode#quick-start).
- - To see the provided CPU profiling and path trace features, check out the
- [StrongOps Quick Start Guide](http://docs.strongloop.com/strongops#quick-start).
+For information on how StrongLoop Suite provides:
+
+ - Out-of-the-box scalability, see
+ [StrongNode](http://docs.strongloop.com/strongnode#quick-start).
+ - CPU profiling and path trace features, see the
+ [StrongOps](http://docs.strongloop.com/strongops#quick-start).
+ - Mobile client APIs, see the [LoopBack Client SDKs](http://docs.strongloop.com/loopback-clients/).
