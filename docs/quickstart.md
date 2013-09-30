@@ -1,4 +1,4 @@
-###Quick Start
+##Quick Start
 
 <h4>Step 1</h4>
 
@@ -55,5 +55,3 @@ API Explorer</a>
  [StrongNode Quick Start Guide](http://docs.strongloop.com/strongnode#quick-start).
  - To see the provided CPU profiling and path trace features, check out the
  [StrongOps Quick Start Guide](http://docs.strongloop.com/strongops#quick-start).
-
----
