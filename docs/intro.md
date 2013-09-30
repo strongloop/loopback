@@ -5,5 +5,5 @@ It is built on [StrongNode](http://strongloop.com/strongloop-suite/strongnode/) 
 it is highly extensible and familiar to developers already using Node.
 
 For more information on the advantages of using LoopBack, see 
-[StrongLoop / LoopBack](http://strongloop.com/strongloop-suite/loopback/).
+[StrongLoop | LoopBack](http://strongloop.com/strongloop-suite/loopback/).
 
