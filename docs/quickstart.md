@@ -16,13 +16,11 @@ $ cd sls-sample-app
 $ slc run app
 ```
 4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.
-<a href="http://localhost:3000/" class="status btn btn-primary">View the Sample App</a>
 5. To browse all the sample app's REST APIs, open the API explorer at <http://localhost:3000/explorer>.
-<a href="http://localhost:3000/explorer" class="status btn btn-primary">View the API Explorer</a>
 
 <h3>Next Steps</h3>
 
-To gain a deeper understanding of what LoopBack is and how it works, read the following [Concepts](#concepts) section.
+To gain a deeper understanding LoopBack and how it works, read the following [Concepts](#concepts) section.
 
 For information on how StrongLoop Suite provides:
 
