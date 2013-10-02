@@ -1,6 +1,6 @@
 ## Key Concepts
 
-This section goes into more depth describing models, data sources, connectors and other concepts important to StrongLoop.
+This section goes into more depth describing models, data sources, connectors and other important LoopBack concepts.
 
 ### Models
 
@@ -33,7 +33,7 @@ var Product = Model.extend('product');
 var Inventory = Model.extend('customer');
 ```
 
-**NOTE:** By default, a LoopBack model does not have a schema.  This is appropriate where data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
+**NOTE:** By default, a LoopBack model does not have a schema.  This is appropriate when data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
 
 <h4>Attaching Models to Data Sources</h4>
 
@@ -41,12 +41,12 @@ A data source enables a model to acess and modify data in backend system such as
 Attaching a model to a data source, enables the model to use the data source API.  For example, as shown below, the [MongoDB Connector](http://docs.strongloop.com/loopback-connector-mongodb), mixes in a `create` method that you can use to store a new product in the database; for example:
 
 ```js
-// Step 2: Attach Data Sources
+// Attach data sources
 var db = loopback.createDataSource({
   connector: require('loopback-connector-mongodb')
 });
 
-// Enables the Model to use the MongoDB API
+// Enable the model to use the MongoDB API
 Product.attachTo(db);
 
 // Create a new product in the database
@@ -59,11 +59,11 @@ Now the models have both data and behaviors. Next, you need to make the models a
 
 <h4>Exposing Models to Mobile Clients</h4>
 
-Models can be exposed to mobile clients using one of the remoting middleware modules.
+To expose a model to mobile clients, use one of LoopBack's remoting middleware modules.
 This example uses the `app.rest` middleware to expose the `Product` Model's API over REST.
 
 ```js
-// Step 3: Create a LoopBack Application
+// Step 3: Create a LoopBack application
 var app = loopback();
 
 // Use the REST remoting middleware
@@ -73,15 +73,12 @@ app.use(loopback.rest());
 app.model(Product);
 ```
 
-After this, you'll have the `Product` model with CRUD functions working remotely
-from mobile clients. Please note the model is schema-less till now and the
-data are not checked.
+After this, you'll have the `Product` model with create, read, update, and delete (CRUD) functions working remotely
+from mobile clients. At this point, the model is schema-less and the data are not checked.
 
 <h4>Sanitizing and Validating Models</h4>
 
-A model can be described in plain JSON or JavaScript. The description is called
-*schema*. Once a schema is defined for a model, the model validates and sanitizes data
-before giving it to a data source. LoopBack schemas are written in **LoopBack Definition Language**, a specific form of JSON.
+A *schema* provides a description of a model in JSON or JavaScript.  Once a schema is defined for a model, the model validates and sanitizes data before giving it to a data source. LoopBack schemas are written in **LoopBack Definition Language**, a specific form of JSON.
 
 For example, the following code defines a schema and assigns it to the product model.  The schema defines two fields (columns): **name**, a string, and **price**, a number.  The field **name** is a required value.
 
@@ -102,15 +99,14 @@ Also, since `name` is a required value, the model will _only_ be saved if the pr
 - Check out the Model [REST API](#rest-api).
 - Read the
 [LoopBack Definition Language Guide](http://docs.strongloop.com/loopback-datasource-juggler#loopback-definition-language-guide).
-- Browse the [Node.js Model API](#model).
-- Before you build your own, check out the [bundled Models](#bundled-models).
+- Browse the [Node.js model API](#model).
+- Before you build your own, check out the [bundled models](#bundled-models).
 - Expose custom behavior to clients using [remote methods](#remote-methods).
-- See how to [define relationships](#relationships) between Models.
+- See how to [define relationships](#relationships) between models.
 
 ### Data Sources and Connectors
 
-Now you see the power of LoopBack models. A model gets rich set of functions out
-of the box with the contribution from Data Sources and Connectors.
+Data sources and connectors provide a rich set of functions to models out of the box.
 
 Data sources encapsulate business logic to
 exchange data between models and various data sources. Data sources are
