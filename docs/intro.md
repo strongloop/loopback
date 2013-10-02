@@ -1,10 +1,10 @@
 <h1> LoopBack</h1>
 
-LoopBack is a mobile backend framework that can run in the cloud or on your own servers.
+LoopBack is a mobile backend framework that can run in the cloud or on-premises.
 It is built on [StrongNode](http://strongloop.com/strongloop-suite/strongnode/) and open-source Node.js modules, so
 it is highly extensible and familiar to developers already using Node. For more information on the advantages of using LoopBack, see [StrongLoop | LoopBack](http://strongloop.com/strongloop-suite/loopback/).
 
-To gain a basic understanding of key LoopBack concepts, read the following [Overview](#overview) section.  If you are impatient, you can skip the overview and dive right into creating an app in [Quick Start](#quick-start).
+To gain a basic understanding of key LoopBack concepts, read the following [Overview](#overview) section.  Then, dive right into creating an app in [Quick Start](#quick-start).
 
 ## Overview
 
@@ -25,3 +25,16 @@ An app interacts with data sources through the LoopBack model API, available
 APIs for [iOS, Android, and HTML5](#mobile-clients).  Using the API, apps can query databases, store data, upload files, send emails, create push notifications, register users, and perform other actions provided by data sources.
 
 ![concepts](assets/loopback-concepts.png "LoopBack Concepts")
+
+###REST API
+
+You can easily make functions defined in LoopBack models available as REST endpoints. 
+For an example, see [Working with Models](#working-with-models).
+
+<h4> Remoting</h4>
+
+With LoopBack you can add functionality to models directly yourself or by leveraging open source
+community modules.  The ability to "mix in" behaviors is possible through the inherent power of Javascript's inheritance model.
+
+LoopBack takes this one step further by enabling you to invoke server side code from the client.
+For more information, see the [Remoting Guide](/strong-remoting).
