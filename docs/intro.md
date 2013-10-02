@@ -31,7 +31,7 @@ APIs for [iOS, Android, and HTML5](#mobile-clients).  Using the API, apps can qu
 You can easily make functions defined in LoopBack models available as REST endpoints. 
 For an example, see [Working with Models](#working-with-models).
 
-<h4> Remoting</h4>
+### Remoting
 
 With LoopBack you can add functionality to models directly yourself or by leveraging open source
 community modules.  The ability to "mix in" behaviors is possible through the inherent power of Javascript's inheritance model.
