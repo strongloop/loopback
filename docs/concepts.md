@@ -113,11 +113,10 @@ Data sources encapsulate business logic to exchange data between models and vari
 relational databases, REST APIs, SOAP web services, storage services, and so on.
 Data sources generally provide create, retrieve, update, and delete (CRUD) functions. 
 
-Models access data sources through **connectors** that are extensible and customizable.  
+Models access data sources through _connectors_ that are extensible and customizable.  
 Connectors implement the data exchange logic using database drivers or other
-client APIs. In general, application code does not use connectors directly.
-Rather, the `DataSource` class provides an API to configure the underlying connector and
-exposes functions via DataSource or model classes.
+client APIs. In general, application code does not use a connector directly.
+Rather, the `DataSource` class provides an API to configure the underlying connector.
 
 <h3> LoopBack Connectors</h3>
 
