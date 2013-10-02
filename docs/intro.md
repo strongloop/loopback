@@ -15,6 +15,7 @@ LoopBack consists of:
 * Client SDKs for native and web-based mobile clients.
 
 As illustrated in the diagram below, a LoopBack application has three components:
+
 + **Models** that represent business data and behavior.
 + **Data sources and connectors**.  Data sources are databases or other backend services such as REST APIs, SOAP web services, or storage services.   Connectors provide apps access to data sources. 
 + **Mobile clients** using the LoopBack client SDKs.
