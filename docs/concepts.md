@@ -4,7 +4,7 @@ This section provides an overview of using models, data sources, and connector.
 
 ### Models
 
-A LoopBack Model consists of:
+A LoopBack model consists of:
 
  - Application data.
  - Validation rules.
@@ -12,7 +12,12 @@ A LoopBack Model consists of:
  - Business logic.
 
 Apps use the model API to display information to the user or trigger actions
-on the models to interact with backend systems.
+on the models to interact with backend systems.  LoopBack supports both "dynamic" schema-less models and "static", schema-driven models.
+
+_Dynamic models_ require only a name.  The format of the data are specified completely and flexibly by the client application. Well-suited for data that originates on the client, dynamic models enable you to persist data both between sessions and between devices without involving a schema.
+
+_Static models_ require more code up front, with the format of the data specified completely in JSON. Well-suited to both existing data and large, intricate datasets, static models provide structure and
+consistency to their data, preventing bugs that can result from unexpected data in the database. 
 
 Here is a simple example of creating and using a model.
 
@@ -33,11 +38,11 @@ var Product = Model.extend('product');
 var Inventory = Model.extend('customer');
 ```
 
-**NOTE:** By default, a LoopBack model does not have a schema.  This is appropriate when data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
+The above code creates two dynamic models, appropriate when data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
 
 <h4>Attaching a Model to a Data Source</h4>
 
-A data source enables a model to acess and modify data in backend system such as a relational database.
+A data source enables a model to access and modify data in backend system such as a relational database.
 Attaching a model to a data source, enables the model to use the data source API.  For example, as shown below, the [MongoDB Connector](http://docs.strongloop.com/loopback-connector-mongodb), mixes in a `create` method that you can use to store a new product in the database; for example:
 
 ```js
@@ -129,40 +134,6 @@ LoopBack provides several connectors, with more under development.
 | REST      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
 
 For more information, see the [LoopBack DataSource and Connector Guide](/loopback-datasource-juggler/#loopback-datasource-and-connector-guide).
-
-### Mobile Clients
-
-LoopBack provides native Client SDKs to give mobile developers access to remote,
-persistent data in a contextually-relevant way. The transport and marshalling of
-the data is taken care of, and mobile developers can leverage all of their
-existing tools (XCode, Eclipse, et al) to model their data on the client,
-persisting it to the server as needed.
-
-To achieve this, LoopBack supports both "Dynamic", schema-less Models and
-"Static", schema-driven Models. (See ["Models"](#models) for more specifics and
-how-tos around Model creation.)
-
-Dynamic Models require minimal server code up front (just a name!) to set-up,
-with the format of the data specified _completely_ and _flexibly_ by the client
-application. Well-suited for data that _originates on the client_, mobile
-developers can leverage Dynamic Models to persist data both between sessions and
-between _devices_ while obviating the need for outside engineering support.
-(Let's be honest - how many server programmers do you know that are _excited_
-when you ask them to add a field to some schema on the server? None? That's what
-we thought.)
-
-Static Models require more code up front in an extended grammar of JSON we call
-LDL, with the format of the data specified _completely_ in a _structured_ way by
-the server application. Well-suited to both existing data and large, intricate
-datasets, mobile developers can leverage Static Models to provide structure and
-consistency to their data, preventing the multitude of bugs that can result from
-unexpected data in their database. (These pesky bugs _love_ to show up in
-production and ruin everyone's launch day. Stop them before they start!)
-
-Use one strategy, or use both. Leverage them to fit your _use case_, rather than
-fitting your use case to some fixed modelling strategy. The choice is yours.
-
-
 
 ### The Big Picture
 
