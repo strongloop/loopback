@@ -110,7 +110,7 @@ Also, since `name` is a required value, the model will _only_ be saved if the pr
 - Expose custom behavior to clients using [remote methods](#remote-methods).
 - See how to [define relationships](#relationships) between models.
 
-### Working with Data Sources and Connectors
+## Working with Data Sources and Connectors
 
 Data sources encapsulate business logic to exchange data between models and various back-end systems such as
 relational databases, REST APIs, SOAP web services, storage services, and so on.
@@ -122,7 +122,7 @@ client APIs. In general, application code does not use connectors directly.
 Rather, the `DataSource` class provides an API to configure the underlying connector and
 exposes functions via DataSource or model classes.
 
-<h4> LoopBack Connectors</h4>
+<h3> LoopBack Connectors</h3>
 
 LoopBack provides several connectors, with more under development.
 
@@ -134,102 +134,3 @@ LoopBack provides several connectors, with more under development.
 | REST      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
 
 For more information, see the [LoopBack DataSource and Connector Guide](/loopback-datasource-juggler/#loopback-datasource-and-connector-guide).
-
-### The Big Picture
-
-LoopBack's overall representation is illustrated below through its
-runtime sub-components:
-
--  Mobile Clients
-- API Gateway - ***Coming Soon***
-- API Server
-- Enterprise Connectors
-
-As well as its management sub-components:
-
-- Editor - ***Coming Soon***
-- Admin Console - ***Coming Soon***
-- LoopBack Node.js API
-- Repository/Registry
-
-![loopback_overview](assets/loopback_ov.png "LoopBack Overview")
-
-At first glance, LoopBack looks like just any other API tier.  But
-looks can be deceiving.  Here are some key differentiators that make
-Loopback stand out as an api tier built for mobile:
-
-1. Model APIS are surfaced over REST without writing code
-2. The Datasource Juggler is a modern ORM that supports
-not only traditional RDBMS, but also noSQL and services
-3. As a mobile backend as a service (mBaaS) we help you leverage
-valuable existing data in your mobile app as well dynamically create
-new schema or schema-less data
-
-<h4> Mobile clients </h4>
-We're putting a lot of effort into building flexibility and
-functionality into our mobile client SDKs.  The ultimate goal is to
-preserve what's familiar to the mobile developer in their native
-platform and empower them with seamelss backend functionality.
-
-Mobile clients call into LoopBack APIs surfaced by [strong-remoting](http://docs.strongloop.com/strong-remoting), a pluggable transport
-layer that supports surfacing backend APIs over REST, WebSockets,
-and other transports.
-
-<h4> API Gateway </h4>
-The first line of defense and entry is the API gateway.  This
-sub-component of LoopBack acts as a reverse-proxy to the rest of
-LoopBack.  It provides OAuth2 based security, will mediate between
-multiple data formats and acts as a quality of service layer for your
-API providing instrumentation and other aspect level functionality.
-
-<h4>  API Server </h4>
-The core of LoopBack is the API Server where models are registered
-and hosted during runtime.   Models are automatically exposed through a REST endpoint.
-
-The API server also will run batch processes or scheduled jobs as a
-mobile backend for functions like mass push notifications.
-
-<h4> Enterprise Connectors </h4>
-LoopBack lets you leveratge existing data and services that you need
-in your mobile apps just as you do in your web apps.  LoopBack has a
-layer of abstraction provided by the DataSource Juggler so that all
-you need to worry about is your model.  The Datasource Juggler
-accesses the underlying [datasources](http://docs.strongloop.com/loopback/#data-sources-and-connectors) through Enterprise
-Connectors.
-
-<h4> Editor </h4>
-LoopBack comes with a rich set of [Node.js based APIs](http://docs.strongloop.com/loopback/#nodejs-api).
-The editor is a web based GUI that makes it even easier to define,
-configure and manage your mobile apps and models without having to
-write code.  The editor will also facilitate the process of
-[discovering models](http://docs.strongloop.com/loopback/#datasourcediscovermodeldefinitionsusername-fn) and [schemas](http://docs.strongloop.com/loopback/#datasourcediscoverschemaowner-name-fn)
-from datasources to give you a headstart on building your app.
-
-<h4> Admin Console </h4>
-Each LoopBack development environment is fully self contained.  When
-working in the enterprise, there is a need to distribute work much
-like how distributed source control systems like `git` have risen and
-evolved.  When combining the work output from multiple LoopBack
-development environments into a single enterprise runtime, the Admin
-Console helps with merging and maintaining configuration as well as
-deployment.
-
-
-<h4> Repository </h4>
-All development in LoopBack ends up as metadata that's stored in JSON
-config files.  Config files are distributed, merged and
-consolidated centrally into the Repository.  The Repository is
-centrally maintained by an admin through the [Admin
-Console](http://docs.strongloop.com/loopback#admin-console) where
-policies like security are defined and configured.
-
-
-<h4> LoopBack Node.js API </h4>
-All manipulation of the metadata that constitutes the entire runtime
-of the mobile API is done through an internal Node.js API.  In the
-spirit of truly "eating our own dog food" - the API powers the
-editor and any other tools that are included with LoopBack.
-
-
-
----
