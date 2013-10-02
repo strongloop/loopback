@@ -15,12 +15,12 @@ LoopBack consists of:
 * Client SDKs for native and web-based mobile clients.
 
 As illustrated in the diagram below, a LoopBack application has three components:
-*  **Models** that represent business data and behavior.
-* **Data sources and connectors**.  Data sources are databases or other backend services such as REST APIs, SOAP web services, or storage services.   Connectors provide apps access to data sources. 
-*  **Mobile clients** using the LoopBack client SDKs.
++ **Models** that represent business data and behavior.
++ **Data sources and connectors**.  Data sources are databases or other backend services such as REST APIs, SOAP web services, or storage services.   Connectors provide apps access to data sources. 
++ **Mobile clients** using the LoopBack client SDKs.
 
-An app interacts with data sources through the LoopBack model API. The model API is available
-[locally within Node.js](#model), [remotely over REST](#rest-api), and as native client
+An app interacts with data sources through the LoopBack model API, available
+[locally within Node.js](#model), [remotely over REST](#rest-api), and via native client
 APIs for [iOS, Android, and HTML5](#mobile-clients).  Using the API, apps can query databases, store data, upload files, send emails, create push notifications, register users, and perform other actions provided by data sources.
 
 ![concepts](assets/loopback-concepts.png "LoopBack Concepts")
