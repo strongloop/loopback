@@ -81,7 +81,8 @@ from mobile clients. At this point, the model is schema-less and the data are no
 
 <h3>Sanitizing and Validating Models</h3>
 
-A *schema* provides a description of a model written in **LoopBack Definition Language**, a specific form of JSON. Once a schema is defined for a model, the model validates and sanitizes data before passing it on to a data source. 
+A *schema* provides a description of a model written in **LoopBack Definition Language**, a specific form of JSON. Once a schema is defined for a model, the model validates and sanitizes data before passing it on to a data store such as a database.  A model with a schema is referred to as a _static model_.
+
 For example, the following code defines a schema and assigns it to the product model.  The schema defines two fields (columns): **name**, a string, and **price**, a number.  The field **name** is a required value.
 
 ```js
