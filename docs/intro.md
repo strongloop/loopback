@@ -26,12 +26,12 @@ APIs for [iOS, Android, and HTML5](#mobile-clients).  Using the API, apps can qu
 
 ![concepts](assets/loopback-concepts.png "LoopBack Concepts")
 
-###REST API
+<h3>REST API</h3>
 
 You can easily make functions defined in LoopBack models available as REST endpoints. 
 For an example, see [Working with Models](#working-with-models).
 
-### Remoting
+<h3> Remoting</h3>
 
 With LoopBack you can add functionality to models directly yourself or by leveraging open source
 community modules.  The ability to "mix in" behaviors is possible through the inherent power of Javascript's inheritance model.
