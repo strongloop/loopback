@@ -26,6 +26,6 @@ For information on how StrongLoop Suite provides:
 
  - Out-of-the-box scalability, see
  [StrongNode](http://docs.strongloop.com/strongnode#quick-start).
- - CPU profiling and path trace features, see the
+ - CPU profiling and path trace features, see
  [StrongOps](http://docs.strongloop.com/strongops#quick-start).
- - Mobile client APIs, see the [LoopBack Client SDKs](http://docs.strongloop.com/loopback-clients/).
+ - Mobile client APIs, see [LoopBack Client SDKs](http://docs.strongloop.com/loopback-clients/).
