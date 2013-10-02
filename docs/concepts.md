@@ -1,6 +1,6 @@
-## Key Concepts
+## Working with Models
 
-This section goes into more depth describing models, data sources, connectors and other important LoopBack concepts.
+This section provides an overview of using models, data sources, and connector.
 
 ### Models
 
@@ -11,7 +11,7 @@ A LoopBack Model consists of:
  - Data access capabilities.
  - Business logic.
 
-Mobile clients use the model API to display information to the user or trigger actions
+Apps use the model API to display information to the user or trigger actions
 on the models to interact with backend systems.
 
 Here is a simple example of creating and using a model.
@@ -35,7 +35,7 @@ var Inventory = Model.extend('customer');
 
 **NOTE:** By default, a LoopBack model does not have a schema.  This is appropriate when data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
 
-<h4>Attaching Models to Data Sources</h4>
+<h4>Attaching a Model to a Data Source</h4>
 
 A data source enables a model to acess and modify data in backend system such as a relational database.
 Attaching a model to a data source, enables the model to use the data source API.  For example, as shown below, the [MongoDB Connector](http://docs.strongloop.com/loopback-connector-mongodb), mixes in a `create` method that you can use to store a new product in the database; for example:
@@ -57,10 +57,12 @@ Product.create({ name: 'widget', price: 99.99 }, function(err, widget) {
 
 Now the models have both data and behaviors. Next, you need to make the models available to mobile clients.
 
-<h4>Exposing Models to Mobile Clients</h4>
+<h4>Exposing a Model to Mobile Clients</h4>
 
 To expose a model to mobile clients, use one of LoopBack's remoting middleware modules.
 This example uses the `app.rest` middleware to expose the `Product` Model's API over REST.
+
+For more information on LoopBack's REST API, see [REST API](#rest-api).
 
 ```js
 // Step 3: Create a LoopBack application
@@ -78,8 +80,7 @@ from mobile clients. At this point, the model is schema-less and the data are no
 
 <h4>Sanitizing and Validating Models</h4>
 
-A *schema* provides a description of a model in JSON or JavaScript.  Once a schema is defined for a model, the model validates and sanitizes data before giving it to a data source. LoopBack schemas are written in **LoopBack Definition Language**, a specific form of JSON.
-
+A *schema* provides a description of a model written in **LoopBack Definition Language**, a specific form of JSON. Once a schema is defined for a model, the model validates and sanitizes data before passing it on to a data source. 
 For example, the following code defines a schema and assigns it to the product model.  The schema defines two fields (columns): **name**, a string, and **price**, a number.  The field **name** is a required value.
 
 ```js
@@ -96,7 +97,7 @@ Also, since `name` is a required value, the model will _only_ be saved if the pr
 
 <h4>More Information</h4>
 
-- Check out the Model [REST API](#rest-api).
+- Check out the model [REST API](#rest-api).
 - Read the
 [LoopBack Definition Language Guide](http://docs.strongloop.com/loopback-datasource-juggler#loopback-definition-language-guide).
 - Browse the [Node.js model API](#model).
@@ -104,37 +105,30 @@ Also, since `name` is a required value, the model will _only_ be saved if the pr
 - Expose custom behavior to clients using [remote methods](#remote-methods).
 - See how to [define relationships](#relationships) between models.
 
-### Data Sources and Connectors
+### Working with Data Sources and Connectors
 
-Data sources and connectors provide a rich set of functions to models out of the box.
+Data sources encapsulate business logic to exchange data between models and various back-end systems such as
+relational databases, REST APIs, SOAP web services, storage services, and so on.
+Data sources generally provide create, retrieve, update, and delete (CRUD) functions. 
 
-Data sources encapsulate business logic to
-exchange data between models and various data sources. Data sources are
-typically databases that provide create, retrieve, update, and delete (CRUD)
-functions. LoopBack also generalize other backend services, such as REST APIs,
-SOAP Web Services, and Storage Services, as data sources.
-
-LoopBack allows you to connect to many sources of data and services both in the
-cloud and on-premise in your data center. DataSources are accessed through a
-plugin called a Connector in LoopBack.  Plugins are highly customizable and
-extensible.  Unlike other mobile backends, LoopBack can leverage your existing
-data and organize them in the form of models.
-
+Models access data sources through **connectors** that are extensible and customizable.  
 Connectors implement the data exchange logic using database drivers or other
-client APIs. In general, connectors are not used directly by application code.
-The DataSource class provides APIs to configure the underlying connector and
+client APIs. In general, application code does not use connectors directly.
+Rather, the `DataSource` class provides an API to configure the underlying connector and
 exposes functions via DataSource or model classes.
 
-#### LoopBack Connector Modules
+<h4> LoopBack Connectors</h4>
 
-|    Type   | Package Name                                                                           |
+LoopBack provides several connectors, with more under development.
+
+| Connector | Package Name                                                                           |
 | --------- | -------------------------------------------------------------------------------------- |
 | Memory    | [Built-in](https://github.com/strongloop/loopback-datasource-juggler)                  |
 | MongoDB   | [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb) |
 | Oracle    | [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)   |
 | REST      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
 
-For more information, please read the [LoopBack DataSource and Connector Guide](/loopback-datasource-juggler/#loopback-datasource-and-connector-guide).
+For more information, see the [LoopBack DataSource and Connector Guide](/loopback-datasource-juggler/#loopback-datasource-and-connector-guide).
 
 ### Mobile Clients
 
@@ -168,30 +162,7 @@ production and ruin everyone's launch day. Stop them before they start!)
 Use one strategy, or use both. Leverage them to fit your _use case_, rather than
 fitting your use case to some fixed modelling strategy. The choice is yours.
 
-### REST
 
-Functions defined in LoopBack Models can be made available as a REST
-endpoint. You can see and experiment with _your_ REST api using the
-[LoopBack API Explorer](http://localhost:3000/explorer/).
-
-LoopBack also supports other protocols for your API as well. Socket.io is
-another protocol that is currently being developed.
-
-For more information, please read [Model REST APIs](#model-rest-api).
-
-### Remoting
-
-With LoopBack you can add whatever functionality you like either
-by yourself or leveraging functionality from other open source
-modules from the community.  The ability to "mix in" behaviors are
-available through the inherent power of Javascript's less resrictive
-inheritance model.
-
-LoopBack takes this one step further by allowing you to seamlessly
-invoke server side code running in LoopBack in the backend from the
-your client on the front end.
-
-For more information, please read the [Remoting Guide](/strong-remoting).
 
 ### The Big Picture
 
