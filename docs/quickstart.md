@@ -20,7 +20,7 @@ $ slc run app
 
 <h3>Next Steps</h3>
 
-To gain a deeper understanding LoopBack and how it works, read the following [Concepts](#concepts) section.
+To gain a deeper understanding LoopBack and how it works, read the following [Key Concepts](#key-concepts) section.
 
 For information on how StrongLoop Suite provides:
 
