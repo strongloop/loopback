@@ -1,5 +1,7 @@
 ## Key Concepts
 
+This section goes into more depth describing models, data sources, connectors and other concepts important to StrongLoop.
+
 ### Models
 
 A LoopBack Model consists of:
@@ -9,12 +11,12 @@ A LoopBack Model consists of:
  - Data access capabilities.
  - Business logic.
 
-A mobile client uses the model API to display information to the user or trigger actions
+Mobile clients use the model API to display information to the user or trigger actions
 on the models to interact with backend systems.
 
 Here is a simple example of creating and using a model.
 
-#### Defining a Model
+<h4>Defining a Model</h4>
 
 Consider an e-commerce app with `Product` and `Inventory` models.
 A mobile client could use the `Product` model API to search through all of the
@@ -33,16 +35,10 @@ var Inventory = Model.extend('customer');
 
 **NOTE:** By default, a LoopBack model does not have a schema.  This is appropriate where data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
 
-#### Attaching Models to Data Sources
+<h4>Attaching Models to Data Sources</h4>
 
-Instances of a model carry application data. But they are not very interesting
-until applications can create, retrieve, update, or delete (CRUD) model instances.
-LoopBack introduces the data source concept to provide the data access
-capabilities to models. 
-
-Attaching a model to a data source gives you access to a
-powerful API mixed into models by the connector behind a data source. The
-[MongoDB Connector](http://docs.strongloop.com/loopback-connector-mongodb), for example, mixes in a `create` method that you can use to store a new product in the database; for example:
+A data source enables a model to acess and modify data in backend system such as a relational database.
+Attaching a model to a data source, enables the model to use the data source API.  For example, as shown below, the [MongoDB Connector](http://docs.strongloop.com/loopback-connector-mongodb), mixes in a `create` method that you can use to store a new product in the database; for example:
 
 ```js
 // Step 2: Attach Data Sources
@@ -61,7 +57,7 @@ Product.create({ name: 'widget', price: 99.99 }, function(err, widget) {
 
 Now the models have both data and behaviors. Next, you need to make the models available to mobile clients.
 
-#### Exposing Models to Mobile Clients
+<h4>Exposing Models to Mobile Clients</h4>
 
 Models can be exposed to mobile clients using one of the remoting middleware modules.
 This example uses the `app.rest` middleware to expose the `Product` Model's API over REST.
@@ -81,7 +77,7 @@ After this, you'll have the `Product` model with CRUD functions working remotely
 from mobile clients. Please note the model is schema-less till now and the
 data are not checked.
 
-#### Sanitizing and Validating Models
+<h4>Sanitizing and Validating Models</h4>
 
 A model can be described in plain JSON or JavaScript. The description is called
 *schema*. Once a schema is defined for a model, the model validates and sanitizes data
@@ -101,7 +97,7 @@ A schema imposes restrictions on the model: If a remote client tries to save a p
 (for example, `description`), those properties are removed before the app saves the data in the model.
 Also, since `name` is a required value, the model will _only_ be saved if the product contains a value for the `name` property.
 
-#### More Information
+<h4>More Information</h4>
 
 - Check out the Model [REST API](#rest-api).
 - Read the
