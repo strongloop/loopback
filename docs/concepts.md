@@ -1,9 +1,5 @@
 ## Working with Models
 
-This section provides an overview of using models, data sources, and connector.
-
-### Models
-
 A LoopBack model consists of:
 
  - Application data.
@@ -21,7 +17,7 @@ consistency to their data, preventing bugs that can result from unexpected data 
 
 Here is a simple example of creating and using a model.
 
-<h4>Defining a Model</h4>
+<h3>Defining a Model</h3>
 
 Consider an e-commerce app with `Product` and `Inventory` models.
 A mobile client could use the `Product` model API to search through all of the
@@ -40,7 +36,7 @@ var Inventory = Model.extend('customer');
 
 The above code creates two dynamic models, appropriate when data is "free form." However, some data sources, such as relational databases, require schemas. Additionally, schemas are valuable to enable data exchange and to validate or sanitize data from clients; see [Sanitizing and Validating Models](#sanitizing-and-validating-models).
 
-<h4>Attaching a Model to a Data Source</h4>
+<h3>Attaching a Model to a Data Source</h3>
 
 A data source enables a model to access and modify data in backend system such as a relational database.
 Attaching a model to a data source, enables the model to use the data source API.  For example, as shown below, the [MongoDB Connector](http://docs.strongloop.com/loopback-connector-mongodb), mixes in a `create` method that you can use to store a new product in the database; for example:
@@ -62,7 +58,7 @@ Product.create({ name: 'widget', price: 99.99 }, function(err, widget) {
 
 Now the models have both data and behaviors. Next, you need to make the models available to mobile clients.
 
-<h4>Exposing a Model to Mobile Clients</h4>
+<h3>Exposing a Model to Mobile Clients</h3>
 
 To expose a model to mobile clients, use one of LoopBack's remoting middleware modules.
 This example uses the `app.rest` middleware to expose the `Product` Model's API over REST.
@@ -83,7 +79,7 @@ app.model(Product);
 After this, you'll have the `Product` model with create, read, update, and delete (CRUD) functions working remotely
 from mobile clients. At this point, the model is schema-less and the data are not checked.
 
-<h4>Sanitizing and Validating Models</h4>
+<h3>Sanitizing and Validating Models</h3>
 
 A *schema* provides a description of a model written in **LoopBack Definition Language**, a specific form of JSON. Once a schema is defined for a model, the model validates and sanitizes data before passing it on to a data source. 
 For example, the following code defines a schema and assigns it to the product model.  The schema defines two fields (columns): **name**, a string, and **price**, a number.  The field **name** is a required value.
@@ -100,7 +96,7 @@ A schema imposes restrictions on the model: If a remote client tries to save a p
 (for example, `description`), those properties are removed before the app saves the data in the model.
 Also, since `name` is a required value, the model will _only_ be saved if the product contains a value for the `name` property.
 
-<h4>More Information</h4>
+<h3>More Information</h3>
 
 - Check out the model [REST API](#rest-api).
 - Read the
