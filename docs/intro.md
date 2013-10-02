@@ -11,8 +11,7 @@ To gain a basic understanding of key LoopBack concepts, read the following [Over
 LoopBack consists of:
 
 * A library of Node.js modules for connecting mobile apps to data sources such as databases and REST APIs.
-* A command line tool, `slc lb`, for generating models and entire applications
- with the LoopBack library.
+* A command line tool, `slc lb`, creating and working with LoopBack applications.
 * Client SDKs for native and web-based mobile clients.
 
 As illustrated in the diagram below, a LoopBack application has three components:
