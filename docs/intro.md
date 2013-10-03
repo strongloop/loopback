@@ -42,7 +42,7 @@ layer that supports surfacing backend APIs over REST, WebSockets, and other tran
 
 <h4> API Gateway </h4>
 
-<div style="width: 400px; border-radius: 5px; border: 1px solid #196831; margin-left:auto; margin-right: auto; padding: 10px; background-color: #F8F8F8;">
+<div style="width: 400px; border-radius: 5px; border: 1px solid #196831; margin: 10px auto 10px auto;  padding: 10px; background-color: #F8F8F8;">
 This component has not yet been released.  Coming soon!
 </div>
 
@@ -61,7 +61,7 @@ accesses [datasources](http://docs.strongloop.com/loopback/#data-sources-and-con
 
 <h4> Editor </h4>
 
-<div style="width: 400px; border-radius: 5px; border: 1px solid #196831; margin-left:auto; margin-right: auto; padding: 10px; background-color: #F8F8F8;">
+<div style="width: 400px; border-radius: 5px; border: 1px solid #196831; margin: 10px auto 10px auto; padding: 10px; background-color: #F8F8F8;">
 This component has not yet been released.  Coming soon!
 </div>
 
@@ -74,7 +74,7 @@ from datasources to give you a head start building your app.
 
 <h4> Admin Console </h4>
 
-<div style="width: 400px; border-radius: 5px; border: 1px solid #196831; margin-left:auto; margin-right: auto; padding: 10px; background-color: #F8F8F8;">
+<div style="width: 400px; border-radius: 5px; border: 1px solid #196831; margin: 10px auto 10px auto; padding: 10px; background-color: #F8F8F8;">
 This component has not yet been released.  Coming soon!
 </div>
 
