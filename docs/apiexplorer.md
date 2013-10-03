@@ -5,12 +5,12 @@ API explorer so you can quickly see and test out the REST API for the models.
 Follow these steps:
 
 1. Open your browser to http://localhost:3000/explorer. You'll see a list of REST API endpoints as illustrated below.
-<img src="/loopback/assets/explorer-listing.png" alt="API Exlporer Listing" width="600" style="border: 1px solid gray; padding: 5px;">
+<img src="/loopback/assets/explorer-listing.png" alt="API Exlporer Listing" width="600" style="border: 1px solid gray; padding: 5px; margin: 10px;">
 The endpoints are grouped by the model names. Each endpoint consists of a list
 of operations for the model.
 2. Click on one of the endpoint paths (such as /locations) to see available
 operations for a given model.
-<img src="/loopback/assets/explorer-endpoint.png" alt="API Exlporer Endpoints" width="600" style="border: 1px solid gray; padding: 5px;">
+<img src="/loopback/assets/explorer-endpoint.png" alt="API Exlporer Endpoints" width="600" style="border: 1px solid gray; padding: 5px; margin: 10px;">">
 
 Great, now you see the CRUD operations mapped to HTTP verbs and paths.
 
