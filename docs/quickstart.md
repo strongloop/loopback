@@ -17,5 +17,5 @@ $ slc run app
 ```
 4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.
 
-LoopBack automatically creates a REST API for your app. In the next sections, you'll use the web-based
+LoopBack automatically creates a REST API for your app. In the next section, you'll use the web-based
 API explorer to check it out.
