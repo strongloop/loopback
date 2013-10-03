@@ -33,12 +33,10 @@ LoopBack has the following management components:
 
 <h4> Client SDKs </h4>
 
-LoopBack native Client SDKs provide access to remote
-persistent data in a contextually-relevant way. The SDK handles transport and marshalling of data, 
-and you can leverage existing tools (XCode, Eclipse, et al) to model data on the client,
-persisting it to the server as needed.
-Mobile clients call into LoopBack APIs surfaced by [strong-remoting](/strong-remoting), a pluggable transport
-layer that supports surfacing backend APIs over REST, WebSockets, and other transports.
+LoopBack native client SDKs provide access to remote persistent data and handle transport and marshalling of data to the app backend.
+You can leverage existing tools (XCode, Eclipse, et al) to model data on the client, persisting it to the server as needed.
+Mobile clients call into LoopBack APIs using [strong-remoting](/strong-remoting), a pluggable transport
+layer that enables you to provide backend APIs over REST, WebSockets, and other transports.
 
 <h4> API Gateway </h4>
 
@@ -46,13 +44,12 @@ layer that supports surfacing backend APIs over REST, WebSockets, and other tran
 This component has not yet been released.  Coming soon!
 </div>
 
-The  API gateway acts as a reverse-proxy to the rest of LoopBack.  It provides OAuth2 based security, mediates between
+The  API gateway acts as a reverse-proxy to the rest of LoopBack.  It provides OAuth 2.0 security, mediates between
 multiple data formats, and acts as a quality-of-service layer for application APIs, providing instrumentation and other aspect-level functionality.  <!-- what does "aspect level" mean -->
 
 <h4>  API Server </h4>
 The API server registers and hosts models at runtime and automatically exposes them through a REST endpoint.
-The API server also runs batch processes or scheduled jobs as a
-mobile backend for functions such as mass push notifications.
+The API server also runs batch processes or scheduled jobs for functions such as mass push notifications.
 
 <h4> Enterprise Connectors </h4>
 LoopBack enables you to leverage existing data and services 
@@ -66,7 +63,7 @@ This component has not yet been released.  Coming soon!
 </div>
 
 LoopBack provides a rich set of [Node.js based APIs](http://docs.strongloop.com/loopback/#nodejs-api).
-The editor is a web based GUI that makes it even easier to define,
+The editor is a web-based GUI that makes it even easier to define,
 configure and manage mobile apps and models without having to
 write code.  The editor facilitates the process of
 [discovering models](http://docs.strongloop.com/loopback/#datasourcediscovermodeldefinitionsusername-fn) and [schemas](http://docs.strongloop.com/loopback/#datasourcediscoverschemaowner-name-fn)
