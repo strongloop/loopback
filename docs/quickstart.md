@@ -16,16 +16,3 @@ $ cd sls-sample-app
 $ slc run app
 ```
 4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.
-5. To browse all the sample app's REST APIs, open the API explorer at <http://localhost:3000/explorer>.
-
-<h3>Next Steps</h3>
-
-To gain a deeper understanding LoopBack and how it works, read the following [Key Concepts](#key-concepts) section.
-
-For information on how StrongLoop Suite provides:
-
- - Out-of-the-box scalability, see
- [StrongNode](http://docs.strongloop.com/strongnode#quick-start).
- - CPU profiling and path trace features, see
- [StrongOps](http://docs.strongloop.com/strongops#quick-start).
- - Mobile client APIs, see [LoopBack Client SDKs](http://docs.strongloop.com/loopback-clients/).
