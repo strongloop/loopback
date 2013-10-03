@@ -10,22 +10,24 @@ To gain a basic understanding of key LoopBack concepts, read the following [Over
 LoopBack consists of:
 
 * A library of Node.js modules for connecting mobile apps to data sources such as databases and REST APIs.
-* A command line tool, `slc lb`, creating and working with LoopBack applications.
+* A command line tool, `slc lb`, for creating and working with LoopBack applications.
 * Client SDKs for native and web-based mobile clients.
 
 The diagram below illustrates LoopBack's architecture:
 
 <img src="/loopback/assets/loopback_ov.png" alt="LoopBack Architecture" width="600">
 
--  Mobile Clients
-- API Gateway (coming soon)
-- API Server
-- Enterprise Connectors
+LoopBack has the following runtime components:
 
-As well as its management sub-components:
+- Mobile clients
+- API gateway (coming soon)
+- API server
+- Enterprise connectors
+
+LoopBack has the following management components:
 
 - Editor (coming soon)
-- Admin Console (coming soon)
+- Admin console (coming soon)
 - LoopBack Node.js API
 - Repository/Registry
 
@@ -39,6 +41,11 @@ Mobile clients call into LoopBack APIs surfaced by [strong-remoting](/strong-rem
 layer that supports surfacing backend APIs over REST, WebSockets, and other transports.
 
 <h4> API Gateway </h4>
+
+<div style="border: 1px solid #196831; margin-left:auto; margin-right: auto; padding: 10px; background-color: #F8F8F8;">
+This component has not yet been released.  Coming soon!
+</div>
+
 The  API gateway acts as a reverse-proxy to the rest of LoopBack.  It provides OAuth2 based security, mediates between
 multiple data formats, and acts as a quality-of-service layer for application APIs, providing instrumentation and other aspect-level functionality.  <!-- what does "aspect level" mean -->
 
@@ -53,6 +60,11 @@ in your mobile apps just as you do in your web apps.  The Datasource Juggler
 accesses [datasources](http://docs.strongloop.com/loopback/#data-sources-and-connectors) through enterprise connectors, so all you need to create is your app's model.
 
 <h4> Editor </h4>
+
+<div style="border: 1px solid #196831; margin-left:auto; margin-right: auto; padding: 10px; background-color: #F8F8F8;">
+This component has not yet been released.  Coming soon!
+</div>
+
 LoopBack provides a rich set of [Node.js based APIs](http://docs.strongloop.com/loopback/#nodejs-api).
 The editor is a web based GUI that makes it even easier to define,
 configure and manage mobile apps and models without having to
@@ -61,6 +73,11 @@ write code.  The editor facilitates the process of
 from datasources to give you a head start building your app.
 
 <h4> Admin Console </h4>
+
+<div style="border: 1px solid #196831; margin-left:auto; margin-right: auto; padding: 10px; background-color: #F8F8F8;">
+This component has not yet been released.  Coming soon!
+</div>
+
 The LoopBack Admin Console facilitates team app development. 
 It enables you to combine work from multiple LoopBack
 development environments into a single enterprise runtime and 
