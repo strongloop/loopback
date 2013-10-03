@@ -18,7 +18,7 @@ of operations for the model.
 Step 3: Click on one of the endpoint paths (such as /locations) to see available
 operations for a given model.
 
- 
+<img src="/loopback/assets/explorer-endpoint.png" alt="API Exlporer Endpoints" width="600" style="border: 1px solid gray; padding: 5px;">
 
 <!--
 ![API Endpoint](assets/explorer-endpoint.png)
