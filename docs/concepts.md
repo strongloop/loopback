@@ -122,11 +122,37 @@ Rather, the `DataSource` class provides an API to configure the underlying conne
 
 LoopBack provides several connectors, with more under development.
 
-| Connector | GitHub Module                                                                           |
-| --------- | -------------------------------------------------------------------------------------- |
-| [Memory](/loopback-datasource-juggler/)    | Built-in to [loopback-datasource-juggler](https://github.com/strongloop/loopback-datasource-juggler)                  |
-| [MongoDB](/loopback-connector-mongodb/)   | [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb) |
-| [Oracle](/loopback-connector-oracle/)    | [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)   |
-| [REST](/loopback-connector-rest/)      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
+<table style="
+    margin: 1em;
+    border: solid 1px #AAAAAA;
+    border-collapse: collapse;
+    background-color: #F9F9F9;
+    font-size: 90%;
+    empty-cells:show;">
+<thead>
+<tr>
+<th>Connector</th>
+<th>GitHub Module</th>
+</tr>
+</thead>    
+<tbody>
+<tr>
+<td><a href="/loopback-datasource-juggler/">Memory</a></td>
+<td>Built-in to <a href="https://github.com/strongloop/loopback-datasource-juggler">loopback-datasource-juggler</a></td>
+</tr>
+<tr>
+<td><a href="/loopback-connector-mongodb/">MongoDB</a></td>
+<td><a href="https://github.com/strongloop/loopback-connector-mongodb">loopback-connector-mongodb</a></td>
+</tr>
+<tr>
+<td><a href="/loopback-connector-oracle/">Oracle</a></td>
+<td><a href="https://github.com/strongloop/loopback-connector-oracle">loopback-connector-oracle</a></td>
+</tr>
+<tr>
+<td><a href="/loopback-connector-rest/">REST</a></td>
+<td><a href="https://github.com/strongloop/loopback-connector-rest">loopback-connector-rest</a></td>
+</tr>
+</tbody>
+</table>
 
 For more information, see the [LoopBack DataSource and Connector Guide](/loopback-datasource-juggler/#loopback-datasource-and-connector-guide).
