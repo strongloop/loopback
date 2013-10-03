@@ -45,7 +45,8 @@ This component has not yet been released.  Coming soon!
 </div>
 
 The  API gateway acts as a reverse-proxy to the rest of LoopBack.  It provides OAuth 2.0 security, mediates between
-multiple data formats, and acts as a quality-of-service layer for application APIs, providing instrumentation and other aspect-level functionality.  <!-- what does "aspect level" mean -->
+multiple data formats, and acts as a quality-of-service layer for application APIs, providing instrumentation and other aspect-level functionality.  
+<!-- what does "aspect level" mean -->
 
 <h4>  API Server </h4>
 The API server registers and hosts models at runtime and automatically exposes them through a REST endpoint.
