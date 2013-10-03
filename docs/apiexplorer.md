@@ -13,7 +13,7 @@ operations for a given model.  You'll see the CRUD operations mapped to HTTP ver
 <img src="/loopback/assets/explorer-api.png" alt="API Spec" width="600" style="border: 1px solid gray; padding: 5px; margin: 10px;">
 Notice that each operation has the HTTP verb, path, description, response model, and a list of request parameters.
 4. Invoke an operation: fill in the parameters,  then click the ***Try it out!*** button.  You'll see something like this:
-<img src="/loopback/assets/explorer-req-res.png" alt="Request/Response" width="600" style="border: 1px solid gray; padding: 5px; margin: 10px;">
+<img src="/loopback/assets/explorer-req-res.png" alt="Request/Response" width="400" style="border: 1px solid gray; padding: 5px; margin: 10px;">
 
 <h3>Next Steps</h3>
 
