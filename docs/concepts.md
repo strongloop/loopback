@@ -123,14 +123,14 @@ Rather, the `DataSource` class provides an API to configure the underlying conne
 LoopBack provides several connectors, with more under development.
 
 <table style="
-    margin: 1em;
+    margin-left: 1em;
     border: solid 1px #AAAAAA;
     border-collapse: collapse;
     background-color: #F9F9F9;
     font-size: 90%;
-    empty-cells:show;">
+    empty-cells:show;" border="1" cellpadding="1">
 <thead>
-<tr>
+<tr style="background-color: #C7C7C7;">
 <th>Connector</th>
 <th>GitHub Module</th>
 </tr>
