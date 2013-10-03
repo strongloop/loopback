@@ -1,8 +1,6 @@
 ### Using the API Explorer
 
-LoopBack has created a REST API for the sample app. LoopBack provides a web-based
-API explorer so you can quickly see and test out the REST API for the models.
-Follow these steps:
+Follow these steps to explore the sample app's REST API:
 
 1. Open your browser to http://localhost:3000/explorer. You'll see a list of REST API endpoints as illustrated below.
 <img src="/loopback/assets/explorer-listing.png" alt="API Explorer Listing" width="600" style="border: 1px solid gray; padding: 5px; margin: 10px;">
