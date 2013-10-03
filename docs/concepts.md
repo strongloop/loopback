@@ -122,11 +122,11 @@ Rather, the `DataSource` class provides an API to configure the underlying conne
 
 LoopBack provides several connectors, with more under development.
 
-| Connector | Package Name                                                                           |
+| Connector | GitHub Module                                                                           |
 | --------- | -------------------------------------------------------------------------------------- |
-| Memory    | [Built-in](https://github.com/strongloop/loopback-datasource-juggler)                  |
-| MongoDB   | [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb) |
-| Oracle    | [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)   |
-| REST      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
+| [Memory](/loopback-datasource-juggler/)    | Built-in to [loopback-datasource-juggler](https://github.com/strongloop/loopback-datasource-juggler)                  |
+| [MongoDB](/loopback-connector-mongodb/)   | [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb) |
+| [Oracle](/loopback-connector-oracle/)    | [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)   |
+| [REST](/loopback-connector-rest/)      | [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)       |
 
 For more information, see the [LoopBack DataSource and Connector Guide](/loopback-datasource-juggler/#loopback-datasource-and-connector-guide).
