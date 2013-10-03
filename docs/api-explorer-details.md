@@ -21,7 +21,7 @@ The first part is a listing of the REST APIs.
 
 - http://localhost:3000/swagger/resources
 
-
+```javascript
     {
       "swaggerVersion": "1.1",
       "basePath": "http://localhost:3000",
@@ -43,13 +43,14 @@ The first part is a listing of the REST APIs.
         }
       ]
     }
+```
 
 ## Resource Operations
 The second part describes all operations of a given model.
 
 - http://localhost:3000/swagger/locations
 
-
+```javascript
     {
       "swaggerVersion": "1.1",
       "basePath": "http://localhost:3000",
@@ -104,4 +105,4 @@ The second part describes all operations of a given model.
         ...
       ]
     }
-
+```
