@@ -128,7 +128,7 @@ LoopBack provides several connectors, with more under development.
     border-collapse: collapse;
     background-color: #F9F9F9;
     font-size: 90%;
-    empty-cells:show;" border="1" cellpadding="1">
+    empty-cells:show;" border="1" cellpadding="10">
 <thead>
 <tr style="background-color: #C7C7C7;">
 <th>Connector</th>
