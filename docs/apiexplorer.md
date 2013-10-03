@@ -1,25 +1,10 @@
-## API Explorer
+### Using the API Explorer
 
-LoopBack helps you build APIs for mobile applications. As you follow the steps
-to create a project and add models using the `slc lb` command line tool, REST
-APIs are automatically added to your application.
+LoopBack has created a REST API for the sample app. LoopBack provides a web-based
+API explorer so you can quickly see and test out the REST API for the models.
+Follow these steps:
 
-Now we have a handful of REST APIs. It would be nice to see the list of APIs and
-try them out without writing code. We can do that! LoopBack provides a Web based
-API explorer out of the box to document and explore REST APIs for the models.
-
-Let's give a try first.
-
-### API Explorer UI
-
-Step 1: Run the sample application
-
-    $ cd sls-sample-app
-    $ slc run app
-
-
-Step 2: Open your browser and point to http://localhost:3000/explorer. You'll
-see a list of REST API endpoints as illustrated below.
+1. Open your browser to http://localhost:3000/explorer. You'll see a list of REST API endpoints as illustrated below.
 
 ![Resource Listing](assets/explorer-listing.png)
 
@@ -29,7 +14,11 @@ of operations for the model.
 Step 3: Click on one of the endpoint paths (such as /locations) to see available
 operations for a given model.
 
+<img src="/assets/explorer-listing.png">
+
+<!--
 ![API Endpoint](assets/explorer-endpoint.png)
+-->
 
 Great, now you see the CRUD operations mapped to HTTP verbs and paths.
 
@@ -155,5 +144,15 @@ The second part describes all operations of a given model.
       ]
     }
 
-**Note: The API specifications will be enhanced in future releases to include
-the model definitions.**
+<h3>Next Steps</h3>
+
+To gain a deeper understanding LoopBack and how it works, read the following [Key Concepts](#key-concepts) section.
+
+For information on how StrongLoop Suite provides:
+
+ - Out-of-the-box scalability, see
+ [StrongNode](http://docs.strongloop.com/strongnode#quick-start).
+ - CPU profiling and path trace features, see
+ [StrongOps](http://docs.strongloop.com/strongops#quick-start).
+ - Mobile client APIs, see [LoopBack Client SDKs](http://docs.strongloop.com/loopback-clients/).
+
