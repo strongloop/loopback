@@ -458,9 +458,9 @@ describe('Model', function() {
       
       var MyModel = loopback.createModel('foo', props);
       
-      Object.keys(MyModel.properties).forEach(function (key) {
-        var p = MyModel.properties[key];
-        var o = MyModel.properties[key];
+      Object.keys(MyModel.definition.properties).forEach(function (key) {
+        var p = MyModel.definition.properties[key];
+        var o = MyModel.definition.properties[key];
         assert(p);
         assert(o);
         assert(typeof p.type === 'function');
