@@ -14,6 +14,7 @@ operations for a given model.  You'll see the CRUD operations mapped to HTTP ver
 Notice that each operation has the HTTP verb, path, description, response model, and a list of request parameters.
 4. Invoke an operation: fill in the parameters,  then click the **Try it out!** button.  You'll see something like this:
 <img src="assets/explorer-req-res.png" alt="Request/Response" width="400" style="border: 1px solid gray; padding: 5px; margin: 10px 10px 10px 100px;">
+
 You can see the request URL, the JSON in the response body, and the HTTP response code and headers.
 
 <h3>Next Steps</h3>
