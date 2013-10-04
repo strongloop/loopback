@@ -15,7 +15,7 @@ LoopBack consists of:
 
 The diagram below illustrates LoopBack's architecture:
 
-<img src="/loopback/assets/loopback_ov.png" alt="LoopBack Architecture" width="600">
+<img src="assets/loopback_ov.png" alt="LoopBack Architecture" width="600">
 
 LoopBack has the following runtime components:
 
