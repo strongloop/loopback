@@ -15,7 +15,8 @@ named `sls-sample-app` and installs all of its dependencies.
 $ cd sls-sample-app
 $ slc run app
 ```
-4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.
+4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.  Click the **GET** buttons to see the JSON data returned.
 
-LoopBack automatically creates a REST API for your app. In the next section, you'll use the web-based
-API explorer to check it out.
+### About the sample app
+
+The StrongLoop sample application is a mobile app for an imaginary military equipment rental dealer with outlets in major cities around the world. 
