@@ -19,4 +19,6 @@ $ slc run app
 
 ### About the sample app
 
-The StrongLoop sample application is a mobile app for an imaginary military equipment rental dealer with outlets in major cities around the world. 
+The StrongLoop sample is a mobile app for "Blackpool," an imaginary military equipment rental dealer with outlets in major cities around the world.  It enables customers (small-time generals) to rent weapons and buy ammunition from Blackpool using their mobile phones.  The app displays a map of nearby rental locations and see currently available weapons, which you can filter by price, ammo type and distance.  Then, you can use the app to reserve the desired weapons and ammo.
+
+For more details on the sample app, see [StrongLoop sls-sample-app](https://github.com/strongloop/sls-sample-app) in GitHub.
