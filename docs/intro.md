@@ -19,7 +19,7 @@ As illustrated in the diagram below, a LoopBack application has three components
 + **Data sources and connectors**.  Data sources are databases or other backend services such as REST APIs, SOAP web services, or storage services.   Connectors provide apps access to enterprise data sources such as Oracle, MySQL, and MongoDB.
 + **Mobile clients** using the LoopBack client SDKs.
 
-![LoopBack Architecture](assets/loopback-architecture.png "LoopBack Architecture")
+<img src="./assets/loopback-architecture.png" alt="StrongLoop Architecture"></img>
 
 An app interacts with data sources through the LoopBack model API, available
 [locally within Node.js](#model), [remotely over REST](#rest-api), and via native client
