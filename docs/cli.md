@@ -11,17 +11,21 @@ For more information on the `slc` command, see [StrongLoop Control](/strongnode/
 
 ### workspace
 
-A LoopBack workspace is essentially a container for application projects.   It is not required.
-
-This command initializes a workspace, _workspance_name_, as a new empty directory.  The _ws_name_ argument is optional; default is "loopback-workspace".
-
 <pre>
 slc lb workspace <i>workspace_name</i>
 </pre>
 
+Creates an empty directory named _workspance_name_.  The argument is optional; default is "loopback-workspace".
+
+A LoopBack workspace is essentially a container for application projects.   It is not required to create an application.
+
 ### project
 
-Create a LoopBack application called _appname_, where _appname_ is a valid JavaScript identifier.
+<pre>
+slc lb project <i>app_name</i>
+</pre>
+
+Creates a LoopBack application called _appname_, where _appname_ is a valid JavaScript identifier.
 This command creates a new directory called _appname_ in the current directory containing:
 * app.js
 * package.json
@@ -30,16 +34,15 @@ This command creates a new directory called _appname_ in the current directory c
 <li>  db directory - contains files index.js and module.json</li> 
 <li>  docs directory - contains files config.json, index.js, and module.json; explorer directory</li></ul> 
 
+### model
+
 <pre>
-slc lb project <i>appname</i>
+slc lb model <i>model_name</i>
 </pre>
 
-### model
-Create a model in an existing LoopBack application. Provide the
+Creates a model in an existing LoopBack application. 
+
+Provide the
 `-i` or `--interactive` flag to be prompted through model
 configuration. Use the `--data-source` flag to specify the name of a
 custom data source; default is data source named "db".
-
-<pre>
-$ slc lb model <i>model_name</i>
-</pre>
