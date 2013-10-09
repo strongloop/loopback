@@ -12,12 +12,12 @@ For more information on the `slc` command, see [StrongLoop Control](/strongnode/
 ### workspace
 
 <pre>
-slc lb workspace <i>workspace_name</i>
+slc lb workspace <i>wsname</i>
 </pre>
 
-Creates an empty directory named _workspance_name_.  The argument is optional; default is "loopback-workspace".
+Creates an empty directory named _wsname_.  The argument is optional; default is "loopback-workspace".
 
-A LoopBack workspace is essentially a container for application projects.   It is not required to create an application.
+A LoopBack workspace is essentially a container for application projects.   It is not required to create an application, but may be helpful for organization.
 
 ### project
 
@@ -37,10 +37,10 @@ This command creates a new directory called _appname_ in the current directory c
 ### model
 
 <pre>
-slc lb model <i>model_name</i>
+slc lb model <i>modelname</i>
 </pre>
 
-Creates a model in an existing LoopBack application. 
+Creates a model named _modelname_ in an existing LoopBack application. 
 
 Provide the
 `-i` or `--interactive` flag to be prompted through model
