@@ -13,9 +13,9 @@ For more information on the `slc` command, see [StrongLoop Control](/strongnode/
 Initialize a workspace as a new empty directory with an optional
 name. The default name is "loopback-workspace".
 
-```sh
-$ slc lb workspace my-loopback-workspace
-```
+<pre>
+$ slc lb workspace <i>workspace_name</i>
+</pre>
 
 ### project
 
