@@ -1,13 +1,12 @@
 ## slc lb Command Line Tool
 
-The StrongLoop Suite comes bundled with a command line tool called StrongLoop
-Command or `slc`. StrongLoop Command allows you to create boilerplate for
-LoopBack and other StrongNode applications.
-
-`slc lb` provides the following commands:
+StrongLoop Suite includes a command-line tool, `slc` (StrongLoop Command), for working with applications.
+The `slc lb` command enables you to quickly create new LoopBack applications and models with the following commands:
 * [workspace](#workspace): create a new workspace, essentially a container for multiple projects.
 * [project](#project): create a new application.
 * [model](#model): create a new model for a LoopBack application.
+
+For more information on the `slc` command, see [StrongLoop Control](/strongnode/#strongloop-control-slc).
 
 ### workspace
 
