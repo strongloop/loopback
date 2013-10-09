@@ -1,7 +1,8 @@
-## slc lb Command Line Tool
+## Command Line Tool
 
 StrongLoop Suite includes a command-line tool, `slc` (StrongLoop Command), for working with applications.
-The `slc lb` command enables you to quickly create new LoopBack applications and models with the following commands:
+The `slc lb` command enables you to quickly create new LoopBack applications and models with the following sub-commands:
+
 * [workspace](#workspace): create a new workspace, essentially a container for multiple projects.
 * [project](#project): create a new application.
 * [model](#model): create a new model for a LoopBack application.
@@ -10,31 +11,35 @@ For more information on the `slc` command, see [StrongLoop Control](/strongnode/
 
 ### workspace
 
-Initialize a workspace as a new empty directory with an optional
-name. The default name is "loopback-workspace".
+A LoopBack workspace is essentially a container for application projects.   It is not required.
+
+This command initializes a workspace, _workspance_name_, as a new empty directory.  The _ws_name_ argument is optional; default is "loopback-workspace".
 
 <pre>
-$ slc lb workspace <i>workspace_name</i>
+slc lb workspace <i>workspace_name</i>
 </pre>
 
 ### project
 
-Create a LoopBack application in a new directory within the current directory
-using the given name. The name arg is required.
+Create a LoopBack application called _appname_, where _appname_ is a valid JavaScript identifier.
+This command creates a new directory called _appname_ in the current directory containing:
+* app.js
+* package.json
+* modules directory, containing: <ul><li> app directory - contains config.json, index.js, and module.json files
+</li> 
+<li>  db directory - contains files index.js and module.json</li> 
+<li>  docs directory - contains files config.json, index.js, and module.json; explorer directory</li></ul> 
 
-```sh
-$ cd my-loopback-workspace
-$ slc lb project my-app
-$ slc run my-app
-```
+<pre>
+slc lb project <i>appname</i>
+</pre>
 
 ### model
-Create a model in an existing LoopBack application. If you provide the
-`-i` or `--interactive` flags, you will be prompted through a model
-configuration. The `--data-source` flag allows you to specify the name of a
-custom data. Otheriwse it will use the data source named "db".
+Create a model in an existing LoopBack application. Provide the
+`-i` or `--interactive` flag to be prompted through model
+configuration. Use the `--data-source` flag to specify the name of a
+custom data source; default is data source named "db".
 
-```sh
-$ cd my-app
-$ slc lb model product
-```
+<pre>
+$ slc lb model <i>model_name</i>
+</pre>
