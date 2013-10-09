@@ -1,6 +1,6 @@
 ## Command Line
 
-The StrongLoop Suite comes bundled with a command line tool called StrongLoop
+StrongLoop Suite comes bundled with a command line tool called StrongLoop
 Command or `slc`. StrongLoop Command allows you to create boilerplate for
 LoopBack and other StrongNode applications.
 
