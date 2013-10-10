@@ -1,59 +1,49 @@
-###Quick Start
+##Quick Start
 
-<h4>Step 1</h4>
+This section will get you up and running with LoopBack and the StrongLoop sample app in just a few minutes.
 
-> Install [StrongLoop Suite](http://www.strongloop.com/get-started)
+### Prerequisites
 
-<h4>Step 2</h4>
+You must have the `git` command-line tool installed to run the sample application.
+If needed, download it at <http://git-scm.com/downloads> and install it.
 
-> Setup the **StrongLoop Suite Sample App**.
+On Linux systems, you must have root privileges to write to `/usr/share`.
 
+**NOTE**: If you're using Windows or OSX and don't have a C compiler (Visual C++ on Windows or XCode on OSX) and command-line "make" tools installed, you will see errors such as these:
+```sh
+xcode-select: Error: No Xcode is selected. Use xcode-select -switch <path-to-xcode>, 
+or see the xcode-select manpage (man xcode-select) for further information.
+...
+Unable to load native module uvmon; some features may be unavailable without compiling it.
+memwatch must be installed to use the instances feature
+StrongOps not configured to monitor. Please refer to http://docs.strongloop.com/strong-agent for usage.
+```
+
+You will still be able to run the sample app, but StrongOps will not be able to collect certain statistics.
+
+### Creating and Running the Sample App
+
+Follow these steps to run the LoopBack sample app:
+
+1. If you have not already done so, download and install [StrongLoop Suite](http://www.strongloop.com/get-started) or set up your cloud development platform.
+
+2. Setup the StrongLoop Suite sample app with this command.
 ```sh
 $ slc example
 ```
-
-The command above takes care of cloning the sample app into a new directory
-named `sls-sample-app` and installing all of its dependencies.
-
-
-<h4>Step 3</h4>
-
-> Run the sample application.
-
+This command clones the sample app into a new directory
+named `sls-sample-app` and installs all of its dependencies.
+3. Run the sample application by entering this command:
 ```sh
 $ cd sls-sample-app
 $ slc run app
 ```
+4. To see the app running in a browser, open <http://localhost:3000>. The app homepage lists sample requests you can make against the LoopBack REST API.  Click the **GET** buttons to see the JSON data returned.
 
-<h4>Step 4</h4>
+### About the sample app
 
-> Open the app in a browser.
+The StrongLoop sample is a mobile app for "Blackpool," an imaginary military equipment rental dealer with outlets in major cities around the world.  It enables customers (military commanders) to rent weapons and buy ammunition from Blackpool using their mobile phones.  The app displays a map of nearby rental locations and see currently available weapons, which you can filter by price, ammo type and distance.  Then, you can use the app to reserve the desired weapons and ammo.
 
-The sample app should now be running at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>. The homepage of
-the sample app lists several sample requests you can make against the LoopBack
-REST API.
+Note that the sample app is the backend functionality only; that is, the app has a REST API, but no client app or UI to consume the interface.
 
-<a href="http://localhost:3000" class="status btn btn-primary" target="_blank">
-View the Sample App</a>
-
-<h4>Step 5</h4>
-
-> Explore the REST API
-
-To browse all the sample app's REST APIs,
-[open the API explorer](http://localhost:3000/explorer)
-
-<a href="http://localhost:3000/explorer" class="status btn btn-primary">View the
-API Explorer</a>
-
-<h4>Next Steps</h4>
-
-> Check out the rest of the StrongLoop Suite.
-
- - To see how to consume the API from mobile clients, check out the [Getting Started](#getting-started) guide.
- - To see the out-of-the-box scaling capability of the Suite, check out the
- [StrongNode Quick Start Guide](http://docs.strongloop.com/strongnode#quick-start).
- - To see the provided CPU profiling and path trace features, check out the
- [StrongOps Quick Start Guide](http://docs.strongloop.com/strongops#quick-start).
-
----
+For more details on the sample app, see [StrongLoop sls-sample-app](https://github.com/strongloop/sls-sample-app) in GitHub.
