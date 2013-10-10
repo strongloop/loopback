@@ -3,9 +3,9 @@
   "content": [
     "docs/intro.md",
     "docs/quickstart.md",
+    "docs/apiexplorer.md",
     "docs/concepts.md",
     "docs/cli.md",
-    "docs/apiexplorer.md",
     "docs/api.md",
     "docs/ios.md",
     "docs/js.md",
