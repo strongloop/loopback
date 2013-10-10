@@ -32,7 +32,7 @@ describe('User', function(){
   describe('User.create', function(){
     it('Create a new user', function(done) {
       User.create({email: 'f@b.com', password: 'bar'}, function (err, user) {
-        assert(err);
+        assert(!err);
         assert(user.id);
         assert(user.email);
         done();
