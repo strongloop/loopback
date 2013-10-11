@@ -44,7 +44,7 @@ describe('User', function(){
         assert.deepEqual(err, { name: 'ValidationError',
           message: 'Validation error',
           statusCode: 400,
-          codes: { email: [ 'presence', 'format.blank' ] },
+          codes: { email: [ 'presence', 'format.blank', 'uniqueness' ] },
           context: 'user' });
         
         done();
