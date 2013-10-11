@@ -1,10 +1,10 @@
-var models = require('../lib/models');
 var loopback = require(('../'));
 var assert = require('assert');
 
 var dataSource = loopback.createDataSource('db', {connector: loopback.Memory});
 
-var Application = models.Application(dataSource);
+var Application = loopback.Application;
+Application.attachTo(dataSource);
 
 describe('Application', function () {
     var registeredApp = null;
