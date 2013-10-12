@@ -1,6 +1,7 @@
 var User = loopback.User.extend('user');
 var Session = loopback.Session;
 var passport = require('passport');
+var MailConnector = require('../lib/connectors/mail');
 
 var userMemory = loopback.createDataSource({
   connector: loopback.Memory
@@ -9,9 +10,13 @@ var userMemory = loopback.createDataSource({
 
 describe('User', function(){
   
+  var mailDataSource = loopback.createDataSource({
+    connector: MailConnector,
+    transports: [{type: 'STUB'}]
+  });
   User.attachTo(userMemory);
   User.session.attachTo(userMemory);
-  User.email.setup({transports: [{type: 'STUB'}]});
+  User.email.attachTo(mailDataSource);
   
   // allow many User.afterRemote's to be called
   User.setMaxListeners(0);
