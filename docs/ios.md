@@ -1,3 +1,3 @@
 ## iOS API
 
-<h3><em>Stay tuned. Currently in development.</em></h3>
+See [LoopBack iOS SDK](http://docs.strongloop.com/loopback-clients/ios/api/annotated.html) for API reference documentation.
