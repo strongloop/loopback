@@ -10,6 +10,7 @@ var loopback = module.exports = require('./lib/loopback');
 
 loopback.Connector = require('./lib/connectors/base-connector');
 loopback.Memory = require('./lib/connectors/memory');
+loopback.Mail = require('./lib/connectors/mail');
 
 /**
  * Types

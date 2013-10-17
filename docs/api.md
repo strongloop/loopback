@@ -1164,6 +1164,22 @@ POST /users/logout
 Require a user to verify their email address before being able to login. This will send an email to the user containing a link to verify their address. Once the user follows the link they will be redirected to `/` and be able to login normally.
 
 ```js
+// first setup the mail datasource (see #mail-model for more info)
+var mail = loopback.createDataSource({
+  connector: loopback.Mail,
+  transports: [{
+    type: 'smtp',
+    host: 'smtp.gmail.com',
+    secureConnection: true,
+    port: 465,
+    auth: {
+      user: 'you@gmail.com',
+      pass: 'your-password'
+    }
+  }]
+});
+
+User.email.attachTo(mail);
 User.requireEmailVerfication = true;
 User.afterRemote('create', function(ctx, user, next) {
   var options = {
@@ -1230,6 +1246,43 @@ MySession.attachTo(loopback.memory());
 #### Email Model
 
 Send emails from your loopback app.
+
+```js
+// extend a one-off model for sending email
+var MyEmail = loopback.Email.extend('my-email');
+
+// create a mail data source
+var mail = loopback.createDataSource({
+  connector: loopback.Mail,
+  transports: [{
+    type: 'smtp',
+    host: 'smtp.gmail.com',
+    secureConnection: true,
+    port: 465,
+    auth: {
+      user: 'you@gmail.com',
+      pass: 'your-password'
+    }
+  }]
+});
+
+// attach the model
+MyEmail.attachTo(mail);
+
+// send an email
+MyEmail.send({
+  to: 'foo@bar.com',
+  from: 'you@gmail.com',
+  subject: 'my subject',
+  text: 'my text',
+  html: 'my <em>html</em>'
+}, function(err, mail) {
+  console.log('email sent!');
+});
+```
+
+> NOTE: the mail connector uses [nodemailer](http://www.nodemailer.com/). See 
+> the [nodemailer docs](http://www.nodemailer.com/) for more info.
 
 ### REST Router
 
