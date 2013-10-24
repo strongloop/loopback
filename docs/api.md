@@ -641,7 +641,7 @@ The express ServerResponse object. [See full documentation](http://expressjs.com
     
 #### Relationships
 
-##### Model.hasMany(Model)
+##### Model.hasMany(Model, options)
 
 Define a "one to many" relationship.
 
@@ -681,6 +681,42 @@ Book.create(function(err, book) {
     console.log(chapters);
   });
 });
+```
+
+##### Model.belongsTo(Model, options)
+
+A `belongsTo` relation sets up a one-to-one connection with another model, such
+that each instance of the declaring model "belongs to" one instance of the other
+model. For example, if your application includes users and posts, and each post
+can be written by exactly one user.
+
+```js
+    Post.belongsTo(User, {as: 'author', foreignKey: 'userId'});
+```
+
+The code above basically says Post has a reference called `author` to User using
+the `userId` property of Post as the foreign key. Now we can access the author
+in one of the following styles:
+
+```js
+    post.author(callback); // Get the User object for the post author asynchronously
+    post.author(); // Get the User object for the post author synchronously
+    post.author(user) // Set the author to be the given user
+```
+
+##### Model.hasAndBelongsToMany(Model, options)
+
+A `hasAndBelongsToMany` relation creates a direct many-to-many connection with
+another model, with no intervening model. For example, if your application
+includes users and groups, with each group having many users and each user
+appearing in many groups, you could declare the models this way,
+
+```js
+    User.hasAndBelongsToMany('groups', {model: Group, foreignKey: 'groupId'});
+    user.groups(callback); // get groups of the user
+    user.groups.create(data, callback); // create a new group and connect it with the user
+    user.groups.add(group, callback); // connect an existing group with the user
+    user.groups.remove(group, callback); // remove the user from the group
 ```
     
 #### Shared Methods
