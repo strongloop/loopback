@@ -149,6 +149,10 @@ LoopBack provides several connectors, with more under development.
 <td><a href="https://github.com/strongloop/loopback-connector-oracle">loopback-connector-oracle</a></td>
 </tr>
 <tr>
+<td><a href="/loopback-connector-mysql/">MySQL</a></td>
+<td><a href="https://github.com/strongloop/loopback-connector-mysql">loopback-connector-mysql</a></td>
+</tr>
+<tr>
 <td><a href="/loopback-connector-rest/">REST</a></td>
 <td><a href="https://github.com/strongloop/loopback-connector-rest">loopback-connector-rest</a></td>
 </tr>
