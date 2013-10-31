@@ -1,3 +1,4 @@
 ## Android API
 
-<h3><em>Stay tuned. Currently in development.</em></h3>
+For information on the LoopBack Android SDK, see [Loopback Android](http://docs.strongloop.com/loopback-android/).
+For API documentation, see [LoopBack Android SDK API reference](http://docs.strongloop.com/loopback-android/api/index.html).
