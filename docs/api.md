@@ -1079,17 +1079,3 @@ The latitude point in degrees. Range: -90 to 90.
 #### geoPoint.lng
 
 The longitude point in degrees. Range: -180 to 180.
-
-### Loopback Types
-
-Various APIs in Loopback accept type descriptions (eg. [remote methods](#remote-methods), [loopback.createModel()](#model)). The following is a list of supported types.
-
- - `null` - JSON null
- - `Boolean` - JSON boolean
- - `Number` - JSON number
- - `String` - JSON string
- - `Object` - JSON object
- - `Array` - JSON array
- - `Date` - a JavaScript date object
- - `Buffer` - a node.js Buffer object
- - [GeoPoint](#geopoint) - A Loopback GeoPoint object.
