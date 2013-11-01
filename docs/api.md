@@ -50,7 +50,7 @@ models.forEach(function (Model) {
     
 #### app.docs(options)
 
-Enable swagger REST api documentation.
+Enable swagger REST API documentation.
 
 **Options**
 
@@ -64,6 +64,18 @@ app.docs({basePath: 'http://localhost:3000'});
 ```
 
 Run your app then navigate to [the api explorer](http://petstore.swagger.wordnik.com/). Enter your API basepath to view your generated docs.
+
+#### app.use( router )
+
+Expose models over specified router.
+For example, to expose models over REST using the `loopback.rest` router:
+
+```js
+app.use(loopback.rest());
+```
+
+View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
+
     
 ### Model
 
@@ -1081,15 +1093,3 @@ Various APIs in Loopback accept type descriptions (eg. [remote methods](#remote-
  - `Date` - a JavaScript date object
  - `Buffer` - a node.js Buffer object
  - [GeoPoint](#geopoint) - A Loopback GeoPoint object.
-
-### REST Router
-
-Expose models over rest using the `loopback.rest` router.
-
-```js
-app.use(loopback.rest());
-```
-    
-**REST Documentation**
-
-View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
