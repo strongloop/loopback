@@ -1093,11 +1093,3 @@ app.use(loopback.rest());
 **REST Documentation**
 
 View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
-    
-### SocketIO Middleware (Not Available)
-
-**Coming Soon** - Expose models over socket.io using the `loopback.sio()` middleware.
-
-```js
-app.use(loopback.sio);
-``` 
