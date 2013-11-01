@@ -21,24 +21,160 @@ app.listen(3000);
 > - see [express docs](http://expressjs.com/api.html) for details
 > - supports [express / connect middleware](http://expressjs.com/api.html#middleware) 
 
-#### app.model(Model)
+#### app.boot([options])
 
-Expose a `Model` to remote clients.
+Initialize an application from an options object or a set of JSON and JavaScript files.
+
+**What happens during an app _boot_?**
+
+1. **DataSources** are created from an `options.dataSources` object or `datasources.json` in the current directory
+2. **Models** are created from an `options.models` object or `models.json` in the current directory
+3. Any JavaScript files in the `./models` directory are loaded with `require()`.
+
+**Options**
+
+ - `cwd` - _optional_ - the directory to use when loading JSON and JavaScript files
+ - `models` - _optional_ - an object containing `Model` definitions
+ - `dataSources` - _optional_ - an object containing `DataSource` definitions
+
+> **NOTE:** mixing `app.boot()` and `app.model(name, config)` in multiple files may result
+> in models being **undefined** due to race conditions. To avoid this when using `app.boot()`
+> make sure all models are passed as part of the `models` definition.
+
+<a name="model-definition"></a>
+**Model Definitions**
+
+The following is an example of an object containing two `Model` definitions: "location" and "inventory".
 
 ```js
-// create a testing data source
-var memory = loopback.memory();
-var Color = memory.createModel('color', {name: String});
+{
+  "location": {
+    // a reference, by name, to a dataSource definition
+    "dataSource": "my-db",
+    // the options passed to Model.extend(name, properties, options)
+    "options": {
+      "relationships": {
+        "hasMany": {
+          "model": "Inventory", "foreignKey": "locationId", "as": "inventory"  
+        }
+      },
+      "remoteMethods": {
+        "nearby": {
+          "description": "Find nearby locations around the geo point",
+          "accepts": [
+            {"arg": "here", "type": "GeoPoint", "required": true, "description": "geo location (lat & lng)"}
+          ],
+          "returns": {"arg": "locations", "root": true}
+        }
+      }
+    },
+    // the properties passed to Model.extend(name, properties, options)
+    "properties": {
+      "id": {"id": true},
+      "name": "String",
+      "zip": "Number",
+      "address": "String"
+    }
+  },
+  "inventory": {
+    "dataSource": "my-db"
+    "options": {
+      "plural": "inventory"
+    },
+    "properties": {
+      "id": {
+        "type": "String",
+        "required": true,
+        "id": true,
+        "length": 20
+      },
+      "available": {
+        "type": "Number",
+        "required": false
+      },
+      "total": {
+        "type": "Number",
+        "required": false
+      }
+    }
+  }
+}
+```
 
-app.model(Color);
-app.use(loopback.rest());
+**Model Definition Properties**
+
+ - `dataSource` - **required** - a string containing the name of the data source definition to attach the `Model` to
+ - `options` - _optional_ - an object containing `Model` options
+ - `properties` _optional_ - an object defining the `Model` properties in [LoopBack Definition Language](http://docs.strongloop.com/loopback-datasource-juggler/#loopback-definition-language)
+
+**DataSource Definition Properties**
+ 
+ - `connector` - **required** - the name of the [connector](#working-with-data-sources-and-connectors)
+
+#### app.model(name, definition)
+
+Define a `Model` and export it for use by remote clients.
+
+```js
+// declare a DataSource
+app.boot({
+  dataSources: {
+    db: {
+      connector: 'mongodb',
+      url: 'mongodb://localhost:27015/my-database-name'
+    }
+  }
+});
+
+// describe a model
+var modelDefinition = {dataSource: 'db'};
+
+// create the model
+var Product = app.model('product', modelDefinition);
+
+// use the model api
+Product.create({name: 'pencil', price: 0.99}, console.log);
 ```
     
 > **Note** - this will expose all [shared methods](#shared-methods) on the model.
-    
+
+You may also export an existing `Model` by calling `app.model(Model)` like the example below.
+
+#### app.models.MyModel
+
+All models are avaialbe from the `loopback.models` object. In the following 
+example the `Product` and `CustomerReceipt` models are accessed using
+the `models` object.
+
+> **NOTE:** you must call `app.boot()` in order to build the app.models object.
+
+```js
+var loopback = require('loopback');
+var app = loopback();
+app.boot({
+  dataSources: {
+    db: {connector: 'memory'}
+  }
+});
+app.model('product', {dataSource: 'db'});
+app.model('customer-receipt', {dataSource: 'db'});
+
+// available based on the given name
+var Product = app.models.Product;
+
+// also available as camelCase
+var product = app.models.product;
+
+// multi-word models are avaiable as pascal cased
+var CustomerReceipt = app.models.CustomerReceipt;
+
+// also available as camelCase
+var customerReceipt = app.models.customerReceipt;
+```
+
 #### app.models()
 
-Get the app's exposed models.
+Get the app's exported models. Only models defined using `app.model()` will show up in this list.
 
 ```js
 var models = app.models();
@@ -47,7 +183,7 @@ models.forEach(function (Model) {
   console.log(Model.modelName); // color
 });
 ```
-    
+
 #### app.docs(options)
 
 Enable swagger REST API documentation.
