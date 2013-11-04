@@ -48,14 +48,16 @@ The following is an example of an object containing two `Model` definitions: "lo
 
 ```js
 {
-  "location": {
+  "dealership": {
     // a reference, by name, to a dataSource definition
     "dataSource": "my-db",
     // the options passed to Model.extend(name, properties, options)
     "options": {
       "relationships": {
-        "hasMany": {
-          "model": "Inventory", "foreignKey": "locationId", "as": "inventory"  
+        "cars": {
+          "type": "hasMany",
+          "model": "Car",
+          "foreignKey": "dealerId"  
         }
       },
       "remoteMethods": {
@@ -76,25 +78,21 @@ The following is an example of an object containing two `Model` definitions: "lo
       "address": "String"
     }
   },
-  "inventory": {
+  "car": {
     "dataSource": "my-db"
-    "options": {
-      "plural": "inventory"
-    },
     "properties": {
       "id": {
         "type": "String",
         "required": true,
-        "id": true,
-        "length": 20
+        "id": true
       },
-      "available": {
-        "type": "Number",
-        "required": false
+      "make": {
+        "type": "String",
+        "required": true
       },
-      "total": {
-        "type": "Number",
-        "required": false
+      "model": {
+        "type": "String",
+        "required": true
       }
     }
   }
