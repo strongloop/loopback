@@ -33,15 +33,19 @@ describe('app', function() {
     });
   })
 
-  describe('app.models()', function() {
-    it("Get the app's exposed models", function() {
-      var Color = loopback.createModel('color', {name: String});
-      var models = app.models();
+  // describe('app.models()', function() {
+  //   it("Get the app's exposed models", function() {
+  //     var app = loopback();
+  //     var models = app.models();
+
+  //     models.forEach(function(m) {
+  //       console.log(m.modelName);
+  //     })
       
-      assert.equal(models.length, 1);
-      assert.equal(models[0].modelName, 'color');
-    });
-  });
+  //     assert.equal(models.length, 1);
+  //     assert.equal(models[0].modelName, 'color');
+  //   });
+  // });
 
   describe('app.boot([options])', function () {
     beforeEach(function () {
@@ -94,11 +98,11 @@ describe('app', function() {
     });
   });
 
-  describe('app.boot() - config loading', function () {
+  describe('app.boot(appRootDir)', function () {
     it('Load config files', function () {
       var app = loopback();
 
-      app.boot({cwd: require('path').join(__dirname, 'fixtures', 'simple-app')});
+      app.boot(require('path').join(__dirname, 'fixtures', 'simple-app'));
 
       assert(app.models.foo);
       assert(app.models.Foo);
