@@ -2,6 +2,10 @@
 
 The App object represents a Loopback application.
 
+The App object extends [Express](http://expressjs.com/api.html#express) and
+supports [Express / Connect middleware](http://expressjs.com/api.html#middleware).
+See [Express documentation](http://expressjs.com/api.html) for details.
+
 ```js
 var loopback = require('loopback');
 var app = loopback();
@@ -13,11 +17,6 @@ app.get('/', function(req, res){
 app.listen(3000);
 ```
     
-**Notes**
-
-- Extends [Express](http://expressjs.com/api.html#express).  See [Express documentation](http://expressjs.com/api.html) for details.
-- Supports [Express / Connect middleware](http://expressjs.com/api.html#middleware) 
-
 ## Properties
 
 ### models
