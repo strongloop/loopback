@@ -20,8 +20,8 @@
   "dependencies": {
     "debug": "~0.7.2",
     "express": "~3.4.0",
-    "loopback-datasource-juggler": "git+ssh://git@github.com:strongloop/loopback-datasource-juggler.git",
-    "strong-remoting": "git+ssh://git@github.com:strongloop/strong-remoting.git",
+    "loopback-datasource-juggler": "~1.2.0",
+    "strong-remoting": "~1.0.0",
     "inflection": "~1.2.5",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
