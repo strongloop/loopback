@@ -2,9 +2,7 @@
 
 The App object represents a Loopback application.
 
-The App object extends [Express](http://expressjs.com/api.html#express) and
-supports [Express / Connect middleware](http://expressjs.com/api.html#middleware).
-See [Express documentation](http://expressjs.com/api.html) for details.
+The App object extends [Express](http://expressjs.com/api.html#express) and supports [Express / Connect middleware](http://expressjs.com/api.html#middleware).  See [Express documentation](http://expressjs.com/api.html) for details.
 
 ```js
 var loopback = require('loopback');
@@ -21,11 +19,9 @@ app.listen(3000);
 
 ### models
 
-All models are avaialbe from the `loopback.models` object. In the following 
-example the `Product` and `CustomerReceipt` models are accessed using
-the `models` object.
+The `app.models` object has properties for all defined models. In the following example the `Product` and `CustomerReceipt` models are accessed using the `models` object.
 
-> **NOTE:** you must call `app.boot()` in order to build the app.models object.
+**NOTE:** you must call `app.boot()` to create the `app.models` object.
 
 ```js
 var loopback = require('loopback');
@@ -131,13 +127,13 @@ The following is an example of an object containing two `Model` definitions: "lo
 }
 ```
 
-**Model Definition Properties**
+**Model definition properties**
 
  - `dataSource` - **required** - a string containing the name of the data source definition to attach the `Model` to
  - `options` - _optional_ - an object containing `Model` options
  - `properties` _optional_ - an object defining the `Model` properties in [LoopBack Definition Language](http://docs.strongloop.com/loopback-datasource-juggler/#loopback-definition-language)
 
-**DataSource Definition Properties**
+**DataSource definition properties**
  
  - `connector` - **required** - the name of the [connector](#working-with-data-sources-and-connectors)
 
@@ -166,7 +162,7 @@ var Product = app.model('product', modelDefinition);
 Product.create({name: 'pencil', price: 0.99}, console.log);
 ```
     
-> **Note** - this will expose all [shared methods](#shared-methods) on the model.
+**Note** - This will expose all [shared methods](#shared-methods) on the model.
 
 You may also export an existing `Model` by calling `app.model(Model)` like the example below.
 
@@ -197,7 +193,7 @@ Enable swagger REST API documentation.
 app.docs({basePath: 'http://localhost:3000'});
 ```
 
-Run your app then navigate to [the api explorer](http://petstore.swagger.wordnik.com/). Enter your API basepath to view your generated docs.
+Run your app then navigate to [the API explorer](http://petstore.swagger.wordnik.com/). Enter your API basepath to view your generated docs.
 
 ### app.use( router )
 
@@ -208,4 +204,4 @@ For example, to expose models over REST using the `loopback.rest` router:
 app.use(loopback.rest());
 ```
 
-View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
+View generated REST documentation at [http://localhost:3000/_docs](http://localhost:3000/_docs).
