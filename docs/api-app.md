@@ -1,6 +1,6 @@
-### App
+## Overview
 
-Create a Loopback application.
+The App object represents a Loopback application.
 
 ```js
 var loopback = require('loopback');
@@ -13,13 +13,48 @@ app.get('/', function(req, res){
 app.listen(3000);
 ```
     
-> **Notes**
->
-> - extends [express](http://expressjs.com/api.html#express)
-> - see [express docs](http://expressjs.com/api.html) for details
-> - supports [express / connect middleware](http://expressjs.com/api.html#middleware) 
+**Notes**
 
-#### app.boot([options])
+- Extends [Express](http://expressjs.com/api.html#express).  See [Express documentation](http://expressjs.com/api.html) for details.
+- Supports [Express / Connect middleware](http://expressjs.com/api.html#middleware) 
+
+## Properties
+
+### models
+
+All models are avaialbe from the `loopback.models` object. In the following 
+example the `Product` and `CustomerReceipt` models are accessed using
+the `models` object.
+
+> **NOTE:** you must call `app.boot()` in order to build the app.models object.
+
+```js
+var loopback = require('loopback');
+var app = loopback();
+app.boot({
+  dataSources: {
+    db: {connector: 'memory'}
+  }
+});
+app.model('product', {dataSource: 'db'});
+app.model('customer-receipt', {dataSource: 'db'});
+
+// available based on the given name
+var Product = app.models.Product;
+
+// also available as camelCase
+var product = app.models.product;
+
+// multi-word models are avaiable as pascal cased
+var CustomerReceipt = app.models.CustomerReceipt;
+
+// also available as camelCase
+var customerReceipt = app.models.customerReceipt;
+```
+
+## Methods 
+
+### boot([options])
 
 Initialize an application from an options object or a set of JSON and JavaScript files.
 
@@ -107,7 +142,7 @@ The following is an example of an object containing two `Model` definitions: "lo
  
  - `connector` - **required** - the name of the [connector](#working-with-data-sources-and-connectors)
 
-#### app.model(name, definition)
+### model(name, definition)
 
 Define a `Model` and export it for use by remote clients.
 
@@ -136,39 +171,7 @@ Product.create({name: 'pencil', price: 0.99}, console.log);
 
 You may also export an existing `Model` by calling `app.model(Model)` like the example below.
 
-#### app.models.MyModel
-
-All models are avaialbe from the `loopback.models` object. In the following 
-example the `Product` and `CustomerReceipt` models are accessed using
-the `models` object.
-
-> **NOTE:** you must call `app.boot()` in order to build the app.models object.
-
-```js
-var loopback = require('loopback');
-var app = loopback();
-app.boot({
-  dataSources: {
-    db: {connector: 'memory'}
-  }
-});
-app.model('product', {dataSource: 'db'});
-app.model('customer-receipt', {dataSource: 'db'});
-
-// available based on the given name
-var Product = app.models.Product;
-
-// also available as camelCase
-var product = app.models.product;
-
-// multi-word models are avaiable as pascal cased
-var CustomerReceipt = app.models.CustomerReceipt;
-
-// also available as camelCase
-var customerReceipt = app.models.customerReceipt;
-```
-
-#### app.models()
+### models()
 
 Get the app's exported models. Only models defined using `app.model()` will show up in this list.
 
@@ -180,7 +183,7 @@ models.forEach(function (Model) {
 });
 ```
 
-#### app.docs(options)
+### docs(options)
 
 Enable swagger REST API documentation.
 
@@ -197,7 +200,7 @@ app.docs({basePath: 'http://localhost:3000'});
 
 Run your app then navigate to [the api explorer](http://petstore.swagger.wordnik.com/). Enter your API basepath to view your generated docs.
 
-#### app.use( router )
+### app.use( router )
 
 Expose models over specified router.
 For example, to expose models over REST using the `loopback.rest` router:
