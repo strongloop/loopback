@@ -49,7 +49,7 @@ var customerReceipt = app.models.customerReceipt;
 
 ## Methods 
 
-### boot([options])
+### app.boot([options])
 
 Initialize an application from an options object or a set of JSON and JavaScript files.
 
