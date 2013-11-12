@@ -62,10 +62,10 @@ GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
 
 ## Properties 
 
-#### geoPoint.lat
+### geoPoint.lat
 
 The latitude point in degrees. Range: -90 to 90.
 
-#### geoPoint.lng
+### geoPoint.lng
 
 The longitude point in degrees. Range: -180 to 180.
