@@ -1,39 +1,58 @@
 var assert = require('assert');
 var loopback = require('../index');
-var Role = require('../lib/models/role');
+var role = require('../lib/models/role');
+var Role = role.Role;
+var RoleMapping = role.RoleMapping;
 var User = loopback.User;
 
 describe('security models', function () {
 
   describe('roles', function () {
 
-    it("Defines role/role relations", function () {
+    it("should define role/role relations", function () {
       var ds = loopback.createDataSource({connector: loopback.Memory});
       Role.attachTo(ds);
+      RoleMapping.attachTo(ds);
 
-      Role.create({name: 'user'}, function (err, role) {
-        role.roles.create({name: 'admin'}, function (err, role2) {
-          Role.find(console.log);
-          role.roles(console.log);
+      Role.create({name: 'user'}, function (err, userRole) {
+        Role.create({name: 'admin'}, function (err, adminRole) {
+          userRole.principals.create({principalType: 'role', principalId: adminRole.id}, function (err, mapping) {
+            Role.find(function(err, roles) {
+              assert.equal(roles.length, 2);
+            });
+            RoleMapping.find(function(err, mappings) {
+              assert.equal(mappings.length, 1);
+            });
+            userRole.principals(function(err, principals) {
+              assert.equal(principals.length, 1);
+            });
+            userRole.roles(function(err, roles) {
+              assert.equal(roles.length, 1);
+            });
+          });
         });
       });
 
     });
 
-    it("Defines role/user relations", function () {
+    it("should define role/user relations", function () {
       var ds = loopback.createDataSource({connector: loopback.Memory});
       User.attachTo(ds);
       Role.attachTo(ds);
 
-      Role.create({name: 'user'}, function (err, role) {
-        role.users.create({name: 'Raymond'}, function (err, user) {
-          console.log('User: ', user);
-          Role.find(console.log);
-          role.users(console.log);
+      User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
+        console.log('User: ', user.id);
+        Role.create({name: 'userRole'}, function (err, role) {
+          role.principals.create({principalType: 'user', principalId: user.id}, function (err, p) {
+            Role.find(console.log);
+            role.principals(console.log);
+            role.users(console.log);
+          });
         });
       });
 
     });
+
   });
 });
 

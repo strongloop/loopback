@@ -512,6 +512,39 @@ describe('Model', function() {
     });
   });
 
+  describe('Model.extend() events', function() {
+    it('create isolated emitters for subclasses', function() {
+    var User1 = loopback.createModel('User1', {
+      'first': String,
+      'last': String
+    });
+
+    var User2 = loopback.createModel('User2', {
+      'name': String
+    });
+
+    var user1Triggered = false;
+    User1.once('x', function(event) {
+      user1Triggered = true;
+    });
+
+
+    var user2Triggered = false;
+    User2.once('x', function(event) {
+      user2Triggered = true;
+    });
+
+    assert(User1.once !== User2.once);
+    assert(User1.once !== loopback.Model.once);
+
+    User1.emit('x', User1);
+
+    assert(user1Triggered);
+    assert(!user2Triggered);
+    });
+
+  });
+
   // describe('Model.hasAndBelongsToMany()', function() {
   //   it("TODO: implement / document", function(done) {
   //     /* example - 
