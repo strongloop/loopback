@@ -1,4 +1,4 @@
-### Model
+## Model object
 
 A Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
 
@@ -31,9 +31,27 @@ var User = loopback.createModel('user', {
 });
 ```
 
-#### Validation (expiremental)
+## Methods
 
-##### Model.validatesFormatOf(property, options)
+### Model.attachTo(dataSource)
+
+Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
+
+```js
+var oracle = loopback.createDataSource({
+  connector: require('loopback-connector-oracle'),
+  host: '111.22.333.44',
+  database: 'MYDB',
+  username: 'username',
+  password: 'password'
+});
+
+User.attachTo(oracle);
+```
+    
+**Note:** until a model is attached to a data source it will **not** have any **attached methods**.
+
+### Model.validatesFormatOf(property, options)
 
 Require a model to include a property that matches the given format.
 
@@ -41,7 +59,7 @@ Require a model to include a property that matches the given format.
 User.validatesFormat('name', {with: /\w+/});
 ```
 
-##### Model.validatesPresenceOf(properties...)
+### Model.validatesPresenceOf(properties...)
 
 Require a model to include a property to be considered valid.
 
@@ -49,7 +67,7 @@ Require a model to include a property to be considered valid.
 User.validatesPresenceOf('first', 'last', 'age');
 ```
 
-##### Model.validatesLengthOf(property, options)
+### Model.validatesLengthOf(property, options)
 
 Require a property length to be within a specified range.
 
@@ -57,7 +75,7 @@ Require a property length to be within a specified range.
 User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
 ```
 
-##### Model.validatesInclusionOf(property, options)
+### Model.validatesInclusionOf(property, options)
 
 Require a value for `property` to be in the specified array.
 
@@ -65,7 +83,7 @@ Require a value for `property` to be in the specified array.
 User.validatesInclusionOf('gender', {in: ['male', 'female']});
 ```
 
-##### Model.validatesExclusionOf(property, options)
+### Model.validatesExclusionOf(property, options)
 
 Require a value for `property` to not exist in the specified array.
 
@@ -73,7 +91,7 @@ Require a value for `property` to not exist in the specified array.
 User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
 ```
 
-##### Model.validatesNumericalityOf(property, options)
+### Model.validatesNumericalityOf(property, options)
 
 Require a value for `property` to be a specific type of `Number`.
 
@@ -81,7 +99,7 @@ Require a value for `property` to be a specific type of `Number`.
 User.validatesNumericalityOf('age', {int: true});
 ```
 
-##### Model.validatesUniquenessOf(property, options)
+### Model.validatesUniquenessOf(property, options)
 
 Ensure the value for `property` is unique in the collection of models.
 
@@ -97,7 +115,7 @@ Currently supported in these connectors:
  - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
  - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
 
-##### myModel.isValid()
+### myModel.isValid()
 
 Validate the model instance.
 
@@ -113,8 +131,9 @@ user.isValid(function (valid) {
     }
 });
 ```
+## Properties
 
-#### Model.properties
+### Model.properties
 
 An object containing a normalized set of properties supplied to `loopback.createModel(name, properties)`.
 
@@ -153,25 +172,7 @@ Outputs:
 }
 ```
 
-#### Model.attachTo(dataSource)
-
-Attach a model to a [DataSource](#data-source). Attaching a [DataSource](#data-source) updates the model with additional methods and behaviors.
-
-```js
-var oracle = loopback.createDataSource({
-  connector: require('loopback-connector-oracle'),
-  host: '111.22.333.44',
-  database: 'MYDB',
-  username: 'username',
-  password: 'password'
-});
-
-User.attachTo(oracle);
-```
-    
-**Note:** until a model is attached to a data source it will **not** have any **attached methods**.
-
-#### CRUD and Query Mixins
+### CRUD and Query Mixins
 
 Mixins are added by attaching a vanilla model to a [data source](#data-source) with a [connector](#connectors). Each [connector](#connectors) enables its own set of operations that are mixed into a `Model` as methods. To see available methods for a data source call `dataSource.operations()`.
 
@@ -225,11 +226,11 @@ Here is the definition of the `count()` operation.
 }
 ```
 
-#### Static Methods
+### Static Methods
 
 **Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
-##### Model.create(data, [callback])
+### Model.create(data, [callback])
 
 Create an instance of Model with given data and save to the attached data source. Callback is optional.
 
@@ -241,7 +242,7 @@ User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
     
 **Note:** You must include a callback and use the created model provided in the callback if your code depends on your model being saved or having an `id`.
 
-##### Model.count([query], callback)
+### Model.count([query], callback)
 
 Query count of Model instances in data source. Optional query param allows to count filtered set of Model instances.
 
@@ -251,7 +252,7 @@ User.count({approved: true}, function(err, count) {
 });
 ```
 
-##### Model.find(filter, callback)
+### Model.find(filter, callback)
 
 Find all instances of Model, matched by query. Fields used for filter and sort should be declared with `{index: true}` in model definition.
 
@@ -309,11 +310,11 @@ User.find({
 
 **Note:** See the specific connector's [docs](#connectors) for more info.
 
-##### Model.destroyAll(callback)
+### Model.destroyAll(callback)
 
 Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
 
-##### Model.findById(id, callback)
+### Model.findById(id, callback)
 
 Find instance by id.
 
@@ -323,7 +324,7 @@ User.findById(23, function(err, user) {
 });
 ```
 
-##### Model.findOne(where, callback)
+### Model.findOne(where, callback)
 
 Find a single instance that matches the given where expression.
 
@@ -333,11 +334,11 @@ User.findOne({id: 23}, function(err, user) {
 });
 ```
     
-##### Model.upsert(data, callback)
+### Model.upsert(data, callback)
 
 Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
 
-##### Custom Static Methods
+## Custom Static Methods
 
 Define a static model method.
 
@@ -378,11 +379,11 @@ loopback.remoteMethod(
 );
 ```
     
-#### Instance Methods
+### Instance Methods
 
 **Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
-##### model.save([options], [callback])
+#### model.save([options], [callback])
 
 Save an instance of a Model to the attached data source.
 
@@ -397,7 +398,7 @@ joe.save(function(err, user) {
 });
 ```
 
-##### model.updateAttributes(data, [callback])
+#### model.updateAttributes(data, [callback])
     
 Save specified attributes to the attached data source.
 
@@ -408,7 +409,7 @@ user.updateAttributes({
 }, fn);
 ```
 
-##### model.destroy([callback])
+#### model.destroy([callback])
 
 Remove a model from the attached data source.
 
@@ -418,7 +419,7 @@ model.destroy(function(err) {
 });
 ```
 
-##### Custom Instance Methods
+### Custom Instance Methods
 
 Define an instance method.
 
@@ -434,11 +435,11 @@ Define a remote model instance method.
 loopback.remoteMethod(User.prototype.logout)
 ```
 
-#### Remote Methods
+### Remote Methods
 
 Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
-##### loopback.remoteMethod(fn, [options])
+#### loopback.remoteMethod(fn, [options])
 
 Expose a remote method.
 
@@ -493,7 +494,7 @@ Each argument may define any of the [loopback types](#loopback-types).
   - The callback is an assumed argument and does not need to be specified in the accepts array.
   - The err argument is also assumed and does not need to be specified in the returns array.
 
-#### Remote Hooks
+## Remote Hooks
 
 Run a function before or after a remote method is called by a client.
 
@@ -548,33 +549,33 @@ User.afterRemote('**', function (ctx, user, next) {
 });
 ```
     
-#### Context
+### Context
 
 Remote hooks are provided with a Context `ctx` object which contains transport specific data (eg. for http: `req` and `res`). The `ctx` object also has a set of consistent apis across transports.
 
-##### ctx.user
+#### ctx.user
 
 A `Model` representing the user calling the method remotely. **Note:** this is undefined if the remote method is not invoked by a logged in user.
 
-##### ctx.result
+#### ctx.result
 
 During `afterRemote` hooks, `ctx.result` will contain the data about to be sent to a client. Modify this object to transform data before it is sent. 
 
-##### Rest
+#### Rest
 
 When [loopback.rest](#loopbackrest) is used the following `ctx` properties are available.
 
-###### ctx.req
+##### ctx.req
 
 The express ServerRequest object. [See full documentation](http://expressjs.com/api.html#req).
 
-###### ctx.res
+##### ctx.res
 
 The express ServerResponse object. [See full documentation](http://expressjs.com/api.html#res).
     
-#### Relationships
+### Relationships
 
-##### Model.hasMany(Model, options)
+#### Model.hasMany(Model, options)
 
 Define a "one to many" relationship.
 
@@ -616,7 +617,7 @@ Book.create(function(err, book) {
 });
 ```
 
-##### Model.belongsTo(Model, options)
+#### Model.belongsTo(Model, options)
 
 A `belongsTo` relation sets up a one-to-one connection with another model, such
 that each instance of the declaring model "belongs to" one instance of the other
@@ -637,7 +638,7 @@ in one of the following styles:
     post.author(user) // Set the author to be the given user
 ```
 
-##### Model.hasAndBelongsToMany(Model, options)
+#### Model.hasAndBelongsToMany(Model, options)
 
 A `hasAndBelongsToMany` relation creates a direct many-to-many connection with
 another model, with no intervening model. For example, if your application
@@ -652,6 +653,6 @@ appearing in many groups, you could declare the models this way,
     user.groups.remove(group, callback); // remove the user from the group
 ```
     
-#### Shared Methods
+### Shared Methods
 
 Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [loopback.rest](#rest)).
