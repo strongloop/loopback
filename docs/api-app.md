@@ -1,4 +1,4 @@
-## Overview
+## App object
 
 The App object represents a Loopback application.
 
