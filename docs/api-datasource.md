@@ -1,4 +1,4 @@
-### Data Source
+## Data Source object
 
 A Loopback `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
 
@@ -13,8 +13,10 @@ var oracle = loopback.createDataSource({
   password: 'password'
 });
 ```
-    
-#### dataSource.createModel(name, properties, options)
+
+## Methods
+
+### dataSource.createModel(name, properties, options)
 
 Define a model and attach it to a `DataSource`.
 
@@ -22,7 +24,7 @@ Define a model and attach it to a `DataSource`.
 var Color = oracle.createModel('color', {name: String});
 ```
 
-#### dataSource.discoverModelDefinitions([username], fn)
+### dataSource.discoverModelDefinitions([username], fn)
 
 Discover a set of model definitions (table or collection names) based on tables or collections in a data source.
 
@@ -37,7 +39,7 @@ oracle.discoverModelDefinitions(function (err, models) {
 });
 ```
     
-#### dataSource.discoverSchema([owner], name, fn)
+### dataSource.discoverSchema([owner], name, fn)
 
 Discover the schema of a specific table or collection.
 
@@ -136,12 +138,12 @@ Discover the schema of a specific table or collection.
     }
 ```
 
-#### dataSource.enableRemote(operation)
+### dataSource.enableRemote(operation)
 
 Enable remote access to a data source operation. Each [connector](#connector) has its own set of set remotely enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
     
 
-#### dataSource.disableRemote(operation)
+### dataSource.disableRemote(operation)
 
 Disable remote access to a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
 
@@ -164,7 +166,7 @@ oracle.disableRemote('destroyAll');
  - disabling the remoting for a method only affects client access (it will still be available from server models)
  - data sources must enable / disable operations before attaching or creating models
 
-#### dataSource.operations()
+### dataSource.operations()
 
 List the enabled and disabled operations.
 
@@ -191,7 +193,7 @@ Output:
 }
 ```
 
-#### Connectors
+## Connectors
 
 Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
 
@@ -234,7 +236,7 @@ Include the connector in your package.json dependencies and run `npm install`.
 }
 ```
 
-##### Memory Connector
+### Memory Connector
 
 The built-in memory connector allows you to test your application without connecting to an actual persistent data source, such as a database. Although the memory connector is very well tested it is not recommended to be used in production. Creating a data source using the memory connector is very simple.
 
