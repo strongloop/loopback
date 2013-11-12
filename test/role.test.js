@@ -74,6 +74,47 @@ describe('role model', function () {
 
   });
 
+  it("should support getRoles() and isInRole()", function () {
+    var ds = loopback.createDataSource({connector: 'memory'});
+    User.attachTo(ds);
+    Role.attachTo(ds);
+    RoleMapping.attachTo(ds);
+
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
+      // console.log('User: ', user.id);
+      Role.create({name: 'userRole'}, function (err, role) {
+        role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function (err, p) {
+          // Role.find(console.log);
+          // role.principals(console.log);
+          Role.isInRole('userRole', RoleMapping.USER, user.id, function(err, exists) {
+            assert(!err && exists === true);
+          });
+
+          Role.isInRole('userRole', RoleMapping.APP, user.id, function(err, exists) {
+            assert(!err && exists === false);
+          });
+
+          Role.isInRole('userRole', RoleMapping.USER, 100, function(err, exists) {
+            assert(!err && exists === false);
+          });
+
+          Role.getRoles(RoleMapping.USER, user.id, function(err, roles) {
+            assert.equal(roles.length, 1);
+            assert.equal(roles[0], role.id);
+          });
+          Role.getRoles(RoleMapping.APP, user.id, function(err, roles) {
+            assert.equal(roles.length, 0);
+          });
+          Role.getRoles(RoleMapping.USER, 100, function(err, roles) {
+            assert.equal(roles.length, 0);
+          });
+
+        });
+      });
+    });
+
+  });
+
 });
 
 
