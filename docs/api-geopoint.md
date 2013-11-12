@@ -1,4 +1,6 @@
-### GeoPoint
+## GeoPoint object
+
+The GeoPoint object represents a physical location.
 
 Use the `GeoPoint` class.
 
@@ -14,9 +16,9 @@ var CoffeeShop = loopback.createModel('coffee-shop', {
 });
 ```
 
-Loopback Model's with a GeoPoint property and an attached DataSource may be queried using geo spatial filters and sorting.
+Loopback models with a GeoPoint property and an attached Data Source may be queried using geo-spatial filters and sorting.
 
-Find the 3 nearest coffee shops.
+For example, the following code is an an example of finding the three nearest coffee shops.
 
 ```js
 CoffeeShop.attachTo(oracle);
@@ -26,25 +28,7 @@ CoffeeShop.find({where: {location: {near: here}}, limit:3}, function(err, nearby
 });
 ```
 
-#### geoPoint.distanceTo(geoPoint, options)
-
-Get the distance to another `GeoPoint`.
-
-```js
-var here = new GeoPoint({lat: 10, lng: 10});
-var there = new GeoPoint({lat: 5, lng: 5});
-console.log(here.distanceTo(there, {type: 'miles'})); // 438
-```
- 
-#### GeoPoint.distanceBetween(a, b, options)
-
-Get the distance between two points.
-
-```js
-GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
-```
-
-#### Distance Types
+### Distance Types
 
 **Note:** all distance methods use `miles` by default.
 
@@ -55,6 +39,28 @@ GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
  - `miles`
  - `feet`
  - `degrees`
+
+## Methods
+
+### geoPoint.distanceTo(geoPoint, options)
+
+Get the distance to another `GeoPoint`.
+
+```js
+var here = new GeoPoint({lat: 10, lng: 10});
+var there = new GeoPoint({lat: 5, lng: 5});
+console.log(here.distanceTo(there, {type: 'miles'})); // 438
+```
+ 
+### GeoPoint.distanceBetween(a, b, options)
+
+Get the distance between two points.
+
+```js
+GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
+```
+
+## Properties 
 
 #### geoPoint.lat
 
