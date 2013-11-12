@@ -117,7 +117,7 @@ Response:
 
 None
 
-###findById
+##findById
 
 Find a model instance by ID from the data source.
 
