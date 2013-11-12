@@ -172,7 +172,7 @@ Outputs:
 }
 ```
 
-### CRUD and Query Mixins
+## CRUD and Query Mixins
 
 Mixins are added by attaching a vanilla model to a [data source](#data-source) with a [connector](#connectors). Each [connector](#connectors) enables its own set of operations that are mixed into a `Model` as methods. To see available methods for a data source call `dataSource.operations()`.
 
@@ -226,7 +226,7 @@ Here is the definition of the `count()` operation.
 }
 ```
 
-### Static Methods
+## Static Methods
 
 **Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
@@ -338,7 +338,7 @@ User.findOne({id: 23}, function(err, user) {
 
 Update when record with id=data.id found, insert otherwise. **Note:** no setters, validations or hooks applied when using upsert.
 
-## Custom Static Methods
+### Custom static methods
 
 Define a static model method.
 
@@ -379,11 +379,11 @@ loopback.remoteMethod(
 );
 ```
     
-### Instance Methods
+## Instance methods
 
 **Note:** These are the default mixin methods for a `Model` attached to a data source. See the specific connector for additional API documentation.
 
-#### model.save([options], [callback])
+### model.save([options], [callback])
 
 Save an instance of a Model to the attached data source.
 
@@ -398,7 +398,7 @@ joe.save(function(err, user) {
 });
 ```
 
-#### model.updateAttributes(data, [callback])
+### model.updateAttributes(data, [callback])
     
 Save specified attributes to the attached data source.
 
@@ -409,7 +409,7 @@ user.updateAttributes({
 }, fn);
 ```
 
-#### model.destroy([callback])
+### model.destroy([callback])
 
 Remove a model from the attached data source.
 
@@ -419,7 +419,7 @@ model.destroy(function(err) {
 });
 ```
 
-### Custom Instance Methods
+### Custom instance methods
 
 Define an instance method.
 
@@ -435,11 +435,11 @@ Define a remote model instance method.
 loopback.remoteMethod(User.prototype.logout)
 ```
 
-### Remote Methods
+## Remote methods
 
 Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
-#### loopback.remoteMethod(fn, [options])
+### loopback.remoteMethod(fn, [options])
 
 Expose a remote method.
 
@@ -573,9 +573,9 @@ The express ServerRequest object. [See full documentation](http://expressjs.com/
 
 The express ServerResponse object. [See full documentation](http://expressjs.com/api.html#res).
     
-### Relationships
+## Relationships
 
-#### Model.hasMany(Model, options)
+### Model.hasMany(Model, options)
 
 Define a "one to many" relationship.
 
@@ -617,7 +617,7 @@ Book.create(function(err, book) {
 });
 ```
 
-#### Model.belongsTo(Model, options)
+### Model.belongsTo(Model, options)
 
 A `belongsTo` relation sets up a one-to-one connection with another model, such
 that each instance of the declaring model "belongs to" one instance of the other
@@ -638,7 +638,7 @@ in one of the following styles:
     post.author(user) // Set the author to be the given user
 ```
 
-#### Model.hasAndBelongsToMany(Model, options)
+### Model.hasAndBelongsToMany(Model, options)
 
 A `hasAndBelongsToMany` relation creates a direct many-to-many connection with
 another model, with no intervening model. For example, if your application
@@ -653,6 +653,6 @@ appearing in many groups, you could declare the models this way,
     user.groups.remove(group, callback); // remove the user from the group
 ```
     
-### Shared Methods
+## Shared methods
 
 Any static or instance method can be decorated as `shared`. These methods are exposed over the provided transport (eg. [loopback.rest](#rest)).
