@@ -212,7 +212,7 @@ The following connectors are available:
 | [MongoDB](http://wiki.strongloop.com/display/DOC/MongoDB+connector) | http://github.com/strongloop/loopback-connector-mongodb |
 | [MySQL](http://wiki.strongloop.com/display/DOC/MySQL+connector) | http://github.com/strongloop/loopback-connector-mysql |
 | [REST](http://wiki.strongloop.com/display/DOC/REST+connector) | http://github.com/strongloop/loopback-connector-rest |
-| [Email](#email-model) | N/A |
+| [Email](http://wiki.strongloop.com/display/DOC/Built-in+models#Built-inmodels-Emailmodel) | Built in to LoopBack |
  
 
 **Installing Connectors**
