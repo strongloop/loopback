@@ -16,13 +16,14 @@ describe('security scopes', function () {
   it("should allow access to models for the given scope by wildcard", function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
     Scope.attachTo(ds);
-    ScopeACL.attachTo(ds);
+    ACL.attachTo(ds);
 
     // console.log(Scope.relations);
 
     Scope.create({name: 'user', description: 'access user information'}, function (err, scope) {
       // console.log(scope);
-      scope.resources.create({model: 'user', property: ACL.ALL, accessType: ACL.ALL, permission: ACL.ALLOW},
+      ACL.create({principalType: ACL.SCOPE, principalId: scope.id, model: 'user', property: ACL.ALL,
+          accessType: ACL.ALL, permission: ACL.ALLOW},
         function (err, resource) {
         // console.log(resource);
         Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, checkResult);
@@ -36,13 +37,14 @@ describe('security scopes', function () {
   it("should allow access to models for the given scope", function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
     Scope.attachTo(ds);
-    ScopeACL.attachTo(ds);
+    ACL.attachTo(ds);
 
     // console.log(Scope.relations);
 
     Scope.create({name: 'user', description: 'access user information'}, function (err, scope) {
       // console.log(scope);
-      scope.resources.create({model: 'user', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
+      ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
+          model: 'user', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
         function (err, resource) {
         // console.log(resource);
         Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, checkResult);
