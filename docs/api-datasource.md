@@ -195,7 +195,7 @@ Output:
 
 ## Connectors
 
-Create a data source with a specific connector. See **available connectors** for specific connector documentation. 
+Create a data source with a specific connector. 
 
 ```js
 var memory = loopback.createDataSource({
@@ -203,26 +203,17 @@ var memory = loopback.createDataSource({
 });
 ```
     
-**Database Connectors**
+The following connectors are available:
  
- - [In Memory](#memory-connector)
- - [Oracle](http://github.com/strongloop/loopback-connector-oracle)
- - [MongoDB](http://github.com/strongloop/loopback-connector-mongodb)
- - [MySQL](http://github.com/strongloop/loopback-connector-mysql) - In Development
- - [SQLite3](http://github.com/strongloop/loopback-connector-sqlite) - In Development
- - [Postgres](http://github.com/strongloop/loopback-connector-postgres) - In Development
- - [Redis](http://github.com/strongloop/loopback-connector-redis) - In Development
- - [CouchDB](http://github.com/strongloop/loopback-connector-couch) - In Development
- - [Firebird](http://github.com/strongloop/loopback-connector-firebird) - In Development
-
-**Other Connectors**
-
- - [REST](http://github.com/strongloop/loopback-connector-rest)
- - [Email](#email-model)
- - [JSON RPC](http://github.com/strongloop/loopback-connector-jsonrpc) - In Development
- - [SOAP](http://github.com/strongloop/loopback-connector-soap) - In Development
- - [Push Notifications](https://github.com/strongloop/loopback-push-notification) - In Development
- - [File Storage](https://github.com/strongloop/loopback-storage-service) - In Development
+| Connector | GitHub Repository|
+|-----------|------------------|
+| [In Memory](#memory-connector) | Built in to LoopBack |
+| [Oracle](http://wiki.strongloop.com/display/DOC/Oracle+connector) | http://github.com/strongloop/loopback-connector-oracle |
+| [MongoDB](http://wiki.strongloop.com/display/DOC/MongoDB+connector) | http://github.com/strongloop/loopback-connector-mongodb |
+| [MySQL](http://wiki.strongloop.com/display/DOC/MySQL+connector) | http://github.com/strongloop/loopback-connector-mysql |
+| [REST](http://wiki.strongloop.com/display/DOC/REST+connector) | http://github.com/strongloop/loopback-connector-rest |
+| [Email](#email-model) | N/A |
+ 
 
 **Installing Connectors**
 
