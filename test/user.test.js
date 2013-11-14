@@ -103,7 +103,7 @@ describe('User', function(){
       User.login({email: 'foo@bar.com', password: 'bar'}, function (err, accessToken) {
         assert(accessToken.uid);
         assert(accessToken.id);
-        assert.equal((new Buffer(accessToken.id, 'base64')).length, 64);
+        assert.equal(accessToken.id.length, 64);
         
         done();
       });
@@ -121,7 +121,7 @@ describe('User', function(){
           
           assert(accessToken.uid);
           assert(accessToken.id);
-          assert.equal((new Buffer(accessToken.id, 'base64')).length, 64);
+          assert.equal(accessToken.id.length, 64);
           
           done();
         });

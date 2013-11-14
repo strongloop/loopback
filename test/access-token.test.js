@@ -10,12 +10,17 @@ describe('loopback.token(app, options)', function() {
   it('should populate req.token from the query string', function (done) {
     var app = loopback();
     var options = {};
+    options.model = Token;
     var testToken = this.token;
     app.use(loopback.token(app, options));
     app.get('/', function (req, res) {
-      assert(req.token === testToken);
+      try {
+        assert(req.accessToken, 'req should have accessToken');
+        assert(req.accessToken.id === testToken.id);
+      } catch(e) {
+        return done(e);
+      }
       res.send('ok');
-      done();
     });
     
     request(app)
