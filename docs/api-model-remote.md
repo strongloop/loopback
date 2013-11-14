@@ -1,6 +1,6 @@
 ## Remote methods
 
-Both instance and static methods can be exposed to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
+You can expose a Model's instance and static methods to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
 ### loopback.remoteMethod(fn, [options])
 
@@ -28,36 +28,35 @@ loopback.remoteMethod(
 
 **Options**
 
- - **accepts** - (optional) an arguments description specifying the remote method's arguments.
- - **returns** - (optional) an arguments description specifying the remote methods callback arguments.
- - **http** - (advanced / optional, object) http routing info
-  - **http.path** - the path relative to the model the method will be exposed at. May be a path fragment (eg. '/:myArg') which will be populated by an arg of the same name in the accepts description. For example the stats method above will be at the whole path `/products/stats`.
-  - **http.verb** - (get, post, put, del, all) - the route verb the method will be available from.
- 
-**Argument Description**
+The options argument is a JSON object, described in the following table.
 
-An arguments description defines either a single argument as an object or an ordered set of arguments as an array.
+| Option  | Required? | Description |
+| ----- | ----- |  ----- |
+| accepts   | No | Describes the remote method's arguments, as explained <a href="#argdesc">below</a>. The callback is an assumed argument; do not specify. |
+| returns    | No | Describes the remote method's callback arguments, as explained <a href="#argdesc">below</a>.. The err argument is assumed; do not specify. |
+| http | No | HTTP routing information: <ul><li> **http.path**: path (relative to the model) at which the method is exposed. May be a path fragment (for example, `/:myArg`) that will be populated by an arg of the same name in the `accepts` description. For example, the `stats` method above will be at the whole path `/products/stats`.</li><li> **http.verb**: HTTP method  (verb) from which the method is available (one of: get, post, put, del, or all).</li></ul>
 
+<a name="argdesc"></a>**Argument description**
+
+The arguments description defines either a single argument as an object or an ordered set of arguments as an array.  Each individual argument has keys for:
+ * arg: argument name
+ * type: argument datatype; must be a[loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
+ * required: Boolean value indicating if argument is required.
+
+For example, a single argument, specified as an object:
 ```js
-// examples
 {arg: 'myArg', type: 'number'}
+```
 
+Multiple arguments, specified as an array:
+```js
 [
   {arg: 'arg1', type: 'number', required: true},
   {arg: 'arg2', type: 'array'}
 ]
 ```
 
-**Types**
-
-Each argument may define any of the [loopback types](#loopback-types).
-
-**Notes:**
-
-  - The callback is an assumed argument and does not need to be specified in the accepts array.
-  - The err argument is also assumed and does not need to be specified in the returns array.
-
-## Remote Hooks
+## Remote hooks
 
 Run a function before or after a remote method is called by a client.
 
