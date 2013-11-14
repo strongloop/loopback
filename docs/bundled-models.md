@@ -25,16 +25,16 @@ var User = loopback.User.extend('user');
 // attach to the memory connector
 User.attachTo(memory);
 
-// also attach the session model to a data source
-User.session.attachTo(memory);
+// also attach the accessToken model to a data source
+User.accessToken.attachTo(memory);
 
 // expose over the app's api
 app.model(User);
 ```
     
-**Note:** By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
+**Note:** By default the `loopback.User` model uses the `loopback.AccessToken` model to persist access tokens. You can change this by setting the `accessToken` property.
 
-**Note:** You must attach both the `User` and `User.session` model's to a data source!
+**Note:** You must attach both the `User` and `User.accessToken` model's to a data source!
     
 #### User Creation
 
@@ -49,13 +49,13 @@ User.create({email: 'foo@bar.com', password: 'bar'}, function(err, user) {
 
 #### Login a User
 
-Create a session for a user using the local auth strategy.
+Create an `accessToken` for a user using the local auth strategy.
 
 **Node.js**
 
 ```js
-User.login({username: 'foo', password: 'bar'}, function(err, session) {
-  console.log(session);
+User.login({username: 'foo', password: 'bar'}, function(err, accessToken) {
+  console.log(accessToken);
 });
 ```
     
@@ -88,8 +88,8 @@ POST
 
 ```js
 // login a user and logout
-User.login({"email": "foo@bar.com", "password": "bar"}, function(err, session) {
-  User.logout(session.id, function(err) {
+User.login({"email": "foo@bar.com", "password": "bar"}, function(err, accessToken) {
+  User.logout(accessToken.id, function(err) {
     // user logged out
   });
 });
@@ -106,7 +106,7 @@ User.findOne({email: 'foo@bar.com'}, function(err, user) {
 POST /users/logout
 ...
 {
-  "sid": "<session id from user login>"
+  "sid": "<accessToken id from user login>"
 }
 ```
 
@@ -175,23 +175,23 @@ User.confirmReset(token, function(err) {
 });
 ```
 
-### Session Model
+### AccessToken Model
 
-Identify users by creating sessions when they connect to your loopback app. By default the `loopback.User` model uses the `loopback.Session` model to persist sessions. You can change this by setting the `session` property.
+Identify users by creating accessTokens when they connect to your loopback app. By default the `loopback.User` model uses the `loopback.AccessToken` model to persist accessTokens. You can change this by setting the `accessToken` property.
 
 ```js
-// define a custom session model    
-var MySession = loopback.Session.extend('my-session');
+// define a custom accessToken model    
+var MyAccessToken = loopback.AccessToken.extend('MyAccessToken');
 
 // define a custom User model
 var User = loopback.User.extend('user');
 
-// use the custom session model
-User.session = MySession;
+// use the custom accessToken model
+User.accessToken = MyAccessToken;
 
-// attach both Session and User to a data source
+// attach both AccessToken and User to a data source
 User.attachTo(loopback.memory());
-MySession.attachTo(loopback.memory());
+MyAccessToken.attachTo(loopback.memory());
 ```
     
 ### Email Model

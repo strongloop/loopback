@@ -210,7 +210,47 @@ app.use(loopback.rest());
 
 View generated REST documentation by visiting: [http://localhost:3000/_docs](http://localhost:3000/_docs).
 
+
+### Middleware
+
+LoopBack comes bundled with several `connect` / `express` style middleware.
+
+#### loopback.token(options)
     
+**Options**
+
+ - `cookies` - An `Array` of cookie names
+ - `headers` - An `Array` of header names
+ - `params` - An `Array` of param names
+
+Each array is used to add additional keys to find an `accessToken` for a `request`.
+
+The following example illustrates how to check for an `accessToken` in a custom cookie, query string parameter
+and header called `foo-auth`.
+
+```js
+app.use(loopback.token({
+  cookies: ['foo-auth'],
+  headers: ['foo-auth', 'X-Foo-Auth'],
+  cookies: ['foo-auth', 'foo_auth']
+}));
+```
+
+**Defaults**
+
+By default the following names will be checked. These names are appended to any optional names. They will always
+be checked, but any names specified will be checked first.
+
+```js
+  params.push('access_token');
+  headers.push('X-Access-Token');
+  headers.push('authorization');
+  cookies.push('access_token');
+  cookies.push('authorization');
+```
+
+> **NOTE:** The `loopback.token()` middleware will only check for [signed cookies](http://expressjs.com/api.html#req.signedCookies).
+
 ### Model
 
 A Loopback `Model` is a vanilla JavaScript class constructor with an attached set of properties and options. A `Model` instance is created by passing a data object containing properties to the `Model` constructor. A `Model` constructor will clean the object passed to it and only set the values matching the properties you define.
@@ -565,8 +605,8 @@ User.login = function (username, password, fn) {
     } else if(!user) {
       fn(failErr);
     } else if(user.password === passwordHash) {
-      MySessionModel.create({userId: user.id}, function (err, session) {
-        fn(null, session.id);
+      MyAccessTokenModel.create({userId: user.id}, function (err, accessToken) {
+        fn(null, accessToken.id);
       });
     } else {
       fn(failErr);
@@ -585,7 +625,7 @@ loopback.remoteMethod(
       {arg: 'username', type: 'string', required: true},
       {arg: 'password', type: 'string', required: true}
     ],
-    returns: {arg: 'sessionId', type: 'any'},
+    returns: {arg: 'accessTokenId', type: 'any'},
     http: {path: '/sign-in'}
   }
 );
@@ -637,7 +677,7 @@ Define an instance method.
 
 ```js
 User.prototype.logout = function (fn) {
-  MySessionModel.destroyAll({userId: this.id}, fn);
+  MyAccessTokenModel.destroyAll({userId: this.id}, fn);
 }
 ```
     
