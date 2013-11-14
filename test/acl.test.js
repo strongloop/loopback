@@ -51,10 +51,10 @@ describe('security scopes', function () {
             function (err, resource) {
               // console.log(resource);
               Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, function (err, perm) {
-                assert(perm.permission === ACL.ALLOW);
+                assert(perm.permission === ACL.DENY); // because name.WRITE == DENY
               });
               Scope.checkPermission('user', 'user', 'name', ACL.ALL, function (err, perm) {
-                assert(perm.permission === ACL.ALLOW);
+                assert(perm.permission === ACL.DENY); // because name.WRITE == DENY
               });
               Scope.checkPermission('user', 'user', 'name', ACL.READ, function (err, perm) {
                 assert(perm.permission === ACL.ALLOW);
@@ -76,11 +76,21 @@ describe('security ACLs', function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
     ACL.attachTo(ds);
 
-
     ACL.create({principalType: 'user', principalId: 'u001', model: 'user', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.ALLOW}, function (err, acl) {
 
-      ACL.checkPermission('user', 'u001', 'user', 'u001', ACL.READ, checkResult);
+      ACL.create({principalType: 'user', principalId: 'u001', model: 'user', property: ACL.ALL,
+        accessType: ACL.READ, permission: ACL.DENY}, function (err, acl) {
+
+        ACL.checkPermission('user', 'u001', 'user', 'name', ACL.READ, function (err, perm) {
+          assert(perm.permission === ACL.DENY);
+        });
+
+        ACL.checkPermission('user', 'u001', 'user', 'name', ACL.ALL, function (err, perm) {
+          assert(perm.permission === ACL.DENY);
+        });
+
+      });
 
     });
 
