@@ -264,7 +264,7 @@ describe('User', function(){
             
             
             var lines = result.email.message.split('\n');
-            assert(lines[4].indexOf('To: bar@bat.com') === 0);
+            assert(lines[3].indexOf('To: bar@bat.com') === 0);
             done();
           });
         });
