@@ -46,11 +46,24 @@ describe('security scopes', function () {
       ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
           model: 'user', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
         function (err, resource) {
-        // console.log(resource);
-        Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, checkResult);
-        Scope.checkPermission('user', 'user', 'name', ACL.ALL, checkResult);
-        Scope.checkPermission('user', 'user', 'name', ACL.READ, checkResult);
-      });
+          ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
+              model: 'user', property: 'name', accessType: ACL.WRITE, permission: ACL.DENY},
+            function (err, resource) {
+              // console.log(resource);
+              Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, function (err, perm) {
+                assert(perm.permission === ACL.ALLOW);
+              });
+              Scope.checkPermission('user', 'user', 'name', ACL.ALL, function (err, perm) {
+                assert(perm.permission === ACL.ALLOW);
+              });
+              Scope.checkPermission('user', 'user', 'name', ACL.READ, function (err, perm) {
+                assert(perm.permission === ACL.ALLOW);
+              });
+              Scope.checkPermission('user', 'user', 'name', ACL.WRITE, function (err, perm) {
+                assert(perm.permission === ACL.DENY);
+              });
+            });
+        });
     });
 
   });
