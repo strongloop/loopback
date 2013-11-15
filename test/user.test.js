@@ -7,7 +7,6 @@ var userMemory = loopback.createDataSource({
   connector: loopback.Memory
 });
 
-
 describe('User', function(){
   
   var mailDataSource = loopback.createDataSource({
@@ -15,7 +14,9 @@ describe('User', function(){
     transports: [{type: 'STUB'}]
   });
   User.attachTo(userMemory);
-  User.accessToken.attachTo(userMemory);
+  AccessToken.attachTo(userMemory);
+  // TODO(ritch) - this should be a default relationship
+  User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
   User.email.attachTo(mailDataSource);
   
   // allow many User.afterRemote's to be called
@@ -101,7 +102,7 @@ describe('User', function(){
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
       User.login({email: 'foo@bar.com', password: 'bar'}, function (err, accessToken) {
-        assert(accessToken.uid);
+        assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
         
@@ -119,7 +120,7 @@ describe('User', function(){
           if(err) return done(err);
           var accessToken = res.body;
           
-          assert(accessToken.uid);
+          assert(accessToken.userId);
           assert(accessToken.id);
           assert.equal(accessToken.id.length, 64);
           
@@ -164,7 +165,7 @@ describe('User', function(){
             if(err) return done(err);
             var accessToken = res.body;
           
-            assert(accessToken.uid);
+            assert(accessToken.userId);
             assert(accessToken.id);
             
             fn(null, accessToken.id);

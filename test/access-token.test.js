@@ -36,6 +36,27 @@ describe('loopback.token(options)', function() {
   });
 });
 
+describe('AccessToken', function () {
+  beforeEach(createTestingToken);
+
+  it('should auto-generate id', function () {
+    assert(this.token.id);
+    assert.equal(this.token.id.length, 64);
+  });
+
+  it('should auto-generate created date', function () {
+    assert(this.token.created);
+    assert(Object.prototype.toString.call(this.token.created), '[object Date]');
+  });
+
+  it('should be validateable', function (done) {
+    this.token.validate(function(err, isValid) {
+      assert(isValid);
+      done();
+    });
+  });
+});
+
 function createTestingToken(done) {
   var test = this;
   Token.create({}, function (err, token) {
