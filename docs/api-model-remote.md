@@ -1,4 +1,4 @@
-## Remote methods
+## Remote methods and hooks
 
 You can expose a Model's instance and static methods to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
