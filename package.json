@@ -21,11 +21,11 @@
     "debug": "~0.7.2",
     "express": "~3.4.0",
     "loopback-datasource-juggler": "~1.2.0",
-    "strong-remoting": "~1.0.0",
+    "strong-remoting": "~1.1.0",
     "inflection": "~1.2.5",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
-    "nodemailer": "~0.4.4",
+    "nodemailer": "~0.5.5",
     "ejs": "~0.8.4",
     "bcryptjs": "~0.7.10",
     "underscore.string": "~2.3.3",
@@ -34,9 +34,9 @@
   },
   "devDependencies": {
     "blanket": "~1.1.5",
-    "mocha": "~1.12.1",
+    "mocha": "~1.14.0",
     "strong-task-emitter": "0.0.x",
-    "supertest": "~0.7.1"
+    "supertest": "~0.8.1"
   },
   "repository": {
     "type": "git",
