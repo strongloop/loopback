@@ -1,5 +1,6 @@
 var loopback = require('../');
 var Token = loopback.AccessToken.extend('MyToken');
+var ACL = loopback.ACL;
 
 describe('loopback.token(options)', function() {
   beforeEach(createTestingToken);
@@ -54,6 +55,27 @@ describe('AccessToken', function () {
   });
 });
 
+describe('app.enableAuth()', function() {
+  this.timeout(0);
+
+  beforeEach(createTestingToken);
+
+  it('should prevent all remote method calls without an accessToken', function (done) {
+    createTestAppAndRequest(this.token, done)
+      .get('/tests')
+      .expect(401)
+      .end(done);
+  });
+
+  it('should prevent remote method calls if the accessToken doesnt have access', function (done) {
+    createTestAppAndRequest(this.token, done)
+      .del('/tests/123')
+      .expect(401)
+      .set('authorization', this.token.id)
+      .end(done);
+  });
+});
+
 function createTestingToken(done) {
   var test = this;
   Token.create({}, function (err, token) {
@@ -86,6 +108,23 @@ function createTestApp(testToken, done) {
     }
     res.send('ok');
   });
+  app.use(loopback.rest());
+  app.enableAuth();
+
+  var TestModel = loopback.Model.extend('test', {}, {
+    acls: [
+      {
+        principalType: "ROLE",
+        principalId: "$everyone",
+        accessType: ACL.ALL,
+        permission: ACL.DENY,
+        property: 'removeById'
+      }
+    ]
+  });
+
+  TestModel.attachTo(loopback.memory());
+  app.model(TestModel);
 
   return app;
 }
