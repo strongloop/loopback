@@ -28,7 +28,9 @@
     "nodemailer": "~0.4.4",
     "ejs": "~0.8.4",
     "bcryptjs": "~0.7.10",
-    "underscore.string": "~2.3.3"
+    "underscore.string": "~2.3.3",
+    "underscore": "~1.5.2",
+    "uid2": "0.0.3"
   },
   "devDependencies": {
     "blanket": "~1.1.5",

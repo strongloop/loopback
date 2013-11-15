@@ -10,7 +10,7 @@ A LoopBack model consists of:
 Apps use the model API to display information to the user or trigger actions
 on the models to interact with backend systems.  LoopBack supports both "dynamic" schema-less models and "static", schema-driven models.
 
-_Dynamic models_ require only a name.  The format of the data are specified completely and flexibly by the client application. Well-suited for data that originates on the client, dynamic models enable you to persist data both between sessions and between devices without involving a schema.
+_Dynamic models_ require only a name.  The format of the data are specified completely and flexibly by the client application. Well-suited for data that originates on the client, dynamic models enable you to persist data both between accessTokens and between devices without involving a schema.
 
 _Static models_ require more code up front, with the format of the data specified completely in JSON. Well-suited to both existing data and large, intricate datasets, static models provide structure and
 consistency to their data, preventing bugs that can result from unexpected data in the database. 

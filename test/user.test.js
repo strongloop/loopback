@@ -1,12 +1,11 @@
 var User = loopback.User.extend('user');
-var Session = loopback.Session;
+var AccessToken = loopback.AccessToken;
 var passport = require('passport');
 var MailConnector = require('../lib/connectors/mail');
 
 var userMemory = loopback.createDataSource({
   connector: loopback.Memory
 });
-
 
 describe('User', function(){
   
@@ -15,7 +14,9 @@ describe('User', function(){
     transports: [{type: 'STUB'}]
   });
   User.attachTo(userMemory);
-  User.session.attachTo(userMemory);
+  AccessToken.attachTo(userMemory);
+  // TODO(ritch) - this should be a default relationship
+  User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
   User.email.attachTo(mailDataSource);
   
   // allow many User.afterRemote's to be called
@@ -30,7 +31,7 @@ describe('User', function(){
   
   afterEach(function (done) {
     User.destroyAll(function (err) {
-      User.session.destroyAll(done);
+      User.accessToken.destroyAll(done);
     });
   });
   
@@ -84,8 +85,8 @@ describe('User', function(){
     
     it('Requires a password to login with basic auth', function(done) {
       User.create({email: 'b@c.com'}, function (err) {
-        User.login({email: 'b@c.com'}, function (err, session) {
-          assert(!session, 'should not create a session without a valid password');
+        User.login({email: 'b@c.com'}, function (err, accessToken) {
+          assert(!accessToken, 'should not create a accessToken without a valid password');
           assert(err, 'should not login without a password');
           done();
         });
@@ -100,10 +101,10 @@ describe('User', function(){
   
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
-      User.login({email: 'foo@bar.com', password: 'bar'}, function (err, session) {
-        assert(session.uid);
-        assert(session.id);
-        assert.equal((new Buffer(session.id, 'base64')).length, 64);
+      User.login({email: 'foo@bar.com', password: 'bar'}, function (err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+        assert.equal(accessToken.id.length, 64);
         
         done();
       });
@@ -117,11 +118,11 @@ describe('User', function(){
         .send({email: 'foo@bar.com', password: 'bar'})
         .end(function(err, res){
           if(err) return done(err);
-          var session = res.body;
+          var accessToken = res.body;
           
-          assert(session.uid);
-          assert(session.id);
-          assert.equal((new Buffer(session.id, 'base64')).length, 64);
+          assert(accessToken.userId);
+          assert(accessToken.id);
+          assert.equal(accessToken.id.length, 64);
           
           done();
         });
@@ -129,9 +130,9 @@ describe('User', function(){
     
     it('Login should only allow correct credentials', function(done) {
       User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
-        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, session) { 
+        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) { 
           assert(err);
-          assert(!session);
+          assert(!accessToken);
           done();
         });
       });
@@ -139,19 +140,19 @@ describe('User', function(){
   });
   
   describe('User.logout', function() {
-    it('Logout a user by providing the current session id (using node)', function(done) {
+    it('Logout a user by providing the current accessToken id (using node)', function(done) {
       login(logout);
       
       function login(fn) {
         User.login({email: 'foo@bar.com', password: 'bar'}, fn);
       }
       
-      function logout(err, session) {
-        User.logout(session.id, verify(session.id, done));
+      function logout(err, accessToken) {
+        User.logout(accessToken.id, verify(accessToken.id, done));
       }
     });
     
-    it('Logout a user by providing the current session id (over rest)', function(done) {
+    it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
       
       function login(fn) {
@@ -162,12 +163,12 @@ describe('User', function(){
           .send({email: 'foo@bar.com', password: 'bar'})
           .end(function(err, res){
             if(err) return done(err);
-            var session = res.body;
+            var accessToken = res.body;
           
-            assert(session.uid);
-            assert(session.id);
+            assert(accessToken.userId);
+            assert(accessToken.id);
             
-            fn(null, session.id);
+            fn(null, accessToken.id);
           });
       }
       
@@ -186,8 +187,8 @@ describe('User', function(){
       return function (err) {
         if(err) return done(err);
         
-        Session.findById(sid, function (err, session) {
-          assert(!session, 'session should not exist after logging out');
+        AccessToken.findById(sid, function (err, accessToken) {
+          assert(!accessToken, 'accessToken should not exist after logging out');
           done(err);
         });
       }
