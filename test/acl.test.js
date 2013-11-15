@@ -20,15 +20,15 @@ describe('security scopes', function () {
 
     // console.log(Scope.relations);
 
-    Scope.create({name: 'user', description: 'access user information'}, function (err, scope) {
+    Scope.create({name: 'userScope', description: 'access user information'}, function (err, scope) {
       // console.log(scope);
-      ACL.create({principalType: ACL.SCOPE, principalId: scope.id, model: 'user', property: ACL.ALL,
+      ACL.create({principalType: ACL.SCOPE, principalId: scope.id, model: 'User', property: ACL.ALL,
           accessType: ACL.ALL, permission: ACL.ALLOW},
         function (err, resource) {
         // console.log(resource);
-        Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, checkResult);
-        Scope.checkPermission('user', 'user', 'name', ACL.ALL, checkResult);
-        Scope.checkPermission('user', 'user', 'name', ACL.READ, checkResult);
+        Scope.checkPermission('userScope', 'User', ACL.ALL, ACL.ALL, checkResult);
+        Scope.checkPermission('userScope', 'User', 'name', ACL.ALL, checkResult);
+        Scope.checkPermission('userScope', 'User', 'name', ACL.READ, checkResult);
       });
     });
 
@@ -41,25 +41,25 @@ describe('security scopes', function () {
 
     // console.log(Scope.relations);
 
-    Scope.create({name: 'user', description: 'access user information'}, function (err, scope) {
+    Scope.create({name: 'userScope', description: 'access user information'}, function (err, scope) {
       // console.log(scope);
       ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
-          model: 'user', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
+          model: 'User', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
         function (err, resource) {
           ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
-              model: 'user', property: 'name', accessType: ACL.WRITE, permission: ACL.DENY},
+              model: 'User', property: 'name', accessType: ACL.WRITE, permission: ACL.DENY},
             function (err, resource) {
               // console.log(resource);
-              Scope.checkPermission('user', 'user', ACL.ALL, ACL.ALL, function (err, perm) {
+              Scope.checkPermission('userScope', 'User', ACL.ALL, ACL.ALL, function (err, perm) {
                 assert(perm.permission === ACL.DENY); // because name.WRITE == DENY
               });
-              Scope.checkPermission('user', 'user', 'name', ACL.ALL, function (err, perm) {
+              Scope.checkPermission('userScope', 'User', 'name', ACL.ALL, function (err, perm) {
                 assert(perm.permission === ACL.DENY); // because name.WRITE == DENY
               });
-              Scope.checkPermission('user', 'user', 'name', ACL.READ, function (err, perm) {
+              Scope.checkPermission('userScope', 'User', 'name', ACL.READ, function (err, perm) {
                 assert(perm.permission === ACL.ALLOW);
               });
-              Scope.checkPermission('user', 'user', 'name', ACL.WRITE, function (err, perm) {
+              Scope.checkPermission('userScope', 'User', 'name', ACL.WRITE, function (err, perm) {
                 assert(perm.permission === ACL.DENY);
               });
             });
@@ -76,17 +76,17 @@ describe('security ACLs', function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
     ACL.attachTo(ds);
 
-    ACL.create({principalType: 'user', principalId: 'u001', model: 'user', property: ACL.ALL,
+    ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.ALLOW}, function (err, acl) {
 
-      ACL.create({principalType: 'user', principalId: 'u001', model: 'user', property: ACL.ALL,
+      ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
         accessType: ACL.READ, permission: ACL.DENY}, function (err, acl) {
 
-        ACL.checkPermission('user', 'u001', 'user', 'name', ACL.READ, function (err, perm) {
+        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.READ, function (err, perm) {
           assert(perm.permission === ACL.DENY);
         });
 
-        ACL.checkPermission('user', 'u001', 'user', 'name', ACL.ALL, function (err, perm) {
+        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.ALL, function (err, perm) {
           assert(perm.permission === ACL.DENY);
         });
 
@@ -95,6 +95,44 @@ describe('security ACLs', function () {
     });
 
   });
+
+  it("should honor static ACLs from the model", function () {
+    var ds = loopback.createDataSource({connector: loopback.Memory});
+    var Customer = ds.createModel('Customer', {
+      name: {
+        type: String,
+        acls: [
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.WRITE, permission: ACL.DENY},
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+        ]
+      }
+    }, {
+      acls: [
+        {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+      ]
+    });
+
+    /*
+     Customer.settings.acls = [
+     {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+     ];
+     */
+    ACL.attachTo(ds);
+
+    ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.WRITE, function (err, perm) {
+      assert(perm.permission === ACL.DENY);
+    });
+
+    ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.READ, function (err, perm) {
+      assert(perm.permission === ACL.ALLOW);
+    });
+
+    ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.ALL, function (err, perm) {
+      assert(perm.permission === ACL.DENY);
+    });
+
+  });
+
 
 });
 
