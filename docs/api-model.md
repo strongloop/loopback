@@ -353,8 +353,8 @@ User.login = function (username, password, fn) {
     } else if(!user) {
       fn(failErr);
     } else if(user.password === passwordHash) {
-      MySessionModel.create({userId: user.id}, function (err, session) {
-        fn(null, session.id);
+      MyAccessTokenModel.create({userId: user.id}, function (err, accessToken) {
+        fn(null, accessToken.id);
       });
     } else {
       fn(failErr);
