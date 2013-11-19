@@ -1,6 +1,7 @@
 {
   "title": "LoopBack Documentation",
   "content": [
+    "docs/api.md",    
     "docs/api-app.md",
     "docs/api-datasource.md",
     "docs/api-geopoint.md",
