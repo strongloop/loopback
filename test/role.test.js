@@ -13,10 +13,6 @@ function checkResult(err, result) {
 describe('role model', function () {
 
   it("should define role/role relations", function () {
-    var ds = loopback.createDataSource({connector: 'memory'});
-    Role.attachTo(ds);
-    RoleMapping.attachTo(ds);
-
     Role.create({name: 'user'}, function (err, userRole) {
       Role.create({name: 'admin'}, function (err, adminRole) {
         userRole.principals.create({principalType: RoleMapping.ROLE, principalId: adminRole.id}, function (err, mapping) {
@@ -41,11 +37,6 @@ describe('role model', function () {
   });
 
   it("should define role/user relations", function () {
-    var ds = loopback.createDataSource({connector: 'memory'});
-    User.attachTo(ds);
-    Role.attachTo(ds);
-    RoleMapping.attachTo(ds);
-
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
       Role.create({name: 'userRole'}, function (err, role) {
@@ -75,11 +66,6 @@ describe('role model', function () {
   });
 
   it("should support getRoles() and isInRole()", function () {
-    var ds = loopback.createDataSource({connector: 'memory'});
-    User.attachTo(ds);
-    Role.attachTo(ds);
-    RoleMapping.attachTo(ds);
-
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
       Role.create({name: 'userRole'}, function (err, role) {
