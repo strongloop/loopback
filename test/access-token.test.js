@@ -1,9 +1,6 @@
 var loopback = require('../');
 var Token = loopback.AccessToken.extend('MyToken');
 
-// attach Token to testing memory ds
-Token.attachTo(loopback.memory());
-
 describe('loopback.token(options)', function() {
   beforeEach(createTestingToken);
 

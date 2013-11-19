@@ -12,6 +12,21 @@ request = require('supertest');
 
 beforeEach(function () {
   app = loopback();
+
+  // setup default data sources
+  loopback.setDefaultDataSourceForType('db', {
+    connector: loopback.Memory
+  });
+
+  loopback.setDefaultDataSourceForType('mail', {
+    connector: loopback.Mail,
+    transports: [
+      {type: 'STUB'}
+    ]
+  });
+
+  // auto attach data sources to models
+  loopback.autoAttach();
 });
 
 assertValidDataSource = function (dataSource) {
