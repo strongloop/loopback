@@ -1,18 +1,12 @@
 {
   "title": "LoopBack Documentation",
   "content": [
-    "docs/intro.md",
-    "docs/quickstart.md",
-    "docs/apiexplorer.md",
-    "docs/concepts.md",
-    "docs/bundled-models.md",
-    "docs/cli.md",
-    "docs/types.md",    
-    "docs/api.md",
-    "docs/ios.md",
-    "docs/js.md",
-    "docs/java.md",
-    "docs/rest.md"
+    "docs/api-app.md",
+    "docs/api-datasource.md",
+    "docs/api-geopoint.md",
+    "docs/api-model.md",
+    "docs/api-model-remote.md",   
+    "docs/rest.md"    
   ],
   "assets": "/docs/assets"
 }
