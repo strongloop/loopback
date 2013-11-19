@@ -2,7 +2,7 @@
 
 ## Documentation
 
-[See the full documentation](http://docs.strongloop.com/loopback).
+[See the full documentation](http://docs.strongloop.com/display/DOC/LoopBack).
 
 ## Mailing List
 
