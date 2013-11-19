@@ -56,6 +56,7 @@ Request - insert:
     http://localhost:3000/locations
 
 Response:
+
     {
       "id": "98",
       "street": "107 S B St",
@@ -275,6 +276,7 @@ same as find's filter argument. Please see [find](#find) for more details.
 ###Example 
 
 Request:
+
     curl http://localhost:3000/locations/findOne?filter%5Bwhere%5D%5Bcity%5D=Scottsdale
 
 Response:
@@ -310,6 +312,7 @@ Delete a model instance by id from the data source
 ###Example 
 
 Request:
+
     curl -X DELETE http://localhost:3000/locations/88
 
 Response:
