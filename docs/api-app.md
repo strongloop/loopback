@@ -212,3 +212,46 @@ app.use(loopback.rest());
 ```
 
 View generated REST documentation at [http://localhost:3000/_docs](http://localhost:3000/_docs).
+
+### Middleware
+
+LoopBack includes middleware similar to [Express / Connect middleware](http://expressjs.com/api.html#middleware).  
+
+
+
+#### loopback.token(options)
+    
+**Options**
+
+ - `cookies` - An `Array` of cookie names
+ - `headers` - An `Array` of header names
+ - `params` - An `Array` of param names
+
+Each array is used to add additional keys to find an `accessToken` for a `request`.
+
+The following example illustrates how to check for an `accessToken` in a custom cookie, query string parameter
+and header called `foo-auth`.
+
+```js
+app.use(loopback.token({
+  cookies: ['foo-auth'],
+  headers: ['foo-auth', 'X-Foo-Auth'],
+  cookies: ['foo-auth', 'foo_auth']
+}));
+```
+
+**Defaults**
+
+By default the following names will be checked. These names are appended to any optional names. They will always
+be checked, but any names specified will be checked first.
+
+```js
+  params.push('access_token');
+  headers.push('X-Access-Token');
+  headers.push('authorization');
+  cookies.push('access_token');
+  cookies.push('authorization');
+```
+
+> **NOTE:** The `loopback.token()` middleware will only check for [signed cookies](http://expressjs.com/api.html#req.signedCookies).
+
