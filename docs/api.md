@@ -113,6 +113,13 @@ The following is an example of an object containing two `Model` definitions: "lo
 
 Define a `Model` and export it for use by remote clients.
 
+**definition**
+
+ - `public` - **default: true** attach the `Model` to the app and export its methods to clients
+ - `dataSource` - **required** the name of the `DataSource` to attach the `Model` to
+
+**Example**
+
 ```js
 // declare a DataSource
 app.boot({
