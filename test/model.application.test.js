@@ -1,16 +1,11 @@
 var loopback = require(('../'));
 var assert = require('assert');
-
-var dataSource = loopback.createDataSource('db', {connector: loopback.Memory});
-
 var Application = loopback.Application;
-Application.attachTo(dataSource);
 
 describe('Application', function () {
     var registeredApp = null;
 
     it('Create a new application', function (done) {
-
         Application.create({owner: 'rfeng', name: 'MyApp1', description: 'My first mobile application'}, function (err, result) {
             var app = result;
             assert.equal(app.owner, 'rfeng');
@@ -28,7 +23,6 @@ describe('Application', function () {
     });
 
     beforeEach(function (done) {
-
         Application.register('rfeng', 'MyApp2', {description: 'My second mobile application'}, function (err, result) {
             var app = result;
             assert.equal(app.owner, 'rfeng');
@@ -47,7 +41,6 @@ describe('Application', function () {
     });
 
     it('Reset keys', function (done) {
-
         Application.resetKeys(registeredApp.id, function (err, result) {
             var app = result;
             assert.equal(app.owner, 'rfeng');
@@ -73,7 +66,6 @@ describe('Application', function () {
     });
 
     it('Authenticate with application id & clientKey', function (done) {
-
         Application.authenticate(registeredApp.id, registeredApp.clientKey, function (err, result) {
             assert.equal(result, 'clientKey');
             done(err, result);
@@ -81,7 +73,6 @@ describe('Application', function () {
     });
 
     it('Authenticate with application id & javaScriptKey', function (done) {
-
         Application.authenticate(registeredApp.id, registeredApp.javaScriptKey, function (err, result) {
             assert.equal(result, 'javaScriptKey');
             done(err, result);
@@ -116,6 +107,5 @@ describe('Application', function () {
             done(err, result);
         });
     });
-
 });
 

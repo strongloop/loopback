@@ -11,10 +11,10 @@ describe('User', function(){
   // allow many User.afterRemote's to be called
   User.setMaxListeners(0);
   
-  // should be able to remove this with autoAttach  
-  User.attachTo(loopback.memory())
-  AccessToken.attachTo(loopback.memory());
-  User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
+  before(function () {
+    debugger;
+    User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
+  });
   
   beforeEach(function (done) {
     app.use(loopback.rest());
