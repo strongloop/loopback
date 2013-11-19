@@ -27,7 +27,7 @@ describe('Application', function () {
         });
     });
 
-    it('Register a new application', function (done) {
+    beforeEach(function (done) {
 
         Application.register('rfeng', 'MyApp2', {description: 'My second mobile application'}, function (err, result) {
             var app = result;

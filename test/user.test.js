@@ -8,19 +8,13 @@ var userMemory = loopback.createDataSource({
 });
 
 describe('User', function(){
-  
-  var mailDataSource = loopback.createDataSource({
-    connector: MailConnector,
-    transports: [{type: 'STUB'}]
-  });
-  User.attachTo(userMemory);
-  AccessToken.attachTo(userMemory);
-  // TODO(ritch) - this should be a default relationship
-  User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
-  User.email.attachTo(mailDataSource);
-  
   // allow many User.afterRemote's to be called
   User.setMaxListeners(0);
+  
+  // should be able to remove this with autoAttach  
+  User.attachTo(loopback.memory())
+  AccessToken.attachTo(loopback.memory());
+  User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
   
   beforeEach(function (done) {
     app.use(loopback.rest());
