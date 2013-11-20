@@ -3,7 +3,9 @@ var loopback = require('../index');
 var acl = require('../lib/models/acl');
 var Scope = acl.Scope;
 var ACL = acl.ACL;
-var ScopeACL = acl.ScopeACL;
+var role = require('../lib/models/role');
+var Role = role.Role;
+var RoleMapping = role.RoleMapping;
 var User = loopback.User;
 
 function checkResult(err, result) {
@@ -81,6 +83,39 @@ describe('security ACLs', function () {
 
   });
 
+  it("should honor defaultPermission from the model", function () {
+    var ds = loopback.createDataSource({connector: loopback.Memory});
+    ACL.attachTo(ds);
+    var Customer = ds.createModel('Customer', {
+      name: {
+        type: String,
+        acls: [
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.WRITE, permission: ACL.DENY},
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+        ]
+      }
+    }, {
+      acls: [
+        {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+      ]
+    });
+
+    Customer.settings.defaultPermission = ACL.DENY;
+
+    ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.WRITE, function (err, perm) {
+      assert(perm.permission === ACL.DENY);
+    });
+
+    ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.READ, function (err, perm) {
+      assert(perm.permission === ACL.ALLOW);
+    });
+
+    ACL.checkPermission(ACL.USER, 'u002', 'Customer', 'name', ACL.WRITE, function (err, perm) {
+      assert(perm.permission === ACL.DENY);
+    });
+
+  });
+
   it("should honor static ACLs from the model", function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
     var Customer = ds.createModel('Customer', {
@@ -117,6 +152,81 @@ describe('security ACLs', function () {
 
   });
 
+  it("should check access against LDL, ACL, and Role", function () {
+    var ds = loopback.createDataSource({connector: loopback.Memory});
+    ACL.attachTo(ds);
+    Role.attachTo(ds);
+    RoleMapping.attachTo(ds);
+    User.attachTo(ds);
+
+    // var log = console.log;
+    var log = function() {};
+
+    // Create
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
+
+      log('User: ', user.toObject());
+
+      // Define a model with static ACLs
+      var Customer = ds.createModel('Customer', {
+        name: {
+          type: String,
+          acls: [
+            {principalType: ACL.USER, principalId: 'u001', accessType: ACL.WRITE, permission: ACL.DENY},
+            {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+          ]
+        }
+      }, {
+        acls: [
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+        ]
+      });
+
+      ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'Customer', property: ACL.ALL,
+        accessType: ACL.ALL, permission: ACL.ALLOW}, function (err, acl) {
+
+        log('ACL 1: ', acl.toObject());
+
+        Role.create({name: 'MyRole'}, function (err, myRole) {
+          log('Role: ', myRole.toObject());
+
+          myRole.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function (err, p) {
+
+            log('Principal added to role: ', p.toObject());
+
+            ACL.create({principalType: ACL.ROLE, principalId: myRole.id, model: 'Customer', property: ACL.ALL,
+              accessType: ACL.READ, permission: ACL.DENY}, function (err, acl) {
+
+              log('ACL 2: ', acl.toObject());
+
+              ACL.checkAccess({
+                principals: [
+                  {principalType: ACL.USER, principalId: 'u001'}
+                ],
+                model: 'Customer',
+                property: 'name',
+                accessType: ACL.READ
+              }, function(err, access) {
+                assert(!err && access.permission === ACL.ALLOW);
+              });
+
+              ACL.checkAccess({
+                principals: [
+                  {principalType: ACL.USER, principalId: 'u001'}
+                ],
+                model: 'Customer',
+                accessType: ACL.READ
+              }, function(err, access) {
+                assert(!err && access.permission === ACL.DENY);
+              });
+
+            });
+
+          });
+        });
+      });
+    });
+  });
 
 });
 
