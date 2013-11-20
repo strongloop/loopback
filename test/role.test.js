@@ -129,6 +129,13 @@ describe('role model', function () {
         assert(!err && !yes);
       });
 
+      Role.isInRole(Role.UNAUTHENTICATED, {principalType: ACL.USER, principalId: user.id}, function (err, yes) {
+        assert(!err && !yes);
+      });
+      Role.isInRole(Role.UNAUTHENTICATED, {principalType: ACL.USER, principalId: null}, function (err, yes) {
+        assert(!err && yes);
+      });
+
       Role.isInRole(Role.EVERYONE, {principalType: ACL.USER, principalId: user.id}, function (err, yes) {
         assert(!err && yes);
       });
