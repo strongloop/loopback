@@ -147,31 +147,62 @@ User.afterRemote('create', function(ctx, user, next) {
 });
 ```
 
-#### Send Reset Password Email
+### Reset Password
 
-Send an email to the user's supplied email address containing a link to reset their password.
+You can implement password reset using the `User.resetPassword` method.
 
-```js  
-User.reset(email, function(err) {
-  console.log('email sent');
+Request a password reset access token.
+
+**Node.js**
+
+```js
+User.resetPassword({
+  email: 'foo@bar.com'
+}, function () {
+  console.log('ready to change password');
 });
 ```
-    
-#### Remote Password Reset
 
-The password reset email will send users to a page rendered by loopback with fields required to reset the user's password. You may customize this template by defining a `resetTemplate` setting.
+**REST**
 
-```js
-User.settings.resetTemplate = 'reset.ejs';
 ```
-    
-#### Remote Password Reset Confirmation
+POST
 
-Confirm the password reset.
+  /users/reset-password
+  ...
+  {
+    "email": "foo@bar.com"
+  }
+  ...
+  200 OK
+```
 
-```js
-User.confirmReset(token, function(err) {
-  console.log(err || 'your password was reset');
+You must the handle the `resetPasswordRequest` event this on the server to
+send a reset email containing an access token to the correct user. The
+example below shows a basic setup for sending the reset email.
+
+```
+User.on('resetPasswordRequest', function (info) {
+  console.log(info.email); // the email of the requested user
+  console.log(info.accessToken.id); // the temp access token to allow password reset
+
+  // requires AccessToken.belongsTo(User)
+  info.accessToken.user(function (err, user) {
+    console.log(user); // the actual user
+    var emailData = {
+      user: user,
+      accessToken: accessToken
+    };
+
+    // this email should include a link to a page with a form to
+    // change the password using the access token in the email
+    Email.send({
+      to: user.email,
+      subject: 'Reset Your Password',
+      text: loopback.template('reset-template.txt.ejs')(emailData),
+      html: loopback.template('reset-template.html.ejs')(emailData)
+    });
+  });
 });
 ```
 
