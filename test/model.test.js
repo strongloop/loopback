@@ -296,6 +296,13 @@ describe('Model', function() {
             done();
           });
       });
+
+      it('Converts null result of findById to 404 Not Found', function(done) {
+        request(app)
+          .get('/users/not-found')
+          .expect(404)
+          .end(done);
+      });
     });
   
     describe('Model.beforeRemote(name, fn)', function(){
