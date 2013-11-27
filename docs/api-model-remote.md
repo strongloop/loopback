@@ -36,19 +36,23 @@ The options argument is a JSON object, described in the following table.
 | returns    | No | Describes the remote method's callback arguments, as explained <a href="#argdesc">below</a>.. The err argument is assumed; do not specify. |
 | http | No | HTTP routing information: <ul><li> **http.path**: path (relative to the model) at which the method is exposed. May be a path fragment (for example, `/:myArg`) that will be populated by an arg of the same name in the `accepts` description. For example, the `stats` method above will be at the whole path `/products/stats`.</li><li> **http.verb**: HTTP method  (verb) from which the method is available (one of: get, post, put, del, or all).</li></ul>
 
-<a name="argdesc"></a>**Argument description**
+<a name="argdesc"></a>
+**Argument description**
 
 The arguments description defines either a single argument as an object or an ordered set of arguments as an array.  Each individual argument has keys for:
+
  * arg: argument name
  * type: argument datatype; must be a[loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
  * required: Boolean value indicating if argument is required.
 
 For example, a single argument, specified as an object:
+
 ```js
 {arg: 'myArg', type: 'number'}
 ```
 
 Multiple arguments, specified as an array:
+
 ```js
 [
   {arg: 'arg1', type: 'number', required: true},
