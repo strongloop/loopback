@@ -183,25 +183,28 @@ values, as described in the following table.
 |fields| Object, Array, or String |  The included/excluded fields.  For foramt, see fields below.
 
 **Operations available in where filter**:
-- gt: >
-- gte: >=
-- lt: <
-- lte: <=
-- between
-- inq: IN
-- nin: NOT IN
-- neq: !=
-- like: LIKE
-- nlike: NOT LIKE
+
+  * gt: >
+  * gte: >=
+  * lt: <
+  * lte: <=
+  * between
+  * inq: IN
+  * nin: NOT IN
+  * neq: !=
+  * like: LIKE
+  * nlike: NOT LIKE
 
 **Include format**:
- - 'posts': Load posts
- - ['posts', 'passports']: Load posts and passports
- - {'owner': 'posts'}: Load owner and owner's posts
- - {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
- - {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
+
+  * 'posts': Load posts
+  * ['posts', 'passports']: Load posts and passports
+  * {'owner': 'posts'}: Load owner and owner's posts
+  * {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
+  * {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
   
 **Fields format**:
+
   - `['foo']` or `'foo'` - include only the foo property
   - `['foo', 'bar']` - include the foo and bar properties
   - `{foo: true}` - include only foo
