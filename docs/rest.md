@@ -9,6 +9,7 @@ Create a new instance of the model and persist it into the data source
     POST /locations
 
 **Arguments**
+
 * **data** The model instance data
 
 
@@ -47,6 +48,7 @@ Update an existing model instance or insert a new one into the data source
     PUT /locations
 
 **Arguments**
+
 * **data** The model instance data
 
 **Examples**
