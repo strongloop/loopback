@@ -182,7 +182,7 @@ values, as described in the following table.
 |skip (offset) | Number | Skip the specified number of instances.  Use offset as alternative. |
 |fields| Object, Array, or String |  The included/excluded fields.  For foramt, see fields below.
 
-**Operations**:
+**Operations available in where filter**:
 - gt: >
 - gte: >=
 - lt: <
@@ -201,12 +201,11 @@ values, as described in the following table.
  - {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
  - {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
   
-*Fields*:
+**Fields format**:
   - `['foo']` or `'foo'` - include only the foo property
   - `['foo', 'bar']` - include the foo and bar properties
   - `{foo: true}` - include only foo
   - `{bat: false}` - include all properties, exclude bat
-
 
 For example,
 
