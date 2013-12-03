@@ -166,42 +166,86 @@ Find all instances of the model matched by filter from the data source.
 
 **Arguments**
 
-* **filter** The filter that defines where, order, fields, skip, and limit
+Pass the arguments as the value of the `find` HTTP query parameter, as follows
 
- - **where** `Object` { key: val, key2: {gt: 'val2'}} The search criteria
-   - Format: {key: val} or {key: {op: val}}
-   - Operations:
-     - gt: >
-     - gte: >=
-     - lt: <
-     - lte: <=
-     - between
-     - inq: IN
-     - nin: NOT IN
-     - neq: !=
-     - like: LIKE
-     - nlike: NOT LIKE
+    /modelName?filter=[filterType1]=<val1>&filter[filterType2]=<val2>...
 
- - **include** `String`, `Object` or `Array` Allows you to load relations of several objects and optimize numbers of requests.
-    - Format:
-      - 'posts': Load posts
-      - ['posts', 'passports']: Load posts and passports
-      - {'owner': 'posts'}: Load owner and owner's posts
-      - {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
-      - {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
+where *filterType1*, *filterType2*, and so on, are the filter types, and *val1*, *val2* are the corresponding
+values, as described in the following table.
 
- - **order** `String` The sorting order
-   - Format: 'key1 ASC, key2 DESC'
-
- - **limit** `Number` The maximum number of instances to be returned
- - **skip** `Number` Skip the number of instances
- - **offset** `Number` Alias for skip
-
- - **fields** `Object|Array|String` The included/excluded fields
-  - `['foo']` or `'foo'` - include only the foo property
-  - `['foo', 'bar']` - include the foo and bar properties
-  - `{foo: true}` - include only foo
-  - `{bat: false}` - include all properties, exclude bat
+<table>
+<thead><tr>
+<th>Filter type</th>
+<th>Type</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>where</td>
+<td>Object</td>
+<td>Search criteria. Format: <code>{key: val}</code> or <code>{key: {op: val}}</code>  
+<p>Operations:</p>
+<ul>
+<li>gt: &gt;</li>
+<li>gte: &gt;=</li>
+<li>lt: &lt;</li>
+<li>lte: &lt;=</li>
+<li>between</li>
+<li>inq: IN</li>
+<li>nin: NOT IN</li>
+<li>neq: !=</li>
+<li>like: LIKE</li>
+<li>nlike: NOT LIKE</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>include</td>
+<td>String, Object, or Array</td>
+<td>Allows you to load relations of several objects and optimize numbers of requests.
+<p>Format:</p>
+<ul>
+<li><code>posts</code>: Load posts</li>
+<li><code>[posts, passports]</code>: Load posts and passports.</li>
+<li><code>{owner: posts}</code>: Load owner and owner's posts.</li>
+<li><code>{owner: [posts, passports]}</code>: Load owner, owner's posts, and owner's passports.</li>
+<li><code>{owner: [{posts: images}, passports]}</code>: Load owner, owner's posts, owner's posts' images, and owner's passports.</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>order</td>
+<td>String</td>
+<td>Sort order.  Format: 'key1 ASC, key2 DESC' where ASC specifies ascending and DESC specifies descending order.</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>Number</td>
+<td>Maximum number of instances to return.</td>
+</tr>
+<tr>
+<td>skip (offset)</td>
+<td>Number</td>
+<td>Skip specified number of instances.  Use offset as alternative.</td>
+</tr>
+<tr>
+<td>fields</td>
+<td>Object, Array, or String</td>
+<td>The included/excluded fields:
+<ul>
+<li>
+<code>[foo]</code> or <code>foo</code> - include only the foo property.</li>
+<li>
+<code>[foo, bar]</code> - include the foo and bar properties</li>
+<li>
+<code>{foo: true}</code> - include only foo</li>
+<li>
+<code>{bat: false}</code> - include all properties, exclude bat</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 
 For example,
 
