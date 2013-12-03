@@ -12,7 +12,6 @@ describe('User', function(){
   User.setMaxListeners(0);
   
   before(function () {
-    debugger;
     User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
   });
   
@@ -257,8 +256,7 @@ describe('User', function(){
             assert(result.token);
             
             
-            var lines = result.email.message.split('\n');
-            assert(lines[3].indexOf('To: bar@bat.com') === 0);
+            assert(~result.email.message.indexOf('To: bar@bat.com'));
             done();
           });
         });
