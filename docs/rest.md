@@ -164,7 +164,7 @@ Find all instances of the model matched by filter from the data source.
 
     GET /locations
 
-####Arguments
+###Arguments
 
 * **filter** The filter that defines where, order, fields, skip, and limit
 
