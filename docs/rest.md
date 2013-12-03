@@ -9,11 +9,10 @@ Create a new instance of the model and persist it into the data source
     POST /locations
 
 **Arguments**
-
 * **data** The model instance data
 
 
-**Example **
+**Example**
 
 Request:
 
@@ -35,7 +34,7 @@ Response:
       }
     }
 
-** Errors**
+**Errors**
 
 None
 
@@ -89,7 +88,7 @@ Response:
     }
 
 
-** Errors**
+**Errors**
 
 None
 
@@ -105,7 +104,7 @@ Check whether a model instance exists by ID in the data source.
 
 * **id** The model id
 
-**Example **
+**Example**
 
 Request:
 
@@ -117,7 +116,7 @@ Response:
         "exists": true
     }
 
-** Errors**
+**Errors**
 
 None
 
@@ -133,7 +132,7 @@ Find a model instance by ID from the data source.
 
 * **id** The model id
 
-**Example **
+**Example**
 
 Request:
 
@@ -153,7 +152,7 @@ Response:
         }
     }
 
-** Errors**
+**Errors**
 
 None
 
@@ -218,7 +217,7 @@ For example,
  - '/locations?filter[where][geo][near]=153.536,-28.1&filter[limit]=3': The 3 closest locations to a given geo point
 
 
-**Example **
+**Example**
 
 Request:
 
@@ -259,7 +258,7 @@ Response:
       }
     ]
 
-** Errors**
+**Errors**
 
 None
 
@@ -276,7 +275,7 @@ Find first instance of the model matched by filter from the data source.
 * **filter** The filter that defines where, order, fields, skip, and limit. It's
 same as find's filter argument. Please see [find](#find) for more details.
 
-**Example **
+**Example**
 
 Request:
 
@@ -296,7 +295,7 @@ Response:
       }
     }
 
-** Errors**
+**Errors**
 
 None
 
@@ -312,7 +311,7 @@ Delete a model instance by id from the data source
 
 * **id** The model id
 
-**Example **
+**Example**
 
 Request:
 
@@ -322,7 +321,7 @@ Response:
 
 Example TBD.
 
-** Errors**
+**Errors**
 
 None
 
@@ -338,7 +337,7 @@ Count instances of the model matched by where from the data source
 
 * **where** The criteria to match model instances
 
-**Example **
+**Example**
 
 Request - count without "where" filter
 
@@ -354,7 +353,7 @@ Response:
         count: 6
     }
 
-** Errors**
+**Errors**
 
 None
 
@@ -372,7 +371,7 @@ Find nearby locations around the geo point.
 * **page** number of pages (page size=10)
 * **max** max distance in miles
 
-**Example **
+**Example**
 
 Request:
 
@@ -405,7 +404,7 @@ Response:
       }
     ]
 
-** Errors**
+**Errors**
 
 None
 
@@ -422,7 +421,7 @@ Update attributes for a model instance and persist it into the data source
 * **data** An object containing property name/value pairs
 * **id** The model id
 
-**Example **
+**Example**
 
 Request:
 
@@ -444,7 +443,7 @@ Response:
       "state": "CA"
     }
 
-** Errors**
+**Errors**
 
 * 404 No instance found for the given id
 
@@ -461,7 +460,7 @@ get instances of the associated model.
 
 * **id** The id for the location model
 
-**Example **
+**Example**
 
 Request:
 
@@ -484,6 +483,6 @@ Response:
       }
     ]
 
-** Errors**
+**Errors**
 
 None
