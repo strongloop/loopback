@@ -4,15 +4,16 @@
 
 Create a new instance of the model and persist it into the data source
 
-###Definition
+**Definition**
 
     POST /locations
 
-###Arguments
+**Arguments**
+
 * **data** The model instance data
 
 
-###Example 
+**Example **
 
 Request:
 
@@ -34,7 +35,7 @@ Response:
       }
     }
 
-### Errors
+** Errors**
 
 None
 
@@ -42,14 +43,14 @@ None
 
 Update an existing model instance or insert a new one into the data source
 
-###Definition
+**Definition**
 
     PUT /locations
 
-###Arguments
+**Arguments**
 * **data** The model instance data
 
-###Examples
+**Examples**
 
 Request - insert:
 
@@ -88,7 +89,7 @@ Response:
     }
 
 
-### Errors
+** Errors**
 
 None
 
@@ -96,15 +97,15 @@ None
 
 Check whether a model instance exists by ID in the data source.
 
-###Definition
+**Definition**
 
     GET /locations/exists
 
-###Arguments
+**Arguments**
 
 * **id** The model id
 
-###Example 
+**Example **
 
 Request:
 
@@ -116,7 +117,7 @@ Response:
         "exists": true
     }
 
-### Errors
+** Errors**
 
 None
 
@@ -124,15 +125,15 @@ None
 
 Find a model instance by ID from the data source.
 
-###Definition
+**Definition**
 
     GET /locations/{id}
 
-###Arguments
+**Arguments**
 
 * **id** The model id
 
-###Example 
+**Example **
 
 Request:
 
@@ -152,7 +153,7 @@ Response:
         }
     }
 
-### Errors
+** Errors**
 
 None
 
@@ -160,11 +161,11 @@ None
 
 Find all instances of the model matched by filter from the data source.
 
-###Definition
+**Definition**
 
     GET /locations
 
-###Arguments
+**Arguments**
 
 * **filter** The filter that defines where, order, fields, skip, and limit
 
@@ -217,7 +218,7 @@ For example,
  - '/locations?filter[where][geo][near]=153.536,-28.1&filter[limit]=3': The 3 closest locations to a given geo point
 
 
-###Example 
+**Example **
 
 Request:
 
@@ -258,7 +259,7 @@ Response:
       }
     ]
 
-### Errors
+** Errors**
 
 None
 
@@ -266,16 +267,16 @@ None
 
 Find first instance of the model matched by filter from the data source.
 
-###Definition
+**Definition**
 
     GET /locations/findOne
 
-###Arguments
+**Arguments**
 
 * **filter** The filter that defines where, order, fields, skip, and limit. It's
 same as find's filter argument. Please see [find](#find) for more details.
 
-###Example 
+**Example **
 
 Request:
 
@@ -295,7 +296,7 @@ Response:
       }
     }
 
-### Errors
+** Errors**
 
 None
 
@@ -303,15 +304,15 @@ None
 
 Delete a model instance by id from the data source
 
-###Definition
+**Definition**
 
     DELETE /locations/{id}
 
-###Arguments
+**Arguments**
 
 * **id** The model id
 
-###Example 
+**Example **
 
 Request:
 
@@ -321,7 +322,7 @@ Response:
 
 Example TBD.
 
-### Errors
+** Errors**
 
 None
 
@@ -329,15 +330,15 @@ None
 
 Count instances of the model matched by where from the data source
 
-###Definition
+**Definition**
 
     GET /locations/count
 
-###Arguments
+**Arguments**
 
 * **where** The criteria to match model instances
 
-###Example 
+**Example **
 
 Request - count without "where" filter
 
@@ -353,7 +354,7 @@ Response:
         count: 6
     }
 
-### Errors
+** Errors**
 
 None
 
@@ -361,17 +362,17 @@ None
 
 Find nearby locations around the geo point.
 
-###Definition
+**Definition**
 
     GET /locations/nearby
 
-###Arguments
+**Arguments**
 
 * **here** geo location object with `lat` and `lng` properties
 * **page** number of pages (page size=10)
 * **max** max distance in miles
 
-###Example 
+**Example **
 
 Request:
 
@@ -404,7 +405,7 @@ Response:
       }
     ]
 
-### Errors
+** Errors**
 
 None
 
@@ -412,16 +413,16 @@ None
 
 Update attributes for a model instance and persist it into the data source
 
-###Definition
+**Definition**
 
     PUT /locations/{id}
 
-###Arguments
+**Arguments**
 
 * **data** An object containing property name/value pairs
 * **id** The model id
 
-###Example 
+**Example **
 
 Request:
 
@@ -443,7 +444,7 @@ Response:
       "state": "CA"
     }
 
-### Errors
+** Errors**
 
 * 404 No instance found for the given id
 
@@ -452,15 +453,15 @@ Response:
 Follow the relations from one model (`location`) to another one (`inventory`) to
 get instances of the associated model.
 
-###Definition
+**Definition**
 
     GET /locations/{id}/inventory
 
-###Arguments
+**Arguments**
 
 * **id** The id for the location model
 
-###Example 
+**Example **
 
 Request:
 
@@ -483,9 +484,6 @@ Response:
       }
     ]
 
-### Errors
+** Errors**
 
 None
-
-
-
