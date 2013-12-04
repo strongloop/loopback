@@ -111,4 +111,31 @@ describe('app', function() {
       assert.isFunc(app.models.Foo, 'create');
     });
   });
+
+  describe('app.get("/", loopback.status())', function () {
+    it('should return the status of the application', function (done) {
+      var app = loopback();
+      app.get('/', loopback.status());
+      request(app)
+        .get('/')
+        .expect(200)
+        .end(function(err, res) {
+          if(err) return done(err);
+
+          assert.equal(typeof res.body, 'object');
+          assert(res.body.started);
+          assert(res.body.uptime);
+
+          var elapsed = Date.now() - Number(new Date(res.body.started));
+
+          // elapsed should be a positive number...
+          assert(elapsed > 0);
+
+          // less than 100 milliseconds
+          assert(elapsed < 100);
+
+          done();
+        });
+    });
+  });
 });

@@ -8,19 +8,12 @@ var userMemory = loopback.createDataSource({
 });
 
 describe('User', function(){
-  
-  var mailDataSource = loopback.createDataSource({
-    connector: MailConnector,
-    transports: [{type: 'STUB'}]
-  });
-  User.attachTo(userMemory);
-  AccessToken.attachTo(userMemory);
-  // TODO(ritch) - this should be a default relationship
-  User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
-  User.email.attachTo(mailDataSource);
-  
   // allow many User.afterRemote's to be called
   User.setMaxListeners(0);
+  
+  before(function () {
+    User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
+  });
   
   beforeEach(function (done) {
     app.use(loopback.rest());
@@ -44,15 +37,20 @@ describe('User', function(){
         done();
       });
     });
-    
-    it('Email is required', function(done) {
+
+    it('Email is required', function (done) {
       User.create({password: '123'}, function (err) {
-        assert.deepEqual(err, { name: 'ValidationError',
-          message: 'Validation error',
-          statusCode: 400,
-          codes: { email: [ 'presence', 'format.blank', 'uniqueness' ] },
-          context: 'user' });
-        
+        assert.deepEqual(err, {name: "ValidationError",
+            message: "The Model instance is not valid. See `details` "
+              + "property of the error object for more info.",
+            statusCode: 422,
+            details: {
+              context: "user",
+              codes: {email: ["presence", "format.blank", "uniqueness"]},
+              messages: {email: ["can't be blank", "is blank",
+                "Email already exists"]}}}
+        );
+
         done();
       });
     });
@@ -263,8 +261,7 @@ describe('User', function(){
             assert(result.token);
             
             
-            var lines = result.email.message.split('\n');
-            assert(lines[3].indexOf('To: bar@bat.com') === 0);
+            assert(~result.email.message.indexOf('To: bar@bat.com'));
             done();
           });
         });

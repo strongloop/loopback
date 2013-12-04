@@ -1,125 +1,26 @@
-## REST API
-
-The REST API allows clients to interact with the LoopBack models using HTTP.
-The clients can be a web browser, a JavaScript program, a mobile SDK, a curl
-script, or anything that can act as an HTTP client.
-
-LoopBack automatically binds a model to a list of HTTP endpoints that provide
-REST APIs for model instance data manipulations (CRUD) and other remote
-operations.
-
-We'll use a simple model called `Location` (locations for rental) to illustrate
-what REST APIs are exposed by LoopBack.
-
-By default, the REST APIs are mounted to `/<pluralFormOfTheModelName>`, for
-example, `/locations`, to the base URL such as http://localhost:3000/.
-
-### CRUD remote methods
-
-For a model backed by a data source that supports CRUD operations, you'll see
-the following endpoints:
-
-- Model.create: POST /locations
-- Model.upsert: PUT /locations
-- Model.exists: GET /locations/:id/exists
-- Model.findById: GET /locations/:id
-- Model.find: GET /locations
-- Model.findOne: GET /locations/findOne
-- Model.deleteById: DELETE /locations/:id
-- Model.count: GET /locations/count
-- Model.prototype.updateAttributes: PUT /locations/:id
-
-### Custom remote methods
-
-To expose a JavaScript method as REST API, we can simply describe the method as
-follows:
-
-    loopback.remoteMethod(
-      Location.nearby,
-      {
-        description: 'Find nearby locations around the geo point',
-        accepts: [
-          {arg: 'here', type: 'GeoPoint', required: true, description: 'geo location (lat & lng)'},
-          {arg: 'page', type: 'Number', description: 'number of pages (page size=10)'},
-          {arg: 'max', type: 'Number', description: 'max distance in miles'}
-        ],
-        returns: {arg: 'locations', root: true},
-        http: {verb: 'POST', path: '/nearby'}
-      }
-    );
-
-The remoting is defined using the following properties:
-
-- description: Description of the REST API
-- accepts: An array of parameters, each parameter has a name, a type, and an
-optional description
-- returns: Description of the return value
-- http: Binding to the HTTP endpoint, including the verb and path
-
-### Request Format
-
-For POST and PUT requests, the request body must be JSON, with the Content-Type
-header set to application/json.
-
-#### Encode the JSON object as query string
-
-LoopBack uses the syntax from [node-querystring](https://github.com/visionmedia/node-querystring)
-to encode JSON objects or arrays as query string. For example,
-
-    user[name][first]=John&user[email]=callback@strongloop.com
-    ==>
-    { user: { name: { first: 'John' }, email: 'callback@strongloop.com' } }
-
-    user[names][]=John&user[names][]=Mary&user[email]=callback@strongloop.com
-    ==>
-    { user: { names: ['John', 'Mary'], email: 'callback@strongloop.com' }}
-
-    items=a&items=b
-    ==> { items: ['a', 'b'] }
-
-For more examples, please check out [node-querystring](https://github.com/visionmedia/node-querystring/blob/master/test/parse.js)
-
-
-### Response Format
-
-The response format for all requests is a JSON object or array if present. Some
-responses have an empty body.
-
-Whether a request succeeded is indicated by the HTTP status code. A 2xx status
-code indicates success, whereas a 4xx status code indicates request related
-issues. 5xx status code reports server side problems.
-
-The response for an error is in the following format:
-
-    {
-    "error": {
-        "message": "could not find a model with id 1",
-        "stack": "Error: could not find a model with id 1\n ...",
-        "statusCode": 404
-        }
-    }
-
-###Generated APIs
-
-
-###create
+##create
 
 Create a new instance of the model and persist it into the data source
 
-####Definition
+**Definition**
 
     POST /locations
 
-####Arguments
+**Arguments**
+
 * **data** The model instance data
 
 
-####Example Request
+**Example**
+
+Request:
+
     curl -X POST -H "Content-Type:application/json" \
     -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' \
     http://localhost:3000/locations
 
-####Example Response
+Response:
+
     {
       "id": "96",
       "street": "107 S B St",
@@ -132,39 +33,32 @@ Create a new instance of the model and persist it into the data source
       }
     }
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###upsert
-
+##upsert
 
 Update an existing model instance or insert a new one into the data source
 
-####Definition
-
+**Definition**
 
     PUT /locations
 
-####Arguments
+**Arguments**
+
 * **data** The model instance data
 
+**Examples**
 
-####Example Request
+Request - insert:
 
-#####Insert
     curl -X PUT -H "Content-Type:application/json" \
     -d '{"name": "L1", "street": "107 S B St", "city": "San Mateo", "zipcode": "94401"}' \
     http://localhost:3000/locations
 
-#####Update
-    curl -X PUT -H "Content-Type:applicatin/json" \
-    -d '{"id": "98", "name": "L4", "street": "107 S B St", "city": "San Mateo", \
-    "zipcode": "94401"}' http://localhost:3000/locations
+Response:
 
-####Example Response
-
-#####Insert
     {
       "id": "98",
       "street": "107 S B St",
@@ -176,8 +70,15 @@ Update an existing model instance or insert a new one into the data source
         "lng": -122.3240212
       }
     }
+    
+Request - update:
 
-#####Update
+    curl -X PUT -H "Content-Type:applicatin/json" \
+    -d '{"id": "98", "name": "L4", "street": "107 S B St", "city": "San Mateo", \
+    "zipcode": "94401"}' http://localhost:3000/locations
+
+Response:
+
     {
       "id": "98",
       "street": "107 S B St",
@@ -187,55 +88,57 @@ Update an existing model instance or insert a new one into the data source
     }
 
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###exists
+##exists
 
+Check whether a model instance exists by ID in the data source.
 
-Check whether a model instance exists by id in the data source
-
-####Definition
-
+**Definition**
 
     GET /locations/exists
 
-####Arguments
+**Arguments**
+
 * **id** The model id
 
+**Example**
 
-####Example Request
+Request:
+
     curl http://localhost:3000/locations/88/exists
 
-####Example Response
+Response:
 
     {
         "exists": true
     }
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###findById
+##findById
 
+Find a model instance by ID from the data source.
 
-Find a model instance by id from the data source
-
-####Definition
-
+**Definition**
 
     GET /locations/{id}
 
-####Arguments
+**Arguments**
+
 * **id** The model id
 
+**Example**
 
-####Example Request
+Request:
+
     curl http://localhost:3000/locations/88
 
-####Example Response
+Response:
 
     {
         "id": "88",
@@ -249,53 +152,59 @@ Find a model instance by id from the data source
         }
     }
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###find
+##find
 
+Find all instances of the model matched by filter from the data source.
 
-Find all instances of the model matched by filter from the data source
-
-####Definition
-
+**Definition**
 
     GET /locations
 
-####Arguments
-* **filter** The filter that defines where, order, fields, skip, and limit
+**Arguments**
 
- - **where** `Object` { key: val, key2: {gt: 'val2'}} The search criteria
-   - Format: {key: val} or {key: {op: val}}
-   - Operations:
-     - gt: >
-     - gte: >=
-     - lt: <
-     - lte: <=
-     - between
-     - inq: IN
-     - nin: NOT IN
-     - neq: !=
-     - like: LIKE
-     - nlike: NOT LIKE
+Pass the arguments as the value of the `find` HTTP query parameter, as follows
 
- - **include** `String`, `Object` or `Array` Allows you to load relations of several objects and optimize numbers of requests.
-    - Format:
-      - 'posts': Load posts
-      - ['posts', 'passports']: Load posts and passports
-      - {'owner': 'posts'}: Load owner and owner's posts
-      - {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
-      - {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
+    /modelName?filter=[filterType1]=<val1>&filter[filterType2]=<val2>...
 
- - **order** `String` The sorting order
-   - Format: 'key1 ASC, key2 DESC'
+where *filterType1*, *filterType2*, and so on, are the filter types, and *val1*, *val2* are the corresponding
+values, as described in the following table.
 
- - **limit** `Number` The maximum number of instances to be returned
- - **skip** `Number` Skip the number of instances
- - **offset** `Number` Alias for skip
+| Filter type  | Type | Description |
+| ------------- | ------------- | ---------------|
+| where   | Object   | Search criteria. Format: `{key: val}` or `{key: {op: val}}`  For list of valid operations, see Operations, below. |
+| include    | String, Object, or Array   | Allows you to load relations of several objects and optimize numbers of requests.  For format, see Include format, below. |
+| order |  String | Sort order. Format: 'key1 ASC, key2 DESC', where ASC specifies ascending and DESC specifies descending order. |
+|limit| Number | Maximum number of instances to return. |
+|skip (offset) | Number | Skip the specified number of instances.  Use offset as alternative. |
+|fields| Object, Array, or String |  The included/excluded fields.  For foramt, see fields below.
 
- - **fields** `Object|Array|String` The included/excluded fields
+**Operations available in where filter**:
+
+  * gt: >
+  * gte: >=
+  * lt: <
+  * lte: <=
+  * between
+  * inq: IN
+  * nin: NOT IN
+  * neq: !=
+  * like: LIKE
+  * nlike: NOT LIKE
+
+**Include format**:
+
+  * 'posts': Load posts
+  * ['posts', 'passports']: Load posts and passports
+  * {'owner': 'posts'}: Load owner and owner's posts
+  * {'owner': ['posts', 'passports']}: Load owner, owner's posts, and owner's passports
+  * {'owner': [{posts: 'images'}, 'passports']}: Load owner, owner's posts, owner's posts' images, and owner's passports
+  
+**Fields format**:
+
   - `['foo']` or `'foo'` - include only the foo property
   - `['foo', 'bar']` - include the foo and bar properties
   - `{foo: true}` - include only foo
@@ -315,17 +224,21 @@ For example,
  - '/locations?filter[where][geo][near]=153.536,-28.1&filter[limit]=3': The 3 closest locations to a given geo point
 
 
-####Example Request
+**Example**
 
-#####Find without filter
+Request:
+
+Find without filter:
+
     curl http://localhost:3000/locations
 
-#####Find with a filter
+Find with a filter:
+
     curl http://localhost:3000/locations?filter%5Blimit%5D=2
 
 **Note**: For curl, `[` needs to be encoded as `%5B`, and `]` as `%5D`.
 
-####Example Response
+Response:
 
     [
       {
@@ -352,30 +265,30 @@ For example,
       }
     ]
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###findOne
+##findOne
 
+Find first instance of the model matched by filter from the data source.
 
-Find first instance of the model matched by filter from the data source
-
-
-####Definition
-
+**Definition**
 
     GET /locations/findOne
 
-####Arguments
+**Arguments**
+
 * **filter** The filter that defines where, order, fields, skip, and limit. It's
 same as find's filter argument. Please see [find](#find) for more details.
 
+**Example**
 
-####Example Request
+Request:
+
     curl http://localhost:3000/locations/findOne?filter%5Bwhere%5D%5Bcity%5D=Scottsdale
 
-####Example Response
+Response:
 
     {
       "id": "87",
@@ -389,86 +302,89 @@ same as find's filter argument. Please see [find](#find) for more details.
       }
     }
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###deleteById
-
+##deleteById
 
 Delete a model instance by id from the data source
 
-####Definition
-
+**Definition**
 
     DELETE /locations/{id}
 
-####Arguments
+**Arguments**
+
 * **id** The model id
 
+**Example**
 
-####Example Request
+Request:
+
     curl -X DELETE http://localhost:3000/locations/88
 
-####Example Response
+Response:
 
+Example TBD.
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###count
-
+##count
 
 Count instances of the model matched by where from the data source
 
-####Definition
-
+**Definition**
 
     GET /locations/count
 
-####Arguments
+**Arguments**
+
 * **where** The criteria to match model instances
 
+**Example**
 
-####Example Request
+Request - count without "where" filter
 
-#####Count without where
     curl http://localhost:3000/locations/count
 
-#####Count with a where filter
+Request - count with a "where" filter
+
     curl http://localhost:3000/locations/count?where%5bcity%5d=Burlingame
 
-####Example Response
+Response:
 
     {
         count: 6
     }
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###nearby
+##nearby
 
+Find nearby locations around the geo point.
 
-Find nearby locations around the geo point
-
-####Definition
-
+**Definition**
 
     GET /locations/nearby
 
-####Arguments
+**Arguments**
+
 * **here** geo location object with `lat` and `lng` properties
 * **page** number of pages (page size=10)
 * **max** max distance in miles
 
+**Example**
 
-####Example Request
+Request:
+
     curl http://localhost:3000/locations/nearby?here%5Blat%5D=37.587409&here%5Blng%5D=-122.338225
 
-####Example Response
+Response:
 
     [
       {
@@ -495,30 +411,32 @@ Find nearby locations around the geo point
       }
     ]
 
-####Potential Errors
-* None
+**Errors**
 
+None
 
-###updateAttributes
-
+##updateAttributes
 
 Update attributes for a model instance and persist it into the data source
 
-####Definition
-
+**Definition**
 
     PUT /locations/{id}
 
-####Arguments
+**Arguments**
+
 * **data** An object containing property name/value pairs
 * **id** The model id
 
+**Example**
 
-####Example Request
+Request:
+
     curl -X PUT -H "Content-Type:application/json" -d '{"name": "L2"}' \
     http://localhost:3000/locations/88
 
-####Example Response
+Response:
+
     {
       "id": "88",
       "street": "390 Lang Road",
@@ -532,29 +450,30 @@ Update attributes for a model instance and persist it into the data source
       "state": "CA"
     }
 
-####Potential Errors
+**Errors**
+
 * 404 No instance found for the given id
 
-
-###getAssociatedModel
-
+##getAssociatedModel
 
 Follow the relations from one model (`location`) to another one (`inventory`) to
 get instances of the associated model.
 
-####Definition
-
+**Definition**
 
     GET /locations/{id}/inventory
 
-####Arguments
+**Arguments**
+
 * **id** The id for the location model
 
+**Example**
 
-####Example Request
+Request:
+
     curl http://localhost:3000/locations/88/inventory
 
-####Example Response
+Response:
 
     [
       {
@@ -571,9 +490,6 @@ get instances of the associated model.
       }
     ]
 
-####Potential Errors
-* None
+**Errors**
 
-
-
-
+None
