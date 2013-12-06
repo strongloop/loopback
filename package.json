@@ -16,7 +16,6 @@
   "dependencies": {
     "debug": "~0.7.2",
     "express": "~3.4.0",
-    "loopback-datasource-juggler": "~1.2.0",
     "strong-remoting": "~1.1.0",
     "inflection": "~1.2.5",
     "passport": "~0.1.17",
@@ -29,7 +28,11 @@
     "uid2": "0.0.3",
     "async": "~0.2.9"
   },
+  "peerDependencies": {
+    "loopback-datasource-juggler": "~1.2.0"
+  },
   "devDependencies": {
+    "loopback-datasource-juggler": "~1.2.0",
     "mocha": "~1.14.0",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.8.1"
