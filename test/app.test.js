@@ -77,6 +77,68 @@ describe('app', function() {
       assert.equal(this.app.get('host'), '127.0.0.1');
     });
 
+    describe('PaaS and npm env variables', function() {
+      beforeEach(function() {
+        this.boot = function () {
+          var app = loopback();
+          app.boot({
+            app: {
+              port: undefined, 
+              host: undefined
+            }
+          });
+          return app;
+        }
+      });
+      
+      it('should be honored', function() {
+        var assertHonored = function (portKey, hostKey) {
+          process.env[hostKey] = randomPort();
+          process.env[portKey] = randomHost();
+          var app = this.boot();
+          assert.equal(app.get('port'), process.env[portKey]);
+          assert.equal(app.get('host'), process.env[hostKey]);
+          delete process.env[portKey];
+          delete process.env[hostKey];
+        }.bind(this);
+
+        assertHonored('OPENSHIFT_SLS_PORT', 'OPENSHIFT_NODEJS_IP');
+        assertHonored('npm_config_port', 'npm_config_host');
+        assertHonored('npm_package_config_port', 'npm_package_config_host');
+        assertHonored('OPENSHIFT_SLS_PORT', 'OPENSHIFT_SLS_IP');
+        assertHonored('PORT', 'HOST');
+      });
+
+      it('should be honored in order', function() {
+        process.env.npm_config_host = randomHost();
+        process.env.OPENSHIFT_SLS_IP = randomHost();
+        process.env.OPENSHIFT_NODEJS_IP = randomHost();
+        process.env.HOST = randomHost();
+        process.env.npm_package_config_host = randomHost();
+
+        var app = this.boot();
+        assert.equal(app.get('host'), process.env.npm_config_host);
+
+        process.env.npm_config_port = randomPort();
+        process.env.OPENSHIFT_SLS_PORT = randomPort();
+        process.env.OPENSHIFT_NODEJS_PORT = randomPort();
+        process.env.PORT = randomPort();
+        process.env.npm_package_config_port = randomPort();
+
+        var app = this.boot();
+        assert.equal(app.get('host'), process.env.npm_config_host);
+        assert.equal(app.get('port'), process.env.npm_config_port);
+      });
+
+      function randomHost() {
+        return Math.random().toString().split('.')[1];
+      }
+
+      function randomPort() {
+        return Math.floor(Math.random() * 10000);
+      }
+    });
+
     it('Instantiate models', function () {
       assert(app.models);
       assert(app.models.FooBarBatBaz);
