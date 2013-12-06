@@ -32,8 +32,8 @@ The options argument is a JSON object, described in the following table.
 
 | Option  | Required? | Description |
 | ----- | ----- |  ----- |
-| accepts   | No | Describes the remote method's arguments, as explained <a href="#argdesc">below</a>. The callback is an assumed argument; do not specify. |
-| returns    | No | Describes the remote method's callback arguments, as explained <a href="#argdesc">below</a>.. The err argument is assumed; do not specify. |
+| accepts   | No | Describes the remote method's arguments; See <a href="#argdesc">Argument description</a>. The `callback` argument is assumed; do not specify. |
+| returns    | No | Describes the remote method's callback arguments; See <a href="#argdesc">Argument description</a>. The `err` argument is assumed; do not specify. |
 | http | No | HTTP routing information: <ul><li> **http.path**: path (relative to the model) at which the method is exposed. May be a path fragment (for example, `/:myArg`) that will be populated by an arg of the same name in the `accepts` description. For example, the `stats` method above will be at the whole path `/products/stats`.</li><li> **http.verb**: HTTP method  (verb) from which the method is available (one of: get, post, put, del, or all).</li></ul>
 
 <a name="argdesc"></a>
@@ -42,8 +42,13 @@ The options argument is a JSON object, described in the following table.
 The arguments description defines either a single argument as an object or an ordered set of arguments as an array.  Each individual argument has keys for:
 
  * arg: argument name
- * type: argument datatype; must be a[loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
+ * type: argument datatype; must be a [loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
  * required: Boolean value indicating if argument is required.
+ * root: For callback arguments: set this property to `true` if your function
+   has a single callback argument to use as the root object
+   returned to remote caller. Otherwise the root object returned is a map (argument-name to argument-value).
+ * http: For input arguments: a function or an object describing mapping from HTTP request
+   to the argument value, as explained <a href="#argdesc-http">below</a>.
 
 For example, a single argument, specified as an object:
 
@@ -59,6 +64,58 @@ Multiple arguments, specified as an array:
   {arg: 'arg2', type: 'array'}
 ]
 ```
+
+<a name="argdesc-http"></a>
+**HTTP mapping of input arguments**
+
+There are two ways to specify HTTP mapping for input parameters (what the method accepts):
+* Provide an object with a `source` property
+* Specify a custom mapping function
+
+To use the first way to specify HTTP mapping for input parameters, provide an object with a `source` property 
+that has one of the values shown in the following table.
+
+| Value of source property | Description |
+|---|---|
+| body | The whole request body is used as the value. |
+| form | The value is looked up using `req.param`, which searches route arguments, the request body and the query string.|
+| query | An alias for form (see above). |
+| path | An alias for form (see above). |
+| req | The whole HTTP reqest object is used as the value. |
+
+For example, an argument getting the whole request body as the value:
+
+```js
+{ arg: 'data', type: 'object', http: { source: 'body' } }
+```
+
+The use the second way to specify HTTP mapping for input parameters, specify a custom mapping function
+that looks like this:
+
+```js
+{
+  arg: 'custom',
+  type: 'number',
+  http: function(ctx) {
+    // ctx is LoopBack Context object
+
+    // 1. Get the HTTP request object as provided by Express
+    var req = ctx.req;
+
+    // 2. Get 'a' and 'b' from query string or form data
+    // and return their sum as the value
+    return +req.param('a') + req.param('b');
+  }
+}
+```
+
+If you don't specify a mapping, LoopBack will look up the value
+using the following algorithm (assuming `name` as the name of the input
+parameter to resolve):
+
+ 1. If there is a HTTP request parameter `args` with a JSON content,
+    then the value of `args['name']` is used if it is defined.
+ 2. Otherwise `req.param('name')` is returned.
 
 ## Remote hooks
 
