@@ -42,12 +42,11 @@ The options argument is a JSON object, described in the following table.
 The arguments description defines either a single argument as an object or an ordered set of arguments as an array.  Each individual argument has keys for:
 
  * arg: argument name
- * type: argument datatype; must be a[loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
+ * type: argument datatype; must be a [loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
  * required: Boolean value indicating if argument is required.
- * root: For callback arguments: set this property to true if your function
-   has a single callback argument that should be used as the root object
-   returned to remote caller. Otherwise a map (argument-name to argument-value)
-   is returned.
+ * root: For callback arguments: set this property to `true` if your function
+   has a single callback argument to use as the root object
+   returned to remote caller. Otherwise the root object returned is a map (argument-name to argument-value).
  * http: For input arguments: a function or an object describing mapping from HTTP request
    to the argument value, as explained <a href="#argdesc-http">below</a>.
 
@@ -69,13 +68,14 @@ Multiple arguments, specified as an array:
 <a name="argdesc-http"></a>
 **HTTP mapping of input arguments**
 
-There are two ways how to specify HTTP mapping for input parameters (what the
-method accepts).
+There are two ways to specify HTTP mapping for input parameters (what the method accepts):
+* Provide an object with a `source` property
+* Specify a custom mapping function
 
-The first way is to provide an object with a `source` property, that can have
-one of these values:
+To use the first way to specify HTTP mapping for input parameters, provide an object with a `source` property 
+that has one of the values shown in the following table.
 
-| source | description |
+| Value of source property | Description |
 |---|---|
 | body | The whole request body is used as the value. |
 | form | The value is looked up using `req.param`, which searches route arguments, the request body and the query string.|
@@ -89,7 +89,8 @@ For example, an argument getting the whole request body as the value:
 { arg: 'data', type: 'object', http: { source: 'body' } }
 ```
 
-The second way is to specify your custom mapping function:
+The use the second way to specify HTTP mapping for input parameters, specify a custom mapping function
+that looks like this:
 
 ```js
 {
@@ -108,13 +109,12 @@ The second way is to specify your custom mapping function:
 }
 ```
 
-When there is no mapping specified, LoopBack will look up the value
+If you don't specify a mapping, LoopBack will look up the value
 using the following algorithm (assuming `name` as the name of the input
 parameter to resolve):
 
  1. If there is a HTTP request parameter `args` with a JSON content,
-    then its content is parsed and the value of `args['name']` is used
-    if it is defined.
+    then the value of `args['name']` is used if it is defined.
  2. Otherwise `req.param('name')` is returned.
 
 ## Remote hooks
