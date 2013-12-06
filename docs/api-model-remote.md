@@ -69,6 +69,7 @@ Multiple arguments, specified as an array:
 **HTTP mapping of input arguments**
 
 There are two ways to specify HTTP mapping for input parameters (what the method accepts):
+
  * Provide an object with a `source` property
  * Specify a custom mapping function
 
