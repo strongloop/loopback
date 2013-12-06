@@ -44,6 +44,12 @@ The arguments description defines either a single argument as an object or an or
  * arg: argument name
  * type: argument datatype; must be a[loopback type](http://wiki.strongloop.com/display/DOC/LoopBack+types).  
  * required: Boolean value indicating if argument is required.
+ * root: For callback arguments: set this property to true if your function
+   has a single callback argument that should be used as the root object
+   returned to remote caller. Otherwise a map (argument-name to argument-value)
+   is returned.
+ * http: For input arguments: a function or an object describing mapping from HTTP request
+   to the argument value, as explained <a href="#argdesc-http">below</a>.
 
 For example, a single argument, specified as an object:
 
@@ -59,6 +65,57 @@ Multiple arguments, specified as an array:
   {arg: 'arg2', type: 'array'}
 ]
 ```
+
+<a name="argdesc-http"></a>
+**HTTP mapping of input arguments**
+
+There are two ways how to specify HTTP mapping for input parameters (what the
+method accepts).
+
+The first way is to provide an object with a `source` property, that can have
+one of these values:
+
+| source | description |
+|---|---|
+| body | The whole request body is used as the value. |
+| form | The value is looked up using `req.param`, which searches route arguments, the request body and the query string.|
+| query | An alias for form (see above). |
+| path | An alias for form (see above). |
+| req | The whole HTTP reqest object is used as the value. |
+
+For example, an argument getting the whole request body as the value:
+
+```js
+{ arg: 'data', type: 'object', http: { source: 'body' } }
+```
+
+The second way is to specify your custom mapping function:
+
+```js
+{
+  arg: 'custom',
+  type: 'number',
+  http: function(ctx) {
+    // ctx is LoopBack Context object
+
+    // 1. Get the HTTP request object as provided by Express
+    var req = ctx.req;
+
+    // 2. Get 'a' and 'b' from query string or form data
+    // and return their sum as the value
+    return +req.param('a') + req.param('b');
+  }
+}
+```
+
+When there is no mapping specified, LoopBack will look up the value
+using the following algorithm (assuming `name` as the name of the input
+parameter to resolve):
+
+ 1. If there is a HTTP request parameter `args` with a JSON content,
+    then its content is parsed and the value of `args['name']` is used
+    if it is defined.
+ 2. Otherwise `req.param('name')` is returned.
 
 ## Remote hooks
 
