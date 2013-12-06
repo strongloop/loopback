@@ -69,8 +69,8 @@ Multiple arguments, specified as an array:
 **HTTP mapping of input arguments**
 
 There are two ways to specify HTTP mapping for input parameters (what the method accepts):
-* Provide an object with a `source` property
-* Specify a custom mapping function
+ * Provide an object with a `source` property
+ * Specify a custom mapping function
 
 To use the first way to specify HTTP mapping for input parameters, provide an object with a `source` property 
 that has one of the values shown in the following table.
@@ -109,9 +109,8 @@ that looks like this:
 }
 ```
 
-If you don't specify a mapping, LoopBack will look up the value
-using the following algorithm (assuming `name` as the name of the input
-parameter to resolve):
+If you don't specify a mapping, LoopBack will determine the value
+as follows (assuming `name` as the name of the input parameter to resolve):
 
  1. If there is a HTTP request parameter `args` with a JSON content,
     then the value of `args['name']` is used if it is defined.
