@@ -1,3 +1,5 @@
+var ACL = require('../').ACL;
+
 describe('Model', function() {
 
   var User, memory;
@@ -550,6 +552,33 @@ describe('Model', function() {
     assert(!user2Triggered);
     });
 
+  });
+
+  describe('Model.checkAccessTypeForMethod(remoteMethod)', function () {
+    shouldReturn('create', ACL.WRITE);
+    shouldReturn('updateOrCreate', ACL.WRITE);
+    shouldReturn('upsert', ACL.WRITE);
+    shouldReturn('exists', ACL.READ);
+    shouldReturn('findById', ACL.READ);
+    shouldReturn('find', ACL.READ);
+    shouldReturn('findOne', ACL.READ);
+    shouldReturn('destroyById', ACL.WRITE);
+    shouldReturn('deleteById', ACL.WRITE);
+    shouldReturn('removeById', ACL.WRITE);
+    shouldReturn('count', ACL.READ);
+    shouldReturn('unkown-model-method', ACL.EXECUTE);
+
+    function shouldReturn(methodName, expectedAccessType) {
+      describe(methodName, function () {
+        it('should return ' + expectedAccessType, function() {
+          var remoteMethod = {name: methodName};
+          assert.equal(
+            User._getAccessTypeForMethod(remoteMethod),
+            expectedAccessType
+          );
+        });
+      });
+    }
   });
 
   // describe('Model.hasAndBelongsToMany()', function() {
