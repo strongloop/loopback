@@ -1,8 +1,8 @@
 ## Node.js API
 
- * [App](#app-object)
- * [DataSource](#data-source-object)
- * [GeoPoint](#geopoint-object)  
- * [Model](#model-object)
-  * [Remote methods and hooks](#remote-methods-and-hooks)
- * [REST API](#rest-api)
+ * [App](api-app.md)
+ * [Model](api-model.md)
+ * [Remote methods and hooks](api-model-remote.md)
+ * [DataSource](api-datasource.md)
+ * [GeoPoint](api-geopoint.md)
+ * [REST API](rest.md)

@@ -13,6 +13,7 @@ describe('User', function(){
   
   before(function () {
     User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
+    AccessToken.belongsTo(User);  
   });
   
   beforeEach(function (done) {
@@ -313,6 +314,33 @@ describe('User', function(){
           .end(function(err, res){
             if(err) return done(err);
           });
+      });
+    });
+  });
+
+  describe('Password Reset', function () {
+    describe('User.resetPassword(options, cb)', function () {
+      it('Creates a temp accessToken to allow a user to change password', function (done) {
+        var calledBack = false;
+        var email = 'foo@bar.com';
+
+        User.resetPassword({
+          email: email
+        }, function () {
+          calledBack = true;
+        });
+
+        User.once('resetPasswordRequest', function (info) {
+          assert(info.email);
+          assert(info.accessToken);
+          assert(info.accessToken.id);
+          assert.equal(info.accessToken.ttl / 60, 15);
+          assert(calledBack);
+          info.accessToken.user(function (err, user) {
+            assert.equal(user.email, email);
+            done();
+          });
+        });
       });
     });
   });
