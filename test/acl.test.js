@@ -30,6 +30,8 @@ describe('security scopes', function () {
 
   it("should allow access to models for the given scope", function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
+    Scope.attachTo(ds);
+    ACL.attachTo(ds);
     Scope.create({name: 'userScope', description: 'access user information'}, function (err, scope) {
       ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
           model: 'User', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
@@ -62,6 +64,7 @@ describe('security ACLs', function () {
 
   it("should allow access to models for the given principal by wildcard", function () {
     var ds = loopback.createDataSource({connector: loopback.Memory});
+    ACL.attachTo(ds);
 
     ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.ALLOW}, function (err, acl) {
@@ -70,6 +73,38 @@ describe('security ACLs', function () {
         accessType: ACL.READ, permission: ACL.DENY}, function (err, acl) {
 
         ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.READ, function (err, perm) {
+          assert(perm.permission === ACL.DENY);
+        });
+
+        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.ALL, function (err, perm) {
+          assert(perm.permission === ACL.DENY);
+        });
+
+      });
+
+    });
+
+  });
+
+  it("should allow access to models by exception", function () {
+    var ds = loopback.createDataSource({connector: loopback.Memory});
+    ACL.attachTo(ds);
+
+    ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
+      accessType: ACL.ALL, permission: ACL.DENY}, function (err, acl) {
+
+      ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
+        accessType: ACL.READ, permission: ACL.ALLOW}, function (err, acl) {
+
+        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.READ, function (err, perm) {
+          assert(perm.permission === ACL.ALLOW);
+        });
+
+        ACL.checkPermission(ACL.USER, 'u001', 'User', ACL.ALL, ACL.READ, function (err, perm) {
+          assert(perm.permission === ACL.ALLOW);
+        });
+
+        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.WRITE, function (err, perm) {
           assert(perm.permission === ACL.DENY);
         });
 
@@ -147,7 +182,7 @@ describe('security ACLs', function () {
     });
 
     ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.ALL, function (err, perm) {
-      assert(perm.permission === ACL.DENY);
+      assert(perm.permission === ACL.ALLOW);
     });
 
   });
