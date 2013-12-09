@@ -42,6 +42,12 @@ describe('AccessToken', function () {
     assert.equal(this.token.id.length, 64);
   });
 
+  describe('AccessToken.ANONYMOUS_TOKEN', function () {
+    it('should have an id of $anonymous', function () {
+      assert.equal(Token.ANONYMOUS_TOKEN.id, '$anonymous');
+    });
+  });
+
   it('should auto-generate created date', function () {
     assert(this.token.created);
     assert(Object.prototype.toString.call(this.token.created), '[object Date]');
