@@ -60,13 +60,6 @@ describe('app.enableAuth()', function() {
 
   beforeEach(createTestingToken);
 
-  it('should prevent all remote method calls without an accessToken', function (done) {
-    createTestAppAndRequest(this.token, done)
-      .get('/tests')
-      .expect(401)
-      .end(done);
-  });
-
   it('should prevent remote method calls if the accessToken doesnt have access', function (done) {
     createTestAppAndRequest(this.token, done)
       .del('/tests/123')
