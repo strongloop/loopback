@@ -31,4 +31,25 @@ describe('loopback', function() {
       assert.equal(Product.stats.shared, true);
     });
   });
+
+  describe('loopback.createModel(name, properties, options)', function () {
+    describe('options.base', function () {
+      it('should extend from options.base', function () {
+        var MyModel = loopback.createModel('MyModel', {}, {
+          foo: {
+            bar: 'bat'
+          }
+        });
+        var MyCustomModel = loopback.createModel('MyCustomModel', {}, {
+          base: 'MyModel',
+          foo: {
+            bat: 'baz'
+          }
+        });
+        assert(MyCustomModel.super_ === MyModel);
+        assert.deepEqual(MyCustomModel.settings.foo, { bar: 'bat', bat: 'baz' });
+        assert(MyCustomModel.super_.modelName === MyModel.modelName);
+      });
+    });
+  });
 });
