@@ -85,17 +85,27 @@ describe('role model', function () {
             assert(!err && exists === false);
           });
 
-          Role.getRoles(RoleMapping.USER, user.id, function (err, roles) {
-            assert.equal(roles.length, 1);
-            assert.equal(roles[0], role.id);
+          Role.getRoles({principalType: RoleMapping.USER, principalId: user.id}, function (err, roles) {
+            assert.equal(roles.length, 3); // everyone, authenticated, userRole
+            assert(roles.indexOf(role.id) >=0);
+            assert(roles.indexOf(Role.EVERYONE) >=0);
+            assert(roles.indexOf(Role.AUTHENTICATED) >=0);
           });
-          Role.getRoles(RoleMapping.APP, user.id, function (err, roles) {
-            assert.equal(roles.length, 0);
+          Role.getRoles({principalType: RoleMapping.APP, principalId: user.id}, function (err, roles) {
+            assert.equal(roles.length, 2);
+            assert(roles.indexOf(Role.EVERYONE) >=0);
+            assert(roles.indexOf(Role.AUTHENTICATED) >=0);
           });
-          Role.getRoles(RoleMapping.USER, 100, function (err, roles) {
-            assert.equal(roles.length, 0);
+          Role.getRoles({principalType: RoleMapping.USER, principalId: 100}, function (err, roles) {
+            assert.equal(roles.length, 2);
+            assert(roles.indexOf(Role.EVERYONE) >=0);
+            assert(roles.indexOf(Role.AUTHENTICATED) >=0);
           });
-
+          Role.getRoles({principalType: RoleMapping.USER, principalId: null}, function (err, roles) {
+            assert.equal(roles.length, 2);
+            assert(roles.indexOf(Role.EVERYONE) >=0);
+            assert(roles.indexOf(Role.UNAUTHENTICATED) >=0);
+          });
         });
       });
     });
