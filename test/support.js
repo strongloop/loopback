@@ -3,6 +3,7 @@
  */
  
 assert = require('assert');
+expect = require('chai').expect;
 loopback = require('../');
 memoryConnector = loopback.Memory;
 GeoPoint = loopback.GeoPoint;

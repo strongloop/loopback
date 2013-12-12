@@ -31,21 +31,7 @@ describe('app', function() {
 
       assert(f instanceof loopback.Model);
     });
-  })
-
-  // describe('app.models()', function() {
-  //   it("Get the app's exposed models", function() {
-  //     var app = loopback();
-  //     var models = app.models();
-
-  //     models.forEach(function(m) {
-  //       console.log(m.modelName);
-  //     })
-      
-  //     assert.equal(models.length, 1);
-  //     assert.equal(models[0].modelName, 'color');
-  //   });
-  // });
+  });
 
   describe('app.boot([options])', function () {
     beforeEach(function () {
@@ -54,7 +40,9 @@ describe('app', function() {
       app.boot({
         app: {
           port: 3000, 
-          host: '127.0.0.1'
+          host: '127.0.0.1',
+          foo: {bar: 'bat'},
+          baz: true
         },
         models: {
           'foo-bar-bat-baz': {
@@ -72,9 +60,19 @@ describe('app', function() {
       });
     });
 
-    it('Load configuration', function () {
+    it('should have port setting', function () {
       assert.equal(this.app.get('port'), 3000);
+    });
+
+    it('should have host setting', function() {
       assert.equal(this.app.get('host'), '127.0.0.1');
+    });
+
+    it('should have other settings', function () {
+      expect(this.app.get('foo')).to.eql({
+        bar: 'bat'
+      });
+      expect(this.app.get('baz')).to.eql(true);
     });
 
     describe('PaaS and npm env variables', function() {
