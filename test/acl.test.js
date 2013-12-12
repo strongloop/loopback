@@ -238,7 +238,7 @@ describe('security ACLs', function () {
 
               ACL.checkAccess({
                 principals: [
-                  {principalType: ACL.USER, principalId: userId}
+                  {type: ACL.USER, id: userId}
                 ],
                 model: 'Customer',
                 property: 'name',
