@@ -1,6 +1,6 @@
 ## Data Source object
 
-A Loopback `DataSource` provides [Models](#model) with the ability to manipulate data. Attaching a `DataSource` to a `Model` adds [instance methods](#instance-methods) and [static methods](#static-methods) to the `Model`. The added methods may be [remote methods](#remote-methods).
+LoopBack models can manipulate data via the DataSource object.  Attaching a `DataSource` to a `Model` adds instance methods and static methods to the `Model`; some of the added methods may be remote methods.
 
 Define a data source for persisting models.
 
@@ -22,6 +22,24 @@ Define a model and attach it to a `DataSource`.
 
 ```js
 var Color = oracle.createModel('color', {name: String});
+```
+
+You can define an ACL when you create a new data source with the `DataSource.create()` method. For example:
+
+```js
+var Customer = ds.createModel('Customer', {
+      name: {
+        type: String,
+        acls: [
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.WRITE, permission: ACL.DENY},
+          {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+        ]
+      }
+    }, {
+      acls: [
+        {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+      ]
+    });
 ```
 
 ### dataSource.discoverModelDefinitions([username], fn)
