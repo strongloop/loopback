@@ -6,7 +6,8 @@ describe('Application', function () {
   var registeredApp = null;
 
   it('Create a new application', function (done) {
-    Application.create({owner: 'rfeng', name: 'MyApp1',
+    Application.create({owner: 'rfeng',
+      name: 'MyApp1',
       description: 'My first mobile application'}, function (err, result) {
       var app = result;
       assert.equal(app.owner, 'rfeng');
@@ -23,8 +24,9 @@ describe('Application', function () {
     });
   });
 
-  it('Create a new application', function (done) {
-    Application.create({owner: 'rfeng', name: 'MyAppWithPush',
+  it('Create a new application with push settings', function (done) {
+    Application.create({owner: 'rfeng',
+        name: 'MyAppWithPush',
         description: 'My push mobile application',
         pushSettings: {
           apns: {
@@ -32,8 +34,12 @@ describe('Application', function () {
             certData: 'cert',
             keyData: 'key',
             pushOptions: {
+              gateway: 'gateway.sandbox.push.apple.com',
+              port: 2195
             },
             feedbackOptions: {
+              gateway: 'feedback.sandbox.push.apple.com',
+              port: 2196,
               interval: 300,
               batchFeedback: true
             }
@@ -44,9 +50,6 @@ describe('Application', function () {
         }},
       function (err, result) {
         var app = result;
-        assert.equal(app.owner, 'rfeng');
-        assert.equal(app.name, 'MyAppWithPush');
-        assert.equal(app.description, 'My push mobile application');
         assert.deepEqual(app.pushSettings.toObject(), {
           apns: {
             production: false,
