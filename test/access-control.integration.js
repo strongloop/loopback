@@ -68,8 +68,9 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER,'GET', urlForUser);
 
     lt.it.shouldBeAllowedWhenCalledAnonymously('POST', '/api/users');
-    lt.it.shouldBeAllowedWhenCalledUnauthenticated('POST', '/api/users');
     lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users');
+
+    lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users/logout');
 
     lt.describe.whenCalledRemotely('DELETE', '/api/users', function() {
       lt.it.shouldNotBeFound();
