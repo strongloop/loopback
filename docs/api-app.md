@@ -58,6 +58,7 @@ Initialize an application from an options object or a set of JSON and JavaScript
 1. **DataSources** are created from an `options.dataSources` object or `datasources.json` in the current directory
 2. **Models** are created from an `options.models` object or `models.json` in the current directory
 3. Any JavaScript files in the `./models` directory are loaded with `require()`.
+4. Any JavaScript files in the `./boot` directory are loaded with `require()`.
 
 **Options**
 

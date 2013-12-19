@@ -1,3 +1,6 @@
+var path = require('path');
+var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
+
 describe('app', function() {
 
   describe('app.model(Model)', function() {
@@ -73,6 +76,23 @@ describe('app', function() {
         bar: 'bat'
       });
       expect(this.app.get('baz')).to.eql(true);
+    });
+
+    describe('boot and models directories', function() {
+      beforeEach(function() {
+        var app = this.app = loopback();
+        app.boot(SIMPLE_APP);
+      });
+
+      it('should run all modules in the boot directory', function () {
+        assert(process.loadedFooJS);
+        delete process.loadedFooJS;
+      });
+
+      it('should run all modules in the models directory', function () {
+        assert(process.loadedBarJS);
+        delete process.loadedBarJS;
+      });
     });
 
     describe('PaaS and npm env variables', function() {
@@ -162,7 +182,7 @@ describe('app', function() {
     it('Load config files', function () {
       var app = loopback();
 
-      app.boot(require('path').join(__dirname, 'fixtures', 'simple-app'));
+      app.boot(SIMPLE_APP);
 
       assert(app.models.foo);
       assert(app.models.Foo);
