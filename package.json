@@ -36,7 +36,8 @@
     "mocha": "~1.14.0",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.8.1",
-    "chai": "~1.8.1"
+    "chai": "~1.8.1",
+    "loopback-testing": "0.0.4"
   },
   "repository": {
     "type": "git",

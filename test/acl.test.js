@@ -7,6 +7,7 @@ var role = require('../lib/models/role');
 var Role = role.Role;
 var RoleMapping = role.RoleMapping;
 var User = loopback.User;
+var testModel;
 
 function checkResult(err, result) {
   // console.log(err, result);
@@ -14,6 +15,17 @@ function checkResult(err, result) {
 }
 
 describe('security scopes', function () {
+
+  beforeEach(function() {
+    var ds = this.ds = loopback.createDataSource({connector: loopback.Memory});
+    testModel = loopback.Model.extend('testModel');
+    ACL.attachTo(ds);
+    Role.attachTo(ds);
+    RoleMapping.attachTo(ds);
+    User.attachTo(ds);
+    Scope.attachTo(ds);
+    testModel.attachTo(ds);
+  });
 
   it("should allow access to models for the given scope by wildcard", function () {
     Scope.create({name: 'userScope', description: 'access user information'}, function (err, scope) {
@@ -29,27 +41,24 @@ describe('security scopes', function () {
   });
 
   it("should allow access to models for the given scope", function () {
-    var ds = loopback.createDataSource({connector: loopback.Memory});
-    Scope.attachTo(ds);
-    ACL.attachTo(ds);
-    Scope.create({name: 'userScope', description: 'access user information'}, function (err, scope) {
+    Scope.create({name: 'testModelScope', description: 'access testModel information'}, function (err, scope) {
       ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
-          model: 'User', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
+          model: 'testModel', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
         function (err, resource) {
           ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
-              model: 'User', property: 'name', accessType: ACL.WRITE, permission: ACL.DENY},
+              model: 'testModel', property: 'name', accessType: ACL.WRITE, permission: ACL.DENY},
             function (err, resource) {
               // console.log(resource);
-              Scope.checkPermission('userScope', 'User', ACL.ALL, ACL.ALL, function (err, perm) {
+              Scope.checkPermission('testModelScope', 'testModel', ACL.ALL, ACL.ALL, function (err, perm) {
                 assert(perm.permission === ACL.DENY); // because name.WRITE == DENY
               });
-              Scope.checkPermission('userScope', 'User', 'name', ACL.ALL, function (err, perm) {
+              Scope.checkPermission('testModelScope', 'testModel', 'name', ACL.ALL, function (err, perm) {
                 assert(perm.permission === ACL.DENY); // because name.WRITE == DENY
               });
-              Scope.checkPermission('userScope', 'User', 'name', ACL.READ, function (err, perm) {
+              Scope.checkPermission('testModelScope', 'testModel', 'name', ACL.READ, function (err, perm) {
                 assert(perm.permission === ACL.ALLOW);
               });
-              Scope.checkPermission('userScope', 'User', 'name', ACL.WRITE, function (err, perm) {
+              Scope.checkPermission('testModelScope', 'testModel', 'name', ACL.WRITE, function (err, perm) {
                 assert(perm.permission === ACL.DENY);
               });
             });
@@ -63,9 +72,6 @@ describe('security scopes', function () {
 describe('security ACLs', function () {
 
   it("should allow access to models for the given principal by wildcard", function () {
-    var ds = loopback.createDataSource({connector: loopback.Memory});
-    ACL.attachTo(ds);
-
     ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.ALLOW}, function (err, acl) {
 
@@ -87,28 +93,25 @@ describe('security ACLs', function () {
   });
 
   it("should allow access to models by exception", function () {
-    var ds = loopback.createDataSource({connector: loopback.Memory});
-    ACL.attachTo(ds);
-
-    ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
+    ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'testModel', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.DENY}, function (err, acl) {
 
-      ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
+      ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'testModel', property: ACL.ALL,
         accessType: ACL.READ, permission: ACL.ALLOW}, function (err, acl) {
 
-        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.READ, function (err, perm) {
+        ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.READ, function (err, perm) {
           assert(perm.permission === ACL.ALLOW);
         });
 
-        ACL.checkPermission(ACL.USER, 'u001', 'User', ACL.ALL, ACL.READ, function (err, perm) {
+        ACL.checkPermission(ACL.USER, 'u001', 'testModel', ACL.ALL, ACL.READ, function (err, perm) {
           assert(perm.permission === ACL.ALLOW);
         });
 
-        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.WRITE, function (err, perm) {
+        ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.WRITE, function (err, perm) {
           assert(perm.permission === ACL.DENY);
         });
 
-        ACL.checkPermission(ACL.USER, 'u001', 'User', 'name', ACL.ALL, function (err, perm) {
+        ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.ALL, function (err, perm) {
           assert(perm.permission === ACL.DENY);
         });
 
@@ -119,8 +122,7 @@ describe('security ACLs', function () {
   });
 
   it("should honor defaultPermission from the model", function () {
-    var ds = loopback.createDataSource({connector: loopback.Memory});
-    ACL.attachTo(ds);
+    var ds = this.ds;
     var Customer = ds.createModel('Customer', {
       name: {
         type: String,
@@ -152,7 +154,7 @@ describe('security ACLs', function () {
   });
 
   it("should honor static ACLs from the model", function () {
-    var ds = loopback.createDataSource({connector: loopback.Memory});
+    var ds = this.ds;
     var Customer = ds.createModel('Customer', {
       name: {
         type: String,
@@ -188,14 +190,9 @@ describe('security ACLs', function () {
   });
 
   it("should check access against LDL, ACL, and Role", function () {
-    var ds = loopback.createDataSource({connector: loopback.Memory});
-    ACL.attachTo(ds);
-    Role.attachTo(ds);
-    RoleMapping.attachTo(ds);
-    User.attachTo(ds);
-
     // var log = console.log;
     var log = function() {};
+    var ds = this.ds;
 
     // Create
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
@@ -246,21 +243,7 @@ describe('security ACLs', function () {
               }, function(err, access) {
                 assert(!err && access.permission === ACL.ALLOW);
               });
-
-              /*
-              ACL.checkAccess({
-                principals: [
-                  {principalType: ACL.USER, principalId: userId}
-                ],
-                model: 'Customer',
-                accessType: ACL.READ
-              }, function(err, access) {
-                assert(!err && access.permission === ACL.DENY);
-              });
-              */
-
             });
-
           });
         });
       });
