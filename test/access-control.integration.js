@@ -1,6 +1,7 @@
 var loopback = require('loopback');
-var lt = require('loopback-testing');
 var path = require('path');
+process.env.PATH_TO_LOOPACK = path.join(__dirname, '..');
+var lt = require('loopback-testing');
 var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
 var app = require(path.join(ACCESS_CONTROL_APP, 'app.js'));
 var assert = require('assert');
