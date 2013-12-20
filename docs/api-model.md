@@ -310,9 +310,17 @@ User.find({
 
 **Note:** See the specific connector's [docs](#connectors) for more info.
 
-### Model.destroyAll(callback)
+### Model.destroyAll([where], callback)
 
 Delete all Model instances from data source. **Note:** destroyAll method does not perform destroy hooks.
+
+```js
+Product.destroyAll({price: {gt: 99}}, function(err) {
+  // removed matching products
+});
+```
+
+> **NOTE:* `where` is optional and a where object... do NOT pass a filter object
 
 ### Model.findById(id, callback)
 
