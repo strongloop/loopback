@@ -1,0 +1,48 @@
+{
+  "email": {
+    "dataSource": "mail",
+    "public": false,
+    "options": {
+      "base": "Email"
+    }
+  },
+  "user": {
+    "dataSource": "db",
+    "public": true,
+    "options": {
+      "base": "User",
+      "relations": {
+        "accessTokens": {
+          "model": "accessToken",
+          "type": "hasMany",
+          "foreignKey": "userId"
+        }
+      }
+    }
+  },
+  "accessToken": {
+    "dataSource": "db",
+    "public": true,
+    "options": {
+      "base": "AccessToken"
+    }
+  },
+  "widget": {
+    "properties": {},
+    "public": true,
+    "dataSource": "db"
+  },
+  "store": {
+    "properties": {},
+    "public": true,
+    "dataSource": "db",
+    "options": {
+      "relations": {
+        "widgets": {
+          "model": "widget",
+          "type": "hasMany"
+        }
+      }
+    }
+  }
+}
