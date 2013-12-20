@@ -1,4 +1,4 @@
-var loopback = require('loopback');
+var loopback = require('../lib/loopback');
 var lt = require('loopback-testing');
 var path = require('path');
 var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
