@@ -1,4 +1,4 @@
-var loopback = require('loopback');
+var loopback = require('../../../lib/loopback');
 var path = require('path');
 var app = module.exports = loopback();
 
