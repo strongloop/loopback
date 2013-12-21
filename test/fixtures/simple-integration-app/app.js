@@ -3,12 +3,11 @@ var path = require('path');
 var app = module.exports = loopback();
 
 app.boot(__dirname);
-
+app.use(loopback.favicon());
+app.use(loopback.cookieParser({secret: app.get('cookieSecret')}));
 var apiPath = '/api';
-app.use(loopback.cookieParser('secret'));
-app.use(loopback.token({model: app.models.accessToken}));
 app.use(apiPath, loopback.rest());
 app.use(app.router);
+app.use(loopback.static(path.join(__dirname, 'public')));
 app.use(loopback.urlNotFound());
 app.use(loopback.errorHandler());
-app.enableAuth();
