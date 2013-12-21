@@ -29,10 +29,10 @@
     "async": "~0.2.9"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~1.2.0"
+    "loopback-datasource-juggler": "~1.2.11"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": "~1.2.0",
+    "loopback-datasource-juggler": "~1.2.11",
     "mocha": "~1.14.0",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.8.1",
