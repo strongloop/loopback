@@ -3,6 +3,7 @@
  */
  
 var loopback = module.exports = require('./lib/loopback');
+var datasourceJuggler = require('loopback-datasource-juggler');
 
 /**
  * Connectors
@@ -17,3 +18,4 @@ loopback.Mail = require('./lib/connectors/mail');
  */
 
 loopback.GeoPoint = require('loopback-datasource-juggler/lib/geo').GeoPoint;
+loopback.ValidationError = datasourceJuggler.ValidationError;
