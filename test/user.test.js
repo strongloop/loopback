@@ -17,6 +17,7 @@ describe('User', function(){
   });
   
   beforeEach(function (done) {
+    app.use(loopback.token());
     app.use(loopback.rest());
     app.model(User);
     
@@ -153,7 +154,6 @@ describe('User', function(){
     
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
-      
       function login(fn) {
         request(app)
           .post('/users/login')
@@ -171,22 +171,22 @@ describe('User', function(){
           });
       }
       
-      function logout(err, sid) {
+      function logout(err, token) {
         request(app)
-          .post('/users/logout') 
+          .post('/users/logout')
+          .set('Authorization', token)
           .expect(204)
-          .send({sid: sid})
-          .end(verify(sid, done));
+          .end(verify(token, done));
       }
     });
     
-    function verify(sid, done) {
-      assert(sid);
+    function verify(token, done) {
+      assert(token);
       
       return function (err) {
         if(err) return done(err);
         
-        AccessToken.findById(sid, function (err, accessToken) {
+        AccessToken.findById(token, function (err, accessToken) {
           assert(!accessToken, 'accessToken should not exist after logging out');
           done(err);
         });

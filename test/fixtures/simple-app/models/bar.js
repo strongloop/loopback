@@ -1,0 +1,1 @@
+process.loadedBarJS = true;
