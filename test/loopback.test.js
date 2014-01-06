@@ -1,4 +1,11 @@
 describe('loopback', function() {
+  describe('exports', function() {
+    it('ValidationError', function() {
+      expect(loopback.ValidationError).to.be.a('function')
+        .and.have.property('name', 'ValidationError');
+    });
+  });
+
   describe('loopback.createDataSource(options)', function(){
     it('Create a data source with a connector.', function() {
       var dataSource = loopback.createDataSource({
