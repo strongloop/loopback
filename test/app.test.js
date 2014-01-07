@@ -44,6 +44,7 @@ describe('app', function() {
         app: {
           port: 3000, 
           host: '127.0.0.1',
+          restApiRoot: '/rest-api',
           foo: {bar: 'bat'},
           baz: true
         },
@@ -69,6 +70,10 @@ describe('app', function() {
 
     it('should have host setting', function() {
       assert.equal(this.app.get('host'), '127.0.0.1');
+    });
+
+    it('should have restApiRoot setting', function() {
+      assert.equal(this.app.get('restApiRoot'), '/rest-api');
     });
 
     it('should have other settings', function () {
