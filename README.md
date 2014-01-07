@@ -4,6 +4,10 @@
 
 [See the full documentation](http://docs.strongloop.com/display/DOC/LoopBack).
 
+## API
+
+[Browse the API documentation](http://apidocs.strongloop.com/loopback).
+
 ## Mailing List
 
 Discuss features and ask questions on [LoopBack Forum](https://groups.google.com/forum/#!forum/loopbackjs).
