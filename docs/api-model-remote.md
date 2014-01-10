@@ -35,6 +35,7 @@ The options argument is a JSON object, described in the following table.
 | accepts   | No | Describes the remote method's arguments; See <a href="#argdesc">Argument description</a>. The `callback` argument is assumed; do not specify. |
 | returns    | No | Describes the remote method's callback arguments; See <a href="#argdesc">Argument description</a>. The `err` argument is assumed; do not specify. |
 | http | No | HTTP routing information: <ul><li> **http.path**: path (relative to the model) at which the method is exposed. May be a path fragment (for example, `/:myArg`) that will be populated by an arg of the same name in the `accepts` description. For example, the `stats` method above will be at the whole path `/products/stats`.</li><li> **http.verb**: HTTP method  (verb) from which the method is available (one of: get, post, put, del, or all).</li></ul>
+| description | No | A text description of the method. This is used by API documentation generators like Swagger.
 
 <a name="argdesc"></a>
 **Argument description**
