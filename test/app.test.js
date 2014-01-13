@@ -197,6 +197,66 @@ describe('app', function() {
     });
   });
 
+  describe('listen()', function() {
+    it('starts http server', function(done) {
+      var app = loopback();
+      app.set('port', 0);
+      app.get('/', function(req, res) { res.send(200, 'OK'); });
+
+      var server = app.listen();
+
+      expect(server).to.be.an.instanceOf(require('http').Server);
+
+      request(server)
+        .get('/')
+        .expect(200, done);
+    });
+
+    it('updates port on "listening" event', function(done) {
+      var app = loopback();
+      app.set('port', 0);
+
+      app.listen(function() {
+        expect(app.get('port'), 'port').to.not.equal(0);
+        done();
+      });
+    });
+
+    it('forwards to http.Server.listen on more than one arg', function(done) {
+      var app = loopback();
+      app.set('port', 1);
+      app.listen(0, '127.0.0.1', function() {
+        expect(app.get('port'), 'port').to.not.equal(0).and.not.equal(1);
+        expect(this.address().address).to.equal('127.0.0.1');
+        done();
+      });
+    });
+
+    it('forwards to http.Server.listen when the single arg is not a function',
+      function(done) {
+        var app = loopback();
+        app.set('port', 1);
+        app.listen(0).on('listening', function() {
+          expect(app.get('port'), 'port') .to.not.equal(0).and.not.equal(1);
+          done();
+        });
+      }
+    );
+
+    it('uses app config when no parameter is supplied', function(done) {
+      var app = loopback();
+      // Http listens on all interfaces by default
+      // Custom host serves as an indicator whether
+      // the value was used by app.listen
+      app.set('host', '127.0.0.1');
+      app.listen()
+        .on('listening', function() {
+          expect(this.address().address).to.equal('127.0.0.1');
+          done();
+        });
+    });
+  });
+
   describe('app.get("/", loopback.status())', function () {
     it('should return the status of the application', function (done) {
       var app = loopback();
