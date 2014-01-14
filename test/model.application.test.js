@@ -167,3 +167,34 @@ describe('Application', function () {
   });
 });
 
+describe('Application subclass', function () {
+  it('should use subclass model name', function (done) {
+    var MyApp = Application.extend('MyApp');
+    MyApp.attachTo(loopback.createDataSource({connector: loopback.Memory}));
+    MyApp.register('rfeng', 'MyApp2',
+      {description: 'My second mobile application'}, function (err, result) {
+        var app = result;
+        assert.equal(app.owner, 'rfeng');
+        assert.equal(app.name, 'MyApp2');
+        assert.equal(app.description, 'My second mobile application');
+        assert(app.clientKey);
+        assert(app.javaScriptKey);
+        assert(app.restApiKey);
+        assert(app.windowsKey);
+        assert(app.masterKey);
+        assert(app.created);
+        assert(app.modified);
+        MyApp.findById(app.id, function (err, myApp) {
+          assert(!err);
+          assert(myApp);
+
+          Application.findById(app.id, function (err, myApp) {
+            assert(!err);
+            assert(myApp === null);
+            done(err, myApp);
+          });
+        });
+      });
+  });
+});
+
