@@ -11,6 +11,11 @@ app = null;
 TaskEmitter = require('strong-task-emitter');
 request = require('supertest');
 
+
+// Speed up the password hashing algorithm
+// for tests using the built-in User model
+loopback.User.settings.saltWorkFactor = 4;
+
 beforeEach(function () {
   app = loopback();
 
