@@ -15,8 +15,7 @@
     "docs/api-datasource.md",
     "docs/api-geopoint.md",
     "docs/api-model.md",
-    "docs/api-model-remote.md",   
-    "docs/rest.md"    
+    "docs/api-model-remote.md"
   ],
   "assets": "/docs/assets"
 }
