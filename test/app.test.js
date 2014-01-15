@@ -291,6 +291,30 @@ describe('app', function() {
         .expect(200, [])
         .end(done);
     });
+
+    it('emits "middleware:static" after express router', function(done) {
+      app.on('middleware:static', function() {
+        this.use(function(req, res, next) {
+          res.send({ handler: 'static' });
+        });
+      });
+
+      app.installMiddleware();
+
+      app.get('/router', function(req, res) {
+        res.send({ handler: 'router' });
+      });
+
+      // First check the middleware order
+      request(app).get('/router')
+        .expect(200, { handler: 'router' })
+        .end(function() {
+          // Then check that the static router was installed
+          request(app).get('/static')
+            .expect(200, { handler: 'static' })
+            .end(done);
+        });
+    });
   });
 
   describe('listen()', function() {
