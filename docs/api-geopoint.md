@@ -40,9 +40,9 @@ CoffeeShop.find({where: {location: {near: here}}, limit:3}, function(err, nearby
  - `feet`
  - `degrees`
 
-## Methods
+### Methods
 
-### geoPoint.distanceTo(geoPoint, options)
+#### geoPoint.distanceTo(geoPoint, options)
 
 Get the distance to another `GeoPoint`.
 
@@ -52,7 +52,7 @@ var there = new GeoPoint({lat: 5, lng: 5});
 console.log(here.distanceTo(there, {type: 'miles'})); // 438
 ```
  
-### GeoPoint.distanceBetween(a, b, options)
+#### GeoPoint.distanceBetween(a, b, options)
 
 Get the distance between two points.
 
@@ -60,12 +60,12 @@ Get the distance between two points.
 GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
 ```
 
-## Properties 
+### Properties 
 
-### geoPoint.lat
+#### geoPoint.lat
 
 The latitude point in degrees. Range: -90 to 90.
 
-### geoPoint.lng
+#### geoPoint.lng
 
 The longitude point in degrees. Range: -180 to 180.
