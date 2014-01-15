@@ -2,7 +2,9 @@
 
 You can expose a Model's instance and static methods to clients. A remote method must accept a callback with the conventional `fn(err, result, ...)` signature. 
 
-### loopback.remoteMethod(fn, [options])
+### Static Methods
+
+#### loopback.remoteMethod(fn, [options])
 
 Expose a remote method.
 
@@ -118,7 +120,7 @@ as follows (assuming `name` as the name of the input parameter to resolve):
     then the value of `args['name']` is used if it is defined.
  2. Otherwise `req.param('name')` is returned.
 
-## Remote hooks
+### Remote hooks
 
 Run a function before or after a remote method is called by a client.
 
@@ -185,9 +187,9 @@ A `Model` representing the user calling the method remotely. **Note:** this is u
 
 During `afterRemote` hooks, `ctx.result` will contain the data about to be sent to a client. Modify this object to transform data before it is sent. 
 
-#### Rest
+#### REST
 
-When [loopback.rest](#loopbackrest) is used the following `ctx` properties are available.
+When [loopback.rest](#loopbackrest) is used the following additional `ctx` properties are available.
 
 ##### ctx.req
 

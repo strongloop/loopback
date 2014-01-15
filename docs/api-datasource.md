@@ -14,9 +14,9 @@ var oracle = loopback.createDataSource({
 });
 ```
 
-## Methods
+### Methods
 
-### dataSource.createModel(name, properties, options)
+#### dataSource.createModel(name, properties, options)
 
 Define a model and attach it to a `DataSource`.
 
@@ -42,7 +42,7 @@ var Customer = ds.createModel('Customer', {
     });
 ```
 
-### dataSource.discoverModelDefinitions([username], fn)
+#### dataSource.discoverModelDefinitions([username], fn)
 
 Discover a set of model definitions (table or collection names) based on tables or collections in a data source.
 
@@ -57,7 +57,7 @@ oracle.discoverModelDefinitions(function (err, models) {
 });
 ```
     
-### dataSource.discoverSchema([owner], name, fn)
+#### dataSource.discoverSchema([owner], name, fn)
 
 Discover the schema of a specific table or collection.
 
@@ -156,12 +156,12 @@ Discover the schema of a specific table or collection.
     }
 ```
 
-### dataSource.enableRemote(operation)
+#### dataSource.enableRemote(operation)
 
 Enable remote access to a data source operation. Each [connector](#connector) has its own set of set remotely enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
     
 
-### dataSource.disableRemote(operation)
+#### dataSource.disableRemote(operation)
 
 Disable remote access to a data source operation. Each [connector](#connector) has its own set of set enabled and disabled operations. You can always list these by calling `dataSource.operations()`.
 
@@ -184,7 +184,7 @@ oracle.disableRemote('destroyAll');
  - disabling the remoting for a method only affects client access (it will still be available from server models)
  - data sources must enable / disable operations before attaching or creating models
 
-### dataSource.operations()
+#### dataSource.operations()
 
 List the enabled and disabled operations.
 
