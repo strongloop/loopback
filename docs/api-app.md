@@ -218,8 +218,6 @@ View generated REST documentation at [http://localhost:3000/_docs](http://localh
 
 LoopBack includes middleware similar to [Express / Connect middleware](http://expressjs.com/api.html#middleware).  
 
-
-
 #### loopback.token(options)
     
 **Options**
