@@ -213,7 +213,8 @@ describe('security ACLs', function () {
       }, {
         acls: [
           {principalType: ACL.USER, principalId: userId, accessType: ACL.ALL, permission: ACL.ALLOW}
-        ]
+        ],
+        defaultPermission: 'DENY'
       });
 
       ACL.create({principalType: ACL.USER, principalId: userId, model: 'Customer', property: ACL.ALL,
@@ -243,6 +244,18 @@ describe('security ACLs', function () {
               }, function(err, access) {
                 assert(!err && access.permission === ACL.ALLOW);
               });
+
+              ACL.checkAccess({
+                principals: [
+                  {type: ACL.ROLE, id: Role.EVERYONE}
+                ],
+                model: 'Customer',
+                property: 'name',
+                accessType: ACL.READ
+              }, function(err, access) {
+                assert(!err && access.permission === ACL.DENY);
+              });
+
             });
           });
         });
