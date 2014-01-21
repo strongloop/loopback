@@ -42,7 +42,7 @@ CoffeeShop.find({where: {location: {near: here}}, limit:3}, function(err, nearby
 
 #### geoPoint.distanceTo(geoPoint, options)
 
-Get the distance to another `GeoPoint`.
+Get the distance to another `GeoPoint`; for example:
 
 ```js
 var here = new GeoPoint({lat: 10, lng: 10});
@@ -52,7 +52,7 @@ console.log(here.distanceTo(there, {type: 'miles'})); // 438
  
 #### GeoPoint.distanceBetween(a, b, options)
 
-Get the distance between two points.
+Get the distance between two points; for example:
 
 ```js
 GeoPoint.distanceBetween(here, there, {type: 'miles'}) // 438
