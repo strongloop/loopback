@@ -16,9 +16,7 @@ var CoffeeShop = loopback.createModel('coffee-shop', {
 });
 ```
 
-Loopback models with a GeoPoint property and an attached Data Source may be queried using geo-spatial filters and sorting.
-
-For example, the following code is an an example of finding the three nearest coffee shops.
+You can query LoopBack models with a GeoPoint property and an attached data source using geo-spatial filters and sorting. For example, the following code finds the three nearest coffee shops.
 
 ```js
 CoffeeShop.attachTo(oracle);
