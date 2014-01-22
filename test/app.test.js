@@ -4,12 +4,52 @@ var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
 describe('app', function() {
 
   describe('app.model(Model)', function() {
+    var app, db;
+    beforeEach(function() {
+      app = loopback();
+      db = loopback.createDataSource({connector: loopback.Memory});
+    });
+
     it("Expose a `Model` to remote clients", function() {
-      var app = loopback();
-      var memory = loopback.createDataSource({connector: loopback.Memory});
-      var Color = memory.createModel('color', {name: String});
+      var Color = db.createModel('color', {name: String});
       app.model(Color);
-      assert.equal(app.models().length, 1);
+
+      expect(app.models()).to.eql([Color]);
+    });
+
+    it('uses singlar name as app.remoteObjects() key', function() {
+      var Color = db.createModel('color', {name: String});
+      app.model(Color);
+      expect(app.remoteObjects()).to.eql({ color: Color });
+    });
+
+    it('uses singular name as shared class name', function() {
+      var Color = db.createModel('color', {name: String});
+      app.model(Color);
+      expect(app.remotes().exports).to.eql({ color: Color });
+    });
+
+    describe('in compat mode', function() {
+      before(function() {
+        loopback.compat.usePluralNamesForRemoting = true;
+      });
+      after(function() {
+        loopback.compat.usePluralNamesForRemoting = false;
+      });
+
+      it('uses plural name as shared class name', function() {
+        loopback.compat.usePluralNamesForRemoting = true;
+        var Color = db.createModel('color', {name: String});
+        app.model(Color);
+        expect(app.remotes().exports).to.eql({ colors: Color });
+      });
+
+      it('uses plural name as app.remoteObjects() key', function() {
+        var Color = db.createModel('color', {name: String});
+        app.model(Color);
+        expect(app.remoteObjects()).to.eql({ colors: Color });
+      });
+;
     });
   });
 
