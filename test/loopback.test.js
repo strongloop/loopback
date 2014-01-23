@@ -58,5 +58,39 @@ describe('loopback', function() {
         assert(MyCustomModel.super_.modelName === MyModel.modelName);
       });
     });
+
+    describe('loopback.getModel and getModelByType', function () {
+      it('should be able to get model by name', function () {
+        var MyModel = loopback.createModel('MyModel', {}, {
+          foo: {
+            bar: 'bat'
+          }
+        });
+        var MyCustomModel = loopback.createModel('MyCustomModel', {}, {
+          base: 'MyModel',
+          foo: {
+            bat: 'baz'
+          }
+        });
+        assert(loopback.getModel('MyModel') === MyModel);
+        assert(loopback.getModel('MyCustomModel') === MyCustomModel);
+        assert(loopback.getModel('Invalid') === undefined);
+      });
+      it('should be able to get model by type', function () {
+        var MyModel = loopback.createModel('MyModel', {}, {
+          foo: {
+            bar: 'bat'
+          }
+        });
+        var MyCustomModel = loopback.createModel('MyCustomModel', {}, {
+          base: 'MyModel',
+          foo: {
+            bat: 'baz'
+          }
+        });
+        assert(loopback.getModelByType(MyModel) === MyCustomModel);
+        assert(loopback.getModelByType(MyCustomModel) === MyCustomModel);
+      });
+    });
   });
 });
