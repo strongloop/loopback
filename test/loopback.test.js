@@ -14,7 +14,33 @@ describe('loopback', function() {
       assert(dataSource.connector);
     });
   });
-  
+
+  describe('loopback.autoAttach', function () {
+    it('doesn\'t overwrite model with datasource configured', function () {
+      var ds1 = loopback.createDataSource('db1', {
+        connector: loopback.Memory
+      });
+
+      // setup default data sources
+      loopback.setDefaultDataSourceForType('db', ds1);
+
+      var ds2 = loopback.createDataSource('db2', {
+        connector: loopback.Memory
+      });
+
+      var model1 = ds2.createModel('m1', {});
+
+      var model2 = loopback.createModel('m2');
+      model2.autoAttach = 'db';
+
+      // auto attach data sources to models
+      loopback.autoAttach();
+
+      assert(model1.dataSource === ds2);
+      assert(model2.dataSource === ds1);
+    });
+  });
+
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
     it("Setup a remote method.", function() {
       var Product = loopback.createModel('product', {price: Number});
