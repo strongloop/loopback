@@ -1,9 +1,13 @@
 var loopback = require('../');
-var MyEmail = loopback.Email.extend('my-email');
+var MyEmail;
 var assert = require('assert');
 
 describe('Email and SMTP', function () {
-
+  beforeEach(function() {
+    MyEmail = loopback.Email.extend('my-email');
+    loopback.autoAttach();
+  });
+  
   it('should have a send method', function () {
     assert(typeof MyEmail.send === 'function');
     assert(typeof MyEmail.prototype.send === 'function');

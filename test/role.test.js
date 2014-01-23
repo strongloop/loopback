@@ -12,6 +12,14 @@ function checkResult(err, result) {
 }
 
 describe('role model', function () {
+  var ds;
+
+  beforeEach(function() {
+    ds = loopback.createDataSource({connector: 'memory'});
+    User.attachTo(ds);
+    Role.attachTo(ds);
+    RoleMapping.attachTo(ds);
+  });
 
   it("should define role/role relations", function () {
     Role.create({name: 'user'}, function (err, userRole) {
@@ -38,6 +46,7 @@ describe('role model', function () {
   });
 
   it("should define role/user relations", function () {
+
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
       Role.create({name: 'userRole'}, function (err, role) {
@@ -113,10 +122,6 @@ describe('role model', function () {
   });
 
   it("should support owner role resolver", function () {
-    var ds = loopback.createDataSource({connector: 'memory'});
-    User.attachTo(ds);
-    Role.attachTo(ds);
-    RoleMapping.attachTo(ds);
 
     var Album = ds.createModel('Album', {
       name: String,

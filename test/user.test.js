@@ -1,4 +1,4 @@
-var User = loopback.User.extend('user');
+var User;
 var AccessToken = loopback.AccessToken;
 var passport = require('passport');
 var MailConnector = require('../lib/connectors/mail');
@@ -8,10 +8,14 @@ var userMemory = loopback.createDataSource({
 });
 
 describe('User', function(){
-  // allow many User.afterRemote's to be called
-  User.setMaxListeners(0);
+  beforeEach(function() {
+    User = loopback.User.extend('user');
+    User.email = loopback.Email.extend('email');
+    loopback.autoAttach();
   
-  before(function () {
+    // allow many User.afterRemote's to be called
+    User.setMaxListeners(0);
+    
     User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
     AccessToken.belongsTo(User);  
   });
