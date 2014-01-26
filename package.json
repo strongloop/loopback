@@ -26,7 +26,8 @@
     "underscore.string": "~2.3.3",
     "underscore": "~1.5.2",
     "uid2": "0.0.3",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "canonical-json": "0.0.3"
   },
   "peerDependencies": {
     "loopback-datasource-juggler": "~1.2.11"
