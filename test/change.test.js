@@ -253,8 +253,11 @@ describe('Change', function(){
 
     it('should return delta and conflict lists', function (done) {
       var remoteChanges = [
+        // an update => should result in a delta
         {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
+        // no change => should not result in a delta / conflict
         {rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
+        // a conflict => should result in a conflict
         {rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1},
       ];
 

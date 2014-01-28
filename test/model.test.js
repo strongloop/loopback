@@ -1,4 +1,7 @@
-var ACL = require('../').ACL;
+var async = require('async');
+var loopback = require('../');
+var ACL = loopback.ACL;
+var Change = loopback.Change;
 
 describe('Model', function() {
 
@@ -523,33 +526,33 @@ describe('Model', function() {
 
   describe('Model.extend() events', function() {
     it('create isolated emitters for subclasses', function() {
-    var User1 = loopback.createModel('User1', {
-      'first': String,
-      'last': String
-    });
+      var User1 = loopback.createModel('User1', {
+        'first': String,
+        'last': String
+      });
 
-    var User2 = loopback.createModel('User2', {
-      'name': String
-    });
+      var User2 = loopback.createModel('User2', {
+        'name': String
+      });
 
-    var user1Triggered = false;
-    User1.once('x', function(event) {
-      user1Triggered = true;
-    });
+      var user1Triggered = false;
+      User1.once('x', function(event) {
+        user1Triggered = true;
+      });
 
 
-    var user2Triggered = false;
-    User2.once('x', function(event) {
-      user2Triggered = true;
-    });
+      var user2Triggered = false;
+      User2.once('x', function(event) {
+        user2Triggered = true;
+      });
 
-    assert(User1.once !== User2.once);
-    assert(User1.once !== loopback.Model.once);
+      assert(User1.once !== User2.once);
+      assert(User1.once !== loopback.Model.once);
 
-    User1.emit('x', User1);
+      User1.emit('x', User1);
 
-    assert(user1Triggered);
-    assert(!user2Triggered);
+      assert(user1Triggered);
+      assert(!user2Triggered);
     });
 
   });
@@ -581,80 +584,125 @@ describe('Model', function() {
     }
   });
 
-  // describe('Model.hasAndBelongsToMany()', function() {
-  //   it("TODO: implement / document", function(done) {
-  //     /* example - 
-  //     
-  //     */
-  //     done(new Error('test not implemented'));
-  //   });
-  // });
+  describe('Model.getChangeModel()', function() {
+    it('Get the Change Model', function () {
+      var UserChange = User.getChangeModel();
+      var change = new UserChange();
+      assert(change instanceof Change);
+    });
+  });
 
-  // describe('Model.remoteMethods()', function() {
-  //   it("Return a list of enabled remote methods", function() {
-  //     app.model(User);
-  //     User.remoteMethods(); // ['save', ...]
-  //   });
-  // });
+  describe('Model.getSourceId(callback)', function() {
+    it('Get the Source Id', function (done) {
+      User.getSourceId(function(err, id) {
+        assert.equal('memory-user', id);
+        done();
+      });
+    });
+  });
 
-  // describe('Model.availableMethods()', function() {
-  //   it("Returns the currently available api of a model as well as descriptions of any modified behavior or methods from attached data sources", function(done) {
-  //     /* example - 
-  //     User.attachTo(oracle);
-  //     console.log(User.availableMethods());
-  //     
-  //     {
-  //       'User.all': {
-  //         accepts: [{arg: 'filter', type: 'object', description: '...'}],
-  //         returns: [{arg: 'users', type: ['User']}]
-  //       },
-  //       'User.find': {
-  //         accepts: [{arg: 'id', type: 'any'}],
-  //         returns: [{arg: 'items', type: 'User'}]
-  //       },
-  //       ...
-  //     }
-  //     var oracle = loopback.createDataSource({
-  //       connector: 'oracle',
-  //       host: '111.22.333.44',
-  //       database: 'MYDB',
-  //       username: 'username',
-  //       password: 'password'
-  //     });
-  //     
-  //     */
-  //     done(new Error('test not implemented'));
-  //   });
-  // });
-  
-//   describe('Model.before(name, fn)', function(){
-//     it('Run a function before a method is called', function() {
-//       // User.before('save', function(user, next) {
-// //         console.log('about to save', user);
-// //         
-// //         next();
-// //       });
-// //       
-// //       User.before('delete', function(user, next) {
-// //         // prevent all delete calls
-// //         next(new Error('deleting is disabled'));
-// //       });
-// //       User.beforeRemote('save', function(ctx, user, next) {
-// //         if(ctx.user.id === user.id) {
-// //           next();
-// //         } else {
-// //           next(new Error('must be logged in to update'))
-// //         }
-// //       });
-// 
-//       throw new Error('not implemented');
-//     });
-//   });
-//   
-//   describe('Model.after(name, fn)', function(){
-//     it('Run a function after a method is called', function() {
-// 
-//       throw new Error('not implemented');
-//     });
-//   });
+  describe('Model.checkpoint(callback)', function() {
+    it('Create a checkpoint', function (done) {
+      var Checkpoint = User.getChangeModel().getCheckpointModel();
+      var tasks = [
+        getCurrentCheckpoint,
+        checkpoint
+      ];
+      var result;
+      var current;
+
+      async.parallel(tasks, function(err) {
+        if(err) return done(err);
+
+        assert.equal(result, current + 1);
+        done();
+      });
+
+      function getCurrentCheckpoint(cb) {
+        Checkpoint.current(function(err, cp) {
+          current = cp;
+          cb(err);
+        });
+      }
+
+      function checkpoint(cb) {
+        User.checkpoint(function(err, cp) {
+          result = cp.id;
+          cb(err);
+        });
+      }
+    });
+  });
+
+  describe('Replication / Change APIs', function() {
+    beforeEach(function(done) {
+      var test = this;
+      this.dataSource = loopback.createDataSource({connector: loopback.Memory});
+      var SourceModel = this.SourceModel = this.dataSource.createModel('SourceModel', {}, {
+        trackChanges: true
+      });
+      var TargetModel = this.TargetModel = this.dataSource.createModel('TargetModel', {}, {
+        trackChanges: true
+      });
+
+      var createOne = SourceModel.create.bind(SourceModel, {
+        name: 'baz'
+      });
+
+      async.parallel([
+        createOne,
+        function(cb) {
+          SourceModel.currentCheckpoint(function(err, id) {
+            if(err) return cb(err);
+            test.startingCheckpoint = id;
+            cb();
+          });
+        }
+      ], process.nextTick.bind(process, done));
+    });
+
+    describe('Model.changes(since, filter, callback)', function() {
+      it('Get changes since the given checkpoint', function (done) {
+        this.SourceModel.changes(this.startingCheckpoint, {}, function(err, changes) {
+          assert.equal(changes.length, 1);
+          done();
+        });
+      });
+    });
+
+    describe('Model.replicate(since, targetModel, options, callback)', function() {
+      it('Replicate data using the target model', function (done) {
+        var test = this;
+        var options = {};
+        var sourceData;
+        var targetData;
+
+        this.SourceModel.replicate(this.startingCheckpoint, this.TargetModel, 
+        options, function(err, conflicts) {
+          assert(conflicts.length === 0);
+          async.parallel([
+            function(cb) {
+              test.SourceModel.find(function(err, result) {
+                if(err) return cb(err);
+                sourceData = result;
+                cb();
+              });
+            },
+            function(cb) {
+              test.TargetModel.find(function(err, result) {
+                if(err) return cb(err);
+                targetData = result;
+                cb();
+              });
+            }
+          ], function(err) {
+            if(err) return done(err);
+
+            assert.deepEqual(sourceData, targetData);
+            done();
+          });
+        });
+      });
+    });
+  });
 });
