@@ -11,7 +11,11 @@
   ],
   "version": "1.6.1",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "build-js": "mkdir -p dist && ./node_modules/.bin/browserify index.js -s loopback -o dist/loopback.js --ignore passport --ignore ./lib-cov/express --ignore ./lib-cov/connect --ignore nodemailer",
+    "watch-js": "mkdir -p dist && ./node_modules/.bin/watchify index.js -s loopback -o dist/loopback.js",
+    "uglify": "./node_modules/.bin/uglifyjs dist/loopback.js -mc > dist/loopback.min.js",
+    "build": "npm run build-js && npm run uglify"
   },
   "dependencies": {
     "debug": "~0.7.2",
@@ -38,11 +42,21 @@
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.8.1",
     "chai": "~1.8.1",
-    "loopback-testing": "~0.1.0"
+    "loopback-testing": "~0.1.0",
+    "watchify": "~0.4.1",
+    "uglify-js": "~2.4.6",
+    "jshint": "~2.3.0",
+    "browserify": "~3.14.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/strongloop/loopback"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "browser": {
+    "express": "./lib/browser-express.js",
+    "connect": false,
+    "passport": false,
+    "passport-local": false
+  }
 }
