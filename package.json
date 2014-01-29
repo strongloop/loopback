@@ -46,7 +46,10 @@
     "watchify": "~0.4.1",
     "uglify-js": "~2.4.6",
     "jshint": "~2.3.0",
-    "browserify": "~3.14.1"
+    "browserify": "~3.14.1",
+    "grunt": "~0.4.2",
+    "grunt-browserify": "~1.3.0",
+    "grunt-mocha-selenium": "~0.7.0"
   },
   "repository": {
     "type": "git",
