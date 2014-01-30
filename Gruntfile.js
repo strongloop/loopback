@@ -16,26 +16,46 @@ module.exports = function(grunt) {
         banner: '<%= banner %>'
       },
       dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.min.js'
+        files: {
+          'dist/loopback.min.js': ['dist/loopback.js']
+        }
       }
     },
     jshint: {
       options: {
-        curly: true,
+        curly: false,
         eqeqeq: true,
         immed: true,
-        latedef: true,
+        latedef: false,
         newcap: true,
         noarg: true,
         sub: true,
         undef: true,
-        unused: true,
+        unused: false,
         boss: true,
         eqnull: true,
         browser: true,
+        asi: true,
+        node: true,
+        laxbreak: true,
         globals: {
-          jQuery: true
+          require: true,
+          jQuery: true,
+          process: true,
+          /* MOCHA */
+          describe: false,
+          it: false,
+          before: false,
+          beforeEach: false,
+          after: false,
+          afterEach: false,
+          assert: false,
+          request: false,
+          app: false,
+          loopback: false,
+          expect: true,
+          GeoPoint: true,
+          assertValidDataSource: true
         }
       },
       gruntfile: {
@@ -61,6 +81,7 @@ module.exports = function(grunt) {
           'dist/loopback.js': ['index.js'],
         },
         options: {
+          ignore: ['nodemailer', 'passport']
         }
       }
     },
@@ -96,13 +117,13 @@ module.exports = function(grunt) {
 // todo appium
 
   // These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-mocha-selenium');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'uglify']);
+  grunt.registerTask('default', ['browserify', 'mochaSelenium']);
 
 };

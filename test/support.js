@@ -24,13 +24,15 @@ beforeEach(function () {
     connector: loopback.Memory
   });
 
-  loopback.setDefaultDataSourceForType('mail', {
-    connector: loopback.Mail,
-    transports: [
-      {type: 'STUB'}
-    ]
-  });
-
+  if(loopback.isServer) {
+    loopback.setDefaultDataSourceForType('mail', {
+      connector: loopback.Mail,
+      transports: [
+        {type: 'STUB'}
+      ]
+    }); 
+  }
+  
   // auto attach data sources to models
   loopback.autoAttach();
 });
