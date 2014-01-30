@@ -262,61 +262,129 @@ describe('Model', function() {
         });
     });
   });
-  
-  if(loopback.isServer) {
-    describe('Remote Methods', function(){
-      beforeEach(function () {
-        User.login = function (username, password, fn) {
-          if(username === 'foo' && password === 'bar') {
-            fn(null, 123);
-          } else {
-            throw new Error('bad username and password!');
-          }
-        }
 
-        loopback.remoteMethod(
-          User.login,
-          {
-            accepts: [
-              {arg: 'username', type: 'string', required: true},
-              {arg: 'password', type: 'string', required: true}
-            ],
-            returns: {arg: 'sessionId', type: 'any', root: true},
-            http: {path: '/sign-in', verb: 'get'}
-          }
-        );
-      
-        app.use(loopback.rest());
-        app.model(User);
-      });
+  describe('Remote Methods', function(){
+    if(loopback.isBrowser) return;
     
-      describe('Example Remote Method', function () {
-        it('Call the method using HTTP / REST', function(done) {
-          request(app)
-            .get('/users/sign-in?username=foo&password=bar')
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .end(function(err, res){
-              if(err) return done(err);
-              assert.equal(res.body, 123);
-              done();
-            });
-        });
+    beforeEach(function () {
+      User.login = function (username, password, fn) {
+        if(username === 'foo' && password === 'bar') {
+          fn(null, 123);
+        } else {
+          throw new Error('bad username and password!');
+        }
+      }
 
-        it('Converts null result of findById to 404 Not Found', function(done) {
-          request(app)
-            .get('/users/not-found')
-            .expect(404)
-            .end(done);
-        });
+      loopback.remoteMethod(
+        User.login,
+        {
+          accepts: [
+            {arg: 'username', type: 'string', required: true},
+            {arg: 'password', type: 'string', required: true}
+          ],
+          returns: {arg: 'sessionId', type: 'any', root: true},
+          http: {path: '/sign-in', verb: 'get'}
+        }
+      );
+      
+      app.use(loopback.rest());
+      app.model(User);
+    });
+    
+    describe('Example Remote Method', function () {
+      it('Call the method using HTTP / REST', function(done) {
+        request(app)
+          .get('/users/sign-in?username=foo&password=bar')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end(function(err, res){
+            if(err) return done(err);
+            assert.equal(res.body, 123);
+            done();
+          });
       });
+
+      it('Converts null result of findById to 404 Not Found', function(done) {
+        request(app)
+          .get('/users/not-found')
+          .expect(404)
+          .end(done);
+      });
+    });
   
-      describe('Model.beforeRemote(name, fn)', function(){
-        it('Run a function before a remote method is called by a client', function(done) {
-          var hookCalled = false;
+    describe('Model.beforeRemote(name, fn)', function(){
+      it('Run a function before a remote method is called by a client', function(done) {
+        var hookCalled = false;
         
+        User.beforeRemote('create', function(ctx, user, next) {
+          hookCalled = true;
+          next();
+        });
+        
+        // invoke save
+        request(app)
+          .post('/users')
+          .send({data: {first: 'foo', last: 'bar'}})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end(function(err, res) {
+            if(err) return done(err);
+            assert(hookCalled, 'hook wasnt called');
+            done();
+          });
+      });
+    });
+  
+    describe('Model.afterRemote(name, fn)', function(){
+      it('Run a function after a remote method is called by a client', function(done) {
+        var beforeCalled = false;
+        var afterCalled = false;
+        
+        User.beforeRemote('create', function(ctx, user, next) {
+          assert(!afterCalled);
+          beforeCalled = true;
+          next();
+        });
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(beforeCalled);
+          afterCalled = true;
+          next();
+        });
+        
+        // invoke save
+        request(app)
+          .post('/users')
+          .send({data: {first: 'foo', last: 'bar'}})
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end(function(err, res) {
+            if(err) return done(err);
+            assert(beforeCalled, 'before hook was not called');
+            assert(afterCalled, 'after hook was not called');
+            done();
+          });
+      });
+    });
+  
+    describe('Remote Method invoking context', function () {
+      // describe('ctx.user', function() {
+      //   it("The remote user model calling the method remotely", function(done) {
+      //     done(new Error('test not implemented'));
+      //   });
+      // });
+
+      describe('ctx.req', function() {
+        it("The express ServerRequest object", function(done) {
+          var hookCalled = false;
+          
           User.beforeRemote('create', function(ctx, user, next) {
             hookCalled = true;
+            assert(ctx.req);
+            assert(ctx.req.url);
+            assert(ctx.req.method);
+            assert(ctx.res);
+            assert(ctx.res.write);
+            assert(ctx.res.end);
             next();
           });
         
@@ -328,25 +396,24 @@ describe('Model', function() {
             .expect(200)
             .end(function(err, res) {
               if(err) return done(err);
-              assert(hookCalled, 'hook wasnt called');
+              assert(hookCalled);
               done();
             });
         });
       });
-  
-      describe('Model.afterRemote(name, fn)', function(){
-        it('Run a function after a remote method is called by a client', function(done) {
-          var beforeCalled = false;
-          var afterCalled = false;
-        
+
+      describe('ctx.res', function() {
+        it("The express ServerResponse object", function(done) {
+          var hookCalled = false;
+          
           User.beforeRemote('create', function(ctx, user, next) {
-            assert(!afterCalled);
-            beforeCalled = true;
-            next();
-          });
-          User.afterRemote('create', function(ctx, user, next) {
-            assert(beforeCalled);
-            afterCalled = true;
+            hookCalled = true;
+            assert(ctx.req);
+            assert(ctx.req.url);
+            assert(ctx.req.method);
+            assert(ctx.res);
+            assert(ctx.res.write);
+            assert(ctx.res.end);
             next();
           });
         
@@ -358,8 +425,7 @@ describe('Model', function() {
             .expect(200)
             .end(function(err, res) {
               if(err) return done(err);
-              assert(beforeCalled, 'before hook was not called');
-              assert(afterCalled, 'after hook was not called');
+              assert(hookCalled);
               done();
             });
         });

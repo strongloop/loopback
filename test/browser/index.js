@@ -43,5 +43,5 @@ testServer.get('/tests.js', function(req, res) {
 testServer.use(loopback.static(__dirname));
 
 testServer.listen(4040, function() {
-  console.log('test server listening on port', testServer.get('port'));
+  console.log('test server listening @ http://localhost:' + testServer.get('port'));
 });
