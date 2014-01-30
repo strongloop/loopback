@@ -8,6 +8,7 @@ var userMemory = loopback.createDataSource({
 });
 
 describe('User', function(){
+  var validCredentials = {email: 'foo@bar.com', password: 'bar'};
   beforeEach(function() {
     User = loopback.User.extend('user');
     User.email = loopback.Email.extend('email');
@@ -25,7 +26,7 @@ describe('User', function(){
     app.use(loopback.rest());
     app.model(User);
     
-    User.create({email: 'foo@bar.com', password: 'bar'}, done);
+    User.create(validCredentials, done);
   });
   
   afterEach(function (done) {
@@ -105,7 +106,7 @@ describe('User', function(){
   
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
-      User.login({email: 'foo@bar.com', password: 'bar'}, function (err, accessToken) {
+      User.login(validCredentials, function (err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
@@ -119,7 +120,7 @@ describe('User', function(){
         .post('/users/login')
         .expect('Content-Type', /json/)
         .expect(200)
-        .send({email: 'foo@bar.com', password: 'bar'})
+        .send(validCredentials)
         .end(function(err, res){
           if(err) return done(err);
           var accessToken = res.body;
@@ -127,11 +128,28 @@ describe('User', function(){
           assert(accessToken.userId);
           assert(accessToken.id);
           assert.equal(accessToken.id.length, 64);
+          assert(accessToken.user === undefined);
           
           done();
         });
     });
-    
+
+    it('Returns current user when `include` is `USER`', function(done) {
+      request(app)
+        .post('/users/login?include=USER')
+        .send(validCredentials)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) return done(err);
+          var token = res.body;
+          expect(token.user, 'body.user').to.not.equal(undefined);
+          expect(token.user, 'body.user')
+            .to.have.property('email', validCredentials.email);
+          done();
+        });
+    });
+
     it('Login should only allow correct credentials', function(done) {
       User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
         User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) { 
