@@ -612,6 +612,16 @@ describe('Model', function() {
     }
   });
 
+  describe('Model._getACLModel()', function() {
+    it('should return the subclass of ACL', function() {
+      var Model = require('../').Model;
+      var acl = ACL.extend('acl');
+      Model._ACL(null); // Reset the ACL class for the base model
+      var model = Model._ACL();
+      assert.equal(model, acl);
+    });
+  });
+
   // describe('Model.hasAndBelongsToMany()', function() {
   //   it("TODO: implement / document", function(done) {
   //     /* example - 
