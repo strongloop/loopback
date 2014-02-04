@@ -93,6 +93,20 @@ describe('app', function() {
     });
   });
 
+  describe('getModelByType', function() {
+    it('returns undefined for model not attached to app', function() {
+      expect(app.getModelByType(loopback.User)).to.equal(null);
+    });
+
+    it('returns model subclass', function() {
+      var User = app.model('User', {
+        options: { base: 'User' },
+        dataSource: 'db'
+      });
+      expect(app.getModelByType(loopback.User)).to.equal(User);
+    });
+  });
+
   describe('app.boot([options])', function () {
     beforeEach(function () {
       app.boot({
