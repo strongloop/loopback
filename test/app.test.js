@@ -78,8 +78,6 @@ describe('app', function() {
 
   describe('app.boot([options])', function () {
     beforeEach(function () {
-      var app = this.app = loopback();
-
       app.boot({
         app: {
           port: 3000, 

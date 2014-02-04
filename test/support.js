@@ -17,7 +17,7 @@ request = require('supertest');
 loopback.User.settings.saltWorkFactor = 4;
 
 beforeEach(function () {
-  app = loopback();
+  this.app = app = loopback();
 
   // setup default data sources
   loopback.setDefaultDataSourceForType('db', {
