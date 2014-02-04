@@ -81,7 +81,8 @@ module.exports = function(grunt) {
           'dist/loopback.js': ['index.js'],
         },
         options: {
-          ignore: ['nodemailer', 'passport']
+          ignore: ['nodemailer', 'passport'],
+          standalone: 'loopback'
         }
       }
     },

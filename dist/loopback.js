@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.loopback=e():"undefined"!=typeof global?global.loopback=e():"undefined"!=typeof self&&(self.loopback=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * loopback ~ public api
  */
@@ -13,6 +13,7 @@ var datasourceJuggler = require('loopback-datasource-juggler');
 loopback.Connector = require('./lib/connectors/base-connector');
 loopback.Memory = require('./lib/connectors/memory');
 loopback.Mail = require('./lib/connectors/mail');
+loopback.Server = require('./lib/connectors/server');
 
 /**
  * Types
@@ -21,13 +22,14 @@ loopback.Mail = require('./lib/connectors/mail');
 loopback.GeoPoint = require('loopback-datasource-juggler/lib/geo').GeoPoint;
 loopback.ValidationError = datasourceJuggler.ValidationError;
 
-},{"./lib/connectors/base-connector":4,"./lib/connectors/mail":5,"./lib/connectors/memory":6,"./lib/loopback":7,"loopback-datasource-juggler":62,"loopback-datasource-juggler/lib/geo":67}],2:[function(require,module,exports){
+},{"./lib/connectors/base-connector":5,"./lib/connectors/mail":6,"./lib/connectors/memory":7,"./lib/connectors/server":8,"./lib/loopback":9,"loopback-datasource-juggler":64,"loopback-datasource-juggler/lib/geo":69}],2:[function(require,module,exports){
 var process=require("__browserify_process"),__dirname="/lib";/*!
  * Module dependencies.
  */
 
 var DataSource = require('loopback-datasource-juggler').DataSource
   , ModelBuilder = require('loopback-datasource-juggler').ModelBuilder
+  , compat = require('./compat')
   , assert = require('assert')
   , fs = require('fs')
   , RemoteObjects = require('strong-remoting')
@@ -121,8 +123,9 @@ app.disuse = function (route) {
 app.model = function (Model, config) {
   if(arguments.length === 1) {
     assert(typeof Model === 'function', 'app.model(Model) => Model must be a function / constructor');
-    assert(Model.pluralModelName, 'Model must have a "pluralModelName" property');
-    this.remotes().exports[Model.pluralModelName] = Model;
+    assert(Model.modelName, 'Model must have a "modelName" property');
+    var remotingClassName = compat.getClassNameForRemoting(Model);
+    this.remotes().exports[remotingClassName] = Model;
     this.models().push(Model);
     Model.shared = true;
     Model.app = this;
@@ -227,7 +230,7 @@ app.remoteObjects = function () {
   models.forEach(function (ModelCtor) {
     // only add shared models
     if(ModelCtor.shared && typeof ModelCtor.sharedCtor === 'function') {
-      result[ModelCtor.pluralModelName] = ModelCtor;
+      result[compat.getClassNameForRemoting(ModelCtor)] = ModelCtor;
     }
   });
     
@@ -835,7 +838,7 @@ app.listen = function(cb) {
   return server;
 }
 
-},{"../":1,"./loopback":7,"__browserify_process":36,"assert":21,"fs":20,"http":30,"loopback-datasource-juggler":62,"path":40,"strong-remoting":84,"strong-remoting/ext/swagger":83,"underscore.string":92}],3:[function(require,module,exports){
+},{"../":1,"./compat":4,"./loopback":9,"__browserify_process":38,"assert":23,"fs":22,"http":32,"loopback-datasource-juggler":64,"path":42,"strong-remoting":88,"strong-remoting/ext/swagger":87,"underscore.string":96}],3:[function(require,module,exports){
 module.exports = browserExpress;
 
 function browserExpress() {
@@ -845,6 +848,64 @@ function browserExpress() {
 browserExpress.errorHandler = {};
 
 },{}],4:[function(require,module,exports){
+var assert = require('assert');
+
+/**
+ * Compatibility layer allowing applications based on an older LoopBack version
+ * to work with newer versions with minimum changes involved.
+ *
+ * You should not use it unless migrating from an older version of LoopBack.
+ */
+
+var compat = exports;
+
+/**
+ * LoopBack versions pre-1.6 use plural model names when registering shared
+ * classes with strong-remoting. As the result, strong-remoting use method names
+ * like `Users.create` for the javascript methods like `User.create`.
+ * This has been fixed in v1.6, LoopBack consistently uses the singular
+ * form now.
+ *
+ * Turn this option on to enable the old behaviour.
+ *
+ *   - `app.remotes()` and `app.remoteObjects()` will be indexed using
+ *      plural names (Users instead of User).
+ *
+ *   - Remote hooks must use plural names for the class name, i.e
+ *     `Users.create` instead of `User.create`. This is transparently
+ *     handled by `Model.beforeRemote()` and `Model.afterRemote()`.
+ *
+ * @type {boolean}
+ * @deprecated Your application should not depend on the way how loopback models
+ *   and strong-remoting are wired together. It if does, you should update
+ *   it to use singular model names.
+ */
+
+compat.usePluralNamesForRemoting = false;
+
+/**
+ * Get the class name to use with strong-remoting.
+ * @param {function} Ctor Model class (constructor), e.g. `User`
+ * @return {string} Singular or plural name, depending on the value
+ *   of `compat.usePluralNamesForRemoting`
+ * @internal
+ */
+
+compat.getClassNameForRemoting = function(Ctor) {
+  assert(
+    typeof(Ctor) === 'function',
+    'compat.getClassNameForRemoting expects a constructor as the argument');
+
+  if (compat.usePluralNamesForRemoting) {
+    assert(Ctor.pluralModelName,
+      'Model must have a "pluralModelName" property in compat mode');
+    return Ctor.pluralModelName;
+  }
+
+  return Ctor.modelName;
+};
+
+},{"assert":23}],5:[function(require,module,exports){
 /**
  * Expose `Connector`.
  */
@@ -899,7 +960,7 @@ Connector._createJDBAdapter = function (jdbModule) {
 Connector.prototype._addCrudOperationsFromJDBAdapter = function (connector) {
   
 }
-},{"assert":21,"debug":57,"events":29,"util":55}],5:[function(require,module,exports){
+},{"assert":23,"debug":59,"events":31,"util":57}],6:[function(require,module,exports){
 var process=require("__browserify_process");/**
  * Dependencies.
  */
@@ -1060,7 +1121,7 @@ MailConnector.prototype.mailer =
 Mailer.mailer =
 Mailer.prototype.mailer = mailer;
 
-},{"__browserify_process":36,"assert":21,"debug":57,"nodemailer":20}],6:[function(require,module,exports){
+},{"__browserify_process":38,"assert":23,"debug":59,"nodemailer":22}],7:[function(require,module,exports){
 /**
  * Expose `Memory`.
  */
@@ -1100,7 +1161,217 @@ inherits(Memory, Connector);
  */
 
 Memory.initialize = JdbMemory.initialize;
-},{"./base-connector":4,"assert":21,"debug":57,"loopback-datasource-juggler/lib/connectors/memory":64,"util":55}],7:[function(require,module,exports){
+
+},{"./base-connector":5,"assert":23,"debug":59,"loopback-datasource-juggler/lib/connectors/memory":66,"util":57}],8:[function(require,module,exports){
+/*!
+ * Dependencies.
+ */
+
+var assert = require('assert')
+  , loopback = require('../loopback')
+  , debug = require('debug')
+  , path = require('path');
+
+/*!
+ * Export the ServerConnector class.
+ */
+
+module.exports = ServerConnector;
+
+/*!
+ * Create an instance of the connector with the given `settings`.
+ */
+
+function ServerConnector(settings) {
+  this.settings = settings;
+}
+
+ServerConnector.initialize = function(dataSource, callback) {
+  var connector = dataSource.connector = new ServerConnector(dataSource.settings);
+  connector.dataSource = dataSource;
+  dataSource.DataAccessObject = function() {}; // unused for this connector
+  var remoteModels = connector.settings.discover;
+  if(remoteModels) {
+    remoteModels.forEach(connector.buildModel.bind(connector));
+  }
+  callback();
+}
+
+ServerConnector.prototype.invoke = function(ctx, callback) {
+  var req = ctx.toRequest();
+  console.log(req);
+}
+
+ServerConnector.prototype.createRequest = function(method, args) {
+  var baseUrl = path.join(this.settings.base || '/');
+  var route = (method.routes && method.routes[0]) || {path: '/'};
+  var url = path.join(baseUrl, route.path);
+}
+
+ServerConnector.prototype.buildModel = function(remoteModel) {
+  var modelName = remoteModel.modelName;
+  var dataSource = this.dataSource;
+  var connector = this;
+
+  var Model = loopback.createModel(
+    modelName,
+    remoteModel.properties || {},
+    remoteModel.settings
+  );
+  
+console.log(remoteModel.settings);
+
+  Model.attachTo(dataSource);
+
+  if(!Model.defineMethod) {
+    Model.defineMethod = function defineMethod(method) {
+      var scope = method.fullName.indexOf('.prototype.') > -1
+        ? Model.prototype : Model;
+
+      scope[method.name] = function() {
+        console.log(method.name);
+        var callback = arguments[arguments.length - 1];
+        var ctx = new Context(
+          connector.settings.base,
+          remoteModel,
+          Model,
+          method,
+          arguments
+        );
+        if(typeof callback !== 'function') callback = undefined;
+        connector.invoke(ctx, callback);
+      };
+    }
+  }
+
+  remoteModel.methods.forEach(Model.defineMethod.bind(Model));
+}
+
+function Context(base, meta, model, method, args) {
+  this.base = base;
+  this.meta = meta;
+  this.model = model;
+  this.method = method;
+  this.args = this.mapArgs(args);
+}
+
+/**
+ * Build an http request object from the `context`.
+ * @return {Object} request
+ */
+
+Context.prototype.toRequest = function() {
+  return {
+    url: this.url(),
+    query: this.query(),
+    method: this.verb(),
+    body: this.body(),
+    headers: this.headers()
+  }
+}
+
+Context.prototype.url = function() {
+  var url = path.join(
+    this.base,
+    this.meta.baseRoute.path,
+    this.route().path
+  );
+
+  // replace url fragments with url params
+  return url;
+}
+
+Context.prototype.query = function() {
+  var accepts = this.method.accepts;
+  var queryParams;
+  var ctx = this;
+
+  if(accepts && accepts.length) {
+    accepts.forEach(function(param) {
+      var http = param.http || {};
+      var explicit = http.source === 'query';
+      var implicit = http.source !== 'body' && http.source !== 'url';
+      
+      if(explicit || implicit) {
+        queryParams = queryParams || {};
+        queryParams[param.arg] = ctx.args[param.arg];
+      }
+    });
+  }
+
+  return queryParams;
+}
+
+Context.prototype.route = function() {
+  var routes = this.method.routes;
+
+  return routes[0] || {path: '/', verb: 'GET'};
+}
+
+Context.prototype.verb = function() {
+  return this.route().verb.toUpperCase();
+}
+
+Context.prototype.body = function() {
+  var accepts = this.method.accepts;
+  var body;
+  var ctx = this;
+
+  if(accepts && accepts.length) {
+    accepts.forEach(function(param) {
+      var http = param.http || {};
+      var explicit = http.source === 'body';
+      
+      if(explicit) {
+        body = ctx.args[param.arg];
+      }
+    });
+  }
+
+  return body;
+}
+
+Context.prototype.headers = function() {
+  return {};
+}
+
+Context.prototype.mapArgs = function(args) {
+  var accepts = this.method.accepts || [];
+  var args = Array.prototype.slice.call(args);
+  var result = {};
+  var supportedSources = ['body', 'form', 'query', 'path'];
+
+  accepts.forEach(function(param) {
+    if(param.http && param.http.source) {
+      // skip explicit unknown sources
+      if(supportedSources.indexOf(param.http.source) === -1) return;
+    }
+
+    var val = args.shift();
+    var type = typeof val;
+    if(Array.isArray(val)) {
+      type = 'array';
+    }
+
+    // skip all functions
+    if(type === 'function') return;
+
+    switch(param.type) {
+      case 'any':
+      case type:
+        result[param.arg] = val;
+      break;
+      default:
+        // skip this param
+        args.unshift(val);
+      break;
+    }
+  });
+
+  return result;
+}
+
+},{"../loopback":9,"assert":23,"debug":59,"path":42}],9:[function(require,module,exports){
 var __dirname="/lib";/*!
  * Module dependencies.
  */
@@ -1121,7 +1392,6 @@ var express = require('express')
  * methods to create models and data sources. The module itself is a function
  * that creates loopback `app`. For example,
  *
- *
  * ```js
  * var loopback = require('loopback');
  * var app = loopback();
@@ -1129,6 +1399,18 @@ var express = require('express')
  */
 
 var loopback = exports = module.exports = createApplication;
+
+/**
+ * Is this a browser environment?
+ */
+
+loopback.isBrowser = typeof window !== 'undefined';
+
+/**
+ * Is this a server environment?
+ */
+
+loopback.isServer = !loopback.isBrowser;
 
 /**
  * Framework version.
@@ -1141,6 +1423,11 @@ loopback.version = require('../package.json').version;
  */
 
 loopback.mime = express.mime;
+
+/*!
+ * Compatibility layer, intentionally left undocumented.
+ */
+loopback.compat = require('./compat');
 
 /**
  * Create an loopback application.
@@ -1418,16 +1705,16 @@ var dataSourceTypes = {
   MAIL: 'mail'
 };
 
-loopback.Email.autoAttach = dataSourceTypes.MAIL;
 loopback.User.autoAttach = dataSourceTypes.DB;
-loopback.AccessToken.autoAttach = dataSourceTypes.DB;
 loopback.Role.autoAttach = dataSourceTypes.DB;
 loopback.RoleMapping.autoAttach = dataSourceTypes.DB;
+loopback.AccessToken.autoAttach = dataSourceTypes.DB;
+if(loopback.isServer) loopback.Email.autoAttach = dataSourceTypes.MAIL;
 loopback.ACL.autoAttach = dataSourceTypes.DB;
 loopback.Scope.autoAttach = dataSourceTypes.DB;
 loopback.Application.autoAttach = dataSourceTypes.DB;
 
-},{"../package.json":93,"./application":2,"./models/access-token":9,"./models/acl":10,"./models/application":11,"./models/change":12,"./models/email":14,"./models/model":15,"./models/role":16,"./models/user":17,"assert":21,"ejs":58,"events":29,"express":3,"fs":20,"inflection":61,"loopback-datasource-juggler":62,"path":40}],8:[function(require,module,exports){
+},{"../package.json":97,"./application":2,"./compat":4,"./models/access-token":11,"./models/acl":12,"./models/application":13,"./models/change":14,"./models/email":16,"./models/model":17,"./models/role":18,"./models/user":19,"assert":23,"ejs":60,"events":31,"express":3,"fs":22,"inflection":63,"loopback-datasource-juggler":64,"path":42}],10:[function(require,module,exports){
 var loopback = require('../loopback');
 var AccessToken = require('./access-token');
 var debug = require('debug')('loopback:security:access-context');
@@ -1679,7 +1966,7 @@ module.exports.AccessRequest = AccessRequest;
 
 
 
-},{"../loopback":7,"./access-token":9,"debug":57}],9:[function(require,module,exports){
+},{"../loopback":9,"./access-token":11,"debug":59}],11:[function(require,module,exports){
 var process=require("__browserify_process");/*!
  * Module Dependencies.
  */
@@ -1699,7 +1986,7 @@ var Model = require('../loopback').Model
  */
 
 var properties = {
-  id: {type: String, generated: true, id: 1},
+  id: {type: String, id: true},
   ttl: {type: Number, ttl: true, default: DEFAULT_TTL}, // time to live in seconds
   created: {type: Date, default: function() {
     return new Date();
@@ -1900,7 +2187,7 @@ function tokenIdForRequest(req, options) {
   return null;
 }
 
-},{"../loopback":7,"./acl":10,"./role":16,"__browserify_process":36,"assert":21,"crypto":24,"uid2":91}],10:[function(require,module,exports){
+},{"../loopback":9,"./acl":12,"./role":18,"__browserify_process":38,"assert":23,"crypto":26,"uid2":95}],12:[function(require,module,exports){
 var process=require("__browserify_process");/*!
  Schema ACL options
 
@@ -2359,7 +2646,7 @@ Scope.checkPermission = function (scope, model, property, accessType, callback) 
 module.exports.ACL = ACL;
 module.exports.Scope = Scope;
 
-},{"../loopback":7,"./access-context":8,"./role":16,"__browserify_process":36,"assert":21,"async":18,"debug":57}],11:[function(require,module,exports){
+},{"../loopback":9,"./access-context":10,"./role":18,"__browserify_process":38,"assert":23,"async":20,"debug":59}],13:[function(require,module,exports){
 var loopback = require('../loopback');
 var assert = require('assert');
 
@@ -2583,7 +2870,7 @@ Application.authenticate = function (appId, key, cb) {
 module.exports = Application;
 
 
-},{"../loopback":7,"assert":21,"crypto":24}],12:[function(require,module,exports){
+},{"../loopback":9,"assert":23,"crypto":26}],14:[function(require,module,exports){
 /**
  * Module Dependencies.
  */
@@ -3022,7 +3309,7 @@ Conflict.prototype.resolve = function(cb) {
   this.sourceChange.save(cb);
 }
 
-},{"../loopback":7,"./checkpoint":13,"assert":21,"async":18,"canonical-json":56,"crypto":24}],13:[function(require,module,exports){
+},{"../loopback":9,"./checkpoint":15,"assert":23,"async":20,"canonical-json":58,"crypto":26}],15:[function(require,module,exports){
 /**
  * Module Dependencies.
  */
@@ -3081,7 +3368,7 @@ Checkpoint.current = function(cb) {
 }
 
 
-},{"../loopback":7,"assert":21}],14:[function(require,module,exports){
+},{"../loopback":9,"assert":23}],16:[function(require,module,exports){
 /*!
  * Module Dependencies.
  */
@@ -3138,11 +3425,12 @@ var Email = module.exports = Model.extend('Email', properties);
 Email.prototype.send = function() {
   throw new Error('You must connect the Email Model to a Mail connector');
 }
-},{"../loopback":7}],15:[function(require,module,exports){
+},{"../loopback":9}],17:[function(require,module,exports){
 /*!
  * Module Dependencies.
  */
 var loopback = require('../loopback');
+var compat = require('../compat');
 var ModelBuilder = require('loopback-datasource-juggler').ModelBuilder;
 var modeler = new ModelBuilder();
 var async = require('async');
@@ -3274,7 +3562,8 @@ Model.setup = function () {
     var self = this;
     if(this.app) {
       var remotes = this.app.remotes();
-      remotes.before(self.pluralModelName + '.' + name, function (ctx, next) {
+      var className = compat.getClassNameForRemoting(self);
+      remotes.before(className + '.' + name, function (ctx, next) {
         fn(ctx, ctx.result, next);
       });
     } else {
@@ -3290,7 +3579,8 @@ Model.setup = function () {
     var self = this;
     if(this.app) {
       var remotes = this.app.remotes();
-      remotes.after(self.pluralModelName + '.' + name, function (ctx, next) {
+      var className = compat.getClassNameForRemoting(self);
+      remotes.after(className + '.' + name, function (ctx, next) {
         fn(ctx, ctx.result, next);
       });
     } else {
@@ -3724,7 +4014,7 @@ Model.enableChangeTracking = function() {
   }
 }
 
-},{"../loopback":7,"./access-token":9,"./acl":10,"./change":12,"assert":21,"async":18,"loopback-datasource-juggler":62}],16:[function(require,module,exports){
+},{"../compat":4,"../loopback":9,"./access-token":11,"./acl":12,"./change":14,"assert":23,"async":20,"loopback-datasource-juggler":64}],18:[function(require,module,exports){
 var process=require("__browserify_process");var loopback = require('../loopback');
 var debug = require('debug')('loopback:security:role');
 var assert = require('assert');
@@ -4182,7 +4472,7 @@ module.exports = {
 
 
 
-},{"../loopback":7,"./access-context":8,"__browserify_process":36,"assert":21,"async":18,"debug":57}],17:[function(require,module,exports){
+},{"../loopback":9,"./access-context":10,"__browserify_process":38,"assert":23,"async":20,"debug":59}],19:[function(require,module,exports){
 var __dirname="/lib/models";/**
  * Module Dependencies.
  */
@@ -4203,6 +4493,7 @@ var Model = require('../loopback').Model
   , ACL = require('./acl').ACL
   , assert = require('assert');
 
+var debug = require('debug')('loopback:user');
 /**
  * Default User properties.
  */
@@ -4312,10 +4603,15 @@ var User = module.exports = Model.extend('User', properties, options);
  * @param {AccessToken} token
  */
 
-User.login = function (credentials, fn) {
-  var UserCtor = this;
+User.login = function (credentials, include, fn) {
+  if (typeof include === 'function') {
+    fn = include;
+    include = undefined;
+  }
+
+  include = (include || '').toLowerCase();
+
   var query = {};
-  
   if(credentials.email) {
     query.email = credentials.email;
   } else if(credentials.username) {
@@ -4328,20 +4624,36 @@ User.login = function (credentials, fn) {
     var defaultError = new Error('login failed');
     
     if(err) {
+      debug('An error is reported from User.findOne: %j', err);
       fn(defaultError);
     } else if(user) {
       user.hasPassword(credentials.password, function(err, isMatch) {
         if(err) {
+          debug('An error is reported from User.hasPassword: %j', err);
           fn(defaultError);
         } else if(isMatch) {
           user.accessTokens.create({
             ttl: Math.min(credentials.ttl || User.settings.ttl, User.settings.maxTTL)
-          }, fn);
+          }, function(err, token) {
+            if (err) return fn(err);
+            if (include === 'user') {
+              // NOTE(bajtos) We can't set token.user here:
+              //  1. token.user already exists, it's a function injected by
+              //     "AccessToken belongsTo User" relation
+              //  2. ModelBaseClass.toJSON() ignores own properties, thus
+              //     the value won't be included in the HTTP response
+              // See also loopback#161 and loopback#162
+              token.__data.user = user;
+            }
+            fn(err, token);
+          });
         } else {
+          debug('The password is invalid for user %s', query.email || query.username);
           fn(defaultError);
         }
       });
     } else {
+      debug('No matching record is found for user %s', query.email || query.username);
       fn(defaultError);
     }
   });
@@ -4425,7 +4737,7 @@ User.prototype.verify = function (options, fn) {
                        options.protocol
                        + '://'
                        + options.host
-                       + (User.sharedCtor.http.path || '/' + User.pluralModelName)
+                       + User.http.path
                        + User.confirm.http.path;
   
 
@@ -4571,9 +4883,18 @@ User.setup = function () {
     UserModel.login,
     {
       accepts: [
-        {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}}
+        {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
+        {arg: 'include', type: 'string', http: {source: 'query' }, description:
+          'Related objects to include in the response. ' +
+            'See the description of return value for more details.'}
       ],
-      returns: {arg: 'accessToken', type: 'object', root: true},
+      returns: {
+        arg: 'accessToken', type: 'object', root: true, description:
+          'The response body contains properties of the AccessToken created on login.\n' +
+            'Depending on the value of `include` parameter, the body may contain ' +
+            'additional properties:\n\n' +
+            '  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n'
+      },
       http: {verb: 'post'}
     }
   );
@@ -4588,7 +4909,10 @@ User.setup = function () {
           var tokenID = accessToken && accessToken.id;
 
           return tokenID;
-        }}
+        }, description:
+          'Do not supply this argument, it is automatically extracted ' +
+            'from request headers.'
+        }
       ],
       http: {verb: 'all'}
     }
@@ -4644,7 +4968,7 @@ User.setup = function () {
 
 User.setup();
 
-},{"../loopback":7,"./access-token":9,"./acl":10,"./email":14,"./role":16,"assert":21,"bcryptjs":19,"crypto":24,"passport":20,"passport-local":22,"path":40}],18:[function(require,module,exports){
+},{"../loopback":9,"./access-token":11,"./acl":12,"./email":16,"./role":18,"assert":23,"bcryptjs":21,"crypto":26,"debug":59,"passport":22,"passport-local":24,"path":42}],20:[function(require,module,exports){
 var process=require("__browserify_process");/*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
@@ -4738,10 +5062,7 @@ var process=require("__browserify_process");/*global setImmediate: false, setTim
     else {
         async.nextTick = process.nextTick;
         if (typeof setImmediate !== 'undefined') {
-            async.setImmediate = function (fn) {
-              // not a direct alias for IE10 compatibility
-              setImmediate(fn);
-            };
+            async.setImmediate = setImmediate;
         }
         else {
             async.setImmediate = async.nextTick;
@@ -5604,7 +5925,7 @@ var process=require("__browserify_process");/*global setImmediate: false, setTim
 
 }());
 
-},{"__browserify_process":36}],19:[function(require,module,exports){
+},{"__browserify_process":38}],21:[function(require,module,exports){
 var process=require("__browserify_process");/*
  bcrypt.js (c) 2013 Daniel Wirtz <dcode@dcode.io>
  Released under the Apache License, Version 2.0
@@ -5647,9 +5968,9 @@ typeof b&&p(Error("Illegal 'callback': "+b));"number"==typeof a?m.genSalt(a,func
 a,b){"function"!=typeof b&&p(Error("Illegal 'callback': "+b));m.hash(c,a.substr(0,29),function(c,d){b(c,a===d)})};m.getRounds=function(c){"string"!=typeof c&&p(Error("Illegal type of 'hash': "+typeof c));return parseInt(c.split("$")[2],10)};m.getSalt=function(c){"string"!=typeof c&&p(Error("Illegal type of 'hash': "+typeof c));60!=c.length&&p(Error("Illegal hash length: "+c.length+" != 60"));return c.substring(0,29)};"undefined"!=typeof module&&module.exports?module.exports=m:"undefined"!=typeof define&&
 define.amd?define("bcrypt",function(){return m}):(n.dcodeIO||(n.dcodeIO={}),n.dcodeIO.bcrypt=m)})(this);
 
-},{"__browserify_process":36,"crypto":24}],20:[function(require,module,exports){
+},{"__browserify_process":38,"crypto":26}],22:[function(require,module,exports){
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -5992,9 +6313,9 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":55}],22:[function(require,module,exports){
-module.exports=require(20)
-},{}],23:[function(require,module,exports){
+},{"util/":57}],24:[function(require,module,exports){
+module.exports=require(22)
+},{}],25:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -6031,7 +6352,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":37}],24:[function(require,module,exports){
+},{"buffer":39}],26:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -6130,7 +6451,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":25,"./rng":26,"./sha":27,"./sha256":28,"buffer":37}],25:[function(require,module,exports){
+},{"./md5":27,"./rng":28,"./sha":29,"./sha256":30,"buffer":39}],27:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -6295,7 +6616,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":23}],26:[function(require,module,exports){
+},{"./helpers":25}],28:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -6328,7 +6649,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -6431,7 +6752,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":23}],28:[function(require,module,exports){
+},{"./helpers":25}],30:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -6512,7 +6833,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":23}],29:[function(require,module,exports){
+},{"./helpers":25}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6814,7 +7135,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -6891,7 +7212,7 @@ var xhrHttp = (function () {
     }
 })();
 
-},{"./lib/request":31,"events":29}],31:[function(require,module,exports){
+},{"./lib/request":33,"events":31}],33:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -7062,7 +7383,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":32,"Base64":33,"inherits":34,"stream":46}],32:[function(require,module,exports){
+},{"./response":34,"Base64":35,"inherits":36,"stream":48}],34:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -7184,7 +7505,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":46,"util":55}],33:[function(require,module,exports){
+},{"stream":48,"util":57}],35:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -7246,7 +7567,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -7271,7 +7592,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"PcZj9L":[function(require,module,exports){
 var TA = require('typedarray')
 var xDataView = typeof DataView === 'undefined'
@@ -9116,7 +9437,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 },{}]},{},[])
 ;;module.exports=require("native-buffer-browserify").Buffer
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -9171,7 +9492,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var base64 = require('base64-js')
 var TA = require('typedarray')
 
@@ -10326,7 +10647,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":38,"typedarray":39}],38:[function(require,module,exports){
+},{"base64-js":40,"typedarray":41}],40:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -10453,7 +10774,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 }());
 
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var undefined = (void 0); // Paranoia
 
 // Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
@@ -11085,7 +11406,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 
 }());
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11311,7 +11632,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-},{"__browserify_process":36}],41:[function(require,module,exports){
+},{"__browserify_process":38}],43:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*! http://mths.be/punycode v1.2.3 by @mathias */
 ;(function(root) {
 
@@ -11821,7 +12142,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 }(this));
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11907,7 +12228,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11994,13 +12315,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":42,"./encode":43}],45:[function(require,module,exports){
+},{"./decode":44,"./encode":45}],47:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12074,7 +12395,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":49,"./writable.js":51,"inherits":34,"process/browser.js":47}],46:[function(require,module,exports){
+},{"./readable.js":51,"./writable.js":53,"inherits":36,"process/browser.js":49}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12203,9 +12524,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":45,"./passthrough.js":48,"./readable.js":49,"./transform.js":50,"./writable.js":51,"events":29,"inherits":34}],47:[function(require,module,exports){
-module.exports=require(36)
-},{}],48:[function(require,module,exports){
+},{"./duplex.js":47,"./passthrough.js":50,"./readable.js":51,"./transform.js":52,"./writable.js":53,"events":31,"inherits":36}],49:[function(require,module,exports){
+module.exports=require(38)
+},{}],50:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12248,7 +12569,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":50,"inherits":34}],49:[function(require,module,exports){
+},{"./transform.js":52,"inherits":36}],51:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13183,7 +13504,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":46,"__browserify_process":36,"buffer":37,"events":29,"inherits":34,"process/browser.js":47,"string_decoder":52}],50:[function(require,module,exports){
+},{"./index.js":48,"__browserify_process":38,"buffer":39,"events":31,"inherits":36,"process/browser.js":49,"string_decoder":54}],52:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13389,7 +13710,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":45,"inherits":34}],51:[function(require,module,exports){
+},{"./duplex.js":47,"inherits":36}],53:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13777,7 +14098,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":46,"buffer":37,"inherits":34,"process/browser.js":47}],52:[function(require,module,exports){
+},{"./index.js":48,"buffer":39,"inherits":36,"process/browser.js":49}],54:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13970,7 +14291,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":37}],53:[function(require,module,exports){
+},{"buffer":39}],55:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -14603,14 +14924,14 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":41,"querystring":44}],54:[function(require,module,exports){
+},{"punycode":43,"querystring":46}],56:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],55:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15198,7 +15519,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":54,"__browserify_process":36,"inherits":34}],56:[function(require,module,exports){
+},{"./support/isBuffer":56,"__browserify_process":38,"inherits":36}],58:[function(require,module,exports){
 
 /*
 The original version of this code is taken from Douglas Crockford's json2.js:
@@ -15420,7 +15741,7 @@ var stringify = function (value, replacer, space) {
 module.exports = stringify
 
 
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -15559,7 +15880,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 
 /*!
  * EJS
@@ -15918,7 +16239,7 @@ if (require.extensions) {
   });
 }
 
-},{"./filters":59,"./utils":60,"fs":20,"path":40}],59:[function(require,module,exports){
+},{"./filters":61,"./utils":62,"fs":22,"path":42}],61:[function(require,module,exports){
 /*!
  * EJS - Filters
  * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
@@ -16121,7 +16442,7 @@ exports.json = function(obj){
   return JSON.stringify(obj);
 };
 
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 
 /*!
  * EJS
@@ -16147,7 +16468,7 @@ exports.escape = function(html){
 };
  
 
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /*!
  * inflection
  * Copyright(c) 2011 Ben Lin <ben@dreamerslab.com>
@@ -16775,7 +17096,7 @@ exports.escape = function(html){
   module.exports = inflector;
 })( this );
 
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 var __dirname="/node_modules/loopback-datasource-juggler";var fs = require('fs');
 
 exports.ModelBuilder = exports.LDL = require('./lib/model-builder.js').ModelBuilder;
@@ -16800,8 +17121,8 @@ exports.__defineGetter__('test', function () {
     return require(commonTest);
 });
 
-},{"./lib/connector.js":63,"./lib/datasource.js":66,"./lib/model-builder.js":73,"./lib/model.js":75,"./lib/validations.js":80,"fs":20}],63:[function(require,module,exports){
-module.exports = Connector;
+},{"./lib/connector.js":65,"./lib/datasource.js":68,"./lib/model-builder.js":75,"./lib/model.js":77,"./lib/validations.js":82,"fs":22}],65:[function(require,module,exports){
+var process=require("__browserify_process");module.exports = Connector;
 
 /**
  * Base class for LooopBack connector. This is more a collection of useful
@@ -16809,9 +17130,9 @@ module.exports = Connector;
  * @constructor
  */
 function Connector(name, settings) {
-    this._models = {};
-    this.name = name;
-    this.settings = settings || {};
+  this._models = {};
+  this.name = name;
+  this.settings = settings || {};
 }
 
 /**
@@ -16821,27 +17142,62 @@ function Connector(name, settings) {
 Connector.prototype.relational = false;
 
 /**
+ * Get types associated with the connector
+ * @returns {String[]} The types for the connector
+ */
+Connector.prototype.getTypes = function() {
+  return ['db', 'nosql'];
+};
+
+/**
+ * Get the default data type for ID
+ * @returns {Function} The default type for ID
+ */
+Connector.prototype.getDefaultIdType = function() {
+  return String;
+};
+
+/**
+ * Get the metadata for the connector
+ * @returns {Object} The metadata object
+ * @property {String} type The type for the backend
+ * @property {Function} defaultIdType The default id type
+ * @property {Boolean} [isRelational] If the connector represents a relational database
+ * @property {Object} schemaForSettings The schema for settings object
+ */
+Connector.prototype.getMedadata = function () {
+  if (!this._metadata) {
+    this._metadata = {
+      types: this.getTypes(),
+      defaultIdType: this.getDefaultIdType(),
+      isRelational: this.isRelational || (this.getTypes().indexOf('rdbms') !== -1),
+      schemaForSettings: {}
+    };
+  }
+  return this._metadata;
+};
+
+/**
  * Execute a command with given parameters
  * @param {String} command The command such as SQL
  * @param {Object[]} [params] An array of parameters
  * @param {Function} [callback] The callback function
  */
 Connector.prototype.execute = function (command, params, callback) {
-    throw new Error('query method should be declared in connector');
+  throw new Error('query method should be declared in connector');
 };
-
 
 /**
  * Look up the data source by model name
  * @param {String} model The model name
  * @returns {DataSource} The data source
  */
-Connector.prototype.getDataSource = function(model) {
-    var m = this._models[model];
-    if(!m) {
-        console.trace('Model not found: ' + model);
-    }
-    return m && m.model.dataSource;
+Connector.prototype.getDataSource = function (model) {
+  var m = this._models[model];
+  if (!m) {
+    console.trace('Model not found: ' + model);
+  }
+  return m && m.model.dataSource;
 };
 
 /**
@@ -16850,7 +17206,7 @@ Connector.prototype.getDataSource = function(model) {
  * @returns {String} The id property name
  */
 Connector.prototype.idName = function (model) {
-    return this.getDataSource(model).idName(model);
+  return this.getDataSource(model).idName(model);
 };
 
 /**
@@ -16859,9 +17215,8 @@ Connector.prototype.idName = function (model) {
  * @returns {[String]} The id property names
  */
 Connector.prototype.idNames = function (model) {
-    return this.getDataSource(model).idNames(model);
+  return this.getDataSource(model).idNames(model);
 };
-
 
 /**
  * Get the id index (sequence number, starting from 1)
@@ -16870,11 +17225,11 @@ Connector.prototype.idNames = function (model) {
  * @returns {Number} The id index, undefined if the property is not part of the primary key
  */
 Connector.prototype.id = function (model, prop) {
-    var p = this._models[model].properties[prop];
-    if(!p) {
-        console.trace('Property not found: ' + model +'.' + prop);
-    }
-    return p.id;
+  var p = this._models[model].properties[prop];
+  if (!p) {
+    console.trace('Property not found: ' + model + '.' + prop);
+  }
+  return p.id;
 };
 
 /**
@@ -16882,10 +17237,10 @@ Connector.prototype.id = function (model, prop) {
  * @param {Object} modelDefinition The model definition
  */
 Connector.prototype.define = function (modelDefinition) {
-    if (!modelDefinition.settings) {
-        modelDefinition.settings = {};
-    }
-    this._models[modelDefinition.model.modelName] = modelDefinition;
+  if (!modelDefinition.settings) {
+    modelDefinition.settings = {};
+  }
+  this._models[modelDefinition.model.modelName] = modelDefinition;
 };
 
 /**
@@ -16895,14 +17250,15 @@ Connector.prototype.define = function (modelDefinition) {
  * @param {Object} propertyDefinition The object for property metadata
  */
 Connector.prototype.defineProperty = function (model, propertyName, propertyDefinition) {
-    this._models[model].properties[propertyName] = propertyDefinition;
+  this._models[model].properties[propertyName] = propertyDefinition;
 };
 
 /**
  * Disconnect from the connector
  */
 Connector.prototype.disconnect = function disconnect(cb) {
-    // NO-OP
+  // NO-OP
+  cb && process.nextTick(cb);
 };
 
 /**
@@ -16912,8 +17268,8 @@ Connector.prototype.disconnect = function disconnect(cb) {
  * @returns {*} The id value
  *
  */
-Connector.prototype.getIdValue = function(model, data) {
-    return data && data[this.idName(model)];
+Connector.prototype.getIdValue = function (model, data) {
+  return data && data[this.idName(model)];
 };
 
 /**
@@ -16923,21 +17279,27 @@ Connector.prototype.getIdValue = function(model, data) {
  * @param {*} value The id value
  *
  */
-Connector.prototype.setIdValue = function(model, data, value) {
-    if(data) {
-        data[this.idName(model)] = value;
-    }
+Connector.prototype.setIdValue = function (model, data, value) {
+  if (data) {
+    data[this.idName(model)] = value;
+  }
+};
+
+Connector.prototype.getType = function () {
+  return this.type;
 };
 
 
 
 
 
-},{}],64:[function(require,module,exports){
+},{"__browserify_process":38}],66:[function(require,module,exports){
 var process=require("__browserify_process");var util = require('util');
 var Connector = require('../connector');
 var geo = require('../geo');
 var utils = require('../utils');
+var fs = require('fs');
+var async = require('async');
 
 /**
  * Initialize the Oracle connector against the given data source
@@ -16946,317 +17308,385 @@ var utils = require('../utils');
  * @param {Function} [callback] The callback function
  */
 exports.initialize = function initializeDataSource(dataSource, callback) {
-    dataSource.connector = new Memory();
-    dataSource.connector.connect(callback);
+  dataSource.connector = new Memory(null, dataSource.settings);
+  dataSource.connector.connect(callback);
 };
 
 exports.Memory = Memory;
 
-function Memory(m) {
-    if (m) {
-        this.isTransaction = true;
-        this.cache = m.cache;
-        this.ids = m.ids;
-        this.constructor.super_.call(this, 'memory');
-        this._models = m._models;
-    } else {
-        this.isTransaction = false;
-        this.cache = {};
-        this.ids = {};
-        this.constructor.super_.call(this, 'memory');
-    }
+function Memory(m, settings) {
+  if (m instanceof Memory) {
+    this.isTransaction = true;
+    this.cache = m.cache;
+    this.ids = m.ids;
+    this.constructor.super_.call(this, 'memory', settings);
+    this._models = m._models;
+  } else {
+    this.isTransaction = false;
+    this.cache = {};
+    this.ids = {};
+    this.constructor.super_.call(this, 'memory', settings);
+  }
 }
 
 util.inherits(Memory, Connector);
 
-Memory.prototype.connect = function(callback) {
-    if (this.isTransaction) {
-        this.onTransactionExec = callback;
-    } else {
-        process.nextTick(callback);
+Memory.prototype.getDefaultIdType = function() {
+  return Number;
+};
+
+Memory.prototype.getTypes = function() {
+  return ['db', 'nosql', 'memory'];
+};
+
+Memory.prototype.connect = function (callback) {
+  if (this.isTransaction) {
+    this.onTransactionExec = callback;
+  } else {
+    this.loadFromFile(callback);
+  }
+};
+
+Memory.prototype.loadFromFile = function(callback) {
+  var self = this;
+  if (self.settings.file) {
+    fs.readFile(self.settings.file, {encoding: 'utf8', flag: 'r'}, function (err, data) {
+      if (err && err.code !== 'ENOENT') {
+        callback && callback(err);
+      } else {
+        if (data) {
+          data = JSON.parse(data.toString());
+          self.ids = data.ids || {};
+          self.cache = data.models || {};
+        } else {
+          if(!self.cache) {
+            self.ids = {};
+            self.cache = {};
+          }
+        }
+        callback && callback();
+      }
+    });
+  } else {
+    process.nextTick(callback);
+  }
+};
+
+/*!
+ * Flush the cache into the json file if necessary
+ * @param {Function} callback
+ */
+Memory.prototype.saveToFile = function (result, callback) {
+  var self = this;
+  if (this.settings.file) {
+    if(!self.writeQueue) {
+      // Create a queue for writes
+      self.writeQueue = async.queue(function (task, cb) {
+        // Flush out the models/ids
+        var data = JSON.stringify({
+          ids: self.ids,
+          models: self.cache
+        }, null, '  ');
+
+        fs.writeFile(self.settings.file, data, function (err) {
+          cb(err);
+          task.callback && task.callback(err, task.data);
+        });
+      }, 1);
     }
+    // Enqueue the write
+    self.writeQueue.push({
+      data: result,
+      callback: callback
+    });
+  } else {
+    process.nextTick(function () {
+      callback && callback(null, result);
+    });
+  }
 };
 
 Memory.prototype.define = function defineModel(definition) {
-    this.constructor.super_.prototype.define.apply(this, [].slice.call(arguments));
-    var m = definition.model.modelName;
+  this.constructor.super_.prototype.define.apply(this, [].slice.call(arguments));
+  var m = definition.model.modelName;
+  if(!this.cache[m]) {
     this.cache[m] = {};
     this.ids[m] = 1;
+  }
 };
 
 Memory.prototype.create = function create(model, data, callback) {
-    // FIXME: [rfeng] We need to generate unique ids based on the id type
-    // FIXME: [rfeng] We don't support composite ids yet
-    var currentId = this.ids[model];
-    if(currentId === undefined) {
-        // First time
-        this.ids[model] = 1;
-        currentId = 1;
-    }
-    var id = this.getIdValue(model, data) || currentId;
-    if(id > currentId) {
-        // If the id is passed in and the value is greater than the current id
-        currentId = id;
-    }
-    this.ids[model] = Number(currentId) + 1;
+  // FIXME: [rfeng] We need to generate unique ids based on the id type
+  // FIXME: [rfeng] We don't support composite ids yet
+  var currentId = this.ids[model];
+  if (currentId === undefined) {
+    // First time
+    this.ids[model] = 1;
+    currentId = 1;
+  }
+  var id = this.getIdValue(model, data) || currentId;
+  if (id > currentId) {
+    // If the id is passed in and the value is greater than the current id
+    currentId = id;
+  }
+  this.ids[model] = Number(currentId) + 1;
 
-    var props = this._models[model].properties;
-    var idName = this.idName(model);
-    id = (props[idName] && props[idName].type && props[idName].type(id)) || id;
-    this.setIdValue(model, data, id);
-    this.cache[model][id] = JSON.stringify(data);
-    process.nextTick(function() {
-        callback(null, id);
-    });
+  var props = this._models[model].properties;
+  var idName = this.idName(model);
+  id = (props[idName] && props[idName].type && props[idName].type(id)) || id;
+  this.setIdValue(model, data, id);
+  if(!this.cache[model]) {
+    this.cache[model] = {};
+  }
+  this.cache[model][id] = JSON.stringify(data);
+  this.saveToFile(id, callback);
 };
 
 Memory.prototype.updateOrCreate = function (model, data, callback) {
-    var self = this;
-    this.exists(model, self.getIdValue(model, data), function (err, exists) {
-        if (exists) {
-            self.save(model, data, callback);
-        } else {
-            self.create(model, data, function (err, id) {
-                self.setIdValue(model, data, id);
-                callback(err, data);
-            });
-        }
-    });
+  var self = this;
+  this.exists(model, self.getIdValue(model, data), function (err, exists) {
+    if (exists) {
+      self.save(model, data, callback);
+    } else {
+      self.create(model, data, function (err, id) {
+        self.setIdValue(model, data, id);
+        callback(err, data);
+      });
+    }
+  });
 };
 
 Memory.prototype.save = function save(model, data, callback) {
-    this.cache[model][this.getIdValue(model, data)] = JSON.stringify(data);
-    process.nextTick(function () {
-        callback(null, data);
-    });
+  this.cache[model][this.getIdValue(model, data)] = JSON.stringify(data);
+  this.saveToFile(data, callback);
 };
 
 Memory.prototype.exists = function exists(model, id, callback) {
-    process.nextTick(function () {
-        callback(null, this.cache[model] && this.cache[model].hasOwnProperty(id));
-    }.bind(this));
+  process.nextTick(function () {
+    callback(null, this.cache[model] && this.cache[model].hasOwnProperty(id));
+  }.bind(this));
 };
 
 Memory.prototype.find = function find(model, id, callback) {
-    var self = this;
-    process.nextTick(function () {
-        callback(null, id in this.cache[model] && this.fromDb(model, this.cache[model][id]));
-    }.bind(this));
+  var self = this;
+  process.nextTick(function () {
+    callback(null, id in this.cache[model] && this.fromDb(model, this.cache[model][id]));
+  }.bind(this));
 };
 
 Memory.prototype.destroy = function destroy(model, id, callback) {
-    delete this.cache[model][id];
-    process.nextTick(callback);
+  delete this.cache[model][id];
+  this.saveToFile(null, callback);
 };
 
-Memory.prototype.fromDb = function(model, data) {
-    if (!data) return null;
-    data = JSON.parse(data);
-    var props = this._models[model].properties;
-    for(var key in data) {
-        var val = data[key];
-        if (val === undefined || val === null) {
-            continue;
-        }
-        if (props[key]) {
-            switch(props[key].type.name) {
-                case 'Date':
-                    val = new Date(val.toString().replace(/GMT.*$/, 'GMT'));
-                    break;
-                case 'Boolean':
-                    val = Boolean(val);
-                    break;
-                case 'Number':
-                    val = Number(val);
-                    break;
-            }
-        }
-        data[key] = val;
+Memory.prototype.fromDb = function (model, data) {
+  if (!data) return null;
+  data = JSON.parse(data);
+  var props = this._models[model].properties;
+  for (var key in data) {
+    var val = data[key];
+    if (val === undefined || val === null) {
+      continue;
     }
-    return data;
+    if (props[key]) {
+      switch (props[key].type.name) {
+        case 'Date':
+          val = new Date(val.toString().replace(/GMT.*$/, 'GMT'));
+          break;
+        case 'Boolean':
+          val = Boolean(val);
+          break;
+        case 'Number':
+          val = Number(val);
+          break;
+      }
+    }
+    data[key] = val;
+  }
+  return data;
 };
 
 Memory.prototype.all = function all(model, filter, callback) {
-    var self = this;
-    var nodes = Object.keys(this.cache[model]).map(function (key) {
-        return this.fromDb(model, this.cache[model][key]);
-    }.bind(this));
+  var self = this;
+  var nodes = Object.keys(this.cache[model]).map(function (key) {
+    return this.fromDb(model, this.cache[model][key]);
+  }.bind(this));
 
-    if (filter) {
-        // do we need some sorting?
-        if (filter.order) {
-            var orders = filter.order;
-            if (typeof filter.order === "string") {
-                orders = [filter.order];
-            }
-            orders.forEach(function (key, i) {
-                var reverse = 1;
-                var m = key.match(/\s+(A|DE)SC$/i);
-                if (m) {
-                    key = key.replace(/\s+(A|DE)SC/i, '');
-                    if (m[1].toLowerCase() === 'de') reverse = -1;
-                }
-                orders[i] = {"key": key, "reverse": reverse};
-            });
-            nodes = nodes.sort(sorting.bind(orders));
+  if (filter) {
+    // do we need some sorting?
+    if (filter.order) {
+      var orders = filter.order;
+      if (typeof filter.order === "string") {
+        orders = [filter.order];
+      }
+      orders.forEach(function (key, i) {
+        var reverse = 1;
+        var m = key.match(/\s+(A|DE)SC$/i);
+        if (m) {
+          key = key.replace(/\s+(A|DE)SC/i, '');
+          if (m[1].toLowerCase() === 'de') reverse = -1;
         }
-        
-        var nearFilter = geo.nearFilter(filter.where);
-        
-        // geo sorting
-        if(nearFilter) {
-            nodes = geo.filter(nodes, nearFilter);
-        }
-        
-        // do we need some filtration?
-        if (filter.where) {
-            nodes = nodes ? nodes.filter(applyFilter(filter)) : nodes;
-        }
-        
-        // field selection
-        if(filter.fields) {
-            nodes = nodes.map(utils.selectFields(filter.fields));
-        }
-
-        // limit/skip
-        filter.skip = filter.skip || 0;
-        filter.limit = filter.limit || nodes.length;
-        nodes = nodes.slice(filter.skip, filter.skip + filter.limit);
+        orders[i] = {"key": key, "reverse": reverse};
+      });
+      nodes = nodes.sort(sorting.bind(orders));
     }
 
-    process.nextTick(function () {
-        if (filter && filter.include) {
-            self._models[model].model.include(nodes, filter.include, callback);
-        } else {
-            callback(null, nodes);
-        }
-    });
+    var nearFilter = geo.nearFilter(filter.where);
 
-    function sorting(a, b) {
-        for (var i=0, l=this.length; i<l; i++) {
-            if (a[this[i].key] > b[this[i].key]) {
-                return 1*this[i].reverse;
-            } else  if (a[this[i].key] < b[this[i].key]) {
-                return -1*this[i].reverse;
-            }
-        }
-        return 0;
+    // geo sorting
+    if (nearFilter) {
+      nodes = geo.filter(nodes, nearFilter);
     }
+
+    // do we need some filtration?
+    if (filter.where) {
+      nodes = nodes ? nodes.filter(applyFilter(filter)) : nodes;
+    }
+
+    // field selection
+    if (filter.fields) {
+      nodes = nodes.map(utils.selectFields(filter.fields));
+    }
+
+    // limit/skip
+    filter.skip = filter.skip || 0;
+    filter.limit = filter.limit || nodes.length;
+    nodes = nodes.slice(filter.skip, filter.skip + filter.limit);
+  }
+
+  process.nextTick(function () {
+    if (filter && filter.include) {
+      self._models[model].model.include(nodes, filter.include, callback);
+    } else {
+      callback(null, nodes);
+    }
+  });
+
+  function sorting(a, b) {
+    for (var i = 0, l = this.length; i < l; i++) {
+      if (a[this[i].key] > b[this[i].key]) {
+        return 1 * this[i].reverse;
+      } else if (a[this[i].key] < b[this[i].key]) {
+        return -1 * this[i].reverse;
+      }
+    }
+    return 0;
+  }
 };
 
 function applyFilter(filter) {
-    if (typeof filter.where === 'function') {
-        return filter.where;
-    }
-    var keys = Object.keys(filter.where);
-    return function (obj) {
-        var pass = true;
-        keys.forEach(function (key) {
-            if (!test(filter.where[key], obj && obj[key])) {
-                pass = false;
-            }
-        });
-        return pass;
-    }
+  if (typeof filter.where === 'function') {
+    return filter.where;
+  }
+  var keys = Object.keys(filter.where);
+  return function (obj) {
+    var pass = true;
+    keys.forEach(function (key) {
+      if (!test(filter.where[key], obj && obj[key])) {
+        pass = false;
+      }
+    });
+    return pass;
+  }
 
-    function test(example, value) {
-        if (typeof value === 'string' && example && example.constructor.name === 'RegExp') {
-            return value.match(example);
-        }
-        if (typeof example === 'undefined') return undefined;
-        if (typeof value === 'undefined') return undefined;
-        if (typeof example === 'object') {
-            // ignore geo near filter
-            if(example.near) return true;
-            
-            if (example.inq) {
-                if (!value) return false;
-                for (var i = 0; i < example.inq.length; i += 1) {
-                    if (example.inq[i] == value) return true;
-                }
-                return false;
-            }
-            
-            if(isNum(example.gt) && example.gt < value) return true;
-            if(isNum(example.gte) && example.gte <= value) return true;
-            if(isNum(example.lt) && example.lt > value) return true;
-            if(isNum(example.lte) && example.lte >= value) return true;
-        }
-        // not strict equality
-        return (example !== null ? example.toString() : example) == (value !== null ? value.toString() : value);
+  function test(example, value) {
+    if (typeof value === 'string' && example && example.constructor.name === 'RegExp') {
+      return value.match(example);
     }
-    
-    function isNum(n) {
-        return typeof n === 'number';
+    if (typeof example === 'undefined') return undefined;
+    if (typeof value === 'undefined') return undefined;
+    if (typeof example === 'object') {
+      // ignore geo near filter
+      if (example.near) return true;
+
+      if (example.inq) {
+        if (!value) return false;
+        for (var i = 0; i < example.inq.length; i += 1) {
+          if (example.inq[i] == value) return true;
+        }
+        return false;
+      }
+
+      if (isNum(example.gt) && example.gt < value) return true;
+      if (isNum(example.gte) && example.gte <= value) return true;
+      if (isNum(example.lt) && example.lt > value) return true;
+      if (isNum(example.lte) && example.lte >= value) return true;
     }
+    // not strict equality
+    return (example !== null ? example.toString() : example) == (value !== null ? value.toString() : value);
+  }
+
+  function isNum(n) {
+    return typeof n === 'number';
+  }
 }
 
 Memory.prototype.destroyAll = function destroyAll(model, where, callback) {
-    if(!callback && 'function' === typeof where) {
-        callback = where;
-        where = undefined;
+  if (!callback && 'function' === typeof where) {
+    callback = where;
+    where = undefined;
+  }
+  var cache = this.cache[model];
+  var filter = null;
+  if (where) {
+    filter = applyFilter({where: where});
+  }
+  Object.keys(cache).forEach(function (id) {
+    if (!filter || filter(this.fromDb(model, cache[id]))) {
+      delete cache[id];
     }
-    var cache = this.cache[model];
-    var filter = null;
-    if (where) {
-        filter = applyFilter({where: where});
-    }
-    Object.keys(cache).forEach(function (id) {
-        if(!filter || filter(this.fromDb(model, cache[id]))) {
-            delete cache[id];
-        }
-    }.bind(this));
-    if(!where) {
-        this.cache[model] = {};
-    }
-    process.nextTick(callback);
+  }.bind(this));
+  if (!where) {
+    this.cache[model] = {};
+  }
+  this.saveToFile(null, callback);
 };
 
 Memory.prototype.count = function count(model, callback, where) {
-    var cache = this.cache[model];
-    var data = Object.keys(cache);
-    if (where) {
-        var filter = {where: where};
-        data = data.map(function (id) {
-          return this.fromDb(model, cache[id]);
-        }.bind(this));
-        data = data.filter(applyFilter(filter));
-    }
-    process.nextTick(function () {
-        callback(null, data.length);
-    });
+  var cache = this.cache[model];
+  var data = Object.keys(cache);
+  if (where) {
+    var filter = {where: where};
+    data = data.map(function (id) {
+      return this.fromDb(model, cache[id]);
+    }.bind(this));
+    data = data.filter(applyFilter(filter));
+  }
+  process.nextTick(function () {
+    callback(null, data.length);
+  });
 };
 
 Memory.prototype.updateAttributes = function updateAttributes(model, id, data, cb) {
-    if(!id) {
-      var err = new Error('You must provide an id when updating attributes!');
-      if(cb) {
-        return cb(err);
-      } else {
-        throw err;
-      }
-    }
-  
-    this.setIdValue(model, data, id);
-    
-    var cachedModels = this.cache[model];
-    var modelAsString = cachedModels && this.cache[model][id];
-    var modelData = modelAsString && JSON.parse(modelAsString);
-    
-    if(modelData) {
-      this.save(model, merge(modelData, data), cb);
+  if (!id) {
+    var err = new Error('You must provide an id when updating attributes!');
+    if (cb) {
+      return cb(err);
     } else {
-      cb(new Error('Could not update attributes. Object with id ' + id + ' does not exist!'));
+      throw err;
     }
+  }
+
+  this.setIdValue(model, data, id);
+
+  var cachedModels = this.cache[model];
+  var modelAsString = cachedModels && this.cache[model][id];
+  var modelData = modelAsString && JSON.parse(modelAsString);
+
+  if (modelData) {
+    this.save(model, merge(modelData, data), cb);
+  } else {
+    cb(new Error('Could not update attributes. Object with id ' + id + ' does not exist!'));
+  }
 };
 
 Memory.prototype.transaction = function () {
-    return new Memory(this);
+  return new Memory(this);
 };
 
-Memory.prototype.exec = function(callback) {
-    this.onTransactionExec();
-    setTimeout(callback, 50);
+Memory.prototype.exec = function (callback) {
+  this.onTransactionExec();
+  setTimeout(callback, 50);
 };
 
 Memory.prototype.buildNearFilter = function (filter) {
@@ -17264,13 +17694,13 @@ Memory.prototype.buildNearFilter = function (filter) {
 }
 
 function merge(base, update) {
-    if (!base) return update;
-    Object.keys(update).forEach(function (key) {
-        base[key] = update[key];
-    });
-    return base;
+  if (!base) return update;
+  Object.keys(update).forEach(function (key) {
+    base[key] = update[key];
+  });
+  return base;
 }
-},{"../connector":63,"../geo":67,"../utils":79,"__browserify_process":36,"util":55}],65:[function(require,module,exports){
+},{"../connector":65,"../geo":69,"../utils":81,"__browserify_process":38,"async":83,"fs":22,"util":57}],67:[function(require,module,exports){
 /**
  * Module exports class Model
  */
@@ -17292,7 +17722,6 @@ var utils = require('./utils');
 var fieldsToArray = utils.fieldsToArray;
 var removeUndefined = utils.removeUndefined;
 
-
 /**
  * DAO class - base class for all persist objects
  * provides **common API** to access any database connector.
@@ -17305,44 +17734,44 @@ var removeUndefined = utils.removeUndefined;
  * @param {Object} data - initial object data
  */
 function DataAccessObject() {
-    if(DataAccessObject._mixins) {
-        var self = this;
-        var args = arguments;
-        DataAccessObject._mixins.forEach(function(m) {
-            m.call(self, args);
-        });
-    }
+  if (DataAccessObject._mixins) {
+    var self = this;
+    var args = arguments;
+    DataAccessObject._mixins.forEach(function (m) {
+      m.call(self, args);
+    });
+  }
 }
 
 function idName(m) {
-    return m.getDataSource().idName 
+  return m.getDataSource().idName
     ? m.getDataSource().idName(m.modelName) : 'id';
 }
 
 function getIdValue(m, data) {
-    return data && data[m.getDataSource().idName(m.modelName)];
+  return data && data[m.getDataSource().idName(m.modelName)];
 }
 
 function setIdValue(m, data, value) {
-    if(data) {
-        data[idName(m)] = value;
-    }
+  if (data) {
+    data[idName(m)] = value;
+  }
 }
 
 DataAccessObject._forDB = function (data) {
-    if(!(this.getDataSource().isRelational && this.getDataSource().isRelational())) {
-        return data;
+  if (!(this.getDataSource().isRelational && this.getDataSource().isRelational())) {
+    return data;
+  }
+  var res = {};
+  for (var propName in data) {
+    var type = this.getPropertyType(propName);
+    if (type === 'JSON' || type === 'Any' || type === 'Object' || data[propName] instanceof Array) {
+      res[propName] = JSON.stringify(data[propName]);
+    } else {
+      res[propName] = data[propName];
     }
-    var res = {};
-    for(var propName in data) {
-        var type = this.getPropertyType(propName);
-        if (type === 'JSON' || type === 'Any' || type === 'Object' || data[propName] instanceof Array) {
-            res[propName] = JSON.stringify(data[propName]);
-        } else {
-            res[propName] = data[propName];
-        }
-    }
-    return res;
+  }
+  return res;
 };
 
 /**
@@ -17356,101 +17785,103 @@ DataAccessObject._forDB = function (data) {
  *   - instance (null or Model)
  */
 DataAccessObject.create = function (data, callback) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    var Model = this;
-    var modelName = Model.modelName;
+  var Model = this;
+  var modelName = Model.modelName;
 
-    if (typeof data === 'function') {
-        callback = data;
-        data = {};
+  if (typeof data === 'function') {
+    callback = data;
+    data = {};
+  }
+
+  if (typeof callback !== 'function') {
+    callback = function () {
+    };
+  }
+
+  if (!data) {
+    data = {};
+  }
+
+  if (Array.isArray(data)) {
+    var instances = [];
+    var errors = Array(data.length);
+    var gotError = false;
+    var wait = data.length;
+    if (wait === 0) callback(null, []);
+
+    var instances = [];
+    for (var i = 0; i < data.length; i += 1) {
+      (function (d, i) {
+        instances.push(Model.create(d, function (err, inst) {
+          if (err) {
+            errors[i] = err;
+            gotError = true;
+          }
+          modelCreated();
+        }));
+      })(data[i], i);
     }
 
-    if (typeof callback !== 'function') {
-        callback = function () {};
+    return instances;
+
+    function modelCreated() {
+      if (--wait === 0) {
+        callback(gotError ? errors : null, instances);
+        if(!gotError) instances.forEach(Model.emit.bind('changed'));
+      }
     }
+  }
 
-    if (!data) {
-        data = {};
-    }
+  var obj;
+  // if we come from save
+  if (data instanceof Model && !getIdValue(this, data)) {
+    obj = data;
+  } else {
+    obj = new Model(data);
+  }
+  data = obj.toObject(true);
 
-    if (Array.isArray(data)) {
-        var instances = [];
-        var errors = Array(data.length);
-        var gotError = false;
-        var wait = data.length;
-        if (wait === 0) callback(null, []);
-
-        var instances = [];
-        for (var i = 0; i < data.length; i += 1) {
-            (function(d, i) {
-                instances.push(Model.create(d, function(err, inst) {
-                    if (err) {
-                        errors[i] = err;
-                        gotError = true;
-                    }
-                    modelCreated();
-                }));
-            })(data[i], i);
-        }
-
-        return instances;
-
-        function modelCreated() {
-            if (--wait === 0) {
-                callback(gotError ? errors : null, instances);
-            }
-        }
-    }
-
-
-    var obj;
-    // if we come from save
-    if (data instanceof Model && !getIdValue(this, data)) {
-        obj = data;
+  // validation required
+  obj.isValid(function (valid) {
+    if (valid) {
+      create();
     } else {
-        obj = new Model(data);
+      callback(new ValidationError(obj), obj);
     }
-    data = obj.toObject(true);
+  }, data);
 
-    // validation required
-    obj.isValid(function(valid) {
-        if (valid) {
-            create();
-        } else {
-            callback(new ValidationError(obj), obj);
-        }
-    }, data);
+  function create() {
+    obj.trigger('create', function (createDone) {
+      obj.trigger('save', function (saveDone) {
 
-    function create() {
-        obj.trigger('create', function(createDone) {
-            obj.trigger('save', function(saveDone) {
-
-                var _idName = idName(Model);
-                this._adapter().create(modelName, this.constructor._forDB(obj.toObject(true)), function (err, id, rev) {
-                    if (id) {
-                        obj.__data[_idName] = id;
-                        obj.__dataWas[_idName] = id;
-                        defineReadonlyProp(obj, _idName, id);
-                    }
-                    if (rev) {
-                        obj._rev = rev;
-                    }
-                    if (err) {
-                        return callback(err, obj);
-                    }
-                    saveDone.call(obj, function () {
-                        createDone.call(obj, function () {
-                            callback(err, obj);
-                        });
-                    });
-                }, obj);
-            }, obj);
+        var _idName = idName(Model);
+        this._adapter().create(modelName, this.constructor._forDB(obj.toObject(true)), function (err, id, rev) {
+          if (id) {
+            obj.__data[_idName] = id;
+            obj.__dataWas[_idName] = id;
+            defineReadonlyProp(obj, _idName, id);
+          }
+          if (rev) {
+            obj._rev = rev;
+          }
+          if (err) {
+            return callback(err, obj);
+          }
+          saveDone.call(obj, function () {
+            createDone.call(obj, function () {
+              callback(err, obj);
+              if(!err) Model.emit('changed', obj);
+            });
+          });
         }, obj);
-    }
+      }, obj);
+    }, obj);
+  }
 
-    // for chaining
-    return obj;
+  // for chaining
+  return obj;
 };
 
 /*!
@@ -17460,24 +17891,24 @@ DataAccessObject.create = function (data, callback) {
  * @private
  */
 function setRemoting(fn, options) {
-    options = options || {};
-    for(var opt in options) {
-        if(options.hasOwnProperty(opt)) {
-            fn[opt] = options[opt];
-        }
+  options = options || {};
+  for (var opt in options) {
+    if (options.hasOwnProperty(opt)) {
+      fn[opt] = options[opt];
     }
-    fn.shared = true;
+  }
+  fn.shared = true;
 }
 
 setRemoting(DataAccessObject.create, {
-    description: 'Create a new instance of the model and persist it into the data source',
-    accepts: {arg: 'data', type: 'object', description: 'Model instance data', http: {source: 'body'}},
-    returns: {arg: 'data', type: 'object', root: true},
-    http: {verb: 'post', path: '/'}
+  description: 'Create a new instance of the model and persist it into the data source',
+  accepts: {arg: 'data', type: 'object', description: 'Model instance data', http: {source: 'body'}},
+  returns: {arg: 'data', type: 'object', root: true},
+  http: {verb: 'post', path: '/'}
 });
 
 function stillConnecting(dataSource, obj, args) {
-    return dataSource.ready(obj, args);
+  return dataSource.ready(obj, args);
 }
 
 /**
@@ -17486,70 +17917,70 @@ function stillConnecting(dataSource, obj, args) {
  * @param {Function} [callback] The callback function
  */
 DataAccessObject.upsert = DataAccessObject.updateOrCreate = function upsert(data, callback) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    var Model = this;
-    if (!getIdValue(this, data)) return this.create(data, callback);
-    if (this.getDataSource().connector.updateOrCreate) {
-        var inst = new Model(data);
-        this.getDataSource().connector.updateOrCreate(Model.modelName, inst.toObject(true), function (err, data) {
-            var obj;
-            if (data) {
-                inst._initProperties(data, false);
-                obj = inst;
-            } else {
-                obj = null;
-            }
-            callback(err, obj);
-        });
-    } else {
-        this.findById(getIdValue(this, data), function (err, inst) {
-            if (err) return callback(err);
-            if (inst) {
-                inst.updateAttributes(data, callback);
-            } else {
-                var obj = new Model(data);
-                obj.save(data, callback);
-            }
-        });
-    }
+  var Model = this;
+  if (!getIdValue(this, data)) return this.create(data, callback);
+  if (this.getDataSource().connector.updateOrCreate) {
+    var inst = new Model(data);
+    this.getDataSource().connector.updateOrCreate(Model.modelName, inst.toObject(true), function (err, data) {
+      var obj;
+      if (data) {
+        inst._initProperties(data, false);
+        obj = inst;
+      } else {
+        obj = null;
+      }
+      callback(err, obj);
+    });
+  } else {
+    this.findById(getIdValue(this, data), function (err, inst) {
+      if (err) return callback(err);
+      if (inst) {
+        inst.updateAttributes(data, callback);
+      } else {
+        var obj = new Model(data);
+        obj.save(data, callback);
+      }
+    });
+  }
 };
 
 // upsert ~ remoting attributes
 setRemoting(DataAccessObject.upsert, {
-    description: 'Update an existing model instance or insert a new one into the data source',
-    accepts: {arg: 'data', type: 'object', description: 'Model instance data', http: {source: 'body'}},
-    returns: {arg: 'data', type: 'object', root: true},
-    http: {verb: 'put', path: '/'}
+  description: 'Update an existing model instance or insert a new one into the data source',
+  accepts: {arg: 'data', type: 'object', description: 'Model instance data', http: {source: 'body'}},
+  returns: {arg: 'data', type: 'object', root: true},
+  http: {verb: 'put', path: '/'}
 });
-
 
 /**
  * Find one record, same as `all`, limited by 1 and return object, not collection,
  * if not found, create using data provided as second argument
- * 
+ *
  * @param {Object} query - search conditions: {where: {test: 'me'}}.
  * @param {Object} data - object to create.
  * @param {Function} cb - callback called with (err, instance)
  */
 DataAccessObject.findOrCreate = function findOrCreate(query, data, callback) {
-    if (query === undefined) {
-        query = {where: {}};
-    }
-    if (typeof data === 'function' || typeof data === 'undefined') {
-        callback = data;
-        data = query && query.where;
-    }
-    if (typeof callback === 'undefined') {
-        callback = function () {};
-    }
+  if (query === undefined) {
+    query = {where: {}};
+  }
+  if (typeof data === 'function' || typeof data === 'undefined') {
+    callback = data;
+    data = query && query.where;
+  }
+  if (typeof callback === 'undefined') {
+    callback = function () {
+    };
+  }
 
-    var t = this;
-    this.findOne(query, function (err, record) {
-        if (err) return callback(err);
-        if (record) return callback(null, record);
-        t.create(data, callback);
-    });
+  var t = this;
+  this.findOne(query, function (err, record) {
+    if (err) return callback(err);
+    if (record) return callback(null, record);
+    t.create(data, callback);
+  });
 };
 
 /**
@@ -17559,21 +17990,21 @@ DataAccessObject.findOrCreate = function findOrCreate(query, data, callback) {
  * @param {Function} cb - callbacl called with (err, exists: Bool)
  */
 DataAccessObject.exists = function exists(id, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    if (id !== undefined && id !== null && id !== '') {
-        this.dataSource.connector.exists(this.modelName, id, cb);
-    } else {
-        cb(new Error('Model::exists requires the id argument'));
-    }
+  if (id !== undefined && id !== null && id !== '') {
+    this.dataSource.connector.exists(this.modelName, id, cb);
+  } else {
+    cb(new Error('Model::exists requires the id argument'));
+  }
 };
 
 // exists ~ remoting attributes
 setRemoting(DataAccessObject.exists, {
-    description: 'Check whether a model instance exists in the data source',
-    accepts: {arg: 'id', type: 'any', description: 'Model id', required: true},
-    returns: {arg: 'exists', type: 'any'},
-    http: {verb: 'get', path: '/:id/exists'}
+  description: 'Check whether a model instance exists in the data source',
+  accepts: {arg: 'id', type: 'any', description: 'Model id', required: true},
+  returns: {arg: 'exists', type: 'any'},
+  http: {verb: 'get', path: '/:id/exists'}
 });
 
 /**
@@ -17583,28 +18014,28 @@ setRemoting(DataAccessObject.exists, {
  * @param {Function} cb - callback called with (err, instance)
  */
 DataAccessObject.findById = function find(id, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    this.getDataSource().connector.find(this.modelName, id, function (err, data) {
-        var obj = null;
-        if (data) {
-            if (!getIdValue(this, data)) {
-                setIdValue(this, data, id);
-            }
-            obj = new this();
-            obj._initProperties(data, false);
-        }
-        cb(err, obj);
-    }.bind(this));
+  this.getDataSource().connector.find(this.modelName, id, function (err, data) {
+    var obj = null;
+    if (data) {
+      if (!getIdValue(this, data)) {
+        setIdValue(this, data, id);
+      }
+      obj = new this();
+      obj._initProperties(data, false);
+    }
+    cb(err, obj);
+  }.bind(this));
 };
 
 // find ~ remoting attributes
 setRemoting(DataAccessObject.findById, {
-    description: 'Find a model instance by id from the data source',
-    accepts: {arg: 'id', type: 'any', description: 'Model id', required: true},
-    returns: {arg: 'data', type: 'any', root: true},
-    http: {verb: 'get', path: '/:id'},
-    rest: {after: convertNullToNotFoundError}
+  description: 'Find a model instance by id from the data source',
+  accepts: {arg: 'id', type: 'any', description: 'Model id', required: true},
+  returns: {arg: 'data', type: 'any', root: true},
+  http: {verb: 'get', path: '/:id'},
+  rest: {after: convertNullToNotFoundError}
 });
 
 function convertNullToNotFoundError(ctx, cb) {
@@ -17624,109 +18055,109 @@ DataAccessObject.all = function () {
 };
 
 var operators = {
-    gt: '>',
-    gte: '>=',
-    lt: '<',
-    lte: '<=',
-    between: 'BETWEEN',
-    inq: 'IN',
-    nin: 'NOT IN',
-    neq: '!=',
-    like: 'LIKE',
-    nlike: 'NOT LIKE'
+  gt: '>',
+  gte: '>=',
+  lt: '<',
+  lte: '<=',
+  between: 'BETWEEN',
+  inq: 'IN',
+  nin: 'NOT IN',
+  neq: '!=',
+  like: 'LIKE',
+  nlike: 'NOT LIKE'
 };
 
 DataAccessObject._coerce = function (where) {
-    if (!where) {
-        return where;
-    }
-
-    var props = this.getDataSource().getModelDefinition(this.modelName).properties;
-    for (var p in where) {
-        var DataType = props[p] && props[p].type;
-        if (!DataType) {
-            continue;
-        }
-        if (Array.isArray(DataType) || DataType === Array) {
-            DataType = DataType[0];
-        }
-        if (DataType === Date) {
-            var OrigDate = Date;
-            DataType = function Date(arg) {
-                return new OrigDate(arg);
-            };
-        } else if (DataType === Boolean) {
-            DataType = function(val) {
-                if(val === 'true') {
-                    return true;
-                } else if(val === 'false') {
-                  return false;
-                } else {
-                  return Boolean(val);
-                }
-            };
-        } else if(DataType === Number) {
-            // This fixes a regression in mongodb connector
-            // For numbers, only convert it produces a valid number
-            // LoopBack by default injects a number id. We should fix it based
-            // on the connector's input, for example, MongoDB should use string
-            // while RDBs typically use number
-            DataType = function(val) {
-                var num = Number(val);
-                return !isNaN(num) ? num : val;
-            };
-        }
-
-        if (!DataType) {
-            continue;
-        }
-
-        if (DataType === geo.GeoPoint) {
-            // Skip the GeoPoint as the near operator breaks the assumption that
-            // an operation has only one property
-            // We should probably fix it based on
-            // http://docs.mongodb.org/manual/reference/operator/query/near/
-            // The other option is to make operators start with $
-            continue;
-        }
-
-        var val = where[p];
-        if(val === null || val === undefined) {
-            continue;
-        }
-        // Check there is an operator
-        var operator = null;
-        if ('object' === typeof val) {
-            if (Object.keys(val).length !== 1) {
-                // Skip if there are not only one properties
-                // as the assumption for operators is not true here
-                continue;
-            }
-            for (var op in operators) {
-                if (op in val) {
-                    val = val[op];
-                    operator = op;
-                    break;
-                }
-            }
-        }
-        // Coerce the array items
-        if (Array.isArray(val)) {
-            for (var i = 0; i < val.length; i++) {
-                val[i] = DataType(val[i]);
-            }
-        } else {
-            val = DataType(val);
-        }
-        // Rebuild {property: {operator: value}}
-        if (operator) {
-            var value = {};
-            value[operator] = val;
-            val = value;
-        }
-        where[p] = val;
-    }
+  if (!where) {
     return where;
+  }
+
+  var props = this.getDataSource().getModelDefinition(this.modelName).properties;
+  for (var p in where) {
+    var DataType = props[p] && props[p].type;
+    if (!DataType) {
+      continue;
+    }
+    if (Array.isArray(DataType) || DataType === Array) {
+      DataType = DataType[0];
+    }
+    if (DataType === Date) {
+      var OrigDate = Date;
+      DataType = function Date(arg) {
+        return new OrigDate(arg);
+      };
+    } else if (DataType === Boolean) {
+      DataType = function (val) {
+        if (val === 'true') {
+          return true;
+        } else if (val === 'false') {
+          return false;
+        } else {
+          return Boolean(val);
+        }
+      };
+    } else if (DataType === Number) {
+      // This fixes a regression in mongodb connector
+      // For numbers, only convert it produces a valid number
+      // LoopBack by default injects a number id. We should fix it based
+      // on the connector's input, for example, MongoDB should use string
+      // while RDBs typically use number
+      DataType = function (val) {
+        var num = Number(val);
+        return !isNaN(num) ? num : val;
+      };
+    }
+
+    if (!DataType) {
+      continue;
+    }
+
+    if (DataType === geo.GeoPoint) {
+      // Skip the GeoPoint as the near operator breaks the assumption that
+      // an operation has only one property
+      // We should probably fix it based on
+      // http://docs.mongodb.org/manual/reference/operator/query/near/
+      // The other option is to make operators start with $
+      continue;
+    }
+
+    var val = where[p];
+    if (val === null || val === undefined) {
+      continue;
+    }
+    // Check there is an operator
+    var operator = null;
+    if ('object' === typeof val) {
+      if (Object.keys(val).length !== 1) {
+        // Skip if there are not only one properties
+        // as the assumption for operators is not true here
+        continue;
+      }
+      for (var op in operators) {
+        if (op in val) {
+          val = val[op];
+          operator = op;
+          break;
+        }
+      }
+    }
+    // Coerce the array items
+    if (Array.isArray(val)) {
+      for (var i = 0; i < val.length; i++) {
+        val[i] = DataType(val[i]);
+      }
+    } else {
+      val = DataType(val);
+    }
+    // Rebuild {property: {operator: value}}
+    if (operator) {
+      var value = {};
+      value[operator] = val;
+      val = value;
+    }
+    where[p] = val;
+  }
+  return where;
 };
 
 /**
@@ -17748,130 +18179,149 @@ DataAccessObject._coerce = function (where) {
  */
 
 DataAccessObject.find = function find(params, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    if (arguments.length === 1) {
-        cb = params;
-        params = null;
-    }
-    var constr = this;
-    
-    params = params || {};
+  if (arguments.length === 1) {
+    cb = params;
+    params = null;
+  }
+  var constr = this;
 
-    if(params.where) {
-        params.where = this._coerce(params.where);
-    }
+  params = params || {};
 
-    var fields = params.fields;
-    var near = params && geo.nearFilter(params.where);
-    var supportsGeo = !!this.getDataSource().connector.buildNearFilter;
-    
-    // normalize fields as array of included property names
-    if(fields) {
-        params.fields = fieldsToArray(fields, Object.keys(this.definition.properties));
-    }
+  if (params.where) {
+    params.where = this._coerce(params.where);
+  }
 
-    params = removeUndefined(params);
-    if(near) {
-      if(supportsGeo) {
-        // convert it
-        this.getDataSource().connector.buildNearFilter(params, near);
-      } else if(params.where) {
-        // do in memory query
-        // using all documents
-        this.getDataSource().connector.all(this.modelName, {}, function (err, data) {
-          var memory = new Memory();
-          var modelName = constr.modelName;
-          
-          if(err) {
-            cb(err);
-          } else if(Array.isArray(data)) {
-            memory.define({
-              properties: constr.dataSource.definitions[constr.modelName].properties,
-              settings: constr.dataSource.definitions[constr.modelName].settings,
-              model: constr
+  var fields = params.fields;
+  var near = params && geo.nearFilter(params.where);
+  var supportsGeo = !!this.getDataSource().connector.buildNearFilter;
+
+  // normalize fields as array of included property names
+  if (fields) {
+    params.fields = fieldsToArray(fields, Object.keys(this.definition.properties));
+  }
+
+  params = removeUndefined(params);
+  if (near) {
+    if (supportsGeo) {
+      // convert it
+      this.getDataSource().connector.buildNearFilter(params, near);
+    } else if (params.where) {
+      // do in memory query
+      // using all documents
+      this.getDataSource().connector.all(this.modelName, {}, function (err, data) {
+        var memory = new Memory();
+        var modelName = constr.modelName;
+
+        if (err) {
+          cb(err);
+        } else if (Array.isArray(data)) {
+          memory.define({
+            properties: constr.dataSource.definitions[constr.modelName].properties,
+            settings: constr.dataSource.definitions[constr.modelName].settings,
+            model: constr
+          });
+
+          data.forEach(function (obj) {
+            memory.create(modelName, obj, function () {
+              // noop
             });
-            
-            data.forEach(function (obj) {
-              memory.create(modelName, obj, function () {
-                // noop
-              });
-            });
-            
-            memory.all(modelName, params, cb);
-          } else {
-            cb(null, []);
-          }
-        }.bind(this));
-        
-        // already handled
-        return;
-      }
-    }
-    
-    this.getDataSource().connector.all(this.modelName, params, function (err, data) {
-        if (data && data.forEach) {
-            data.forEach(function (d, i) {
-                var obj = new constr();
+          });
 
-                obj._initProperties(d, false, params.fields);
-                
-                if (params && params.include && params.collect) {
-                    data[i] = obj.__cachedRelations[params.collect];
-                } else {
-                    data[i] = obj;
-                }
-            });
-            if (data && data.countBeforeLimit) {
-                data.countBeforeLimit = data.countBeforeLimit;
-            }
-            if(!supportsGeo && near) {
-              data = geo.filter(data, near);
-            }
-            
-            cb(err, data);
+          memory.all(modelName, params, cb);
+        } else {
+          cb(null, []);
         }
-        else
-            cb(err, []);
-    });
+      }.bind(this));
+
+      // already handled
+      return;
+    }
+  }
+
+  this.getDataSource().connector.all(this.modelName, params, function (err, data) {
+    if (data && data.forEach) {
+      data.forEach(function (d, i) {
+        var obj = new constr();
+
+        obj._initProperties(d, false, params.fields);
+
+        if (params && params.include) {
+          if (params.collect) {
+            // The collect property indicates that the query is to return the
+            // standlone items for a related model, not as child of the parent object
+            // For example, article.tags
+            obj = obj.__cachedRelations[params.collect];
+          } else {
+            // This handles the case to return parent items including the related
+            // models. For example, Article.find({include: 'tags'}, ...);
+            // Try to normalize the include
+            var includes = params.include || [];
+            if (typeof includes === 'string') {
+              includes = [includes];
+            } else if (typeof includes === 'object') {
+              includes = Object.keys(includes);
+            }
+            includes.forEach(function (inc) {
+              // Promote the included model as a direct property
+              obj.__data[inc] = obj.__cachedRelations[inc];
+            });
+            delete obj.__data.__cachedRelations;
+          }
+        }
+        data[i] = obj;
+      });
+
+      if (data && data.countBeforeLimit) {
+        data.countBeforeLimit = data.countBeforeLimit;
+      }
+      if (!supportsGeo && near) {
+        data = geo.filter(data, near);
+      }
+
+      cb(err, data);
+    }
+    else
+      cb(err, []);
+  });
 };
 
 // all ~ remoting attributes
 setRemoting(DataAccessObject.find, {
-    description: 'Find all instances of the model matched by filter from the data source',
-    accepts: {arg: 'filter', type: 'object', description: 'Filter defining fields, where, orderBy, offset, and limit'},
-    returns: {arg: 'data', type: 'array', root: true},
-    http: {verb: 'get', path: '/'}
+  description: 'Find all instances of the model matched by filter from the data source',
+  accepts: {arg: 'filter', type: 'object', description: 'Filter defining fields, where, orderBy, offset, and limit'},
+  returns: {arg: 'data', type: 'array', root: true},
+  http: {verb: 'get', path: '/'}
 });
 
 /**
  * Find one record, same as `all`, limited by 1 and return object, not collection
- * 
+ *
  * @param {Object} params - search conditions: {where: {test: 'me'}}
  * @param {Function} cb - callback called with (err, instance)
  */
 DataAccessObject.findOne = function findOne(params, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    if (typeof params === 'function') {
-        cb = params;
-        params = {};
-    }
-    params = params || {};
-    params.limit = 1;
-    this.find(params, function (err, collection) {
-        if (err || !collection || !collection.length > 0) return cb(err, null);
-        cb(err, collection[0]);
-    });
+  if (typeof params === 'function') {
+    cb = params;
+    params = {};
+  }
+  params = params || {};
+  params.limit = 1;
+  this.find(params, function (err, collection) {
+    if (err || !collection || !collection.length > 0) return cb(err, null);
+    cb(err, collection[0]);
+  });
 };
 
 setRemoting(DataAccessObject.findOne, {
-    description: 'Find first instance of the model matched by filter from the data source',
-    accepts: {arg: 'filter', type: 'object', description: 'Filter defining fields, where, orderBy, offset, and limit'},
-    returns: {arg: 'data', type: 'object', root: true},
-    http: {verb: 'get', path: '/findOne'}
+  description: 'Find first instance of the model matched by filter from the data source',
+  accepts: {arg: 'filter', type: 'object', description: 'Filter defining fields, where, orderBy, offset, and limit'},
+  returns: {arg: 'data', type: 'object', root: true},
+  http: {verb: 'get', path: '/findOne'}
 });
-
 
 /**
  * Destroy all matching records
@@ -17879,27 +18329,30 @@ setRemoting(DataAccessObject.findOne, {
  * @param {Function} [cb] - callback called with (err)
  */
 DataAccessObject.remove =
-DataAccessObject.deleteAll =
-DataAccessObject.destroyAll = function destroyAll(where, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  DataAccessObject.deleteAll =
+    DataAccessObject.destroyAll = function destroyAll(where, cb) {
+      if (stillConnecting(this.getDataSource(), this, arguments)) return;
+      var Model = this;
 
-    if(!cb && 'function' === typeof where) {
+      if (!cb && 'function' === typeof where) {
         cb = where;
         where = undefined;
-    }
-    if(!where) {
+      }
+      if (!where) {
         this.getDataSource().connector.destroyAll(this.modelName, function (err, data) {
-            cb && cb(err, data);
+          cb && cb(err, data);
+          if(!err) Model.emit('deletedAll');
         }.bind(this));
-    } else {
+      } else {
         // Support an optional where object
         where = removeUndefined(where);
         where = this._coerce(where);
         this.getDataSource().connector.destroyAll(this.modelName, where, function (err, data) {
-            cb && cb(err, data);
+          cb && cb(err, data);
+          if(!err) Model.emit('deletedAll', where);
         }.bind(this));
-    }
-};
+      }
+    };
 
 /**
  * Destroy a record by id
@@ -17907,24 +18360,25 @@ DataAccessObject.destroyAll = function destroyAll(where, cb) {
  * @param {Function} cb - callback called with (err)
  */
 DataAccessObject.removeById =
-DataAccessObject.deleteById =
+  DataAccessObject.deleteById =
     DataAccessObject.destroyById = function deleteById(id, cb) {
-        if (stillConnecting(this.getDataSource(), this, arguments)) return;
+      if (stillConnecting(this.getDataSource(), this, arguments)) return;
+      var Model = this;
 
-        this.getDataSource().connector.destroy(this.modelName, id, function (err) {
-            if ('function' === typeof cb) {
-                cb(err);
-            }
-        }.bind(this));
+      this.getDataSource().connector.destroy(this.modelName, id, function (err) {
+        if ('function' === typeof cb) {
+          cb(err);
+        }
+        if(!err) Model.emit('deleted', id);
+      }.bind(this));
     };
 
 // deleteById ~ remoting attributes
 setRemoting(DataAccessObject.deleteById, {
-    description: 'Delete a model instance by id from the data source',
-    accepts: {arg: 'id', type: 'any', description: 'Model id', required: true},
-    http: {verb: 'del', path: '/:id'}
+  description: 'Delete a model instance by id from the data source',
+  accepts: {arg: 'id', type: 'any', description: 'Model id', required: true},
+  http: {verb: 'del', path: '/:id'}
 });
-
 
 /**
  * Return count of matched records
@@ -17933,26 +18387,24 @@ setRemoting(DataAccessObject.deleteById, {
  * @param {Function} cb - callback, called with (err, count)
  */
 DataAccessObject.count = function (where, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    if (typeof where === 'function') {
-        cb = where;
-        where = null;
-    }
-    where = removeUndefined(where);
-    where = this._coerce(where);
-    this.getDataSource().connector.count(this.modelName, cb, where);
+  if (typeof where === 'function') {
+    cb = where;
+    where = null;
+  }
+  where = removeUndefined(where);
+  where = this._coerce(where);
+  this.getDataSource().connector.count(this.modelName, cb, where);
 };
-
 
 // count ~ remoting attributes
 setRemoting(DataAccessObject.count, {
-    description: 'Count instances of the model matched by where from the data source',
-    accepts: {arg: 'where', type: 'object', description: 'Criteria to match model instances'},
-    returns: {arg: 'count', type: 'number'},
-    http: {verb: 'get', path: '/count'}
+  description: 'Count instances of the model matched by where from the data source',
+  accepts: {arg: 'where', type: 'object', description: 'Criteria to match model instances'},
+  returns: {arg: 'count', type: 'number'},
+  http: {verb: 'get', path: '/count'}
 });
-
 
 /**
  * Save instance. When instance haven't id, create method called instead.
@@ -17961,73 +18413,77 @@ setRemoting(DataAccessObject.count, {
  * @param callback(err, obj)
  */
 DataAccessObject.prototype.save = function (options, callback) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  var Model = this.constructor;
 
-    if (typeof options == 'function') {
-        callback = options;
-        options = {};
+  if (typeof options == 'function') {
+    callback = options;
+    options = {};
+  }
+
+  callback = callback || function () {
+  };
+  options = options || {};
+
+  if (!('validate' in options)) {
+    options.validate = true;
+  }
+  if (!('throws' in options)) {
+    options.throws = false;
+  }
+
+  var inst = this;
+  var data = inst.toObject(true);
+  var Model = this.constructor;
+  var modelName = Model.modelName;
+
+  if (!getIdValue(Model, this)) {
+    return Model.create(this, callback);
+  }
+
+  // validate first
+  if (!options.validate) {
+    return save();
+  }
+
+  inst.isValid(function (valid) {
+    if (valid) {
+      save();
+    } else {
+      var err = new ValidationError(inst);
+      // throws option is dangerous for async usage
+      if (options.throws) {
+        throw err;
+      }
+      callback(err, inst);
     }
+  });
 
-    callback = callback || function () {};
-    options = options || {};
-
-    if (!('validate' in options)) {
-        options.validate = true;
-    }
-    if (!('throws' in options)) {
-        options.throws = false;
-    }
-
-    var inst = this;
-    var data = inst.toObject(true);
-    var Model = this.constructor;
-    var modelName = Model.modelName;
-
-    if (!getIdValue(Model, this)) {
-        return Model.create(this, callback);
-    }
-
-    // validate first
-    if (!options.validate) {
-        return save();
-    }
-
-    inst.isValid(function (valid) {
-        if (valid) {
-            save();
-        } else {
-            var err = new ValidationError(inst);
-            // throws option is dangerous for async usage
-            if (options.throws) {
-                throw err;
-            }
-            callback(err, inst);
-        }
-    });
-
-    // then save
-    function save() {
-        inst.trigger('save', function (saveDone) {
-            inst.trigger('update', function (updateDone) {
-                inst._adapter().save(modelName, inst.constructor._forDB(data), function (err) {
-                    if (err) {
-                        return callback(err, inst);
-                    }
-                    inst._initProperties(data, false);
-                    updateDone.call(inst, function () {
-                        saveDone.call(inst, function () {
-                            callback(err, inst);
-                        });
-                    });
-                });
-            }, data);
-        }, data);
-    }
+  // then save
+  function save() {
+    inst.trigger('save', function (saveDone) {
+      inst.trigger('update', function (updateDone) {
+        inst._adapter().save(modelName, inst.constructor._forDB(data), function (err) {
+          if (err) {
+            return callback(err, inst);
+          }
+          inst._initProperties(data, false);
+          updateDone.call(inst, function () {
+            saveDone.call(inst, function () {
+              callback(err, inst);
+              if(!err) {
+                Model.emit('changed', inst);
+              }
+            });
+          });
+        });
+      }, data);
+    }, data);
+  }
 };
 
-
 DataAccessObject.prototype.isNewRecord = function () {
-    return !getIdValue(this.constructor, this);
+  return !getIdValue(this.constructor, this);
 };
 
 /**
@@ -18035,7 +18491,7 @@ DataAccessObject.prototype.isNewRecord = function () {
  * @private
  */
 DataAccessObject.prototype._adapter = function () {
-    return this.getDataSource().connector;
+  return this.getDataSource().connector;
 };
 
 /**
@@ -18044,23 +18500,25 @@ DataAccessObject.prototype._adapter = function () {
  * @triggers `destroy` hook (async) before and after destroying object
  */
 DataAccessObject.prototype.remove =
-DataAccessObject.prototype.delete =
-DataAccessObject.prototype.destroy = function (cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  DataAccessObject.prototype.delete =
+    DataAccessObject.prototype.destroy = function (cb) {
+      if (stillConnecting(this.getDataSource(), this, arguments)) return;
+      var Model = this.constructor;
+      var id = getIdValue(this.constructor, this);
 
-    this.trigger('destroy', function (destroyed) {
-        this._adapter().destroy(this.constructor.modelName, getIdValue(this.constructor, this), function (err) {
-            if (err) {
-                return cb(err);
-            }
+      this.trigger('destroy', function (destroyed) {
+        this._adapter().destroy(this.constructor.modelName, id, function (err) {
+          if (err) {
+            return cb(err);
+          }
 
-            destroyed(function () {
-                if(cb) cb();
-            });
+          destroyed(function () {
+            if (cb) cb();
+            Model.emit('deleted', id);
+          });
         }.bind(this));
-    });
-};
-
+      });
+    };
 
 /**
  * Update single attribute
@@ -18072,9 +18530,9 @@ DataAccessObject.prototype.destroy = function (cb) {
  * @param {Function} callback - callback called with (err, instance)
  */
 DataAccessObject.prototype.updateAttribute = function updateAttribute(name, value, callback) {
-    var data = {};
-    data[name] = value;
-    this.updateAttributes(data, callback);
+  var data = {};
+  data[name] = value;
+  this.updateAttributes(data, callback);
 };
 
 /**
@@ -18087,65 +18545,67 @@ DataAccessObject.prototype.updateAttribute = function updateAttribute(name, valu
  * @param {Function} callback - callback called with (err, instance)
  */
 DataAccessObject.prototype.updateAttributes = function updateAttributes(data, cb) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    var inst = this;
-    var model = this.constructor.modelName;
+  var inst = this;
+  var Model = this.constructor
+  var model = Model.modelName;
 
-    if (typeof data === 'function') {
-        cb = data;
-        data = null;
-    }
+  if (typeof data === 'function') {
+    cb = data;
+    data = null;
+  }
 
-    if (!data) {
-        data = {};
-    }
+  if (!data) {
+    data = {};
+  }
 
-    // update instance's properties
-    for(var key in data) {
-        inst[key] = data[key];
-    }
+  // update instance's properties
+  for (var key in data) {
+    inst[key] = data[key];
+  }
 
-    inst.isValid(function (valid) {
-        if (!valid) {
-            if (cb) {
-                cb(new ValidationError(inst), inst);
+  inst.isValid(function (valid) {
+    if (!valid) {
+      if (cb) {
+        cb(new ValidationError(inst), inst);
+      }
+    } else {
+      inst.trigger('save', function (saveDone) {
+        inst.trigger('update', function (done) {
+
+          for (var key in data) {
+            inst[key] = data[key];
+          }
+
+          inst._adapter().updateAttributes(model, getIdValue(inst.constructor, inst), inst.constructor._forDB(data), function (err) {
+            if (!err) {
+              // update $was attrs
+              for (var key in data) {
+                inst.__dataWas[key] = inst.__data[key];
+              }
+              ;
             }
-        } else {
-            inst.trigger('save', function (saveDone) {
-                inst.trigger('update', function (done) {
-
-                    for(var key in data) {
-                        inst[key] = data[key];
-                    }
-
-                    inst._adapter().updateAttributes(model, getIdValue(inst.constructor, inst), inst.constructor._forDB(data), function (err) {
-                        if (!err) {
-                            // update $was attrs
-                            for(var key in data) {
-                                inst.__dataWas[key] = inst.__data[key];
-                            };
-                        }
-                        done.call(inst, function () {
-                            saveDone.call(inst, function () {
-                                cb(err, inst);
-                            });
-                        });
-                    });
-                }, data);
-            }, data);
-        }
-    }, data);
+            done.call(inst, function () {
+              saveDone.call(inst, function () {
+                if(cb) cb(err, inst);
+                if(!err) Model.emit('changed', inst);
+              });
+            });
+          });
+        }, data);
+      }, data);
+    }
+  }, data);
 };
 
 // updateAttributes ~ remoting attributes
 setRemoting(DataAccessObject.prototype.updateAttributes, {
-    description: 'Update attributes for a model instance and persist it into the data source',
-    accepts: {arg: 'data', type: 'object', http: {source: 'body'}, description: 'An object of model property name/value pairs'},
-    returns: {arg: 'data', type: 'object', root: true},
-    http: {verb: 'put', path: '/'}
+  description: 'Update attributes for a model instance and persist it into the data source',
+  accepts: {arg: 'data', type: 'object', http: {source: 'body'}, description: 'An object of model property name/value pairs'},
+  returns: {arg: 'data', type: 'object', root: true},
+  http: {verb: 'put', path: '/'}
 });
-
 
 /**
  * Reload object from persistence
@@ -18154,17 +18614,17 @@ setRemoting(DataAccessObject.prototype.updateAttributes, {
  * @param {Function} callback - called with (err, instance) arguments
  */
 DataAccessObject.prototype.reload = function reload(callback) {
-    if (stillConnecting(this.getDataSource(), this, arguments)) return;
+  if (stillConnecting(this.getDataSource(), this, arguments)) return;
 
-    this.constructor.findById(getIdValue(this.constructor, this), callback);
+  this.constructor.findById(getIdValue(this.constructor, this), callback);
 };
 
 /*
-setRemoting(DataAccessObject.prototype.reload, {
-    description: 'Reload a model instance from the data source',
-    returns: {arg: 'data', type: 'object', root: true}
-});
-*/
+ setRemoting(DataAccessObject.prototype.reload, {
+ description: 'Reload a model instance from the data source',
+ returns: {arg: 'data', type: 'object', root: true}
+ });
+ */
 
 /**
  * Define readonly property on object
@@ -18174,12 +18634,12 @@ setRemoting(DataAccessObject.prototype.reload, {
  * @param {Mixed} value
  */
 function defineReadonlyProp(obj, key, value) {
-    Object.defineProperty(obj, key, {
-        writable: false,
-        enumerable: true,
-        configurable: true,
-        value: value
-    });
+  Object.defineProperty(obj, key, {
+    writable: false,
+    enumerable: true,
+    configurable: true,
+    value: value
+  });
 }
 
 var defineScope = require('./scope.js').defineScope;
@@ -18188,14 +18648,14 @@ var defineScope = require('./scope.js').defineScope;
  * Define scope
  */
 DataAccessObject.scope = function (name, filter, targetClass) {
-    defineScope(this, targetClass || this, name, filter);
+  defineScope(this, targetClass || this, name, filter);
 };
 
 // jutil.mixin(DataAccessObject, validations.Validatable);
 jutil.mixin(DataAccessObject, Inclusion);
 jutil.mixin(DataAccessObject, Relation);
 
-},{"./connectors/memory":64,"./geo":67,"./include.js":69,"./jutil":71,"./relations.js":76,"./scope.js":77,"./utils":79,"./validations.js":80,"util":55}],66:[function(require,module,exports){
+},{"./connectors/memory":66,"./geo":69,"./include.js":71,"./jutil":73,"./relations.js":78,"./scope.js":79,"./utils":81,"./validations.js":82,"util":57}],68:[function(require,module,exports){
 var process=require("__browserify_process");/*!
  * Module dependencies
  */
@@ -18212,8 +18672,6 @@ var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
 var async = require('async');
-
-var existsSync = fs.existsSync || path.existsSync;
 
 /**
  * Export public API
@@ -18252,115 +18710,112 @@ var slice = Array.prototype.slice;
  * ```
  */
 function DataSource(name, settings, modelBuilder) {
-    if (!(this instanceof DataSource)) {
-        return new DataSource(name, settings);
+  if (!(this instanceof DataSource)) {
+    return new DataSource(name, settings);
+  }
+
+  // Check if the settings object is passed as the first argument
+  if (typeof name === 'object' && settings === undefined) {
+    settings = name;
+    name = undefined;
+  }
+
+  // Check if the first argument is a URL
+  if (typeof name === 'string' && name.indexOf('://') !== -1) {
+    name = utils.parseSettings(name);
+  }
+
+  // Check if the settings is in the form of URL string
+  if (typeof settings === 'string' && settings.indexOf('://') !== -1) {
+    settings = utils.parseSettings(settings);
+  }
+
+  this.modelBuilder = modelBuilder || new ModelBuilder();
+  this.models = this.modelBuilder.models;
+  this.definitions = this.modelBuilder.definitions;
+
+  // operation metadata
+  // Initialize it before calling setup as the connector might register operations
+  this._operations = {};
+
+  this.setup(name, settings);
+
+  this._setupConnector();
+
+  // connector
+  var connector = this.connector;
+
+  // DataAccessObject - connector defined or supply the default
+  var dao = (connector && connector.DataAccessObject) || this.constructor.DataAccessObject;
+  this.DataAccessObject = function () {
+  };
+
+  // define DataAccessObject methods
+  Object.keys(dao).forEach(function (name) {
+    var fn = dao[name];
+    this.DataAccessObject[name] = fn;
+
+    if (typeof fn === 'function') {
+      this.defineOperation(name, {
+        accepts: fn.accepts,
+        'returns': fn.returns,
+        http: fn.http,
+        remoteEnabled: fn.shared ? true : false,
+        scope: this.DataAccessObject,
+        fnName: name
+      });
     }
+  }.bind(this));
 
-    // Check if the settings object is passed as the first argument
-    if (typeof name === 'object' && settings === undefined) {
-        settings = name;
-        name = undefined;
+  // define DataAccessObject.prototype methods
+  Object.keys(dao.prototype).forEach(function (name) {
+    var fn = dao.prototype[name];
+    this.DataAccessObject.prototype[name] = fn;
+    if (typeof fn === 'function') {
+      this.defineOperation(name, {
+        prototype: true,
+        accepts: fn.accepts,
+        'returns': fn.returns,
+        http: fn.http,
+        remoteEnabled: fn.shared ? true : false,
+        scope: this.DataAccessObject.prototype,
+        fnName: name
+      });
     }
-
-    // Check if the first argument is a URL
-    if(typeof name === 'string' && name.indexOf('://') !== -1 ) {
-        name = utils.parseSettings(name);
-    }
-
-    // Check if the settings is in the form of URL string
-    if(typeof settings === 'string' && settings.indexOf('://') !== -1 ) {
-        settings = utils.parseSettings(settings);
-    }
-
-    this.modelBuilder = modelBuilder || new ModelBuilder();
-    this.models = this.modelBuilder.models;
-    this.definitions = this.modelBuilder.definitions;
-
-    // operation metadata
-    // Initialize it before calling setup as the connector might register operations
-    this._operations = {};
-
-    this.setup(name, settings);
-
-    this._setupConnector();
-
-    // connector
-    var connector = this.connector;
-    
-    // DataAccessObject - connector defined or supply the default
-    var dao = (connector && connector.DataAccessObject) || this.constructor.DataAccessObject;
-    this.DataAccessObject = function() {};
-
-    // define DataAccessObject methods
-    Object.keys(dao).forEach(function (name) {
-      var fn = dao[name];
-      this.DataAccessObject[name] = fn;
-
-      if(typeof fn === 'function') {
-        this.defineOperation(name, {
-          accepts: fn.accepts, 
-          'returns': fn.returns,
-          http: fn.http,
-          remoteEnabled: fn.shared ? true : false,
-          scope: this.DataAccessObject,
-          fnName: name
-        });
-      }
-    }.bind(this));
-    
-    // define DataAccessObject.prototype methods
-    Object.keys(dao.prototype).forEach(function (name) {
-      var fn = dao.prototype[name];
-      this.DataAccessObject.prototype[name] = fn;
-      if(typeof fn === 'function') {
-        this.defineOperation(name, {
-          prototype: true,
-          accepts: fn.accepts, 
-          'returns': fn.returns,
-          http: fn.http,
-          remoteEnabled: fn.shared ? true : false,
-          scope: this.DataAccessObject.prototype,
-          fnName: name
-        });
-      }
-    }.bind(this));
+  }.bind(this));
 
 }
-
-
 
 util.inherits(DataSource, EventEmitter);
 
 // allow child classes to supply a data access object
 DataSource.DataAccessObject = DataAccessObject;
 
-
-
 /**
  * Set up the connector instance for backward compatibility with JugglingDB schema/adapter
  * @private
  */
 DataSource.prototype._setupConnector = function () {
-    this.connector = this.connector || this.adapter; // The legacy JugglingDB adapter will set up `adapter` property
-    this.adapter = this.connector; // Keep the adapter as an alias to connector
-    if (this.connector) {
-        if (!this.connector.dataSource) {
-            // Set up the dataSource if the connector doesn't do so
-            this.connector.dataSource = this;
-        }
-        var dataSource = this;
-        this.connector.log = function (query, start) {
-            dataSource.log(query, start);
-        };
-
-        this.connector.logger = function (query) {
-            var t1 = Date.now();
-            var log = this.log;
-            return function (q) {
-                log(q || query, t1);
-            };
-        };
+  this.connector = this.connector || this.adapter; // The legacy JugglingDB adapter will set up `adapter` property
+  this.adapter = this.connector; // Keep the adapter as an alias to connector
+  if (this.connector) {
+    if (!this.connector.dataSource) {
+      // Set up the dataSource if the connector doesn't do so
+      this.connector.dataSource = this;
     }
+    var dataSource = this;
+    this.connector.log = function (query, start) {
+      dataSource.log(query, start);
+    };
+
+    this.connector.logger = function (query) {
+      var t1 = Date.now();
+      var log = this.log;
+      return function (q) {
+        log(q || query, t1);
+      };
+    };
+  }
 };
 
 // List possible connector module names
@@ -18379,11 +18834,11 @@ function connectorModuleNames(name) {
 function tryModules(names, loader) {
   var mod;
   loader = loader || require;
-  for(var m =0; m<names.length; m++) {
+  for (var m = 0; m < names.length; m++) {
     try {
       mod = loader(names[m]);
     } catch (e) {
-     /* ignore */
+      /* ignore */
     }
     if (mod) {
       break;
@@ -18398,11 +18853,11 @@ function tryModules(names, loader) {
  * @returns {*}
  * @private
  */
-DataSource._resolveConnector = function(name, loader) {
+DataSource._resolveConnector = function (name, loader) {
   var names = connectorModuleNames(name);
-  var connector = tryModules(names , loader);
+  var connector = tryModules(names, loader);
   var error = null;
-  if(!connector) {
+  if (!connector) {
     error = '\nWARNING: LoopBack connector "' + name
       + '" is not installed at any of the locations ' + names
       + '. To fix, run:\n\n    npm install '
@@ -18421,134 +18876,133 @@ DataSource._resolveConnector = function(name, loader) {
  * @returns {*}
  * @private
  */
-DataSource.prototype.setup = function(name, settings) {
-    var dataSource = this;
-    var connector;
+DataSource.prototype.setup = function (name, settings) {
+  var dataSource = this;
+  var connector;
 
-    // support single settings object
-    if(name && typeof name === 'object' && !settings) {
-        settings = name;
-        name = undefined;
+  // support single settings object
+  if (name && typeof name === 'object' && !settings) {
+    settings = name;
+    name = undefined;
+  }
+
+  if (typeof settings === 'object') {
+    if (settings.initialize) {
+      connector = settings;
+    } else if (settings.connector) {
+      connector = settings.connector;
+    } else if (settings.adapter) {
+      connector = settings.adapter;
     }
+  }
 
-    if(typeof settings === 'object') {
-      if(settings.initialize) {
-        connector = settings;
-      } else if(settings.connector) {
-        connector = settings.connector;
-      } else if(settings.adapter) {
-        connector = settings.adapter;
+  // just save everything we get
+  this.settings = settings || {};
+
+  // Check the debug env settings
+  var debugEnv = process.env.DEBUG || process.env.NODE_DEBUG || '';
+  var debugModules = debugEnv.split(/[\s,]+/);
+  if (debugModules.indexOf('loopback') !== -1) {
+    this.settings.debug = true;
+  }
+
+  // Disconnected by default
+  this.connected = false;
+  this.connecting = false;
+
+  if (typeof connector === 'string') {
+    name = connector;
+    connector = undefined;
+  }
+  name = name || (connector && connector.name);
+  this.name = name;
+
+  if (name && !connector) {
+    if (typeof name === 'object') {
+      // The first argument might be the connector itself
+      connector = name;
+      this.name = connector.name;
+    } else {
+      // The connector has not been resolved
+      var result = DataSource._resolveConnector(name);
+      connector = result.connector;
+      if (!connector) {
+        console.error(result.error);
+        return;
       }
     }
-    
-    // just save everything we get
-    this.settings = settings || {};
+  }
 
-    // Check the debug env settings
-    var debugEnv = process.env.DEBUG || process.env.NODE_DEBUG || '';
-    var debugModules = debugEnv.split(/[\s,]+/);
-    if(debugModules.indexOf('loopback') !== -1) {
-        this.settings.debug = true;
+  if (connector) {
+    var postInit = function postInit(err, result) {
+
+      this._setupConnector();
+      // we have an connector now?
+      if (!this.connector) {
+        throw new Error('Connector is not defined correctly: it should create `connector` member of dataSource');
+      }
+      this.connected = !err; // Connected now
+      if (this.connected) {
+        this.emit('connected');
+      } else {
+        // The connection fails, let's report it and hope it will be recovered in the next call
+        console.error('Connection fails: ', err, '\nIt will be retried for the next request.');
+        this.connecting = false;
+      }
+
+    }.bind(this);
+
+    if ('function' === typeof connector.initialize) {
+      // Call the async initialize method
+      connector.initialize(this, postInit);
+    } else if ('function' === typeof connector) {
+      // Use the connector constructor directly
+      this.connector = new connector(this.settings);
+      postInit();
     }
+  }
 
-    // Disconnected by default
-    this.connected = false;
-    this.connecting = false;
-
-    if(typeof connector === 'string') {
-        name = connector;
-        connector = undefined;
+  dataSource.connect = function (cb) {
+    var dataSource = this;
+    if (dataSource.connected || dataSource.connecting) {
+      process.nextTick(function () {
+        cb && cb();
+      });
+      return;
     }
-    name = name || (connector && connector.name);
-    this.name = name;
-
-    if (name && !connector) {
-        if (typeof name === 'object') {
-            // The first argument might be the connector itself
-            connector = name;
-            this.name = connector.name;
+    dataSource.connecting = true;
+    if (dataSource.connector.connect) {
+      dataSource.connector.connect(function (err, result) {
+        if (!err) {
+          dataSource.connected = true;
+          dataSource.connecting = false;
+          dataSource.emit('connected');
         } else {
-          // The connector has not been resolved
-          var result = DataSource._resolveConnector(name);
-          connector = result.connector;
-          if(!connector) {
-            console.error(result.error);
-            return;
-          }
+          dataSource.connected = false;
+          dataSource.connecting = false;
+          dataSource.emit('error', err);
         }
+        cb && cb(err, result);
+      });
+    } else {
+      process.nextTick(function () {
+        dataSource.connected = true;
+        dataSource.connecting = false;
+        dataSource.emit('connected');
+        cb && cb();
+      });
     }
-
-    if (connector) {
-        var postInit = function postInit(err, result) {
-
-            this._setupConnector();
-            // we have an connector now?
-            if (!this.connector) {
-                throw new Error('Connector is not defined correctly: it should create `connector` member of dataSource');
-            }
-            this.connected = !err; // Connected now
-            if(this.connected) {
-                this.emit('connected');
-            } else {
-                // The connection fails, let's report it and hope it will be recovered in the next call
-                console.error('Connection fails: ', err, '\nIt will be retried for the next request.');
-                this.connecting = false;
-            }
-
-        }.bind(this);
-
-        if ('function' === typeof connector.initialize) {
-            // Call the async initialize method
-            connector.initialize(this, postInit);
-        } else if('function' === typeof connector) {
-            // Use the connector constructor directly
-            this.connector = new connector(this.settings);
-            postInit();
-        }
-    }
-
-    dataSource.connect = function(cb) {
-        var dataSource = this;
-        if(dataSource.connected || dataSource.connecting) {
-            process.nextTick(function() {
-                cb && cb();
-            });
-            return;
-        }
-        dataSource.connecting = true;
-        if (dataSource.connector.connect) {
-            dataSource.connector.connect(function(err, result) {
-                if (!err) {
-                    dataSource.connected = true;
-                    dataSource.connecting = false;
-                    dataSource.emit('connected');
-                } else {
-                    dataSource.connected = false;
-                    dataSource.connecting = false;
-                    dataSource.emit('error', err);
-                }
-                cb && cb(err, result);
-            });
-        } else {
-            process.nextTick(function() {
-                dataSource.connected = true;
-                dataSource.connecting = false;
-                dataSource.emit('connected');
-                cb && cb();
-            });
-        }
-    };
+  };
 };
 
 function isModelClass(cls) {
-    if(!cls) {
-        return false;
-    }
-    return cls.prototype instanceof ModelBaseClass;
+  if (!cls) {
+    return false;
+  }
+  return cls.prototype instanceof ModelBaseClass;
 }
 
 DataSource.relationTypes = ['belongsTo', 'hasMany', 'hasAndBelongsToMany'];
-
 
 function isModelDataSourceAttached(model) {
   return model && (!model.settings.unresolved) && (model.dataSource instanceof DataSource);
@@ -18558,94 +19012,104 @@ function isModelDataSourceAttached(model) {
  * @param modelClass
  * @param relations
  */
-DataSource.prototype.defineRelations = function(modelClass, relations) {
+DataSource.prototype.defineRelations = function (modelClass, relations) {
 
-    // Create a function for the closure in the loop
-    var createListener = function (name, relation, targetModel, throughModel) {
-        if (!isModelDataSourceAttached(targetModel)) {
-            targetModel.once('dataSourceAttached', function (model) {
-                // Check if the through model doesn't exist or resolved
-                if (!throughModel || isModelDataSourceAttached(throughModel)) {
-                    // The target model is resolved
-                    var params = {
-                        foreignKey: relation.foreignKey,
-                        as: name,
-                        model: model
-                    };
-                    if (throughModel) {
-                        params.through = throughModel;
-                    }
-                    modelClass[relation.type].call(modelClass, name, params);
-                }
-            });
+  // Create a function for the closure in the loop
+  var createListener = function (name, relation, targetModel, throughModel) {
+    if (!isModelDataSourceAttached(targetModel)) {
+      targetModel.once('dataSourceAttached', function (model) {
+        // Check if the through model doesn't exist or resolved
+        if (!throughModel || isModelDataSourceAttached(throughModel)) {
+          // The target model is resolved
+          var params = {
+            foreignKey: relation.foreignKey,
+            as: name,
+            model: model
+          };
+          if (throughModel) {
+            params.through = throughModel;
+          }
+          modelClass[relation.type].call(modelClass, name, params);
+        }
+      });
 
-        }
-        if (throughModel && !isModelDataSourceAttached(throughModel)) {
-            // Set up a listener to the through model
-            throughModel.once('dataSourceAttached', function (model) {
-                if (isModelDataSourceAttached(targetModel)) {
-                    // The target model is resolved
-                    var params = {
-                        foreignKey: relation.foreignKey,
-                        as: name,
-                        model: targetModel,
-                        through: model
-                    };
-                    modelClass[relation.type].call(modelClass, name, params);
-                }
-            });
-        }
-    };
-
-    // Set up the relations
-    if (relations) {
-        for (var rn in relations) {
-            var r = relations[rn];
-            assert(DataSource.relationTypes.indexOf(r.type) !== -1, "Invalid relation type: " + r.type);
-            var targetModel = isModelClass(r.model) ? r.model : this.getModel(r.model, true);
-            var throughModel = null;
-            if (r.through) {
-                throughModel = isModelClass(r.through) ? r.through : this.getModel(r.through, true);
-            }
-            if (!isModelDataSourceAttached(targetModel) || (throughModel && !isModelDataSourceAttached(throughModel))) {
-                // Create a listener to defer the relation set up
-                createListener(rn, r, targetModel, throughModel);
-            } else {
-                // The target model is resolved
-                var params = {
-                    foreignKey: r.foreignKey,
-                    as: rn,
-                    model: targetModel
-                };
-                if (throughModel) {
-                    params.through = throughModel;
-                }
-                modelClass[r.type].call(modelClass, rn, params);
-            }
-        }
     }
+    if (throughModel && !isModelDataSourceAttached(throughModel)) {
+      // Set up a listener to the through model
+      throughModel.once('dataSourceAttached', function (model) {
+        if (isModelDataSourceAttached(targetModel)) {
+          // The target model is resolved
+          var params = {
+            foreignKey: relation.foreignKey,
+            as: name,
+            model: targetModel,
+            through: model
+          };
+          modelClass[relation.type].call(modelClass, name, params);
+        }
+      });
+    }
+  };
+
+  // Set up the relations
+  if (relations) {
+    for (var rn in relations) {
+      var r = relations[rn];
+      assert(DataSource.relationTypes.indexOf(r.type) !== -1, "Invalid relation type: " + r.type);
+      var targetModel = isModelClass(r.model) ? r.model : this.getModel(r.model, true);
+      var throughModel = null;
+      if (r.through) {
+        throughModel = isModelClass(r.through) ? r.through : this.getModel(r.through, true);
+      }
+      if (!isModelDataSourceAttached(targetModel) || (throughModel && !isModelDataSourceAttached(throughModel))) {
+        // Create a listener to defer the relation set up
+        createListener(rn, r, targetModel, throughModel);
+      } else {
+        // The target model is resolved
+        var params = {
+          foreignKey: r.foreignKey,
+          as: rn,
+          model: targetModel
+        };
+        if (throughModel) {
+          params.through = throughModel;
+        }
+        modelClass[r.type].call(modelClass, rn, params);
+      }
+    }
+  }
 };
 
 /*!
  * Set up the data access functions from the data source
- * @param modelClass
- * @param settings
+ * @param {Model} modelClass The model class
+ * @param {Object} settings The settings object
  */
 DataSource.prototype.setupDataAccess = function (modelClass, settings) {
-    if (this.connector && this.connector.define) {
-        // pass control to connector
-        this.connector.define({
-            model: modelClass,
-            properties: modelClass.definition.properties,
-            settings: settings
-        });
+  if (this.connector) {
+    // Check if the id property should be generated
+    var idName = modelClass.definition.idName();
+    var idProp = modelClass.definition.properties[idName];
+    if(idProp && idProp.generated && this.connector.getDefaultIdType) {
+      // Set the default id type from connector's ability
+      var idType = this.connector.getDefaultIdType() || String;
+      idProp.type = idType;
     }
+    if (this.connector.define) {
+      // pass control to connector
+      this.connector.define({
+        model: modelClass,
+        properties: modelClass.definition.properties,
+        settings: settings
+      });
+    }
+  }
 
-    // add data access objects
-    this.mixin(modelClass);
+  // add data access objects
+  this.mixin(modelClass);
 
-    var relations = settings.relationships || settings.relations;
-    this.defineRelations(modelClass, relations);
+  var relations = settings.relationships || settings.relations;
+  this.defineRelations(modelClass, relations);
 
 };
 
@@ -18682,46 +19146,45 @@ DataSource.prototype.setupDataAccess = function (modelClass, settings) {
  */
 
 DataSource.prototype.createModel = DataSource.prototype.define = function defineClass(className, properties, settings) {
-    var args = slice.call(arguments);
+  var args = slice.call(arguments);
 
-    if (!className) {
-        throw new Error('Class name required');
+  if (!className) {
+    throw new Error('Class name required');
+  }
+  if (args.length === 1) {
+    properties = {};
+    args.push(properties);
+  }
+  if (args.length === 2) {
+    settings = {};
+    args.push(settings);
+  }
+
+  properties = properties || {};
+  settings = settings || {};
+
+  if (this.isRelational()) {
+    // Set the strict mode to be true for relational DBs by default
+    if (settings.strict === undefined || settings.strict === null) {
+      settings.strict = true;
     }
-    if (args.length === 1) {
-        properties = {};
-        args.push(properties);
+    if (settings.strict === false) {
+      settings.strict = 'throw';
     }
-    if (args.length === 2) {
-        settings   = {};
-        args.push(settings);
-    }
+  }
 
-    properties = properties || {};
-    settings = settings || {};
+  var modelClass = this.modelBuilder.define(className, properties, settings);
+  modelClass.dataSource = this;
 
-    if(this.isRelational()) {
-        // Set the strict mode to be true for relational DBs by default
-        if(settings.strict === undefined || settings.strict === null) {
-            settings.strict = true;
-        }
-        if(settings.strict === false) {
-            settings.strict = 'throw';
-        }
-    }
-
-    var modelClass = this.modelBuilder.define(className, properties, settings);
-    modelClass.dataSource = this;
-
-    if(settings.unresolved) {
-        return modelClass;
-    }
-
-    this.setupDataAccess(modelClass, settings);
-    modelClass.emit('dataSourceAttached', modelClass);
-
+  if (settings.unresolved) {
     return modelClass;
-};
+  }
 
+  this.setupDataAccess(modelClass, settings);
+  modelClass.emit('dataSourceAttached', modelClass);
+
+  return modelClass;
+};
 
 /**
  * Mixin DataAccessObject methods.
@@ -18732,16 +19195,16 @@ DataSource.prototype.createModel = DataSource.prototype.define = function define
 DataSource.prototype.mixin = function (ModelCtor) {
   var ops = this.operations();
   var DAO = this.DataAccessObject;
-  
+
   // mixin DAO
-  jutil.mixin(ModelCtor, DAO, {proxyFunctions : true});
-  
+  jutil.mixin(ModelCtor, DAO, {proxyFunctions: true});
+
   // decorate operations as alias functions
   Object.keys(ops).forEach(function (name) {
     var op = ops[name];
     var scope;
 
-    if(op.enabled) {
+    if (op.enabled) {
       scope = op.prototype ? ModelCtor.prototype : ModelCtor;
       // var sfn = scope[name] = function () {
       //   op.scope[op.fnName].apply(self, arguments);
@@ -18749,14 +19212,14 @@ DataSource.prototype.mixin = function (ModelCtor) {
       Object.keys(op)
         .filter(function (key) {
           // filter out the following keys
-          return ~ [
+          return ~[
             'scope',
             'fnName',
             'prototype'
           ].indexOf(key);
         })
         .forEach(function (key) {
-          if(typeof op[key] !== 'undefined') {
+          if (typeof op[key] !== 'undefined') {
             op.scope[op.fnName][key] = op[key];
           }
         });
@@ -18764,12 +19227,53 @@ DataSource.prototype.mixin = function (ModelCtor) {
   });
 };
 
-DataSource.prototype.getModel = function(name, forceCreate) {
-    return this.modelBuilder.getModel(name, forceCreate);
+/**
+ * @see ModelBuilder.prototype.getModel
+ */
+DataSource.prototype.getModel = function (name, forceCreate) {
+  return this.modelBuilder.getModel(name, forceCreate);
 };
 
-DataSource.prototype.getModelDefinition = function(name) {
-    return this.modelBuilder.getModelDefinition(name);
+/**
+ * @see ModelBuilder.prototype.getModelDefinition
+ */
+DataSource.prototype.getModelDefinition = function (name) {
+  return this.modelBuilder.getModelDefinition(name);
+};
+
+/**
+ * Get the data source types
+ * @returns {String[]} The data source type, such as ['db', 'nosql', 'mongodb'],
+ * ['rest'], or ['db', 'rdbms', 'mysql']
+ */
+DataSource.prototype.getTypes = function () {
+  var types = this.connector && this.connector.getTypes() || [];
+  if (typeof types === 'string') {
+    types = types.split(/[\s,\/]+/);
+  }
+  return types;
+};
+
+/**
+ * Check the data source supports the given types
+ * @param String|String[]) types A type name or an array of type names
+ * @return {Boolean} true if all types are supported by the data source
+ */
+DataSource.prototype.supportTypes = function (types) {
+  var supportedTypes = this.getTypes();
+  if (Array.isArray(types)) {
+    // Check each of the types
+    for (var i = 0; i < types.length; i++) {
+      if (supportedTypes.indexOf(types[i]) === -1) {
+        // Not supported
+        return false;
+      }
+    }
+    return true;
+  } else {
+    // The types is a string
+    return supportedTypes.indexOf(types) !== -1;
+  }
 };
 
 /**
@@ -18779,12 +19283,12 @@ DataSource.prototype.getModelDefinition = function(name) {
  */
 
 DataSource.prototype.attach = function (modelClass) {
-  if(modelClass.dataSource === this) {
+  if (modelClass.dataSource === this) {
     // Already attached to the data source
     return modelClass;
   }
 
-  if(modelClass.modelBuilder !== this.modelBuilder) {
+  if (modelClass.modelBuilder !== this.modelBuilder) {
     this.modelBuilder.definitions[modelClass.modelName] = modelClass.definition;
     this.modelBuilder.models[modelClass.modelName] = modelClass;
     // reset the modelBuilder
@@ -18808,12 +19312,12 @@ DataSource.prototype.attach = function (modelClass) {
  * @param {Object} params - property settings
  */
 DataSource.prototype.defineProperty = function (model, prop, params) {
-    this.modelBuilder.defineProperty(model, prop, params);
+  this.modelBuilder.defineProperty(model, prop, params);
 
-    var resolvedProp = this.getModelDefinition(model).properties[prop];
-    if (this.connector.defineProperty) {
-        this.connector.defineProperty(model, prop, resolvedProp);
-    }
+  var resolvedProp = this.getModelDefinition(model).properties[prop];
+  if (this.connector.defineProperty) {
+    this.connector.defineProperty(model, prop, resolvedProp);
+  }
 };
 
 /**
@@ -18826,16 +19330,16 @@ DataSource.prototype.defineProperty = function (model, prop, params) {
  * @warning All data will be lost! Use autoupdate if you need your data.
  */
 DataSource.prototype.automigrate = function (models, cb) {
-    this.freeze();
-    if (this.connector.automigrate) {
-        this.connector.automigrate(models, cb);
-    } else {
-        if ((!cb) && ('function' === typeof models)) {
-            cb = models;
-            models = undefined;
-        }
-        cb && process.nextTick(cb);
+  this.freeze();
+  if (this.connector.automigrate) {
+    this.connector.automigrate(models, cb);
+  } else {
+    if ((!cb) && ('function' === typeof models)) {
+      cb = models;
+      models = undefined;
     }
+    cb && process.nextTick(cb);
+  }
 };
 
 /**
@@ -18846,16 +19350,16 @@ DataSource.prototype.automigrate = function (models, cb) {
  * @param {Function} [cb] The callback function
  */
 DataSource.prototype.autoupdate = function (models, cb) {
-    this.freeze();
-    if (this.connector.autoupdate) {
-        this.connector.autoupdate(models, cb);
-    } else {
-        if ((!cb) && ('function' === typeof models)) {
-            cb = models;
-            models = undefined;
-        }
-        cb && process.nextTick(cb);
+  this.freeze();
+  if (this.connector.autoupdate) {
+    this.connector.autoupdate(models, cb);
+  } else {
+    if ((!cb) && ('function' === typeof models)) {
+      cb = models;
+      models = undefined;
     }
+    cb && process.nextTick(cb);
+  }
 };
 
 /**
@@ -18874,14 +19378,13 @@ DataSource.prototype.autoupdate = function (models, cb) {
  *
  */
 DataSource.prototype.discoverModelDefinitions = function (options, cb) {
-    this.freeze();
-    if (this.connector.discoverModelDefinitions) {
-        this.connector.discoverModelDefinitions(options, cb);
-    } else if (cb) {
-        cb();
-    }
+  this.freeze();
+  if (this.connector.discoverModelDefinitions) {
+    this.connector.discoverModelDefinitions(options, cb);
+  } else if (cb) {
+    cb();
+  }
 };
-
 
 /**
  * The synchronous version of discoverModelDefinitions
@@ -18889,11 +19392,11 @@ DataSource.prototype.discoverModelDefinitions = function (options, cb) {
  * @returns {*}
  */
 DataSource.prototype.discoverModelDefinitionsSync = function (options) {
-    this.freeze();
-    if (this.connector.discoverModelDefinitionsSync) {
-        return this.connector.discoverModelDefinitionsSync(options);
-    }
-    return null;
+  this.freeze();
+  if (this.connector.discoverModelDefinitionsSync) {
+    return this.connector.discoverModelDefinitionsSync(options);
+  }
+  return null;
 };
 
 /**
@@ -18922,9 +19425,9 @@ DataSource.prototype.discoverModelDefinitionsSync = function (options) {
 DataSource.prototype.discoverModelProperties = function (modelName, options, cb) {
   this.freeze();
   if (this.connector.discoverModelProperties) {
-      this.connector.discoverModelProperties(modelName, options, cb);
+    this.connector.discoverModelProperties(modelName, options, cb);
   } else if (cb) {
-      cb();
+    cb();
   }
 };
 
@@ -18935,11 +19438,11 @@ DataSource.prototype.discoverModelProperties = function (modelName, options, cb)
  * @returns {*}
  */
 DataSource.prototype.discoverModelPropertiesSync = function (modelName, options) {
-    this.freeze();
-    if (this.connector.discoverModelPropertiesSync) {
-        return this.connector.discoverModelPropertiesSync(modelName, options);
-    }
-    return null;
+  this.freeze();
+  if (this.connector.discoverModelPropertiesSync) {
+    return this.connector.discoverModelPropertiesSync(modelName, options);
+  }
+  return null;
 };
 
 /**
@@ -18963,13 +19466,13 @@ DataSource.prototype.discoverModelPropertiesSync = function (modelName, options)
  * @param {Object} options The options
  * @param {Function} [cb] The callback function
  */
-DataSource.prototype.discoverPrimaryKeys= function(modelName, options, cb) {
-    this.freeze();
-    if (this.connector.discoverPrimaryKeys) {
-        this.connector.discoverPrimaryKeys(modelName, options, cb);
-    } else if (cb) {
-        cb();
-    }
+DataSource.prototype.discoverPrimaryKeys = function (modelName, options, cb) {
+  this.freeze();
+  if (this.connector.discoverPrimaryKeys) {
+    this.connector.discoverPrimaryKeys(modelName, options, cb);
+  } else if (cb) {
+    cb();
+  }
 };
 
 /**
@@ -18978,12 +19481,12 @@ DataSource.prototype.discoverPrimaryKeys= function(modelName, options, cb) {
  * @param {Object} options The options
  * @returns {*}
  */
-DataSource.prototype.discoverPrimaryKeysSync= function(modelName, options) {
-    this.freeze();
-    if (this.connector.discoverPrimaryKeysSync) {
-        return this.connector.discoverPrimaryKeysSync(modelName, options);
-    }
-    return null;
+DataSource.prototype.discoverPrimaryKeysSync = function (modelName, options) {
+  this.freeze();
+  if (this.connector.discoverPrimaryKeysSync) {
+    return this.connector.discoverPrimaryKeysSync(modelName, options);
+  }
+  return null;
 };
 
 /**
@@ -19010,13 +19513,13 @@ DataSource.prototype.discoverPrimaryKeysSync= function(modelName, options) {
  * @param {Function} [cb] The callback function
  *
  */
-DataSource.prototype.discoverForeignKeys= function(modelName, options, cb) {
-    this.freeze();
-    if (this.connector.discoverForeignKeys) {
-        this.connector.discoverForeignKeys(modelName, options, cb);
-    } else if (cb) {
-        cb();
-    }
+DataSource.prototype.discoverForeignKeys = function (modelName, options, cb) {
+  this.freeze();
+  if (this.connector.discoverForeignKeys) {
+    this.connector.discoverForeignKeys(modelName, options, cb);
+  } else if (cb) {
+    cb();
+  }
 };
 
 /**
@@ -19026,12 +19529,12 @@ DataSource.prototype.discoverForeignKeys= function(modelName, options, cb) {
  * @param {Object} options The options
  * @returns {*}
  */
-DataSource.prototype.discoverForeignKeysSync= function(modelName, options) {
-    this.freeze();
-    if (this.connector.discoverForeignKeysSync) {
-        return this.connector.discoverForeignKeysSync(modelName, options);
-    }
-    return null;
+DataSource.prototype.discoverForeignKeysSync = function (modelName, options) {
+  this.freeze();
+  if (this.connector.discoverForeignKeysSync) {
+    return this.connector.discoverForeignKeysSync(modelName, options);
+  }
+  return null;
 }
 
 /**
@@ -19058,13 +19561,13 @@ DataSource.prototype.discoverForeignKeysSync= function(modelName, options) {
  * @param {Object} options The options
  * @param {Function} [cb] The callback function
  */
-DataSource.prototype.discoverExportedForeignKeys= function(modelName, options, cb) {
-    this.freeze();
-    if (this.connector.discoverExportedForeignKeys) {
-        this.connector.discoverExportedForeignKeys(modelName, options, cb);
-    } else if (cb) {
-        cb();
-    }
+DataSource.prototype.discoverExportedForeignKeys = function (modelName, options, cb) {
+  this.freeze();
+  if (this.connector.discoverExportedForeignKeys) {
+    this.connector.discoverExportedForeignKeys(modelName, options, cb);
+  } else if (cb) {
+    cb();
+  }
 };
 
 /**
@@ -19073,32 +19576,32 @@ DataSource.prototype.discoverExportedForeignKeys= function(modelName, options, c
  * @param {Object} options The options
  * @returns {*}
  */
-DataSource.prototype.discoverExportedForeignKeysSync= function(modelName, options) {
-    this.freeze();
-    if (this.connector.discoverExportedForeignKeysSync) {
-        return this.connector.discoverExportedForeignKeysSync(modelName, options);
-    }
-    return null;
-}
+DataSource.prototype.discoverExportedForeignKeysSync = function (modelName, options) {
+  this.freeze();
+  if (this.connector.discoverExportedForeignKeysSync) {
+    return this.connector.discoverExportedForeignKeysSync(modelName, options);
+  }
+  return null;
+};
 
 function capitalize(str) {
-    if (!str) {
-        return str;
-    }
-    return str.charAt(0).toUpperCase() + ((str.length > 1) ? str.slice(1).toLowerCase() : '');
+  if (!str) {
+    return str;
+  }
+  return str.charAt(0).toUpperCase() + ((str.length > 1) ? str.slice(1).toLowerCase() : '');
 }
 
 function fromDBName(dbName, camelCase) {
-    if (!dbName) {
-        return dbName;
-    }
-    var parts = dbName.split(/-|_/);
-    parts[0] = camelCase ? parts[0].toLowerCase() : capitalize(parts[0]);
+  if (!dbName) {
+    return dbName;
+  }
+  var parts = dbName.split(/-|_/);
+  parts[0] = camelCase ? parts[0].toLowerCase() : capitalize(parts[0]);
 
-    for (var i = 1; i < parts.length; i++) {
-        parts[i] = capitalize(parts[i]);
-    }
-    return parts.join('');
+  for (var i = 1; i < parts.length; i++) {
+    parts[i] = capitalize(parts[i]);
+  }
+  return parts.join('');
 }
 
 /**
@@ -19109,25 +19612,25 @@ function fromDBName(dbName, camelCase) {
  * @param {Function} [cb] The callback function
  */
 DataSource.prototype.discoverSchema = function (modelName, options, cb) {
-    options = options || {};
+  options = options || {};
 
-    if(!cb && 'function' === typeof options) {
-        cb = options;
-        options = {};
+  if (!cb && 'function' === typeof options) {
+    cb = options;
+    options = {};
+  }
+  options.visited = {};
+  options.relations = false;
+
+  this.discoverSchemas(modelName, options, function (err, schemas) {
+    if (err) {
+      cb && cb(err, schemas);
+      return;
     }
-    options.visited = {};
-    options.relations = false;
-
-    this.discoverSchemas(modelName, options, function(err, schemas) {
-        if(err) {
-            cb && cb(err, schemas);
-            return;
-        }
-        for(var s in schemas) {
-            cb && cb(null, schemas[s]);
-            return;
-        }
-    });
+    for (var s in schemas) {
+      cb && cb(null, schemas[s]);
+      return;
+    }
+  });
 }
 
 /**
@@ -19145,161 +19648,160 @@ DataSource.prototype.discoverSchema = function (modelName, options, cb) {
  * @param {Function} [cb] The callback function
  */
 DataSource.prototype.discoverSchemas = function (modelName, options, cb) {
-    options = options || {};
+  options = options || {};
 
-    if(!cb && 'function' === typeof options) {
-        cb = options;
-        options = {};
+  if (!cb && 'function' === typeof options) {
+    cb = options;
+    options = {};
+  }
+
+  var self = this;
+  var schemaName = this.connector.name || this.name;
+
+  var tasks = [
+    this.discoverModelProperties.bind(this, modelName, options),
+    this.discoverPrimaryKeys.bind(this, modelName, options) ];
+
+  var followingRelations = options.associations || options.relations;
+  if (followingRelations) {
+    tasks.push(this.discoverForeignKeys.bind(this, modelName, options));
+  }
+
+  async.parallel(tasks, function (err, results) {
+
+    if (err) {
+      cb && cb(err);
+      return;
     }
 
-    var self = this;
-    var schemaName = this.connector.name || this.name;
-
-    var tasks = [
-        this.discoverModelProperties.bind(this, modelName, options),
-        this.discoverPrimaryKeys.bind(this, modelName, options) ];
-
-    var followingRelations = options.associations || options.relations;
-    if (followingRelations) {
-        tasks.push(this.discoverForeignKeys.bind(this, modelName, options));
+    var columns = results[0];
+    if (!columns || columns.length === 0) {
+      cb && cb();
+      return;
     }
 
-    async.parallel(tasks, function (err, results) {
-
-        if (err) {
-            cb && cb(err);
-            return;
-        }
-
-        var columns = results[0];
-        if (!columns || columns.length === 0) {
-            cb && cb();
-            return;
-        }
-
-        // Handle primary keys
-        var primaryKeys = results[1];
-        var pks = {};
-        primaryKeys.forEach(function (pk) {
-            pks[pk.columnName] = pk.keySeq;
-        });
-
-        if (self.settings.debug) {
-            console.log('Primary keys: ', pks);
-        }
-
-        var schema = {
-            name: fromDBName(modelName, false),
-            options: {
-                idInjection: false // DO NOT add id property
-            },
-            properties: {
-            }
-        };
-
-        schema.options[schemaName] = {
-            schema: columns[0].owner,
-            table: modelName
-        };
-
-        columns.forEach(function (item) {
-            var i = item;
-
-            var propName = fromDBName(item.columnName, true);
-            schema.properties[propName] = {
-                type: item.type,
-                required: (item.nullable === 'N'),
-                length: item.dataLength,
-                precision: item.dataPrecision,
-                scale: item.dataScale
-            };
-
-            if (pks[item.columnName]) {
-                schema.properties[propName].id = pks[item.columnName];
-            }
-            schema.properties[propName][schemaName] = {
-                columnName: i.columnName,
-                dataType: i.dataType,
-                dataLength: i.dataLength,
-                dataPrecision: item.dataPrecision,
-                dataScale: item.dataScale,
-                nullable: i.nullable
-            };
-        });
-
-        // Add current modelName to the visited tables
-        options.visited = options.visited || {};
-        var schemaKey = columns[0].owner + '.' + modelName;
-        if (!options.visited.hasOwnProperty(schemaKey)) {
-            if(self.settings.debug) {
-                console.log('Adding schema for ' + schemaKey);
-            }
-            options.visited[schemaKey] = schema;
-        }
-
-        var otherTables = {};
-        if (followingRelations) {
-            // Handle foreign keys
-            var fks = {};
-            var foreignKeys = results[2];
-            foreignKeys.forEach(function (fk) {
-                var fkInfo = {
-                    keySeq: fk.keySeq,
-                    owner: fk.pkOwner,
-                    tableName: fk.pkTableName,
-                    columnName: fk.pkColumnName
-                };
-                if (fks[fk.fkName]) {
-                    fks[fk.fkName].push(fkInfo);
-                } else {
-                    fks[fk.fkName] = [fkInfo];
-                }
-            });
-
-            if (self.settings.debug) {
-                console.log('Foreign keys: ', fks);
-            }
-
-            schema.options.relations = {};
-            foreignKeys.forEach(function (fk) {
-                var propName = fromDBName(fk.pkTableName, true);
-                schema.options.relations[propName] = {
-                    model: fromDBName(fk.pkTableName, false),
-                    type: 'belongsTo',
-                    foreignKey: fromDBName(fk.fkColumnName, true)
-                };
-
-                var key = fk.pkOwner + '.' + fk.pkTableName;
-                if (!options.visited.hasOwnProperty(key) && !otherTables.hasOwnProperty(key)) {
-                    otherTables[key] = {owner: fk.pkOwner, tableName: fk.pkTableName};
-                }
-            });
-        }
-
-        if (Object.keys(otherTables).length === 0) {
-            cb && cb(null, options.visited);
-        } else {
-            var moreTasks = [];
-            for (var t in otherTables) {
-                if(self.settings.debug) {
-                    console.log('Discovering related schema for ' + schemaKey);
-                }
-                var newOptions = {};
-                for(var key in options) {
-                    newOptions[key] = options[key];
-                }
-                newOptions.owner = otherTables[t].owner;
-
-                moreTasks.push(DataSource.prototype.discoverSchemas.bind(self, otherTables[t].tableName, newOptions));
-            }
-            async.parallel(moreTasks, function (err, results) {
-                var result = results && results[0];
-                cb && cb(err, result);
-            });
-        }
+    // Handle primary keys
+    var primaryKeys = results[1];
+    var pks = {};
+    primaryKeys.forEach(function (pk) {
+      pks[pk.columnName] = pk.keySeq;
     });
-};
 
+    if (self.settings.debug) {
+      console.log('Primary keys: ', pks);
+    }
+
+    var schema = {
+      name: fromDBName(modelName, false),
+      options: {
+        idInjection: false // DO NOT add id property
+      },
+      properties: {
+      }
+    };
+
+    schema.options[schemaName] = {
+      schema: columns[0].owner,
+      table: modelName
+    };
+
+    columns.forEach(function (item) {
+      var i = item;
+
+      var propName = fromDBName(item.columnName, true);
+      schema.properties[propName] = {
+        type: item.type,
+        required: (item.nullable === 'N'),
+        length: item.dataLength,
+        precision: item.dataPrecision,
+        scale: item.dataScale
+      };
+
+      if (pks[item.columnName]) {
+        schema.properties[propName].id = pks[item.columnName];
+      }
+      schema.properties[propName][schemaName] = {
+        columnName: i.columnName,
+        dataType: i.dataType,
+        dataLength: i.dataLength,
+        dataPrecision: item.dataPrecision,
+        dataScale: item.dataScale,
+        nullable: i.nullable
+      };
+    });
+
+    // Add current modelName to the visited tables
+    options.visited = options.visited || {};
+    var schemaKey = columns[0].owner + '.' + modelName;
+    if (!options.visited.hasOwnProperty(schemaKey)) {
+      if (self.settings.debug) {
+        console.log('Adding schema for ' + schemaKey);
+      }
+      options.visited[schemaKey] = schema;
+    }
+
+    var otherTables = {};
+    if (followingRelations) {
+      // Handle foreign keys
+      var fks = {};
+      var foreignKeys = results[2];
+      foreignKeys.forEach(function (fk) {
+        var fkInfo = {
+          keySeq: fk.keySeq,
+          owner: fk.pkOwner,
+          tableName: fk.pkTableName,
+          columnName: fk.pkColumnName
+        };
+        if (fks[fk.fkName]) {
+          fks[fk.fkName].push(fkInfo);
+        } else {
+          fks[fk.fkName] = [fkInfo];
+        }
+      });
+
+      if (self.settings.debug) {
+        console.log('Foreign keys: ', fks);
+      }
+
+      schema.options.relations = {};
+      foreignKeys.forEach(function (fk) {
+        var propName = fromDBName(fk.pkTableName, true);
+        schema.options.relations[propName] = {
+          model: fromDBName(fk.pkTableName, false),
+          type: 'belongsTo',
+          foreignKey: fromDBName(fk.fkColumnName, true)
+        };
+
+        var key = fk.pkOwner + '.' + fk.pkTableName;
+        if (!options.visited.hasOwnProperty(key) && !otherTables.hasOwnProperty(key)) {
+          otherTables[key] = {owner: fk.pkOwner, tableName: fk.pkTableName};
+        }
+      });
+    }
+
+    if (Object.keys(otherTables).length === 0) {
+      cb && cb(null, options.visited);
+    } else {
+      var moreTasks = [];
+      for (var t in otherTables) {
+        if (self.settings.debug) {
+          console.log('Discovering related schema for ' + schemaKey);
+        }
+        var newOptions = {};
+        for (var key in options) {
+          newOptions[key] = options[key];
+        }
+        newOptions.owner = otherTables[t].owner;
+
+        moreTasks.push(DataSource.prototype.discoverSchemas.bind(self, otherTables[t].tableName, newOptions));
+      }
+      async.parallel(moreTasks, function (err, results) {
+        var result = results && results[0];
+        cb && cb(err, result);
+      });
+    }
+  });
+};
 
 /**
  * Discover schema from a given table/view synchronously
@@ -19315,132 +19817,132 @@ DataSource.prototype.discoverSchemas = function (modelName, options, cb) {
  * @param {Object} [options] The options
  */
 DataSource.prototype.discoverSchemasSync = function (modelName, options) {
-    var self = this;
-    var schemaName = this.name || this.connector.name;
+  var self = this;
+  var schemaName = this.name || this.connector.name;
 
-    var columns = this.discoverModelPropertiesSync(modelName, options);
-    if (!columns || columns.length === 0) {
-        return [];
+  var columns = this.discoverModelPropertiesSync(modelName, options);
+  if (!columns || columns.length === 0) {
+    return [];
+  }
+
+  // Handle primary keys
+  var primaryKeys = this.discoverPrimaryKeysSync(modelName, options);
+  var pks = {};
+  primaryKeys.forEach(function (pk) {
+    pks[pk.columnName] = pk.keySeq;
+  });
+
+  if (self.settings.debug) {
+    console.log('Primary keys: ', pks);
+  }
+
+  var schema = {
+    name: fromDBName(modelName, false),
+    options: {
+      idInjection: false // DO NOT add id property
+    },
+    properties: {
     }
+  };
 
-    // Handle primary keys
-    var primaryKeys = this.discoverPrimaryKeysSync(modelName, options);
-    var pks = {};
-    primaryKeys.forEach(function (pk) {
-        pks[pk.columnName] = pk.keySeq;
+  schema.options[schemaName] = {
+    schema: columns.length > 0 && columns[0].owner,
+    table: modelName
+  };
+
+  columns.forEach(function (item) {
+    var i = item;
+
+    var propName = fromDBName(item.columnName, true);
+    schema.properties[propName] = {
+      type: item.type,
+      required: (item.nullable === 'N'),
+      length: item.dataLength,
+      precision: item.dataPrecision,
+      scale: item.dataScale
+    };
+
+    if (pks[item.columnName]) {
+      schema.properties[propName].id = pks[item.columnName];
+    }
+    schema.properties[propName][schemaName] = {
+      columnName: i.columnName,
+      dataType: i.dataType,
+      dataLength: i.dataLength,
+      dataPrecision: item.dataPrecision,
+      dataScale: item.dataScale,
+      nullable: i.nullable
+    };
+  });
+
+  // Add current modelName to the visited tables
+  options.visited = options.visited || {};
+  var schemaKey = columns[0].owner + '.' + modelName;
+  if (!options.visited.hasOwnProperty(schemaKey)) {
+    if (self.settings.debug) {
+      console.log('Adding schema for ' + schemaKey);
+    }
+    options.visited[schemaKey] = schema;
+  }
+
+  var otherTables = {};
+  var followingRelations = options.associations || options.relations;
+  if (followingRelations) {
+    // Handle foreign keys
+    var fks = {};
+    var foreignKeys = this.discoverForeignKeysSync(modelName, options);
+    foreignKeys.forEach(function (fk) {
+      var fkInfo = {
+        keySeq: fk.keySeq,
+        owner: fk.pkOwner,
+        tableName: fk.pkTableName,
+        columnName: fk.pkColumnName
+      };
+      if (fks[fk.fkName]) {
+        fks[fk.fkName].push(fkInfo);
+      } else {
+        fks[fk.fkName] = [fkInfo];
+      }
     });
 
     if (self.settings.debug) {
-        console.log('Primary keys: ', pks);
+      console.log('Foreign keys: ', fks);
     }
 
-    var schema = {
-        name: fromDBName(modelName, false),
-        options: {
-            idInjection: false // DO NOT add id property
-        },
-        properties: {
-        }
-    };
+    schema.options.relations = {};
+    foreignKeys.forEach(function (fk) {
+      var propName = fromDBName(fk.pkTableName, true);
+      schema.options.relations[propName] = {
+        model: fromDBName(fk.pkTableName, false),
+        type: 'belongsTo',
+        foreignKey: fromDBName(fk.fkColumnName, true)
+      };
 
-    schema.options[schemaName] = {
-        schema: columns.length > 0 && columns[0].owner,
-        table: modelName
-    };
-
-    columns.forEach(function (item) {
-        var i = item;
-
-        var propName = fromDBName(item.columnName, true);
-        schema.properties[propName] = {
-            type: item.type,
-            required: (item.nullable === 'N'),
-            length: item.dataLength,
-            precision: item.dataPrecision,
-            scale: item.dataScale
-        };
-
-        if (pks[item.columnName]) {
-            schema.properties[propName].id = pks[item.columnName];
-        }
-        schema.properties[propName][schemaName] = {
-            columnName: i.columnName,
-            dataType: i.dataType,
-            dataLength: i.dataLength,
-            dataPrecision: item.dataPrecision,
-            dataScale: item.dataScale,
-            nullable: i.nullable
-        };
+      var key = fk.pkOwner + '.' + fk.pkTableName;
+      if (!options.visited.hasOwnProperty(key) && !otherTables.hasOwnProperty(key)) {
+        otherTables[key] = {owner: fk.pkOwner, tableName: fk.pkTableName};
+      }
     });
+  }
 
-    // Add current modelName to the visited tables
-    options.visited = options.visited || {};
-    var schemaKey = columns[0].owner + '.' + modelName;
-    if (!options.visited.hasOwnProperty(schemaKey)) {
-        if (self.settings.debug) {
-            console.log('Adding schema for ' + schemaKey);
-        }
-        options.visited[schemaKey] = schema;
+  if (Object.keys(otherTables).length === 0) {
+    return options.visited;
+  } else {
+    var moreTasks = [];
+    for (var t in otherTables) {
+      if (self.settings.debug) {
+        console.log('Discovering related schema for ' + schemaKey);
+      }
+      var newOptions = {};
+      for (var key in options) {
+        newOptions[key] = options[key];
+      }
+      newOptions.owner = otherTables[t].owner;
+      self.discoverSchemasSync(otherTables[t].tableName, newOptions);
     }
+    return options.visited;
 
-    var otherTables = {};
-    var followingRelations = options.associations || options.relations;
-    if (followingRelations) {
-        // Handle foreign keys
-        var fks = {};
-        var foreignKeys = this.discoverForeignKeysSync(modelName, options);
-        foreignKeys.forEach(function (fk) {
-            var fkInfo = {
-                keySeq: fk.keySeq,
-                owner: fk.pkOwner,
-                tableName: fk.pkTableName,
-                columnName: fk.pkColumnName
-            };
-            if (fks[fk.fkName]) {
-                fks[fk.fkName].push(fkInfo);
-            } else {
-                fks[fk.fkName] = [fkInfo];
-            }
-        });
-
-        if (self.settings.debug) {
-            console.log('Foreign keys: ', fks);
-        }
-
-        schema.options.relations = {};
-        foreignKeys.forEach(function (fk) {
-            var propName = fromDBName(fk.pkTableName, true);
-            schema.options.relations[propName] = {
-                model: fromDBName(fk.pkTableName, false),
-                type: 'belongsTo',
-                foreignKey: fromDBName(fk.fkColumnName, true)
-            };
-
-            var key = fk.pkOwner + '.' + fk.pkTableName;
-            if (!options.visited.hasOwnProperty(key) && !otherTables.hasOwnProperty(key)) {
-                otherTables[key] = {owner: fk.pkOwner, tableName: fk.pkTableName};
-            }
-        });
-    }
-
-    if (Object.keys(otherTables).length === 0) {
-        return options.visited;
-    } else {
-        var moreTasks = [];
-        for (var t in otherTables) {
-            if (self.settings.debug) {
-                console.log('Discovering related schema for ' + schemaKey);
-            }
-            var newOptions = {};
-            for(var key in options) {
-                newOptions[key] = options[key];
-            }
-            newOptions.owner = otherTables[t].owner;
-            self.discoverSchemasSync(otherTables[t].tableName, newOptions);
-        }
-        return options.visited;
-
-    }
+  }
 };
 
 /**
@@ -19458,26 +19960,26 @@ DataSource.prototype.discoverSchemasSync = function (modelName, options) {
  * @param {Function} [cb] The callback function
  */
 DataSource.prototype.discoverAndBuildModels = function (modelName, options, cb) {
-    var self = this;
-    this.discoverSchemas(modelName, options, function (err, schemas) {
-        if (err) {
-            cb && cb(err, schemas);
-            return;
-        }
+  var self = this;
+  this.discoverSchemas(modelName, options, function (err, schemas) {
+    if (err) {
+      cb && cb(err, schemas);
+      return;
+    }
 
-        var schemaList = [];
-        for (var s in schemas) {
-            var schema = schemas[s];
-            schemaList.push(schema);
-        }
+    var schemaList = [];
+    for (var s in schemas) {
+      var schema = schemas[s];
+      schemaList.push(schema);
+    }
 
-        var models = self.modelBuilder.buildModels(schemaList);
-        // Now attach the models to the data source
-        for(var m in models) {
-            models[m].attachTo(self);
-        }
-        cb && cb(err, models);
-    });
+    var models = self.modelBuilder.buildModels(schemaList);
+    // Now attach the models to the data source
+    for (var m in models) {
+      models[m].attachTo(self);
+    }
+    cb && cb(err, models);
+  });
 };
 
 /**
@@ -19494,16 +19996,16 @@ DataSource.prototype.discoverAndBuildModels = function (modelName, options, cb) 
  * @param {Object} [options] The options
  */
 DataSource.prototype.discoverAndBuildModelsSync = function (modelName, options) {
-    var schemas = this.discoverSchemasSync(modelName, options);
+  var schemas = this.discoverSchemasSync(modelName, options);
 
-    var schemaList = [];
-    for (var s in schemas) {
-        var schema = schemas[s];
-        schemaList.push(schema);
-    }
+  var schemaList = [];
+  for (var s in schemas) {
+    var schema = schemas[s];
+    schemaList.push(schema);
+  }
 
-    var models = this.modelBuilder.buildModels(schemaList);
-    return models;
+  var models = this.modelBuilder.buildModels(schemaList);
+  return models;
 };
 
 /**
@@ -19512,20 +20014,20 @@ DataSource.prototype.discoverAndBuildModelsSync = function (modelName, options) 
  * @param {String[]} [models] A model name or an array of model names. If not present, apply to all models
  */
 DataSource.prototype.isActual = function (models, cb) {
-    this.freeze();
-    if (this.connector.isActual) {
-        this.connector.isActual(models, cb);
-    } else {
-        if ((!cb) && ('function' === typeof models)) {
-            cb = models;
-            models = undefined;
-        }
-        if (cb) {
-            process.nextTick(function() {
-                cb(null, true);
-            });
-        }
+  this.freeze();
+  if (this.connector.isActual) {
+    this.connector.isActual(models, cb);
+  } else {
+    if ((!cb) && ('function' === typeof models)) {
+      cb = models;
+      models = undefined;
     }
+    if (cb) {
+      process.nextTick(function () {
+        cb(null, true);
+      });
+    }
+  }
 };
 
 /**
@@ -19535,19 +20037,19 @@ DataSource.prototype.isActual = function (models, cb) {
  * @private used by connectors
  */
 DataSource.prototype.log = function (sql, t) {
-    this.emit('log', sql, t);
+  this.emit('log', sql, t);
 };
 
 /**
  * Freeze dataSource. Behavior depends on connector
  */
 DataSource.prototype.freeze = function freeze() {
-    if (this.connector.freezeDataSource) {
-        this.connector.freezeDataSource();
-    }
-    if (this.connector.freezeSchema) {
-        this.connector.freezeSchema();
-    }
+  if (this.connector.freezeDataSource) {
+    this.connector.freezeDataSource();
+  }
+  if (this.connector.freezeSchema) {
+    this.connector.freezeSchema();
+  }
 }
 
 /**
@@ -19555,7 +20057,7 @@ DataSource.prototype.freeze = function freeze() {
  * @param {String} modelName The model name
  */
 DataSource.prototype.tableName = function (modelName) {
-    return this.getModelDefinition(modelName).tableName(this.connector.name);
+  return this.getModelDefinition(modelName).tableName(this.connector.name);
 };
 
 /**
@@ -19565,7 +20067,7 @@ DataSource.prototype.tableName = function (modelName) {
  * @returns {String} columnName
  */
 DataSource.prototype.columnName = function (modelName, propertyName) {
-    return this.getModelDefinition(modelName).columnName(this.connector.name, propertyName);
+  return this.getModelDefinition(modelName).columnName(this.connector.name, propertyName);
 };
 
 /**
@@ -19575,7 +20077,7 @@ DataSource.prototype.columnName = function (modelName, propertyName) {
  * @returns {Object} column metadata
  */
 DataSource.prototype.columnMetadata = function (modelName, propertyName) {
-    return this.getModelDefinition(modelName).columnMetadata(this.connector.name, propertyName);
+  return this.getModelDefinition(modelName).columnMetadata(this.connector.name, propertyName);
 };
 
 /**
@@ -19584,7 +20086,7 @@ DataSource.prototype.columnMetadata = function (modelName, propertyName) {
  * @returns {String[]} column names
  */
 DataSource.prototype.columnNames = function (modelName) {
-    return this.getModelDefinition(modelName).columnNames(this.connector.name);
+  return this.getModelDefinition(modelName).columnNames(this.connector.name);
 };
 
 /**
@@ -19592,8 +20094,8 @@ DataSource.prototype.columnNames = function (modelName) {
  * @param {String} modelName The model name
  * @returns {String} columnName for ID
  */
-DataSource.prototype.idColumnName = function(modelName) {
-    return this.getModelDefinition(modelName).idColumnName(this.connector.name);
+DataSource.prototype.idColumnName = function (modelName) {
+  return this.getModelDefinition(modelName).idColumnName(this.connector.name);
 };
 
 /**
@@ -19601,11 +20103,11 @@ DataSource.prototype.idColumnName = function(modelName) {
  * @param {String} modelName The model name
  * @returns {String} property name for ID
  */
-DataSource.prototype.idName = function(modelName) {
-    if(!this.getModelDefinition(modelName).idName) {
-      console.error('No id name', this.getModelDefinition(modelName));
-    }
-    return this.getModelDefinition(modelName).idName();
+DataSource.prototype.idName = function (modelName) {
+  if (!this.getModelDefinition(modelName).idName) {
+    console.error('No id name', this.getModelDefinition(modelName));
+  }
+  return this.getModelDefinition(modelName).idName();
 };
 
 /**
@@ -19614,9 +20116,8 @@ DataSource.prototype.idName = function(modelName) {
  * @returns {String[]} property names for IDs
  */
 DataSource.prototype.idNames = function (modelName) {
-    return this.getModelDefinition(modelName).idNames();
+  return this.getModelDefinition(modelName).idNames();
 };
-
 
 /**
  * Define foreign key to another model
@@ -19625,28 +20126,36 @@ DataSource.prototype.idNames = function (modelName) {
  * @param {String} foreignClassName The foreign model name
  */
 DataSource.prototype.defineForeignKey = function defineForeignKey(className, key, foreignClassName) {
-    // quit if key already defined
-    if (this.getModelDefinition(className).rawProperties[key]) return;
+  // quit if key already defined
+  if (this.getModelDefinition(className).rawProperties[key]) return;
 
-    if (this.connector.defineForeignKey) {
-        var cb = function (err, keyType) {
-            if (err) throw err;
-            // Add the foreign key property to the data source _models
-            this.defineProperty(className, key, {type: keyType || Number});
-        }.bind(this);
-        switch (this.connector.defineForeignKey.length) {
-            case 4:
-                this.connector.defineForeignKey(className, key, foreignClassName, cb);
-            break;
-            default:
-            case 3:
-                this.connector.defineForeignKey(className, key, cb);
-            break;
-        }
-    } else {
-        // Add the foreign key property to the data source _models
-        this.defineProperty(className, key, {type: Number});
+  var defaultType = Number;
+  if (foreignClassName) {
+    var foreignModel = this.getModelDefinition(foreignClassName);
+    var pkName = foreignModel && foreignModel.idName();
+    if (pkName) {
+      defaultType = foreignModel.properties[pkName].type;
     }
+  }
+  if (this.connector.defineForeignKey) {
+    var cb = function (err, keyType) {
+      if (err) throw err;
+      // Add the foreign key property to the data source _models
+      this.defineProperty(className, key, {type: keyType || defaultType});
+    }.bind(this);
+    switch (this.connector.defineForeignKey.length) {
+      case 4:
+        this.connector.defineForeignKey(className, key, foreignClassName, cb);
+        break;
+      default:
+      case 3:
+        this.connector.defineForeignKey(className, key, cb);
+        break;
+    }
+  } else {
+    // Add the foreign key property to the data source _models
+    this.defineProperty(className, key, {type: defaultType});
+  }
 
 };
 
@@ -19655,17 +20164,17 @@ DataSource.prototype.defineForeignKey = function defineForeignKey(className, key
  * @param {Fucntion} [cb] The callback function
  */
 DataSource.prototype.disconnect = function disconnect(cb) {
-    var self = this;
-    if (this.connected && (typeof this.connector.disconnect === 'function')) {
-        this.connector.disconnect(function(err, result) {
-            self.connected = false;
-            cb && cb(err, result);
-        });
-    } else {
-        process.nextTick(function() {
-           cb && cb();
-        });
-    }
+  var self = this;
+  if (this.connected && (typeof this.connector.disconnect === 'function')) {
+    this.connector.disconnect(function (err, result) {
+      self.connected = false;
+      cb && cb(err, result);
+    });
+  } else {
+    process.nextTick(function () {
+      cb && cb();
+    });
+  }
 };
 
 /**
@@ -19676,39 +20185,39 @@ DataSource.prototype.disconnect = function disconnect(cb) {
  * @private
  */
 DataSource.prototype.copyModel = function copyModel(Master) {
-    var dataSource = this;
-    var className = Master.modelName;
-    var md = Master.modelBuilder.getModelDefinition(className);
-    var Slave = function SlaveModel() {
-        Master.apply(this, [].slice.call(arguments));
-    };
+  var dataSource = this;
+  var className = Master.modelName;
+  var md = Master.modelBuilder.getModelDefinition(className);
+  var Slave = function SlaveModel() {
+    Master.apply(this, [].slice.call(arguments));
+  };
 
-    util.inherits(Slave, Master);
+  util.inherits(Slave, Master);
 
-    // Delegating static properties
-    Slave.__proto__ = Master;
+  // Delegating static properties
+  Slave.__proto__ = Master;
 
-    hiddenProperty(Slave, 'dataSource', dataSource);
-    hiddenProperty(Slave, 'modelName', className);
-    hiddenProperty(Slave, 'relations', Master.relations);
+  hiddenProperty(Slave, 'dataSource', dataSource);
+  hiddenProperty(Slave, 'modelName', className);
+  hiddenProperty(Slave, 'relations', Master.relations);
 
-    if (!(className in dataSource.modelBuilder.models)) {
+  if (!(className in dataSource.modelBuilder.models)) {
 
-        // store class in model pool
-        dataSource.modelBuilder.models[className] = Slave;
-        dataSource.modelBuilder.definitions[className] = new ModelDefinition(dataSource.modelBuilder, md.name, md.properties, md.settings);
+    // store class in model pool
+    dataSource.modelBuilder.models[className] = Slave;
+    dataSource.modelBuilder.definitions[className] = new ModelDefinition(dataSource.modelBuilder, md.name, md.properties, md.settings);
 
-        if ((!dataSource.isTransaction) && dataSource.connector && dataSource.connector.define) {
-            dataSource.connector.define({
-                model:      Slave,
-                properties: md.properties,
-                settings:   md.settings
-            });
-        }
-
+    if ((!dataSource.isTransaction) && dataSource.connector && dataSource.connector.define) {
+      dataSource.connector.define({
+        model: Slave,
+        properties: md.properties,
+        settings: md.settings
+      });
     }
 
-    return Slave;
+  }
+
+  return Slave;
 };
 
 /**
@@ -19716,36 +20225,36 @@ DataSource.prototype.copyModel = function copyModel(Master) {
  * @returns {EventEmitter}
  * @private
  */
-DataSource.prototype.transaction = function() {
-    var dataSource = this;
-    var transaction = new EventEmitter();
+DataSource.prototype.transaction = function () {
+  var dataSource = this;
+  var transaction = new EventEmitter();
 
-    for (var p in dataSource) {
-        transaction[p] = dataSource[p];
-    }
+  for (var p in dataSource) {
+    transaction[p] = dataSource[p];
+  }
 
-    transaction.isTransaction = true;
-    transaction.origin = dataSource;
-    transaction.name = dataSource.name;
-    transaction.settings = dataSource.settings;
-    transaction.connected = false;
-    transaction.connecting = false;
-    transaction.connector = dataSource.connector.transaction();
+  transaction.isTransaction = true;
+  transaction.origin = dataSource;
+  transaction.name = dataSource.name;
+  transaction.settings = dataSource.settings;
+  transaction.connected = false;
+  transaction.connecting = false;
+  transaction.connector = dataSource.connector.transaction();
 
-    // create blank models pool
-    transaction.modelBuilder = new ModelBuilder();
-    transaction.models = transaction.modelBuilder.models;
-    transaction.definitions = transaction.modelBuilder.definitions;
+  // create blank models pool
+  transaction.modelBuilder = new ModelBuilder();
+  transaction.models = transaction.modelBuilder.models;
+  transaction.definitions = transaction.modelBuilder.definitions;
 
-    for (var i in dataSource.modelBuilder.models) {
-        dataSource.copyModel.call(transaction, dataSource.modelBuilder.models[i]);
-    }
+  for (var i in dataSource.modelBuilder.models) {
+    dataSource.copyModel.call(transaction, dataSource.modelBuilder.models[i]);
+  }
 
-    transaction.exec = function(cb) {
-        transaction.connector.exec(cb);
-    };
+  transaction.exec = function (cb) {
+    transaction.connector.exec(cb);
+  };
 
-    return transaction;
+  return transaction;
 };
 
 /**
@@ -19755,7 +20264,7 @@ DataSource.prototype.transaction = function() {
 
 DataSource.prototype.enableRemote = function (operation) {
   var op = this.getOperation(operation);
-  if(op) {
+  if (op) {
     op.remoteEnabled = true;
   } else {
     throw new Error(operation + ' is not provided by the attached connector');
@@ -19769,7 +20278,7 @@ DataSource.prototype.enableRemote = function (operation) {
 
 DataSource.prototype.disableRemote = function (operation) {
   var op = this.getOperation(operation);
-  if(op) {
+  if (op) {
     op.remoteEnabled = false;
   } else {
     throw new Error(operation + ' is not provided by the attached connector');
@@ -19784,11 +20293,11 @@ DataSource.prototype.disableRemote = function (operation) {
 DataSource.prototype.getOperation = function (operation) {
   var ops = this.operations();
   var opKeys = Object.keys(ops);
-  
-  for(var i = 0; i < opKeys.length; i++) {
+
+  for (var i = 0; i < opKeys.length; i++) {
     var op = ops[opKeys[i]];
-    
-    if(op.name === operation) {
+
+    if (op.name === operation) {
       return op;
     }
   }
@@ -19817,8 +20326,8 @@ DataSource.prototype.defineOperation = function (name, options, fn) {
  * Check if the backend is a relational DB
  * @returns {Boolean}
  */
-DataSource.prototype.isRelational = function() {
-    return this.connector && this.connector.relational;
+DataSource.prototype.isRelational = function () {
+  return this.connector && this.connector.relational;
 };
 
 /**
@@ -19827,39 +20336,38 @@ DataSource.prototype.isRelational = function() {
  * @param args
  * @returns {boolean}
  */
-DataSource.prototype.ready = function(obj, args) {
-    var self = this;
-    if (this.connected) {
-        // Connected
-        return false;
-    }
+DataSource.prototype.ready = function (obj, args) {
+  var self = this;
+  if (this.connected) {
+    // Connected
+    return false;
+  }
 
-    var method = args.callee;
-    // Set up a callback after the connection is established to continue the method call
+  var method = args.callee;
+  // Set up a callback after the connection is established to continue the method call
 
-    var onConnected = null, onError = null;
-    onConnected = function () {
-        // Remove the error handler
-        self.removeListener('error', onError);
-        method.apply(obj, [].slice.call(args));
-    };
-    onError = function (err) {
-        // Remove the connected listener
-        self.removeListener('connected', onConnected);
-        var params = [].slice.call(args);
-        var cb = params.pop();
-        if(typeof cb === 'function') {
-            cb(err);
-        }
-    };
-    this.once('connected', onConnected);
-    this.once('error', onError);
-    if (!this.connecting) {
-        this.connect();
+  var onConnected = null, onError = null;
+  onConnected = function () {
+    // Remove the error handler
+    self.removeListener('error', onError);
+    method.apply(obj, [].slice.call(args));
+  };
+  onError = function (err) {
+    // Remove the connected listener
+    self.removeListener('connected', onConnected);
+    var params = [].slice.call(args);
+    var cb = params.pop();
+    if (typeof cb === 'function') {
+      cb(err);
     }
-    return true;
+  };
+  this.once('connected', onConnected);
+  this.once('error', onError);
+  if (!this.connecting) {
+    this.connect();
+  }
+  return true;
 };
-
 
 /**
  * Define a hidden property
@@ -19868,12 +20376,12 @@ DataSource.prototype.ready = function(obj, args) {
  * @param {Mixed} value The default value
  */
 function hiddenProperty(obj, key, value) {
-    Object.defineProperty(obj, key, {
-        writable: false,
-        enumerable: false,
-        configurable: false,
-        value: value
-    });
+  Object.defineProperty(obj, key, {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+    value: value
+  });
 }
 
 /**
@@ -19884,14 +20392,13 @@ function hiddenProperty(obj, key, value) {
  * @param {Mixed} value The default value
  */
 function defineReadonlyProp(obj, key, value) {
-    Object.defineProperty(obj, key, {
-        writable: false,
-        enumerable: true,
-        configurable: true,
-        value: value
-    });
+  Object.defineProperty(obj, key, {
+    writable: false,
+    enumerable: true,
+    configurable: true,
+    value: value
+  });
 }
-
 
 // Carry over a few properties/methods from the ModelBuilder as some tests use them
 DataSource.Text = ModelBuilder.Text;
@@ -19902,12 +20409,12 @@ DataSource.Any = ModelBuilder.Any;
  * @deprecated Use ModelBuilder.registerType instead
  * @param type
  */
-DataSource.registerType = function(type) {
+DataSource.registerType = function (type) {
   ModelBuilder.registerType(type);
 };
 
 
-},{"./dao.js":65,"./jutil":71,"./list.js":72,"./model-builder.js":73,"./model-definition.js":74,"./model.js":75,"./utils":79,"__browserify_process":36,"assert":21,"async":18,"events":29,"fs":20,"path":40,"util":55}],67:[function(require,module,exports){
+},{"./dao.js":67,"./jutil":73,"./list.js":74,"./model-builder.js":75,"./model-definition.js":76,"./model.js":77,"./utils":81,"__browserify_process":38,"assert":23,"async":83,"events":31,"fs":22,"path":42,"util":57}],69:[function(require,module,exports){
 /**
  * Dependencies.
  */
@@ -19920,12 +20427,12 @@ var assert = require('assert');
 
 exports.nearFilter = function nearFilter(where) {
   var result = false;
-  
-  if(where && typeof where === 'object') {
+
+  if (where && typeof where === 'object') {
     Object.keys(where).forEach(function (key) {
       var ex = where[key];
-      
-      if(ex && ex.near) {
+
+      if (ex && ex.near) {
         result = {
           near: ex.near,
           maxDistance: ex.maxDistance,
@@ -19934,7 +20441,7 @@ exports.nearFilter = function nearFilter(where) {
       }
     });
   }
-  
+
   return result;
 }
 
@@ -19946,43 +20453,43 @@ exports.filter = function (arr, filter) {
   var origin = filter.near;
   var max = filter.maxDistance > 0 ? filter.maxDistance : false;
   var key = filter.key;
-  
+
   // create distance index
   var distances = {};
   var result = [];
-  
+
   arr.forEach(function (obj) {
     var loc = obj[key];
-    
+
     // filter out objects without locations
-    if(!loc) return;
-    
-    if(!(loc instanceof GeoPoint)) {
+    if (!loc) return;
+
+    if (!(loc instanceof GeoPoint)) {
       loc = GeoPoint(loc);
     }
-    
-    if(typeof loc.lat !== 'number') return;
-    if(typeof loc.lng !== 'number') return;
-    
+
+    if (typeof loc.lat !== 'number') return;
+    if (typeof loc.lng !== 'number') return;
+
     var d = GeoPoint.distanceBetween(origin, loc);
-    
-    if(max && d > max) {
+
+    if (max && d > max) {
       // dont add
     } else {
       distances[obj.id] = d;
       result.push(obj);
     }
   });
-  
+
   return result.sort(function (objA, objB) {
     var a = objB[key];
     var b = objB[key];
-    
-    if(a && b) {
+
+    if (a && b) {
       var da = distances[objA.id];
       var db = distances[objB.id];
-      
-      if(db === da) return 0;
+
+      if (db === da) return 0;
       return da > db ? 1 : -1;
     } else {
       return 0;
@@ -19997,15 +20504,15 @@ exports.filter = function (arr, filter) {
 exports.GeoPoint = GeoPoint;
 
 function GeoPoint(data) {
-  if(!(this instanceof GeoPoint)) {
+  if (!(this instanceof GeoPoint)) {
     return new GeoPoint(data);
   }
-  
-  if(typeof data === 'string') {
+
+  if (typeof data === 'string') {
     data = data.split(/,\s*/);
     assert(data.length === 2, 'must provide a string "lng,lat" creating a GeoPoint with a string');
   }
-  if(Array.isArray(data)) {
+  if (Array.isArray(data)) {
     data = {
       lng: Number(data[0]),
       lat: Number(data[1])
@@ -20014,7 +20521,7 @@ function GeoPoint(data) {
     data.lng = Number(data.lng);
     data.lat = Number(data.lat);
   }
-  
+
   assert(typeof data === 'object', 'must provide a lat and lng object when creating a GeoPoint');
   assert(typeof data.lat === 'number' && !isNaN(data.lat), 'lat must be a number when creating a GeoPoint');
   assert(typeof data.lng === 'number' && !isNaN(data.lng), 'lng must be a number when creating a GeoPoint');
@@ -20022,7 +20529,7 @@ function GeoPoint(data) {
   assert(data.lng >= -180, 'lng must be >= -180');
   assert(data.lat <= 90, 'lat must be <= 90');
   assert(data.lat >= -90, 'lat must be >= -90');
-  
+
   this.lat = data.lat;
   this.lng = data.lng;
 }
@@ -20032,19 +20539,19 @@ function GeoPoint(data) {
  */
 
 GeoPoint.distanceBetween = function distanceBetween(a, b, options) {
-  if(!(a instanceof GeoPoint)) {
+  if (!(a instanceof GeoPoint)) {
     a = GeoPoint(a);
   }
-  if(!(b instanceof GeoPoint)) {
+  if (!(b instanceof GeoPoint)) {
     b = GeoPoint(b);
   }
-  
+
   var x1 = a.lat;
   var y1 = a.lng;
-  
+
   var x2 = b.lat;
   var y2 = b.lng;
-  
+
   return geoDistance(x1, y1, x2, y2, options);
 }
 
@@ -20072,7 +20579,7 @@ GeoPoint.prototype.toString = function () {
 var PI = 3.1415926535897932384626433832795;
 
 // factor to convert decimal degrees to radians
-var DEG2RAD =  0.01745329252;
+var DEG2RAD = 0.01745329252;
 
 // factor to convert decimal degrees to radians
 var RAD2DEG = 57.29577951308;
@@ -20094,17 +20601,17 @@ function geoDistance(x1, y1, x2, y2, options) {
   x2 = x2 * DEG2RAD;
   y2 = y2 * DEG2RAD;
 
-  var a = Math.pow(Math.sin(( y2-y1 ) / 2.0 ), 2);
-  var b = Math.pow(Math.sin(( x2-x1 ) / 2.0 ), 2);
-  var c = Math.sqrt( a + Math.cos( y2 ) * Math.cos( y1 ) * b );
+  var a = Math.pow(Math.sin(( y2 - y1 ) / 2.0), 2);
+  var b = Math.pow(Math.sin(( x2 - x1 ) / 2.0), 2);
+  var c = Math.sqrt(a + Math.cos(y2) * Math.cos(y1) * b);
 
   var type = (options && options.type) || 'miles';
 
-  return 2 * Math.asin( c ) * EARTH_RADIUS[type];
+  return 2 * Math.asin(c) * EARTH_RADIUS[type];
 }
 
 
-},{"assert":21}],68:[function(require,module,exports){
+},{"assert":23}],70:[function(require,module,exports){
 /**
  * Module exports
  */
@@ -20134,44 +20641,50 @@ Hookable.afterDestroy = null;
 
 // TODO: Evaluate https://github.com/bnoguchi/hooks-js/
 Hookable.prototype.trigger = function trigger(actionName, work, data) {
-    var capitalizedName = capitalize(actionName);
-    var beforeHook = this.constructor["before" + capitalizedName] || this.constructor["pre" + capitalizedName];
-    var afterHook = this.constructor["after" + capitalizedName] || this.constructor["post" + capitalizedName];
-    if (actionName === 'validate') {
-        beforeHook = beforeHook || this.constructor.beforeValidation;
-        afterHook = afterHook || this.constructor.afterValidation;
-    }
-    var inst = this;
+  var capitalizedName = capitalize(actionName);
+  var beforeHook = this.constructor["before" + capitalizedName]
+    || this.constructor["pre" + capitalizedName];
+  var afterHook = this.constructor["after" + capitalizedName]
+    || this.constructor["post" + capitalizedName];
+  if (actionName === 'validate') {
+    beforeHook = beforeHook || this.constructor.beforeValidation;
+    afterHook = afterHook || this.constructor.afterValidation;
+  }
+  var inst = this;
 
-    // we only call "before" hook when we have actual action (work) to perform
-    if (work) {
-        if (beforeHook) {
-            // before hook should be called on instance with one param: callback
-            beforeHook.call(inst, function () {
-                // actual action also have one param: callback
-                work.call(inst, next);
-            }, data);
-        } else {
-            work.call(inst, next);
-        }
+  // we only call "before" hook when we have actual action (work) to perform
+  if (work) {
+    if (beforeHook) {
+      // before hook should be called on instance with one param: callback
+      beforeHook.call(inst, function () {
+        // actual action also have one param: callback
+        work.call(inst, next);
+      }, data);
     } else {
-        next();
+      work.call(inst, next);
     }
+  } else {
+    next();
+  }
 
-    function next(done) {
-        if (afterHook) {
-            afterHook.call(inst, done);
-        } else if (done) {
-            done.call(this);
-        }
+  function next(done) {
+    if (afterHook) {
+      afterHook.call(inst, done);
+    } else if (done) {
+      done.call(this);
     }
+  }
 };
 
 function capitalize(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-},{}],69:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
+var utils = require('./utils');
+var isPlainObject = utils.isPlainObject;
+var defineCachedRelations = utils.defineCachedRelations;
+
 /**
  * Include mixin for ./model.js
  */
@@ -20200,202 +20713,202 @@ function Inclusion() {
  *
  */
 Inclusion.include = function (objects, include, cb) {
-    var self = this;
+  var self = this;
 
-    if (
-        (include.constructor.name == 'Array' && include.length == 0) ||
-        (include.constructor.name == 'Object' && Object.keys(include).length == 0)
-        ) {
-        cb(null, objects);
-        return;
+  if (
+    !include || (Array.isArray(include) && include.length === 0) ||
+      (isPlainObject(include) && Object.keys(include).length === 0)
+    ) {
+    cb(null, objects);
+    return;
+  }
+
+  include = processIncludeJoin(include);
+
+  var keyVals = {};
+  var objsByKeys = {};
+
+  var nbCallbacks = 0;
+  for (var i = 0; i < include.length; i++) {
+    var callback = processIncludeItem(objects, include[i], keyVals, objsByKeys);
+    if (callback !== null) {
+      nbCallbacks++;
+      callback(function () {
+        nbCallbacks--;
+        if (nbCallbacks === 0) {
+          cb(null, objects);
+        }
+      });
+    } else {
+      cb(null, objects);
+    }
+  }
+
+  function processIncludeJoin(ij) {
+    if (typeof ij === 'string') {
+      ij = [ij];
+    }
+    if (isPlainObject(ij)) {
+      var newIj = [];
+      for (var key in ij) {
+        var obj = {};
+        obj[key] = ij[key];
+        newIj.push(obj);
+      }
+      return newIj;
+    }
+    return ij;
+  }
+
+  function processIncludeItem(objs, include, keyVals, objsByKeys) {
+    var relations = self.relations;
+
+    var relationName, subInclude;
+    if (isPlainObject(include)) {
+      relationName = Object.keys(include)[0];
+      subInclude = include[relationName];
+    } else {
+      relationName = include;
+      subInclude = [];
+    }
+    var relation = relations[relationName];
+
+    if (!relation) {
+      return function () {
+        cb(new Error('Relation "' + relationName + '" is not defined for '
+          + self.modelName + ' model'));
+      };
     }
 
-    include = processIncludeJoin(include);
+    var req = {'where': {}};
 
-    var keyVals = {};
-    var objsByKeys = {};
+    if (!keyVals[relation.keyFrom]) {
+      objsByKeys[relation.keyFrom] = {};
+      objs.filter(Boolean).forEach(function (obj) {
+        if (!objsByKeys[relation.keyFrom][obj[relation.keyFrom]]) {
+          objsByKeys[relation.keyFrom][obj[relation.keyFrom]] = [];
+        }
+        objsByKeys[relation.keyFrom][obj[relation.keyFrom]].push(obj);
+      });
+      keyVals[relation.keyFrom] = Object.keys(objsByKeys[relation.keyFrom]);
+    }
 
-    var nbCallbacks = 0;
-    for (var i = 0; i < include.length; i++) {
-        var callback = processIncludeItem(objects, include[i], keyVals, objsByKeys);
-        if (callback !== null) {
-            nbCallbacks++;
-            callback(function() {
-                nbCallbacks--;
-                if (nbCallbacks == 0) {
-                    cb(null, objects);
+    if (keyVals[relation.keyFrom].length > 0) {
+      // deep clone is necessary since inq seems to change the processed array
+      var keysToBeProcessed = {};
+      var inValues = [];
+      for (var j = 0; j < keyVals[relation.keyFrom].length; j++) {
+        keysToBeProcessed[keyVals[relation.keyFrom][j]] = true;
+        if (keyVals[relation.keyFrom][j] !== 'null'
+          && keyVals[relation.keyFrom][j] !== 'undefined') {
+          inValues.push(keyVals[relation.keyFrom][j]);
+        }
+      }
+
+      req.where[relation.keyTo] = {inq: inValues};
+      req.include = subInclude;
+
+      return function (cb) {
+        relation.modelTo.find(req, function (err, objsIncluded) {
+          var objectsFrom, j;
+          for (var i = 0; i < objsIncluded.length; i++) {
+            delete keysToBeProcessed[objsIncluded[i][relation.keyTo]];
+            objectsFrom = objsByKeys[relation.keyFrom][objsIncluded[i][relation.keyTo]];
+            for (j = 0; j < objectsFrom.length; j++) {
+              defineCachedRelations(objectsFrom[j]);
+              if (relation.multiple) {
+                if (!objectsFrom[j].__cachedRelations[relationName]) {
+                  objectsFrom[j].__cachedRelations[relationName] = [];
                 }
-            });
-        } else {
-            cb(null, objects);
-        }
+                objectsFrom[j].__cachedRelations[relationName].push(objsIncluded[i]);
+              } else {
+                objectsFrom[j].__cachedRelations[relationName] = objsIncluded[i];
+              }
+            }
+          }
+
+          // No relation have been found for these keys
+          for (var key in keysToBeProcessed) {
+            objectsFrom = objsByKeys[relation.keyFrom][key];
+            for (j = 0; j < objectsFrom.length; j++) {
+              defineCachedRelations(objectsFrom[j]);
+              objectsFrom[j].__cachedRelations[relationName] =
+                relation.multiple ? [] : null;
+            }
+          }
+          cb(err, objsIncluded);
+        });
+      };
     }
 
-    function processIncludeJoin(ij) {
-        if (typeof ij === 'string') {
-            ij = [ij];
-        }
-        if (ij.constructor.name === 'Object') {
-            var newIj = [];
-            for (var key in ij) {
-                var obj = {};
-                obj[key] = ij[key];
-                newIj.push(obj);
-            }
-            return newIj;
-        }
-        return ij;
-    }
-
-    function processIncludeItem(objs, include, keyVals, objsByKeys) {
-        var relations = self.relations;
-
-        if (include.constructor.name === 'Object') {
-            var relationName = Object.keys(include)[0];
-            var subInclude = include[relationName];
-        } else {
-            var relationName = include;
-            var subInclude = [];
-        }
-        var relation = relations[relationName];
-
-        if (!relation) {
-            return function() {
-                cb(new Error('Relation "' + relationName + '" is not defined for ' + self.modelName + ' model'));
-            }
-        }
-
-        var req = {'where': {}};
-
-        if (!keyVals[relation.keyFrom]) {
-            objsByKeys[relation.keyFrom] = {};
-            objs.filter(Boolean).forEach(function(obj) {
-                if (!objsByKeys[relation.keyFrom][obj[relation.keyFrom]]) {
-                    objsByKeys[relation.keyFrom][obj[relation.keyFrom]] = [];
-                }
-                objsByKeys[relation.keyFrom][obj[relation.keyFrom]].push(obj);
-            });
-            keyVals[relation.keyFrom] = Object.keys(objsByKeys[relation.keyFrom]);
-        }
-
-        if (keyVals[relation.keyFrom].length > 0) {
-            // deep clone is necessary since inq seems to change the processed array
-            var keysToBeProcessed = {};
-            var inValues = [];
-            for (var j = 0; j < keyVals[relation.keyFrom].length; j++) {
-                keysToBeProcessed[keyVals[relation.keyFrom][j]] = true;
-                if (keyVals[relation.keyFrom][j] !== 'null' && keyVals[relation.keyFrom][j] !== 'undefined') {
-                    inValues.push(keyVals[relation.keyFrom][j]);
-                }
-            }
-
-            req['where'][relation.keyTo] = {inq: inValues};
-            req['include'] = subInclude;
-
-            return function(cb) {
-                relation.modelTo.find(req, function(err, objsIncluded) {
-                    for (var i = 0; i < objsIncluded.length; i++) {
-                        delete keysToBeProcessed[objsIncluded[i][relation.keyTo]];
-                        var objectsFrom = objsByKeys[relation.keyFrom][objsIncluded[i][relation.keyTo]];
-                        for (var j = 0; j < objectsFrom.length; j++) {
-                            if (!objectsFrom[j].__cachedRelations) {
-                                objectsFrom[j].__cachedRelations = {};
-                            }
-                            if (relation.multiple) {
-                                if (!objectsFrom[j].__cachedRelations[relationName]) {
-                                    objectsFrom[j].__cachedRelations[relationName] = [];
-                                }
-                                objectsFrom[j].__cachedRelations[relationName].push(objsIncluded[i]);
-                            } else {
-                                objectsFrom[j].__cachedRelations[relationName] = objsIncluded[i];
-                            }
-                        }
-                    }
-
-                    // No relation have been found for these keys
-                    for (var key in keysToBeProcessed) {
-                        var objectsFrom = objsByKeys[relation.keyFrom][key];
-                        for (var j = 0; j < objectsFrom.length; j++) {
-                            if (!objectsFrom[j].__cachedRelations) {
-                                objectsFrom[j].__cachedRelations = {};
-                            }
-                            objectsFrom[j].__cachedRelations[relationName] = relation.multiple ? [] : null;
-                        }
-                    }
-                    cb(err, objsIncluded);
-                });
-            };
-        }
+    return null;
+  }
+};
 
 
-        return null;
-    }
-}
-
-
-},{}],70:[function(require,module,exports){
+},{"./utils":81}],72:[function(require,module,exports){
 module.exports = function getIntrospector(ModelBuilder) {
 
-    function introspectType(value) {
+  function introspectType(value) {
 
-        // Unknown type, using Any
-        if (value === null || value === undefined) {
-            return ModelBuilder.Any;
-        }
-
-        // Check registered schemaTypes
-        for (var t in ModelBuilder.schemaTypes) {
-            var st = ModelBuilder.schemaTypes[t];
-            if (st !== Object && st !== Array && (value instanceof st)) {
-                return t;
-            }
-        }
-
-        var type = typeof value;
-        if (type === 'string' || type === 'number' || type === 'boolean') {
-            return type;
-        }
-
-        if (value instanceof Date) {
-            return 'date';
-        }
-
-        if (Array.isArray(value)) {
-            for (var i = 0; i < value.length; i++) {
-                if (value[i] === null || value[i] === undefined) {
-                    continue;
-                }
-                var itemType = introspectType(value[i]);
-                if (itemType) {
-                    return [itemType];
-                }
-            }
-            return 'array';
-        }
-
-        if (type === 'function') {
-            return value.constructor.name;
-        }
-
-        var properties = {};
-        for (var p in value) {
-            var itemType = introspectType(value[p]);
-            if (itemType) {
-                properties[p] = itemType;
-            }
-        }
-        if (Object.keys(properties).length === 0) {
-            return 'object';
-        }
-        return properties;
+    // Unknown type, using Any
+    if (value === null || value === undefined) {
+      return ModelBuilder.Any;
     }
 
-    return introspectType;
+    // Check registered schemaTypes
+    for (var t in ModelBuilder.schemaTypes) {
+      var st = ModelBuilder.schemaTypes[t];
+      if (st !== Object && st !== Array && (value instanceof st)) {
+        return t;
+      }
+    }
+
+    var type = typeof value;
+    if (type === 'string' || type === 'number' || type === 'boolean') {
+      return type;
+    }
+
+    if (value instanceof Date) {
+      return 'date';
+    }
+
+    if (Array.isArray(value)) {
+      for (var i = 0; i < value.length; i++) {
+        if (value[i] === null || value[i] === undefined) {
+          continue;
+        }
+        var itemType = introspectType(value[i]);
+        if (itemType) {
+          return [itemType];
+        }
+      }
+      return 'array';
+    }
+
+    if (type === 'function') {
+      return value.constructor.name;
+    }
+
+    var properties = {};
+    for (var p in value) {
+      var itemType = introspectType(value[p]);
+      if (itemType) {
+        properties[p] = itemType;
+      }
+    }
+    if (Object.keys(properties).length === 0) {
+      return 'object';
+    }
+    return properties;
+  }
+
+  return introspectType;
 }
 
 
 
-},{}],71:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 var util = require('util');
 /**
  *
@@ -20403,23 +20916,23 @@ var util = require('util');
  * @param baseClass
  */
 exports.inherits = function (newClass, baseClass, options) {
-    util.inherits(newClass, baseClass);
+  util.inherits(newClass, baseClass);
 
-    options = options || {
-        staticProperties: true,
-        override: false
-    };
+  options = options || {
+    staticProperties: true,
+    override: false
+  };
 
-    if (options.staticProperties) {
-        Object.keys(baseClass).forEach(function (classProp) {
-            if (classProp !== 'super_' && (!newClass.hasOwnProperty(classProp) || options.override)) {
-                var pd = Object.getOwnPropertyDescriptor(baseClass, classProp);
-                Object.defineProperty(newClass, classProp, pd);
-            }
-        });
-    }
+  if (options.staticProperties) {
+    Object.keys(baseClass).forEach(function (classProp) {
+      if (classProp !== 'super_' && (!newClass.hasOwnProperty(classProp)
+        || options.override)) {
+        var pd = Object.getOwnPropertyDescriptor(baseClass, classProp);
+        Object.defineProperty(newClass, classProp, pd);
+      }
+    });
+  }
 };
-
 
 /**
  * Mix in the a class into the new class
@@ -20428,84 +20941,85 @@ exports.inherits = function (newClass, baseClass, options) {
  * @param options
  */
 exports.mixin = function (newClass, mixinClass, options) {
-    if (Array.isArray(newClass._mixins)) {
-        if(newClass._mixins.indexOf(mixinClass) !== -1) {
-            return;
+  if (Array.isArray(newClass._mixins)) {
+    if (newClass._mixins.indexOf(mixinClass) !== -1) {
+      return;
+    }
+    newClass._mixins.push(mixinClass);
+  } else {
+    newClass._mixins = [mixinClass];
+  }
+
+  options = options || {
+    staticProperties: true,
+    instanceProperties: true,
+    override: false,
+    proxyFunctions: false
+  };
+
+  if (options.staticProperties === undefined) {
+    options.staticProperties = true;
+  }
+
+  if (options.instanceProperties === undefined) {
+    options.instanceProperties = true;
+  }
+
+  if (options.staticProperties) {
+    var staticProxies = [];
+    Object.keys(mixinClass).forEach(function (classProp) {
+      if (classProp !== 'super_' && classProp !== '_mixins'
+        && (!newClass.hasOwnProperty(classProp) || options.override)) {
+        var pd = Object.getOwnPropertyDescriptor(mixinClass, classProp);
+        if (options.proxyFunctions && pd.writable
+          && typeof pd.value === 'function') {
+          pd.value = exports.proxy(pd.value, staticProxies);
         }
-        newClass._mixins.push(mixinClass);
-    } else {
-        newClass._mixins = [mixinClass];
-    }
+        Object.defineProperty(newClass, classProp, pd);
+      }
+    });
+  }
 
-    options = options || {
-        staticProperties: true,
-        instanceProperties: true,
-        override: false,
-        proxyFunctions: false
-    };
-
-    if(options.staticProperties === undefined) {
-        options.staticProperties = true;
-    }
-
-    if(options.instanceProperties === undefined) {
-        options.instanceProperties = true;
-    }
-
-    if (options.staticProperties) {
-      var staticProxies = [];
-      Object.keys(mixinClass).forEach(function (classProp) {
-            if (classProp !== 'super_' && classProp !== '_mixins' && (!newClass.hasOwnProperty(classProp) || options.override)) {
-                var pd = Object.getOwnPropertyDescriptor(mixinClass, classProp);
-                if(options.proxyFunctions && pd.writable && typeof pd.value === 'function') {
-                  pd.value = exports.proxy(pd.value, staticProxies);
-                }
-                Object.defineProperty(newClass, classProp, pd);
-            }
-        });
-    }
-
-    if (options.instanceProperties) {
-        if (mixinClass.prototype) {
-          var instanceProxies = [];
-          Object.keys(mixinClass.prototype).forEach(function (instanceProp) {
-                if (!newClass.prototype.hasOwnProperty(instanceProp) || options.override) {
-                    var pd = Object.getOwnPropertyDescriptor(mixinClass.prototype, instanceProp);
-                    if(options.proxyFunctions && pd.writable && typeof pd.value === 'function') {
-                      pd.value = exports.proxy(pd.value, instanceProxies);
-                    }
-                    Object.defineProperty(newClass.prototype, instanceProp, pd);
-                }
-            });
+  if (options.instanceProperties) {
+    if (mixinClass.prototype) {
+      var instanceProxies = [];
+      Object.keys(mixinClass.prototype).forEach(function (instanceProp) {
+        if (!newClass.prototype.hasOwnProperty(instanceProp) || options.override) {
+          var pd = Object.getOwnPropertyDescriptor(mixinClass.prototype, instanceProp);
+          if (options.proxyFunctions && pd.writable && typeof pd.value === 'function') {
+            pd.value = exports.proxy(pd.value, instanceProxies);
+          }
+          Object.defineProperty(newClass.prototype, instanceProp, pd);
         }
+      });
     }
+  }
 
-    return newClass;
+  return newClass;
 };
 
-exports.proxy = function(fn, proxies) {
+exports.proxy = function (fn, proxies) {
   // Make sure same methods referenced by different properties have the same proxy
   // For example, deleteById is an alias of removeById
   proxies = proxies || [];
-  for(var i = 0; i<proxies.length; i++) {
-    if(proxies[i]._delegate === fn) {
+  for (var i = 0; i < proxies.length; i++) {
+    if (proxies[i]._delegate === fn) {
       return proxies[i];
     }
   }
-  var f = function() {
+  var f = function () {
     return fn.apply(this, arguments);
   };
   f._delegate = fn;
   proxies.push(f);
-  Object.keys(fn).forEach(function(x) {
+  Object.keys(fn).forEach(function (x) {
     f[x] = fn[x];
   });
   return f;
 };
 
 
-},{"util":55}],72:[function(require,module,exports){
-
+},{"util":57}],74:[function(require,module,exports){
 module.exports = List;
 
 /**
@@ -20517,234 +21031,234 @@ module.exports = List;
  * @constructor
  */
 function List(data, type, parent) {
-    var list = this;
-    if (!(list instanceof List)) {
-        return new List(data, type, parent);
+  var list = this;
+  if (!(list instanceof List)) {
+    return new List(data, type, parent);
+  }
+
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch (e) {
+      throw new Error('could not create List from JSON string: ', data);
     }
-    
-    if(typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch(e) {
-        throw new Error('could not create List from JSON string: ', data);
-      }
+  }
+
+  if (data && data instanceof List) data = data.items;
+
+  Object.defineProperty(list, 'parent', {
+    writable: false,
+    enumerable: false,
+    configurable: false,
+    value: parent
+  });
+
+  Object.defineProperty(list, 'nextid', {
+    writable: true,
+    enumerable: false,
+    value: 1
+  });
+
+  data = list.items = data || [];
+  var Item = list.ItemType = ListItem;
+
+  if (typeof type === 'object' && type.constructor.name === 'Array') {
+    Item = list.ItemType = type[0] || ListItem;
+  }
+
+  data.forEach(function (item, i) {
+    data[i] = Item(item, list);
+    Object.defineProperty(list, data[i].id, {
+      writable: true,
+      enumerable: false,
+      configurable: true,
+      value: data[i]
+    });
+    if (list.nextid <= data[i].id) {
+      list.nextid = data[i].id + 1;
     }
+  });
 
-    if (data && data instanceof List) data = data.items;
-
-    Object.defineProperty(list, 'parent', {
-        writable: false,
-        enumerable: false,
-        configurable: false,
-        value: parent
-    });
-
-    Object.defineProperty(list, 'nextid', {
-        writable: true,
-        enumerable: false,
-        value: 1
-    });
-
-    data = list.items = data || [];
-    var Item = list.ItemType = ListItem;
-
-    if (typeof type === 'object' && type.constructor.name === 'Array') {
-        Item = list.ItemType = type[0] || ListItem;
+  Object.defineProperty(list, 'length', {
+    enumerable: false,
+    configurable: true,
+    get: function () {
+      return list.items.length;
     }
+  });
 
-    data.forEach(function(item, i) {
-        data[i] = Item(item, list);
-        Object.defineProperty(list, data[i].id, {
-            writable: true,
-            enumerable: false,
-            configurable: true,
-            value: data[i]
-        });
-        if (list.nextid <= data[i].id) {
-            list.nextid = data[i].id + 1;
-        }
-    });
-
-    Object.defineProperty(list, 'length', {
-        enumerable: false,
-        configurable: true,
-        get: function() {
-            return list.items.length;
-        }
-    });
-
-    return list;
+  return list;
 
 }
 
 var _;
 try {
-    var underscore = 'underscore';
-    _ = require(underscore);
+  var underscore = 'underscore';
+  _ = require(underscore);
 } catch (e) {
-    _ = false;
+  _ = false;
 }
 
 if (_) {
-    var _import = [
-        // collection methods
-        'each',
-        'map',
-        'reduce',
-        'reduceRight',
-        'find',
-        'filter',
-        'reject',
-        'all',
-        'any',
-        'include',
-        'invoke',
-        'pluck',
-        'max',
-        'min',
-        'sortBy',
-        'groupBy',
-        'sortedIndex',
-        'shuffle',
-        'toArray',
-        'size',
-        // array methods
-        'first',
-        'initial',
-        'last',
-        'rest',
-        'compact',
-        'flatten',
-        'without',
-        'union',
-        'intersection',
-        'difference',
-        'uniq',
-        'zip',
-        'indexOf',
-        'lastIndexOf',
-        'range'
-    ];
+  var _import = [
+    // collection methods
+    'each',
+    'map',
+    'reduce',
+    'reduceRight',
+    'find',
+    'filter',
+    'reject',
+    'all',
+    'any',
+    'include',
+    'invoke',
+    'pluck',
+    'max',
+    'min',
+    'sortBy',
+    'groupBy',
+    'sortedIndex',
+    'shuffle',
+    'toArray',
+    'size',
+    // array methods
+    'first',
+    'initial',
+    'last',
+    'rest',
+    'compact',
+    'flatten',
+    'without',
+    'union',
+    'intersection',
+    'difference',
+    'uniq',
+    'zip',
+    'indexOf',
+    'lastIndexOf',
+    'range'
+  ];
 
-    _import.forEach(function(name) {
-        List.prototype[name] = function() {
-            var args = [].slice.call(arguments);
-            args.unshift(this.items);
-            return _[name].apply(_, args);
-        };
-    });
+  _import.forEach(function (name) {
+    List.prototype[name] = function () {
+      var args = [].slice.call(arguments);
+      args.unshift(this.items);
+      return _[name].apply(_, args);
+    };
+  });
 }
 
 ['slice', 'forEach', 'filter', 'reduce', 'map'].forEach(function (method) {
-    var slice = [].slice;
-    List.prototype[method] = function () {
-        return Array.prototype[method].apply(this.items, slice.call(arguments));
-    };
+  var slice = [].slice;
+  List.prototype[method] = function () {
+    return Array.prototype[method].apply(this.items, slice.call(arguments));
+  };
 });
 
-List.prototype.find = function(pattern, field) {
-    if (field) {
-        var res;
-        this.items.forEach(function(o) {
-            if (o[field] == pattern) res = o;
-        });
-        return res;
+List.prototype.find = function (pattern, field) {
+  if (field) {
+    var res;
+    this.items.forEach(function (o) {
+      if (o[field] == pattern) res = o;
+    });
+    return res;
+  } else {
+    return this.items[this.items.indexOf(pattern)];
+  }
+};
+
+List.prototype.toObject = function (onlySchema) {
+  var items = [];
+  this.items.forEach(function (item) {
+    if (item.toObject) {
+      items.push(item.toObject(onlySchema));
     } else {
-        return this.items[this.items.indexOf(pattern)];
+      items.push(item);
     }
+  });
+  return items;
 };
 
-List.prototype.toObject = function(onlySchema) {
-    var items = [];
-    this.items.forEach(function(item) {
-        if(item.toObject) {
-            items.push(item.toObject(onlySchema));
-        } else {
-            items.push(item);
-        }
-    });
-    return items;
+List.prototype.toJSON = function () {
+  return this.toObject(true);
 };
 
-List.prototype.toJSON = function() {
-    return this.toObject(true);
+List.prototype.toString = function () {
+  return JSON.stringify(this.items);
 };
 
-List.prototype.toString = function() {
-    return JSON.stringify(this.items);
+List.prototype.autoincrement = function () {
+  return this.nextid++;
 };
 
-List.prototype.autoincrement = function() {
-    return this.nextid++;
+List.prototype.push = function (obj) {
+  var item = new ListItem(obj, this);
+  this.items.push(item);
+  return item;
 };
 
-List.prototype.push = function(obj) {
-    var item = new ListItem(obj, this);
-    this.items.push(item);
-    return item;
-};
-
-List.prototype.remove = function(obj) {
-    var id = obj.id ? obj.id : obj;
-    var found = false;
-    this.items.forEach(function(o, i) {
-        if (id && o.id == id) {
-            found = i;
-            if (o.id !== id) {
-                console.log('WARNING! Type of id not matched');
-            }
-        }
-    });
-    if (found !== false) {
-        delete this[id];
-        this.items.splice(found, 1);
+List.prototype.remove = function (obj) {
+  var id = obj.id ? obj.id : obj;
+  var found = false;
+  this.items.forEach(function (o, i) {
+    if (id && o.id == id) {
+      found = i;
+      if (o.id !== id) {
+        console.log('WARNING! Type of id not matched');
+      }
     }
+  });
+  if (found !== false) {
+    delete this[id];
+    this.items.splice(found, 1);
+  }
 };
 
-List.prototype.sort = function(cb) {
-    return this.items.sort(cb);
+List.prototype.sort = function (cb) {
+  return this.items.sort(cb);
 };
 
-List.prototype.map = function(cb) {
-    if (typeof cb === 'function') return this.items.map(cb);
-    if (typeof cb === 'string') return this.items.map(function(el) {
-        if (typeof el[cb] === 'function') return el[cb]();
-        if (el.hasOwnProperty(cb)) return el[cb];
-    });
+List.prototype.map = function (cb) {
+  if (typeof cb === 'function') return this.items.map(cb);
+  if (typeof cb === 'string') return this.items.map(function (el) {
+    if (typeof el[cb] === 'function') return el[cb]();
+    if (el.hasOwnProperty(cb)) return el[cb];
+  });
 };
 
 function ListItem(data, parent) {
-    if(!(this instanceof  ListItem)) {
-        return new ListItem(data, parent);
+  if (!(this instanceof  ListItem)) {
+    return new ListItem(data, parent);
+  }
+  if (typeof data === 'object') {
+    for (var i in data) this[i] = data[i];
+  } else {
+    this.id = data;
+  }
+  Object.defineProperty(this, 'parent', {
+    writable: false,
+    enumerable: false,
+    configurable: true,
+    value: parent
+  });
+  if (!this.id) {
+    this.id = parent.autoincrement();
+  }
+  if (parent.ItemType) {
+    this.__proto__ = parent.ItemType.prototype;
+    if (parent.ItemType !== ListItem) {
+      parent.ItemType.apply(this);
     }
-    if (typeof data === 'object') {
-        for (var i in data) this[i] = data[i];
-    } else {
-        this.id = data;
-    }
-    Object.defineProperty(this, 'parent', {
-        writable: false,
-        enumerable: false,
-        configurable: true,
-        value: parent
-    });
-    if (!this.id) {
-        this.id = parent.autoincrement();
-    }
-    if (parent.ItemType) {
-        this.__proto__ = parent.ItemType.prototype;
-        if (parent.ItemType !== ListItem) {
-            parent.ItemType.apply(this);
-        }
-    }
+  }
 
-    this.save = function(c) {
-        parent.parent.save(c);
-    };
+  this.save = function (c) {
+    parent.parent.save(c);
+  };
 }
 
 
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /*!
  * Module dependencies
  */
@@ -20779,15 +21293,15 @@ var slice = Array.prototype.slice;
  * @constructor
  */
 function ModelBuilder() {
-    // create blank models pool
-    /**
-     * @property {Object} models Model constructors
-     */
-    this.models = {};
-    /**
-     * @property {Object} definitions Definitions of the models
-     */
-    this.definitions = {};
+  // create blank models pool
+  /**
+   * @property {Object} models Model constructors
+   */
+  this.models = {};
+  /**
+   * @property {Object} definitions Definitions of the models
+   */
+  this.definitions = {};
 }
 
 // Inherit from EventEmitter
@@ -20797,10 +21311,10 @@ util.inherits(ModelBuilder, EventEmitter);
 ModelBuilder.defaultInstance = new ModelBuilder();
 
 function isModelClass(cls) {
-    if(!cls) {
-        return false;
-    }
-    return cls.prototype instanceof DefaultModelBaseClass;
+  if (!cls) {
+    return false;
+  }
+  return cls.prototype instanceof DefaultModelBaseClass;
 }
 
 /**
@@ -20810,15 +21324,20 @@ function isModelClass(cls) {
  * given name if a model doesn't exist
  * @returns {*} The model class
  */
-ModelBuilder.prototype.getModel = function(name, forceCreate) {
+ModelBuilder.prototype.getModel = function (name, forceCreate) {
   var model = this.models[name];
-  if(!model && forceCreate) {
-   model = this.define(name, {}, {unresolved: true});
+  if (!model && forceCreate) {
+    model = this.define(name, {}, {unresolved: true});
   }
   return model;
 };
 
-ModelBuilder.prototype.getModelDefinition = function(name) {
+/**
+ * Get the model definition by name
+ * @param {String} name The model name
+ * @returns {ModelDefinition} The model definition
+ */
+ModelBuilder.prototype.getModelDefinition = function (name) {
   return this.definitions[name];
 };
 
@@ -20854,314 +21373,316 @@ ModelBuilder.prototype.getModelDefinition = function(name) {
  * ```
  */
 ModelBuilder.prototype.define = function defineClass(className, properties, settings, parent) {
-    var modelBuilder = this;
-    var args = slice.call(arguments);
-    var pluralName = settings && settings.plural;
+  var modelBuilder = this;
+  var args = slice.call(arguments);
+  var pluralName = (settings && settings.plural) ||
+    inflection.pluralize(className);
 
-    if (!className) {
-        throw new Error('Class name required');
+  if (!className) {
+    throw new Error('Class name required');
+  }
+  if (args.length === 1) {
+    properties = {};
+    args.push(properties);
+  }
+  if (args.length === 2) {
+    settings = {};
+    args.push(settings);
+  }
+
+  properties = properties || {};
+  settings = settings || {};
+
+  // Set the strict mode to be false by default
+  if (settings.strict === undefined || settings.strict === null) {
+    settings.strict = false;
+  }
+
+  // Set up the base model class
+  var ModelBaseClass = parent || DefaultModelBaseClass;
+  var baseClass = settings.base || settings['super'];
+  if (baseClass) {
+    if (isModelClass(baseClass)) {
+      ModelBaseClass = baseClass;
+    } else {
+      ModelBaseClass = this.models[baseClass];
+      assert(ModelBaseClass, 'Base model is not found: ' + baseClass);
     }
-    if (args.length === 1) {
-        properties = {};
-        args.push(properties);
+  }
+
+  // Check if there is a unresolved model with the same name
+  var ModelClass = this.models[className];
+
+  // Create the ModelClass if it doesn't exist or it's resolved (override)
+  // TODO: [rfeng] We need to decide what names to use for built-in models such as User.
+  if (!ModelClass || !ModelClass.settings.unresolved) {
+    // every class can receive hash of data as optional param
+    ModelClass = function ModelConstructor(data, dataSource) {
+      if (!(this instanceof ModelConstructor)) {
+        return new ModelConstructor(data, dataSource);
+      }
+      if (ModelClass.settings.unresolved) {
+        throw new Error('Model ' + ModelClass.modelName + ' is not defined.');
+      }
+      ModelBaseClass.apply(this, arguments);
+      if (dataSource) {
+        hiddenProperty(this, '__dataSource', dataSource);
+      }
+    };
+    // mix in EventEmitter (don't inherit from)
+    var events = new EventEmitter();
+    for (var f in EventEmitter.prototype) {
+      if (typeof EventEmitter.prototype[f] === 'function') {
+        ModelClass[f] = EventEmitter.prototype[f].bind(events);
+      }
     }
-    if (args.length === 2) {
-        settings   = {};
-        args.push(settings);
+    hiddenProperty(ModelClass, 'modelName', className);
+  }
+
+  util.inherits(ModelClass, ModelBaseClass);
+
+  // store class in model pool
+  this.models[className] = ModelClass;
+
+  // Return the unresolved model
+  if (settings.unresolved) {
+    ModelClass.settings = {unresolved: true};
+    return ModelClass;
+  }
+
+  // Add metadata to the ModelClass
+  hiddenProperty(ModelClass, 'modelBuilder', modelBuilder);
+  hiddenProperty(ModelClass, 'dataSource', modelBuilder); // Keep for back-compatibility
+  hiddenProperty(ModelClass, 'pluralModelName', pluralName);
+  hiddenProperty(ModelClass, 'relations', {});
+  hiddenProperty(ModelClass, 'http', { path: '/' + pluralName });
+
+  // inherit ModelBaseClass static methods
+  for (var i in ModelBaseClass) {
+    // We need to skip properties that are already in the subclass, for example, the event emitter methods
+    if (i !== '_mixins' && !(i in ModelClass)) {
+      ModelClass[i] = ModelBaseClass[i];
     }
+  }
 
-    properties = properties || {};
-    settings = settings || {};
+  // Load and inject the model classes
+  if (settings.models) {
+    Object.keys(settings.models).forEach(function (m) {
+      var model = settings.models[m];
+      ModelClass[m] = typeof model === 'string' ? modelBuilder.getModel(model, true) : model;
+    });
+  }
 
-    // Set the strict mode to be false by default
-    if(settings.strict === undefined || settings.strict === null) {
-        settings.strict = false;
-    }
+  ModelClass.getter = {};
+  ModelClass.setter = {};
 
-    // Set up the base model class
-    var ModelBaseClass = parent || DefaultModelBaseClass;
-    var baseClass = settings.base || settings['super'];
-    if(baseClass) {
-        if(isModelClass(baseClass)) {
-            ModelBaseClass = baseClass;
-        } else {
-            ModelBaseClass = this.models[baseClass];
-            assert(ModelBaseClass, 'Base model is not found: ' + baseClass);
-        }
-    }
+  var modelDefinition = new ModelDefinition(this, className, properties, settings);
 
-    // Check if there is a unresolved model with the same name
-    var ModelClass = this.models[className];
+  this.definitions[className] = modelDefinition;
 
-    // Create the ModelClass if it doesn't exist or it's resolved (override)
-    // TODO: [rfeng] We need to decide what names to use for built-in models such as User.
-    if(!ModelClass || !ModelClass.settings.unresolved) {
-        // every class can receive hash of data as optional param
-        ModelClass = function ModelConstructor(data, dataSource) {
-            if(!(this instanceof ModelConstructor)) {
-                return new ModelConstructor(data, dataSource);
-            }
-            if(ModelClass.settings.unresolved) {
-                throw new Error('Model ' + ModelClass.modelName + ' is not defined.');
-            }
-            ModelBaseClass.apply(this, arguments);
-            if(dataSource) {
-                hiddenProperty(this, '__dataSource', dataSource);
-            }
-        };
-        // mix in EventEmitter (don't inherit from)
-        var events = new EventEmitter();
-        for (var f in EventEmitter.prototype) {
-            if (typeof EventEmitter.prototype[f] === 'function') {
-                ModelClass[f] = EventEmitter.prototype[f].bind(events);
-            }
-        }
-        hiddenProperty(ModelClass, 'modelName', className);
-    }
+  // expose properties on the ModelClass
+  ModelClass.definition = modelDefinition;
+  // keep a pointer to settings as models can use it for configuration
+  ModelClass.settings = modelDefinition.settings;
 
-    util.inherits(ModelClass, ModelBaseClass);
+  var idInjection = settings.idInjection;
+  if (idInjection !== false) {
+    // Default to true if undefined
+    idInjection = true;
+  }
 
-    // store class in model pool
-    this.models[className] = ModelClass;
+  var idNames = modelDefinition.idNames();
+  if (idNames.length > 0) {
+    // id already exists
+    idInjection = false;
+  }
 
-    // Return the unresolved model
-    if(settings.unresolved) {
-        ModelClass.settings = {unresolved: true};
-        return ModelClass;
-    }
+  // Add the id property
+  if (idInjection) {
+    // Set up the id property
+    ModelClass.definition.defineProperty('id', { type: Number, id: 1, generated: true });
+  }
 
-    // Add metadata to the ModelClass
-    hiddenProperty(ModelClass, 'modelBuilder', modelBuilder);
-    hiddenProperty(ModelClass, 'dataSource', modelBuilder); // Keep for back-compatibility
-    hiddenProperty(ModelClass, 'pluralModelName', pluralName || inflection.pluralize(className));
-    hiddenProperty(ModelClass, 'relations', {});
-
-    // inherit ModelBaseClass static methods
-    for (var i in ModelBaseClass) {
-        // We need to skip properties that are already in the subclass, for example, the event emitter methods
-        if(i !== '_mixins' && !(i in ModelClass)) {
-            ModelClass[i] = ModelBaseClass[i];
-        }
-    }
-
-    // Load and inject the model classes
-    if(settings.models) {
-      Object.keys(settings.models).forEach(function(m) {
-        var model = settings.models[m];
-        ModelClass[m] = typeof model === 'string' ? modelBuilder.getModel(model, true) : model;
+  idNames = modelDefinition.idNames(); // Reload it after rebuild
+  // Create a virtual property 'id'
+  if (idNames.length === 1) {
+    var idProp = idNames[0];
+    if (idProp !== 'id') {
+      Object.defineProperty(ModelClass.prototype, 'id', {
+        get: function () {
+          var idProp = ModelClass.definition.idNames[0];
+          return this.__data[idProp];
+        },
+        configurable: true,
+        enumerable: false
       });
     }
-    
-    ModelClass.getter = {};
-    ModelClass.setter = {};
-
-    var modelDefinition = new ModelDefinition(this, className, properties, settings);
-
-    this.definitions[className] = modelDefinition;
-    
-    // expose properties on the ModelClass
-    ModelClass.definition = modelDefinition;
-    // keep a pointer to settings as models can use it for configuration
-    ModelClass.settings = modelDefinition.settings;
-
-    var idInjection = settings.idInjection;
-    if(idInjection !== false) {
-        // Default to true if undefined
-        idInjection = true;
-    }
-
-    var idNames = modelDefinition.idNames();
-    if(idNames.length > 0) {
-        // id already exists
-        idInjection = false;
-    }
-
-    // Add the id property
-    if (idInjection) {
-        // Set up the id property
-        ModelClass.definition.defineProperty('id', { type: Number, id: 1, generated: true });
-    }
-
-    idNames = modelDefinition.idNames(); // Reload it after rebuild
-    // Create a virtual property 'id'
-    if (idNames.length === 1) {
-        var idProp = idNames[0];
-        if (idProp !== 'id') {
-            Object.defineProperty(ModelClass.prototype, 'id', {
-                get: function () {
-                    var idProp = ModelClass.definition.idNames[0];
-                    return this.__data[idProp];
-                },
-                configurable: true,
-                enumerable: false
-            });
+  } else {
+    // Now the id property is an object that consists of multiple keys
+    Object.defineProperty(ModelClass.prototype, 'id', {
+      get: function () {
+        var compositeId = {};
+        var idNames = ModelClass.definition.idNames();
+        for (var p in idNames) {
+          compositeId[p] = this.__data[p];
         }
-    } else {
-        // Now the id property is an object that consists of multiple keys
-        Object.defineProperty(ModelClass.prototype, 'id', {
-            get: function () {
-                var compositeId = {};
-                var idNames = ModelClass.definition.idNames();
-                for (var p in idNames) {
-                    compositeId[p] = this.__data[p];
-                }
-                return compositeId;
-            },
-            configurable: true,
-            enumerable: false
-        });
+        return compositeId;
+      },
+      configurable: true,
+      enumerable: false
+    });
+  }
+
+  // A function to loop through the properties
+  ModelClass.forEachProperty = function (cb) {
+    Object.keys(ModelClass.definition.properties).forEach(cb);
+  };
+
+  // A function to attach the model class to a data source
+  ModelClass.attachTo = function (dataSource) {
+    dataSource.attach(this);
+  };
+
+  // A function to extend the model
+  ModelClass.extend = function (className, subclassProperties, subclassSettings) {
+    var properties = ModelClass.definition.properties;
+    var settings = ModelClass.definition.settings;
+
+    subclassProperties = subclassProperties || {};
+    subclassSettings = subclassSettings || {};
+
+    // Check if subclass redefines the ids
+    var idFound = false;
+    for (var k in subclassProperties) {
+      if (subclassProperties[k].id) {
+        idFound = true;
+        break;
+      }
     }
 
-    // A function to loop through the properties
-    ModelClass.forEachProperty = function (cb) {
-        Object.keys(ModelClass.definition.properties).forEach(cb);
-    };
+    // Merging the properties
+    Object.keys(properties).forEach(function (key) {
+      if (idFound && properties[key].id) {
+        // don't inherit id properties
+        return;
+      }
+      if (subclassProperties[key] === undefined) {
+        subclassProperties[key] = properties[key];
+      }
+    });
 
-    // A function to attach the model class to a data source
-    ModelClass.attachTo = function (dataSource) {
-        dataSource.attach(this);
-    };
+    // Merge the settings
+    subclassSettings = mergeSettings(settings, subclassSettings);
 
-    // A function to extend the model
-    ModelClass.extend = function (className, subclassProperties, subclassSettings) {
-        var properties = ModelClass.definition.properties;
-        var settings = ModelClass.definition.settings;
-
-        subclassProperties = subclassProperties || {};
-        subclassSettings = subclassSettings || {};
-
-        // Check if subclass redefines the ids
-        var idFound = false;
-        for(var k in subclassProperties) {
-            if(subclassProperties[k].id) {
-                idFound = true;
-                break;
-            }
-        }
-
-        // Merging the properties
-        Object.keys(properties).forEach(function (key) {
-          if(idFound && properties[key].id) {
-              // don't inherit id properties
-              return;
-          }
-          if(subclassProperties[key] === undefined) {
-            subclassProperties[key] = properties[key];
-          }
-        });
-
-        // Merge the settings
-        subclassSettings = mergeSettings(settings, subclassSettings);
-
-        /*
-        Object.keys(settings).forEach(function (key) {
-          if(subclassSettings[key] === undefined) {
-            subclassSettings[key] = settings[key];
-          }
-        });
-        */
-
-        // Define the subclass
-        var subClass = modelBuilder.define(className, subclassProperties, subclassSettings, ModelClass);
-
-        // Calling the setup function
-        if(typeof subClass.setup === 'function') {
-          subClass.setup.call(subClass);
-        }
-        
-        return subClass;
-    };
-
-    /**
-     * Register a property for the model class
-     * @param propertyName
+    /*
+     Object.keys(settings).forEach(function (key) {
+     if(subclassSettings[key] === undefined) {
+     subclassSettings[key] = settings[key];
+     }
+     });
      */
-    ModelClass.registerProperty = function (propertyName) {
-        var properties = modelDefinition.build();
-        var prop = properties[propertyName];
-        var DataType = prop.type;
-        if(!DataType) {
-            throw new Error('Invalid type for property ' + propertyName);
+
+    // Define the subclass
+    var subClass = modelBuilder.define(className, subclassProperties, subclassSettings, ModelClass);
+
+    // Calling the setup function
+    if (typeof subClass.setup === 'function') {
+      subClass.setup.call(subClass);
+    }
+
+    return subClass;
+  };
+
+  /**
+   * Register a property for the model class
+   * @param propertyName
+   */
+  ModelClass.registerProperty = function (propertyName) {
+    var properties = modelDefinition.build();
+    var prop = properties[propertyName];
+    var DataType = prop.type;
+    if (!DataType) {
+      throw new Error('Invalid type for property ' + propertyName);
+    }
+    if (Array.isArray(DataType) || DataType === Array) {
+      DataType = List;
+    } else if (DataType.name === 'Date') {
+      var OrigDate = Date;
+      DataType = function Date(arg) {
+        return new OrigDate(arg);
+      };
+    } else if (typeof DataType === 'string') {
+      DataType = modelBuilder.resolveType(DataType);
+    }
+
+    if (prop.required) {
+      var requiredOptions = typeof prop.required === 'object' ? prop.required : undefined;
+      ModelClass.validatesPresenceOf(propertyName, requiredOptions);
+    }
+
+    Object.defineProperty(ModelClass.prototype, propertyName, {
+      get: function () {
+        if (ModelClass.getter[propertyName]) {
+          return ModelClass.getter[propertyName].call(this); // Try getter first
+        } else {
+          return this.__data && this.__data[propertyName]; // Try __data
         }
-        if (Array.isArray(DataType) || DataType === Array) {
-            DataType = List;
-        } else if (DataType.name === 'Date') {
-            var OrigDate = Date;
-            DataType = function Date(arg) {
-                return new OrigDate(arg);
-            };
-        } else if(typeof DataType === 'string') {
-            DataType = modelBuilder.resolveType(DataType);
+      },
+      set: function (value) {
+        if (ModelClass.setter[propertyName]) {
+          ModelClass.setter[propertyName].call(this, value); // Try setter first
+        } else {
+          if (!this.__data) {
+            this.__data = {};
+          }
+          if (value === null || value === undefined) {
+            this.__data[propertyName] = value;
+          } else {
+            if (DataType === List) {
+              this.__data[propertyName] = DataType(value, properties[propertyName].type, this.__data);
+            } else {
+              // Assume the type constructor handles Constructor() call
+              // If not, we should call new DataType(value).valueOf();
+              this.__data[propertyName] = DataType(value);
+            }
+          }
         }
-        
-        if(prop.required) {
-            var requiredOptions = typeof prop.required === 'object' ? prop.required : undefined;
-            ModelClass.validatesPresenceOf(propertyName, requiredOptions);
+      },
+      configurable: true,
+      enumerable: true
+    });
+
+    // <propertyName>$was --> __dataWas.<propertyName>
+    Object.defineProperty(ModelClass.prototype, propertyName + '$was', {
+      get: function () {
+        return this.__dataWas && this.__dataWas[propertyName];
+      },
+      configurable: true,
+      enumerable: false
+    });
+
+    // FIXME: [rfeng] Do we need to keep the raw data?
+    // Use $ as the prefix to avoid conflicts with properties such as _id
+    Object.defineProperty(ModelClass.prototype, '$' + propertyName, {
+      get: function () {
+        return this.__data && this.__data[propertyName];
+      },
+      set: function (value) {
+        if (!this.__data) {
+          this.__data = {};
         }
+        this.__data[propertyName] = value;
+      },
+      configurable: true,
+      enumerable: false
+    });
+  };
 
-        Object.defineProperty(ModelClass.prototype, propertyName, {
-            get: function () {
-                if (ModelClass.getter[propertyName]) {
-                    return ModelClass.getter[propertyName].call(this); // Try getter first
-                } else {
-                    return this.__data && this.__data[propertyName]; // Try __data
-                }
-            },
-            set: function (value) {
-                if (ModelClass.setter[propertyName]) {
-                    ModelClass.setter[propertyName].call(this, value); // Try setter first
-                } else {
-                    if (!this.__data) {
-                        this.__data = {};
-                    }
-                    if (value === null || value === undefined) {
-                        this.__data[propertyName] = value;
-                    } else {
-                        if(DataType === List) {
-                            this.__data[propertyName] = DataType(value, properties[propertyName].type, this.__data);
-                        } else {
-                            // Assume the type constructor handles Constructor() call
-                            // If not, we should call new DataType(value).valueOf();
-                            this.__data[propertyName] = DataType(value);
-                        }
-                    }
-                }
-            },
-            configurable: true,
-            enumerable: true
-        });
+  ModelClass.forEachProperty(ModelClass.registerProperty);
 
-        // <propertyName>$was --> __dataWas.<propertyName>
-        Object.defineProperty(ModelClass.prototype, propertyName + '$was', {
-            get: function () {
-                return this.__dataWas && this.__dataWas[propertyName];
-            },
-            configurable: true,
-            enumerable: false
-        });
+  ModelClass.emit('defined', ModelClass);
 
-        // FIXME: [rfeng] Do we need to keep the raw data?
-        // Use $ as the prefix to avoid conflicts with properties such as _id
-        Object.defineProperty(ModelClass.prototype, '$' + propertyName, {
-            get: function () {
-                return this.__data && this.__data[propertyName];
-            },
-            set: function (value) {
-                if (!this.__data) {
-                    this.__data = {};
-                }
-                this.__data[propertyName] = value;
-            },
-            configurable: true,
-            enumerable: false
-        });
-    };
-
-    ModelClass.forEachProperty(ModelClass.registerProperty);
-
-    ModelClass.emit('defined', ModelClass);
-
-    return ModelClass;
+  return ModelClass;
 
 };
 
@@ -21173,8 +21694,8 @@ ModelBuilder.prototype.define = function defineClass(className, properties, sett
  * @param {Object} propertyDefinition - property settings
  */
 ModelBuilder.prototype.defineProperty = function (model, propertyName, propertyDefinition) {
-    this.definitions[model].defineProperty(propertyName, propertyDefinition);
-    this.models[model].registerProperty(propertyName);
+  this.definitions[model].defineProperty(propertyName, propertyDefinition);
+  this.models[model].registerProperty(propertyName);
 };
 
 /**
@@ -21201,69 +21722,67 @@ ModelBuilder.prototype.defineProperty = function (model, propertyName, propertyD
  *     });
  */
 ModelBuilder.prototype.extendModel = function (model, props) {
-    var t = this;
-    Object.keys(props).forEach(function (propName) {
-        var definition = props[propName];
-        t.defineProperty(model, propName, definition);
-    });
+  var t = this;
+  Object.keys(props).forEach(function (propName) {
+    var definition = props[propName];
+    t.defineProperty(model, propName, definition);
+  });
 };
-
 
 ModelBuilder.prototype.copyModel = function copyModel(Master) {
-    var modelBuilder = this;
-    var className = Master.modelName;
-    var md = Master.modelBuilder.definitions[className];
-    var Slave = function SlaveModel() {
-        Master.apply(this, [].slice.call(arguments));
+  var modelBuilder = this;
+  var className = Master.modelName;
+  var md = Master.modelBuilder.definitions[className];
+  var Slave = function SlaveModel() {
+    Master.apply(this, [].slice.call(arguments));
+  };
+
+  util.inherits(Slave, Master);
+
+  Slave.__proto__ = Master;
+
+  hiddenProperty(Slave, 'modelBuilder', modelBuilder);
+  hiddenProperty(Slave, 'modelName', className);
+  hiddenProperty(Slave, 'relations', Master.relations);
+
+  if (!(className in modelBuilder.models)) {
+
+    // store class in model pool
+    modelBuilder.models[className] = Slave;
+    modelBuilder.definitions[className] = {
+      properties: md.properties,
+      settings: md.settings
     };
+  }
 
-    util.inherits(Slave, Master);
-
-    Slave.__proto__ = Master;
-
-    hiddenProperty(Slave, 'modelBuilder', modelBuilder);
-    hiddenProperty(Slave, 'modelName', className);
-    hiddenProperty(Slave, 'relations', Master.relations);
-
-    if (!(className in modelBuilder.models)) {
-
-        // store class in model pool
-        modelBuilder.models[className] = Slave;
-        modelBuilder.definitions[className] = {
-            properties: md.properties,
-            settings: md.settings
-        };
-    }
-
-    return Slave;
+  return Slave;
 };
-
 
 /*!
  * Define hidden property
  */
 function hiddenProperty(where, property, value) {
-    Object.defineProperty(where, property, {
-        writable: true,
-        enumerable: false,
-        configurable: true,
-        value: value
-    });
+  Object.defineProperty(where, property, {
+    writable: true,
+    enumerable: false,
+    configurable: true,
+    value: value
+  });
 }
 
 /**
  * Get the schema name
  */
 ModelBuilder.prototype.getSchemaName = function (name) {
-    if (name) {
-        return name;
-    }
-    if (typeof this._nameCount !== 'number') {
-        this._nameCount = 0;
-    } else {
-        this._nameCount++;
-    }
-    return 'AnonymousModel_' + this._nameCount;
+  if (name) {
+    return name;
+  }
+  if (typeof this._nameCount !== 'number') {
+    this._nameCount = 0;
+  } else {
+    this._nameCount++;
+  }
+  return 'AnonymousModel_' + this._nameCount;
 };
 
 /**
@@ -21271,41 +21790,41 @@ ModelBuilder.prototype.getSchemaName = function (name) {
  * @param {String} type The type string, such as 'number', 'Number', 'boolean', or 'String'. It's case insensitive
  * @returns {Function} if the type is resolved
  */
-ModelBuilder.prototype.resolveType = function(type) {
-    if (!type) {
-        return type;
-    }
-    if (Array.isArray(type) && type.length > 0) {
-        // For array types, the first item should be the type string
-        var itemType = this.resolveType(type[0]);
-        if (typeof itemType === 'function') {
-            return [itemType];
-        }
-        else {
-            return itemType; // Not resolved, return the type string
-        }
-    }
-    if (typeof type === 'string') {
-        var schemaType = ModelBuilder.schemaTypes[type.toLowerCase()] || this.models[type];
-        if (schemaType) {
-            return schemaType;
-        } else {
-            // The type cannot be resolved, let's create a place holder
-            type = this.define(type, {}, {unresolved: true});
-            return type;
-        }
-    } else if (type.constructor.name === 'Object') {
-        // We also support the syntax {type: 'string', ...}
-        if (type.type) {
-            return this.resolveType(type.type);
-        } else {
-            return this.define(this.getSchemaName(null),
-                type, {anonymous: true, idInjection: false});
-        }
-    } else if('function' === typeof type ) {
-        return type;
-    }
+ModelBuilder.prototype.resolveType = function (type) {
+  if (!type) {
     return type;
+  }
+  if (Array.isArray(type) && type.length > 0) {
+    // For array types, the first item should be the type string
+    var itemType = this.resolveType(type[0]);
+    if (typeof itemType === 'function') {
+      return [itemType];
+    }
+    else {
+      return itemType; // Not resolved, return the type string
+    }
+  }
+  if (typeof type === 'string') {
+    var schemaType = ModelBuilder.schemaTypes[type.toLowerCase()] || this.models[type];
+    if (schemaType) {
+      return schemaType;
+    } else {
+      // The type cannot be resolved, let's create a place holder
+      type = this.define(type, {}, {unresolved: true});
+      return type;
+    }
+  } else if (type.constructor.name === 'Object') {
+    // We also support the syntax {type: 'string', ...}
+    if (type.type) {
+      return this.resolveType(type.type);
+    } else {
+      return this.define(this.getSchemaName(null),
+        type, {anonymous: true, idInjection: false});
+    }
+  } else if ('function' === typeof type) {
+    return type;
+  }
+  return type;
 };
 
 /**
@@ -21321,46 +21840,46 @@ ModelBuilder.prototype.resolveType = function(type) {
  * @returns {Object} A map of model constructors keyed by model name
  */
 ModelBuilder.prototype.buildModels = function (schemas) {
-    var models = {};
+  var models = {};
 
-    // Normalize the schemas to be an array of the schema objects {name: <name>, properties: {}, options: {}}
-    if (!Array.isArray(schemas)) {
-        if (schemas.properties && schemas.name) {
-            // Only one item
-            schemas = [schemas];
-        } else {
-            // Anonymous schema
-            schemas = [
-                {
-                    name: this.getSchemaName(),
-                    properties: schemas,
-                    options: {anonymous: true}
-                }
-            ];
+  // Normalize the schemas to be an array of the schema objects {name: <name>, properties: {}, options: {}}
+  if (!Array.isArray(schemas)) {
+    if (schemas.properties && schemas.name) {
+      // Only one item
+      schemas = [schemas];
+    } else {
+      // Anonymous schema
+      schemas = [
+        {
+          name: this.getSchemaName(),
+          properties: schemas,
+          options: {anonymous: true}
         }
+      ];
     }
+  }
 
-    var relations = [];
-    for (var s in schemas) {
-        var name = this.getSchemaName(schemas[s].name);
-        schemas[s].name = name;
-        var model = this.define(schemas[s].name, schemas[s].properties, schemas[s].options);
-        models[name] = model;
-        relations = relations.concat(model.definition.relations);
-    }
+  var relations = [];
+  for (var s in schemas) {
+    var name = this.getSchemaName(schemas[s].name);
+    schemas[s].name = name;
+    var model = this.define(schemas[s].name, schemas[s].properties, schemas[s].options);
+    models[name] = model;
+    relations = relations.concat(model.definition.relations);
+  }
 
-    // Connect the models based on the relations
-    for (var i = 0; i < relations.length; i++) {
-        var relation = relations[i];
-        var sourceModel = models[relation.source];
-        var targetModel = models[relation.target];
-        if (sourceModel && targetModel) {
-            if(typeof sourceModel[relation.type] === 'function') {
-                sourceModel[relation.type](targetModel, {as: relation.as});
-            }
-        }
+  // Connect the models based on the relations
+  for (var i = 0; i < relations.length; i++) {
+    var relation = relations[i];
+    var sourceModel = models[relation.source];
+    var targetModel = models[relation.target];
+    if (sourceModel && targetModel) {
+      if (typeof sourceModel[relation.type] === 'function') {
+        sourceModel[relation.type](targetModel, {as: relation.as});
+      }
     }
-    return models;
+  }
+  return models;
 };
 
 /**
@@ -21370,19 +21889,19 @@ ModelBuilder.prototype.buildModels = function (schemas) {
  * @param [Object} options The options
  * @returns {}
  */
-ModelBuilder.prototype.buildModelFromInstance = function(name, json, options) {
+ModelBuilder.prototype.buildModelFromInstance = function (name, json, options) {
 
-    // Introspect the JSON document to generate a schema
-    var schema = introspect(json);
+  // Introspect the JSON document to generate a schema
+  var schema = introspect(json);
 
-    // Create a model for the generated schema
-    return this.define(name, schema, options);
+  // Create a model for the generated schema
+  return this.define(name, schema, options);
 };
 
 
 
 
-},{"./introspection":70,"./list.js":72,"./model-definition.js":74,"./model.js":75,"./types":78,"./utils":79,"assert":21,"events":29,"inflection":61,"util":55}],74:[function(require,module,exports){
+},{"./introspection":72,"./list.js":74,"./model-definition.js":76,"./model.js":77,"./types":80,"./utils":81,"assert":23,"events":31,"inflection":84,"util":57}],76:[function(require,module,exports){
 var assert = require('assert');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -21406,27 +21925,27 @@ module.exports = ModelDefinition;
  *
  */
 function ModelDefinition(modelBuilder, name, properties, settings) {
-    if (!(this instanceof ModelDefinition)) {
-        // Allow to call ModelDefinition without new
-        return new ModelDefinition(modelBuilder, name, properties, settings);
-    }
-    this.modelBuilder = modelBuilder || ModelBuilder.defaultInstance;
-    assert(name, 'name is missing');
+  if (!(this instanceof ModelDefinition)) {
+    // Allow to call ModelDefinition without new
+    return new ModelDefinition(modelBuilder, name, properties, settings);
+  }
+  this.modelBuilder = modelBuilder || ModelBuilder.defaultInstance;
+  assert(name, 'name is missing');
 
-    if (arguments.length === 2 && typeof name === 'object') {
-        var schema = name;
-        this.name = schema.name;
-        this.rawProperties = schema.properties || {}; // Keep the raw property definitions
-        this.settings = schema.settings || {};
-    } else {
-        assert(typeof name === 'string', 'name must be a string');
-        this.name = name;
-        this.rawProperties = properties || {}; // Keep the raw property definitions
-        this.settings = settings || {};
-    }
-    this.relations = [];
-    this.properties = null;
-    this.build();
+  if (arguments.length === 2 && typeof name === 'object') {
+    var schema = name;
+    this.name = schema.name;
+    this.rawProperties = schema.properties || {}; // Keep the raw property definitions
+    this.settings = schema.settings || {};
+  } else {
+    assert(typeof name === 'string', 'name must be a string');
+    this.name = name;
+    this.rawProperties = properties || {}; // Keep the raw property definitions
+    this.settings = settings || {};
+  }
+  this.relations = [];
+  this.properties = null;
+  this.build();
 }
 
 util.inherits(ModelDefinition, EventEmitter);
@@ -21434,18 +21953,17 @@ util.inherits(ModelDefinition, EventEmitter);
 // Set up types
 require('./types')(ModelDefinition);
 
-
 /**
  * Return table name for specified `modelName`
  * @param {String} connectorType The connector type, such as 'oracle' or 'mongodb'
  */
 ModelDefinition.prototype.tableName = function (connectorType) {
-    var settings = this.settings;
-    if(settings[connectorType]) {
-        return settings[connectorType].table || settings[connectorType].tableName || this.name;
-    } else {
-        return this.name;
-    }
+  var settings = this.settings;
+  if (settings[connectorType]) {
+    return settings[connectorType].table || settings[connectorType].tableName || this.name;
+  } else {
+    return this.name;
+  }
 };
 
 /**
@@ -21455,16 +21973,16 @@ ModelDefinition.prototype.tableName = function (connectorType) {
  * @returns {String} columnName
  */
 ModelDefinition.prototype.columnName = function (connectorType, propertyName) {
-    if(!propertyName) {
-        return propertyName;
-    }
-    this.build();
-    var property = this.properties[propertyName];
-    if(property && property[connectorType]) {
-        return property[connectorType].column || property[connectorType].columnName || propertyName;
-    } else {
-        return propertyName;
-    }
+  if (!propertyName) {
+    return propertyName;
+  }
+  this.build();
+  var property = this.properties[propertyName];
+  if (property && property[connectorType]) {
+    return property[connectorType].column || property[connectorType].columnName || propertyName;
+  } else {
+    return propertyName;
+  }
 };
 
 /**
@@ -21474,16 +21992,16 @@ ModelDefinition.prototype.columnName = function (connectorType, propertyName) {
  * @returns {Object} column metadata
  */
 ModelDefinition.prototype.columnMetadata = function (connectorType, propertyName) {
-    if(!propertyName) {
-        return propertyName;
-    }
-    this.build();
-    var property = this.properties[propertyName];
-    if(property && property[connectorType]) {
-        return property[connectorType];
-    } else {
-        return null;
-    }
+  if (!propertyName) {
+    return propertyName;
+  }
+  this.build();
+  var property = this.properties[propertyName];
+  if (property && property[connectorType]) {
+    return property[connectorType];
+  } else {
+    return null;
+  }
 };
 
 /**
@@ -21492,17 +22010,17 @@ ModelDefinition.prototype.columnMetadata = function (connectorType, propertyName
  * @returns {String[]} column names
  */
 ModelDefinition.prototype.columnNames = function (connectorType) {
-    this.build();
-    var props = this.properties;
-    var cols = [];
-    for(var p in props) {
-        if(props[p][connectorType]) {
-            cols.push(property[connectorType].column || props[p][connectorType].columnName || p);
-        } else {
-            cols.push(p);
-        }
+  this.build();
+  var props = this.properties;
+  var cols = [];
+  for (var p in props) {
+    if (props[p][connectorType]) {
+      cols.push(property[connectorType].column || props[p][connectorType].columnName || p);
+    } else {
+      cols.push(p);
     }
-    return cols;
+  }
+  return cols;
 };
 
 /**
@@ -21510,27 +22028,27 @@ ModelDefinition.prototype.columnNames = function (connectorType) {
  * @returns {Object[]} property name/index for IDs
  */
 ModelDefinition.prototype.ids = function () {
-    if(this._ids) {
-        return this._ids;
+  if (this._ids) {
+    return this._ids;
+  }
+  var ids = [];
+  this.build();
+  var props = this.properties;
+  for (var key in props) {
+    var id = props[key].id;
+    if (!id) {
+      continue;
     }
-    var ids = [];
-    this.build();
-    var props = this.properties;
-    for (var key in props) {
-        var id = props[key].id;
-        if(!id) {
-            continue;
-        }
-        if(typeof id !== 'number') {
-            id = 1;
-        }
-        ids.push({name: key, id: id});
+    if (typeof id !== 'number') {
+      id = 1;
     }
-    ids.sort(function (a, b) {
-        return a.key - b.key;
-    });
-    this._ids = ids;
-    return ids;
+    ids.push({name: key, id: id});
+  }
+  ids.sort(function (a, b) {
+    return a.key - b.key;
+  });
+  this._ids = ids;
+  return ids;
 };
 
 /**
@@ -21538,20 +22056,21 @@ ModelDefinition.prototype.ids = function () {
  * @param {String} modelName The model name
  * @returns {String} columnName for ID
  */
-ModelDefinition.prototype.idColumnName = function(connectorType) {
-    return this.columnName(connectorType, this.idName());
+ModelDefinition.prototype.idColumnName = function (connectorType) {
+  return this.columnName(connectorType, this.idName());
 };
 
 /**
  * Find the ID property name
  * @returns {String} property name for ID
  */
-ModelDefinition.prototype.idName = function() {
-    var id = this.ids()[0];
-    if(this.properties.id && this.properties.id.id) {
-        return 'id';
-    } else {}
-    return id && id.name;
+ModelDefinition.prototype.idName = function () {
+  var id = this.ids()[0];
+  if (this.properties.id && this.properties.id.id) {
+    return 'id';
+  } else {
+  }
+  return id && id.name;
 };
 
 /**
@@ -21559,11 +22078,11 @@ ModelDefinition.prototype.idName = function() {
  * @returns {String[]} property names for IDs
  */
 ModelDefinition.prototype.idNames = function () {
-    var ids = this.ids();
-    var names = ids.map(function (id) {
-        return id.name;
-    });
-    return names;
+  var ids = this.ids();
+  var names = ids.map(function (id) {
+    return id.name;
+  });
+  return names;
 };
 
 /**
@@ -21571,19 +22090,19 @@ ModelDefinition.prototype.idNames = function () {
  * @returns {{}}
  */
 ModelDefinition.prototype.indexes = function () {
-    this.build();
-    var indexes = {};
-    if (this.settings.indexes) {
-        for (var i in this.settings.indexes) {
-            indexes[i] = this.settings.indexes[i];
-        }
+  this.build();
+  var indexes = {};
+  if (this.settings.indexes) {
+    for (var i in this.settings.indexes) {
+      indexes[i] = this.settings.indexes[i];
     }
-    for (var p in this.properties) {
-        if (this.properties[p].index) {
-            indexes[p + '_index'] = this.properties[p].index;
-        }
+  }
+  for (var p in this.properties) {
+    if (this.properties[p].index) {
+      indexes[p + '_index'] = this.properties[p].index;
     }
-    return indexes;
+  }
+  return indexes;
 };
 
 /**
@@ -21591,41 +22110,41 @@ ModelDefinition.prototype.indexes = function () {
  * @param {Boolean} force Forcing rebuild
  */
 ModelDefinition.prototype.build = function (forceRebuild) {
-    if(forceRebuild) {
-        this.properties = null;
-        this.relations = [];
-        this._ids = null;
-    }
-    if (this.properties) {
-        return this.properties;
-    }
-    this.properties = {};
-    for (var p in this.rawProperties) {
-        var prop = this.rawProperties[p];
-        var type = this.modelBuilder.resolveType(prop);
-        if (typeof type === 'string') {
-            this.relations.push({
-                source: this.name,
-                target: type,
-                type: Array.isArray(prop) ? 'hasMany' : 'belongsTo',
-                as: p
-            });
-        } else {
-            var typeDef = {
-                type: type
-            };
-            if (typeof prop === 'object' && prop !== null) {
-                for (var a in prop) {
-                    // Skip the type property but don't delete it Model.extend() shares same instances of the properties from the base class
-                    if (a !== 'type') {
-                        typeDef[a] = prop[a];
-                    }
-                }
-            }
-            this.properties[p] = typeDef;
-        }
-    }
+  if (forceRebuild) {
+    this.properties = null;
+    this.relations = [];
+    this._ids = null;
+  }
+  if (this.properties) {
     return this.properties;
+  }
+  this.properties = {};
+  for (var p in this.rawProperties) {
+    var prop = this.rawProperties[p];
+    var type = this.modelBuilder.resolveType(prop);
+    if (typeof type === 'string') {
+      this.relations.push({
+        source: this.name,
+        target: type,
+        type: Array.isArray(prop) ? 'hasMany' : 'belongsTo',
+        as: p
+      });
+    } else {
+      var typeDef = {
+        type: type
+      };
+      if (typeof prop === 'object' && prop !== null) {
+        for (var a in prop) {
+          // Skip the type property but don't delete it Model.extend() shares same instances of the properties from the base class
+          if (a !== 'type') {
+            typeDef[a] = prop[a];
+          }
+        }
+      }
+      this.properties[p] = typeDef;
+    }
+  }
+  return this.properties;
 };
 
 /**
@@ -21634,61 +22153,60 @@ ModelDefinition.prototype.build = function (forceRebuild) {
  * @param {Object} propertyDefinition The property definition
  */
 ModelDefinition.prototype.defineProperty = function (propertyName, propertyDefinition) {
-    this.rawProperties[propertyName] = propertyDefinition;
-    this.build(true);
+  this.rawProperties[propertyName] = propertyDefinition;
+  this.build(true);
 };
-
 
 function isModelClass(cls) {
-    if(!cls) {
-        return false;
-    }
-    return cls.prototype instanceof ModelBaseClass;
+  if (!cls) {
+    return false;
+  }
+  return cls.prototype instanceof ModelBaseClass;
 }
 
-ModelDefinition.prototype.toJSON = function(forceRebuild) {
-    if(forceRebuild) {
-        this.json = null;
-    }
-    if(this.json) {
-        return json;
-    }
-    var json = {
-        name: this.name,
-        properties: {},
-        settings: this.settings
-    };
-    this.build(forceRebuild);
-
-    var mapper = function(val) {
-        if(val === undefined || val === null) {
-            return val;
-        }
-        if('function' === typeof val.toJSON) {
-            // The value has its own toJSON() object
-            return val.toJSON();
-        }
-        if('function' === typeof val) {
-            if(isModelClass(val)) {
-                if(val.settings && val.settings.anonymous) {
-                    return val.definition && val.definition.toJSON().properties;
-                } else {
-                    return val.modelName;
-                }
-            }
-            return val.name;
-        } else {
-            return val;
-        }
-    };
-    for(var p in this.properties) {
-        json.properties[p] = traverse(this.properties[p]).map(mapper);
-    }
-    this.json = json;
+ModelDefinition.prototype.toJSON = function (forceRebuild) {
+  if (forceRebuild) {
+    this.json = null;
+  }
+  if (this.json) {
     return json;
+  }
+  var json = {
+    name: this.name,
+    properties: {},
+    settings: this.settings
+  };
+  this.build(forceRebuild);
+
+  var mapper = function (val) {
+    if (val === undefined || val === null) {
+      return val;
+    }
+    if ('function' === typeof val.toJSON) {
+      // The value has its own toJSON() object
+      return val.toJSON();
+    }
+    if ('function' === typeof val) {
+      if (isModelClass(val)) {
+        if (val.settings && val.settings.anonymous) {
+          return val.definition && val.definition.toJSON().properties;
+        } else {
+          return val.modelName;
+        }
+      }
+      return val.name;
+    } else {
+      return val;
+    }
+  };
+  for (var p in this.properties) {
+    json.properties[p] = traverse(this.properties[p]).map(mapper);
+  }
+  this.json = json;
+  return json;
 };
 
-},{"./model":75,"./model-builder":73,"./types":78,"assert":21,"events":29,"traverse":82,"util":55}],75:[function(require,module,exports){
+},{"./model":77,"./model-builder":75,"./types":80,"assert":23,"events":31,"traverse":86,"util":57}],77:[function(require,module,exports){
 /**
  * Module exports class Model
  */
@@ -21697,7 +22215,7 @@ module.exports = ModelBaseClass;
 /**
  * Module dependencies
  */
- 
+
 var util = require('util');
 var traverse = require('traverse');
 var jutil = require('./jutil');
@@ -21719,19 +22237,19 @@ var BASE_TYPES = ['String', 'Boolean', 'Number', 'Date', 'Text'];
  * @param {Object} data - initial object data
  */
 function ModelBaseClass(data) {
-    this._initProperties(data, true);
+  this._initProperties(data, true);
 }
 
 // FIXME: [rfeng] We need to make sure the input data should not be mutated. Disabled cloning for now to get tests passing
 function clone(data) {
-    /*
-    if(!(data instanceof ModelBaseClass)) {
-        if(data && (Array.isArray(data) || 'object' === typeof data)) {
-            return traverse(data).clone();
-        }
-    }
-    */
-    return data;
+  /*
+   if(!(data instanceof ModelBaseClass)) {
+   if(data && (Array.isArray(data) || 'object' === typeof data)) {
+   return traverse(data).clone();
+   }
+   }
+   */
+  return data;
 }
 /**
  * Initialize properties
@@ -21740,117 +22258,117 @@ function clone(data) {
  * @private
  */
 ModelBaseClass.prototype._initProperties = function (data, applySetters) {
-    var self = this;
-    var ctor = this.constructor;
-    
-    var properties = ctor.definition.build();
-    data = data || {};
+  var self = this;
+  var ctor = this.constructor;
 
-    Object.defineProperty(this, '__cachedRelations', {
-        writable: true,
-        enumerable: false,
-        configurable: true,
-        value: {}
-    });
+  var properties = ctor.definition.build();
+  data = data || {};
 
-    Object.defineProperty(this, '__data', {
-        writable: true,
-        enumerable: false,
-        configurable: true,
-        value: {}
-    });
+  Object.defineProperty(this, '__cachedRelations', {
+    writable: true,
+    enumerable: false,
+    configurable: true,
+    value: {}
+  });
 
-    Object.defineProperty(this, '__dataWas', {
-        writable: true,
-        enumerable: false,
-        configurable: true,
-        value: {}
-    });
+  Object.defineProperty(this, '__data', {
+    writable: true,
+    enumerable: false,
+    configurable: true,
+    value: {}
+  });
 
-    if (data['__cachedRelations']) {
-        this.__cachedRelations = data['__cachedRelations'];
+  Object.defineProperty(this, '__dataWas', {
+    writable: true,
+    enumerable: false,
+    configurable: true,
+    value: {}
+  });
+
+  if (data.__cachedRelations) {
+    this.__cachedRelations = data.__cachedRelations;
+  }
+
+  // Check if the strict option is set to false for the model
+  var strict = ctor.definition.settings.strict;
+
+  for (var i in data) {
+    if (i in properties) {
+      this.__data[i] = this.__dataWas[i] = clone(data[i]);
+    } else if (i in ctor.relations) {
+      this.__data[ctor.relations[i].keyFrom] = this.__dataWas[i] = data[i][ctor.relations[i].keyTo];
+      this.__cachedRelations[i] = data[i];
+    } else {
+      if (strict === false) {
+        this.__data[i] = this.__dataWas[i] = clone(data[i]);
+      } else if (strict === 'throw') {
+        throw new Error('Unknown property: ' + i);
+      }
+    }
+  }
+
+  if (applySetters === true) {
+    for (var propertyName in data) {
+      if ((propertyName in properties) || (propertyName in ctor.relations)) {
+        self[propertyName] = self.__data[propertyName] || data[propertyName];
+      }
+    }
+  }
+
+  // Set the unknown properties as properties to the object
+  if (strict === false) {
+    for (var propertyName in data) {
+      if (!(propertyName in properties)) {
+        self[propertyName] = self.__data[propertyName] || data[propertyName];
+      }
+    }
+  }
+
+  ctor.forEachProperty(function (propertyName) {
+
+    if ('undefined' === typeof self.__data[propertyName]) {
+      self.__data[propertyName] = self.__dataWas[propertyName] = getDefault(propertyName);
+    } else {
+      self.__dataWas[propertyName] = self.__data[propertyName];
     }
 
-    // Check if the strict option is set to false for the model
-    var strict = ctor.definition.settings.strict;
+  });
 
-    for (var i in data) {
-        if (i in properties) {
-            this.__data[i] = this.__dataWas[i] = clone(data[i]);
-        } else if (i in ctor.relations) {
-            this.__data[ctor.relations[i].keyFrom] = this.__dataWas[i] = data[i][ctor.relations[i].keyTo];
-            this.__cachedRelations[i] = data[i];
-        } else {
-            if(strict === false) {
-                this.__data[i] = this.__dataWas[i] = clone(data[i]);
-            } else if(strict === 'throw') {
-                throw new Error('Unknown property: ' + i);
-            }
+  ctor.forEachProperty(function (propertyName) {
+
+    var type = properties[propertyName].type;
+
+    if (BASE_TYPES.indexOf(type.name) === -1) {
+      if (typeof self.__data[propertyName] !== 'object' && self.__data[propertyName]) {
+        try {
+          self.__data[propertyName] = JSON.parse(self.__data[propertyName] + '');
+        } catch (e) {
+          self.__data[propertyName] = String(self.__data[propertyName]);
         }
+      }
+      if (type.name === 'Array' || Array.isArray(type)) {
+        if (!(self.__data[propertyName] instanceof List)) {
+          self.__data[propertyName] = new List(self.__data[propertyName], type, self);
+        }
+      }
     }
 
-    if (applySetters === true) {
-        for(var propertyName in data) {
-            if((propertyName in properties) || (propertyName in ctor.relations)) {
-                self[propertyName] = self.__data[propertyName] || data[propertyName];
-            }
-        }
+  });
+
+  function getDefault(propertyName) {
+    var def = properties[propertyName]['default'];
+    if (def !== undefined) {
+      if (typeof def === 'function') {
+        return def();
+      } else {
+        return def;
+      }
+    } else {
+      return undefined;
     }
+  }
 
-    // Set the unknown properties as properties to the object
-    if(strict === false) {
-        for(var propertyName in data) {
-            if(!(propertyName in properties)) {
-                self[propertyName] = self.__data[propertyName] || data[propertyName];
-            }
-        }
-    }
-
-    ctor.forEachProperty(function (propertyName) {
-
-        if ('undefined' === typeof self.__data[propertyName]) {
-            self.__data[propertyName] = self.__dataWas[propertyName] = getDefault(propertyName);
-        } else {
-            self.__dataWas[propertyName] = self.__data[propertyName];
-        }
-
-    });
-
-    ctor.forEachProperty(function (propertyName) {
-
-        var type = properties[propertyName].type;
-        
-        if (BASE_TYPES.indexOf(type.name) === -1) {
-            if (typeof self.__data[propertyName] !== 'object' && self.__data[propertyName]) {
-                try {
-                    self.__data[propertyName] = JSON.parse(self.__data[propertyName] + '');
-                } catch (e) {
-                    self.__data[propertyName] = String(self.__data[propertyName]);
-                }
-            }
-            if (type.name === 'Array' || Array.isArray(type)) {
-                if(!(self.__data[propertyName] instanceof List)) {
-                    self.__data[propertyName] = new List(self.__data[propertyName], type, self);
-                }
-            }
-        }
-
-    });
-
-    function getDefault(propertyName) {
-        var def = properties[propertyName]['default'];
-        if (def !== undefined) {
-            if (typeof def === 'function') {
-                return def();
-            } else {
-                return def;
-            }
-        } else {
-            return undefined;
-        }
-    }
-
-    this.trigger('initialize');
+  this.trigger('initialize');
 }
 
 /**
@@ -21858,24 +22376,24 @@ ModelBaseClass.prototype._initProperties = function (data, applySetters) {
  * @param {Object} params - various property configuration
  */
 ModelBaseClass.defineProperty = function (prop, params) {
-    this.dataSource.defineProperty(this.modelName, prop, params);
+  this.dataSource.defineProperty(this.modelName, prop, params);
 };
 
 ModelBaseClass.getPropertyType = function (propName) {
-    var prop = this.definition.properties[propName];
-    if(!prop) {
-        // The property is not part of the definition
-        return null;
-    }
-    if (!prop.type) {
-        throw new Error('Type not defined for property ' + this.modelName + '.' + propName);
-        // return null;
-    }
-    return prop.type.name;
+  var prop = this.definition.properties[propName];
+  if (!prop) {
+    // The property is not part of the definition
+    return null;
+  }
+  if (!prop.type) {
+    throw new Error('Type not defined for property ' + this.modelName + '.' + propName);
+    // return null;
+  }
+  return prop.type.name;
 };
 
 ModelBaseClass.prototype.getPropertyType = function (propName) {
-    return this.constructor.getPropertyType(propName);
+  return this.constructor.getPropertyType(propName);
 };
 
 /**
@@ -21884,7 +22402,7 @@ ModelBaseClass.prototype.getPropertyType = function (propName) {
  * @override default toString method
  */
 ModelBaseClass.toString = function () {
-    return '[Model ' + this.modelName + ']';
+  return '[Model ' + this.modelName + ']';
 };
 
 /**
@@ -21896,37 +22414,37 @@ ModelBaseClass.toString = function () {
  * @returns {Object} - canonical object representation (no getters and setters)
  */
 ModelBaseClass.prototype.toObject = function (onlySchema) {
-    var data = {};
-    var self = this;
+  var data = {};
+  var self = this;
 
-    var schemaLess = this.constructor.definition.settings.strict === false || !onlySchema;
-    this.constructor.forEachProperty(function (propertyName) {
-        if (self[propertyName] instanceof List) {
-            data[propertyName] = self[propertyName].toObject(!schemaLess);
-        } else if (self.__data.hasOwnProperty(propertyName)) {
-            if(self[propertyName] !== undefined && self[propertyName]!== null && self[propertyName].toObject) {
-                data[propertyName] = self[propertyName].toObject(!schemaLess);
-            } else {
-                data[propertyName] = self[propertyName];
-            }
-        } else {
-            data[propertyName] = null;
-        }
-    });
-
-    if (schemaLess) {
-            for(var propertyName in self.__data) {
-            if (!data.hasOwnProperty(propertyName)) {
-                var val = self.hasOwnProperty(propertyName) ? self[propertyName] : self.__data[propertyName];
-                if(val !== undefined && val!== null && val.toObject) {
-                    data[propertyName] = val.toObject(!schemaLess);
-                } else {
-                    data[propertyName] = val;
-                }
-            }
-        }
+  var schemaLess = this.constructor.definition.settings.strict === false || !onlySchema;
+  this.constructor.forEachProperty(function (propertyName) {
+    if (self[propertyName] instanceof List) {
+      data[propertyName] = self[propertyName].toObject(!schemaLess);
+    } else if (self.__data.hasOwnProperty(propertyName)) {
+      if (self[propertyName] !== undefined && self[propertyName] !== null && self[propertyName].toObject) {
+        data[propertyName] = self[propertyName].toObject(!schemaLess);
+      } else {
+        data[propertyName] = self[propertyName];
+      }
+    } else {
+      data[propertyName] = null;
     }
-    return data;
+  });
+
+  if (schemaLess) {
+    for (var propertyName in self.__data) {
+      if (!data.hasOwnProperty(propertyName)) {
+        var val = self.hasOwnProperty(propertyName) ? self[propertyName] : self.__data[propertyName];
+        if (val !== undefined && val !== null && val.toObject) {
+          data[propertyName] = val.toObject(!schemaLess);
+        } else {
+          data[propertyName] = val;
+        }
+      }
+    }
+  }
+  return data;
 };
 
 // ModelBaseClass.prototype.hasOwnProperty = function (prop) {
@@ -21935,13 +22453,13 @@ ModelBaseClass.prototype.toObject = function (onlySchema) {
 // };
 
 ModelBaseClass.prototype.toJSON = function () {
-    return this.toObject();
+  return this.toObject();
 };
 
 ModelBaseClass.prototype.fromObject = function (obj) {
-    for(var key in obj) {
-        this[key] = obj[key];
-    }
+  for (var key in obj) {
+    this[key] = obj[key];
+  }
 };
 
 /**
@@ -21951,7 +22469,7 @@ ModelBaseClass.prototype.fromObject = function (obj) {
  * @return Boolean
  */
 ModelBaseClass.prototype.propertyChanged = function propertyChanged(propertyName) {
-    return this.__data[propertyName] !== this.__dataWas[propertyName];
+  return this.__data[propertyName] !== this.__dataWas[propertyName];
 };
 
 /**
@@ -21961,23 +22479,23 @@ ModelBaseClass.prototype.propertyChanged = function propertyChanged(propertyName
  * initial state
  */
 ModelBaseClass.prototype.reset = function () {
-    var obj = this;
-    for(var k in obj) {
-        if (k !== 'id' && !obj.constructor.dataSource.definitions[obj.constructor.modelName].properties[k]) {
-            delete obj[k];
-        }
-        if (obj.propertyChanged(k)) {
-            obj[k] = obj[k + '$was'];
-        }
+  var obj = this;
+  for (var k in obj) {
+    if (k !== 'id' && !obj.constructor.dataSource.definitions[obj.constructor.modelName].properties[k]) {
+      delete obj[k];
     }
+    if (obj.propertyChanged(k)) {
+      obj[k] = obj[k + '$was'];
+    }
+  }
 };
 
 ModelBaseClass.prototype.inspect = function () {
-    return util.inspect(this.__data, false, 4, true);
+  return util.inspect(this.__data, false, 4, true);
 };
 
-ModelBaseClass.mixin = function(anotherClass, options) {
-    return jutil.mixin(this, anotherClass, options);
+ModelBaseClass.mixin = function (anotherClass, options) {
+  return jutil.mixin(this, anotherClass, options);
 };
 
 ModelBaseClass.prototype.getDataSource = function () {
@@ -21990,7 +22508,7 @@ ModelBaseClass.getDataSource = function () {
 jutil.mixin(ModelBaseClass, Hookable);
 jutil.mixin(ModelBaseClass, validations.Validatable);
 
-},{"./hooks":68,"./jutil":71,"./list":72,"./validations.js":80,"traverse":82,"util":55}],76:[function(require,module,exports){
+},{"./hooks":70,"./jutil":73,"./list":74,"./validations.js":82,"traverse":86,"util":57}],78:[function(require,module,exports){
 /**
  * Dependencies
  */
@@ -22004,12 +22522,24 @@ function Relation() {
 }
 
 Relation.relationNameFor = function relationNameFor(foreignKey) {
-    for (var rel in this.relations) {
-        if (this.relations[rel].type === 'belongsTo' && this.relations[rel].keyFrom === foreignKey) {
-            return rel;
-        }
+  for (var rel in this.relations) {
+    if (this.relations[rel].type === 'belongsTo' && this.relations[rel].keyFrom === foreignKey) {
+      return rel;
     }
+  }
 };
+
+function lookupModel(models, modelName) {
+  if(models[modelName]) {
+    return models[modelName];
+  }
+  var lookupClassName = modelName.toLowerCase();
+  for (var name in models) {
+    if (name.toLowerCase() === lookupClassName) {
+      return models[name];
+    }
+  }
+}
 
 /**
  * Declare hasMany relation
@@ -22019,131 +22549,136 @@ Relation.relationNameFor = function relationNameFor(foreignKey) {
  * @example `User.hasMany(Post, {as: 'posts', foreignKey: 'authorId'});`
  */
 Relation.hasMany = function hasMany(anotherClass, params) {
-    var thisClassName = this.modelName;
-    params = params || {};
-    if (typeof anotherClass === 'string') {
-        params.as = anotherClass;
-        if (params.model) {
-            anotherClass = params.model;
-        } else {
-            var anotherClassName = i8n.singularize(anotherClass).toLowerCase();
-            for(var name in this.dataSource.modelBuilder.models) {
-                if (name.toLowerCase() === anotherClassName) {
-                    anotherClass = this.dataSource.modelBuilder.models[name];
-                }
-            }
-        }
+  var thisClassName = this.modelName;
+  params = params || {};
+  if (typeof anotherClass === 'string') {
+    params.as = anotherClass;
+    if (params.model) {
+      anotherClass = params.model;
+    } else {
+      var anotherClassName = i8n.singularize(anotherClass).toLowerCase();
+      anotherClass = lookupModel(this.dataSource.modelBuilder.models, anotherClassName);
     }
-    var methodName = params.as || i8n.camelize(anotherClass.pluralModelName, true);
-    var fk = params.foreignKey || i8n.camelize(thisClassName + '_id', true);
+  }
+  var methodName = params.as || i8n.camelize(anotherClass.pluralModelName, true);
+  var fk = params.foreignKey || i8n.camelize(thisClassName + '_id', true);
 
-    var idName = this.dataSource.idName(this.modelName) || 'id';
+  var idName = this.dataSource.idName(this.modelName) || 'id';
 
-    this.relations[methodName] = {
-        type: 'hasMany',
-        keyFrom: idName,
-        keyTo: fk,
-        modelTo: anotherClass,
-        multiple: true
-    };
-    // each instance of this class should have method named
-    // pluralize(anotherClass.modelName)
-    // which is actually just anotherClass.find({where: {thisModelNameId: this[idName]}}, cb);
-    var scopeMethods = {
-        findById: find,
-        destroy: destroy
-    };
-    if (params.through) {
-        var fk2 = i8n.camelize(anotherClass.modelName + '_id', true);
-        scopeMethods.create = function create(data, done) {
-            if (typeof data !== 'object') {
-                done = data;
-                data = {};
-            }
-            if ('function' !== typeof done) {
-                done = function() {};
-            }
-            var self = this;
-            anotherClass.create(data, function(err, ac) {
-                if (err) return done(err, ac);
-                var d = {};
-                d[params.through.relationNameFor(fk)] = self;
-                d[params.through.relationNameFor(fk2)] = ac;
-                params.through.create(d, function(e) {
-                    if (e) {
-                        ac.destroy(function() {
-                            done(e);
-                        });
-                    } else {
-                        done(err, ac);
-                    }
-                });
+  this.relations[methodName] = {
+    type: 'hasMany',
+    keyFrom: idName,
+    keyTo: fk,
+    modelTo: anotherClass,
+    multiple: true
+  };
+  // each instance of this class should have method named
+  // pluralize(anotherClass.modelName)
+  // which is actually just anotherClass.find({where: {thisModelNameId: this[idName]}}, cb);
+  var scopeMethods = {
+    findById: find,
+    destroy: destroy
+  };
+  if (params.through) {
+    var fk2 = i8n.camelize(anotherClass.modelName + '_id', true);
+    scopeMethods.create = function create(data, done) {
+      if (typeof data !== 'object') {
+        done = data;
+        data = {};
+      }
+      if ('function' !== typeof done) {
+        done = function () {
+        };
+      }
+      var self = this;
+      anotherClass.create(data, function (err, ac) {
+        if (err) return done(err, ac);
+        var d = {};
+        d[params.through.relationNameFor(fk)] = self;
+        d[params.through.relationNameFor(fk2)] = ac;
+        params.through.create(d, function (e) {
+          if (e) {
+            ac.destroy(function () {
+              done(e);
             });
-        };
-        scopeMethods.add = function(acInst, done) {
-            var data = {};
-            var query = {};
-            query[fk] = this[idName];
-            data[params.through.relationNameFor(fk)] = this;
-            query[fk2] = acInst[idName] || acInst;
-            data[params.through.relationNameFor(fk2)] = acInst;
-            params.through.findOrCreate({where: query}, data, done);
-        };
-        scopeMethods.remove = function(acInst, done) {
-            var q = {};
-            q[fk2] = acInst[idName] || acInst;
-            params.through.findOne({where: q}, function(err, d) {
-                if (err) {
-                    return done(err);
-                }
-                if (!d) {
-                    return done();
-                }
-                d.destroy(done);
-            });
-        };
-        delete scopeMethods.destroy;
-    }
-    defineScope(this.prototype, params.through || anotherClass, methodName, function () {
-        var filter = {};
-        filter.where = {};
-        filter.where[fk] = this[idName];
-        if (params.through) {
-            filter.collect = i8n.camelize(anotherClass.modelName, true);
-            filter.include = filter.collect;
-        }
-        return filter;
-    }, scopeMethods);
-
-    if (!params.through) {
-        // obviously, anotherClass should have attribute called `fk`
-        anotherClass.dataSource.defineForeignKey(anotherClass.modelName, fk, this.modelName);
-    }
-
-    function find(id, cb) {
-        anotherClass.findById(id, function (err, inst) {
-            if (err) return cb(err);
-            if (!inst) return cb(new Error('Not found'));
-            if (inst[fk] && inst[fk].toString() == this[idName].toString()) {
-                cb(null, inst);
-            } else {
-                cb(new Error('Permission denied'));
-            }
-        }.bind(this));
-    }
-
-    function destroy(id, cb) {
-        var self = this;
-        anotherClass.findById(id, function (err, inst) {
-            if (err) return cb(err);
-            if (!inst) return cb(new Error('Not found'));
-            if (inst[fk] && inst[fk].toString() == self[idName].toString()) {
-                inst.destroy(cb);
-            } else {
-                cb(new Error('Permission denied'));
-            }
+          } else {
+            done(err, ac);
+          }
         });
+      });
+    };
+    scopeMethods.add = function (acInst, done) {
+      var data = {};
+      var query = {};
+      query[fk] = this[idName];
+      data[params.through.relationNameFor(fk)] = this;
+      query[fk2] = acInst[idName] || acInst;
+      data[params.through.relationNameFor(fk2)] = acInst;
+      params.through.findOrCreate({where: query}, data, done);
+    };
+    scopeMethods.remove = function (acInst, done) {
+      var q = {};
+      q[fk2] = acInst[idName] || acInst;
+      params.through.findOne({where: q}, function (err, d) {
+        if (err) {
+          return done(err);
+        }
+        if (!d) {
+          return done();
+        }
+        d.destroy(done);
+      });
+    };
+    delete scopeMethods.destroy;
+  }
+  defineScope(this.prototype, params.through || anotherClass, methodName, function () {
+    var filter = {};
+    filter.where = {};
+    filter.where[fk] = this[idName];
+    if (params.through) {
+      filter.collect = i8n.camelize(anotherClass.modelName, true);
+      filter.include = filter.collect;
     }
+    return filter;
+  }, scopeMethods);
+
+  if (!params.through) {
+    // obviously, anotherClass should have attribute called `fk`
+    anotherClass.dataSource.defineForeignKey(anotherClass.modelName, fk, this.modelName);
+  }
+
+  function find(id, cb) {
+    anotherClass.findById(id, function (err, inst) {
+      if (err) {
+        return cb(err);
+      }
+      if (!inst) {
+        return cb(new Error('Not found'));
+      }
+      if (inst[fk] && inst[fk].toString() === this[idName].toString()) {
+        cb(null, inst);
+      } else {
+        cb(new Error('Permission denied'));
+      }
+    }.bind(this));
+  }
+
+  function destroy(id, cb) {
+    var self = this;
+    anotherClass.findById(id, function (err, inst) {
+      if (err) {
+        return cb(err);
+      }
+      if (!inst) {
+        return cb(new Error('Not found'));
+      }
+      if (inst[fk] && inst[fk].toString() === self[idName].toString()) {
+        inst.destroy(cb);
+      } else {
+        cb(new Error('Permission denied'));
+      }
+    });
+  }
 
 };
 
@@ -22171,87 +22706,87 @@ Relation.hasMany = function hasMany(anotherClass, params) {
  * This optional parameter default value is false, so the related object will be loaded from cache if available.
  */
 Relation.belongsTo = function (anotherClass, params) {
-    params = params || {};
-    if ('string' === typeof anotherClass) {
-        params.as = anotherClass;
-        if (params.model) {
-            anotherClass = params.model;
-        } else {
-            var anotherClassName = anotherClass.toLowerCase();
-            for(var name in this.dataSource.modelBuilder.models) {
-                if (name.toLowerCase() === anotherClassName) {
-                    anotherClass = this.dataSource.modelBuilder.models[name];
-                }
-            }
-        }
+  params = params || {};
+  if ('string' === typeof anotherClass) {
+    params.as = anotherClass;
+    if (params.model) {
+      anotherClass = params.model;
+    } else {
+      var anotherClassName = anotherClass.toLowerCase();
+      anotherClass = lookupModel(this.dataSource.modelBuilder.models, anotherClassName);
     }
+  }
 
-    var idName = this.dataSource.idName(anotherClass.modelName) || 'id';
-    var methodName = params.as || i8n.camelize(anotherClass.modelName, true);
-    var fk = params.foreignKey || methodName + 'Id';
+  var idName = this.dataSource.idName(anotherClass.modelName) || 'id';
+  var methodName = params.as || i8n.camelize(anotherClass.modelName, true);
+  var fk = params.foreignKey || methodName + 'Id';
 
-    this.relations[methodName] = {
-        type: 'belongsTo',
-        keyFrom: fk,
-        keyTo: idName,
-        modelTo: anotherClass,
-        multiple: false
-    };
+  this.relations[methodName] = {
+    type: 'belongsTo',
+    keyFrom: fk,
+    keyTo: idName,
+    modelTo: anotherClass,
+    multiple: false
+  };
 
-    this.dataSource.defineForeignKey(this.modelName, fk, anotherClass.modelName);
-    this.prototype['__finders__'] = this.prototype['__finders__'] || {};
+  this.dataSource.defineForeignKey(this.modelName, fk, anotherClass.modelName);
+  this.prototype.__finders__ = this.prototype.__finders__ || {};
 
-    this.prototype['__finders__'][methodName] = function (id, cb) {
-        if (id === null) {
-            cb(null, null);
-            return;
-        }
-        anotherClass.findById(id, function (err,inst) {
-            if (err) return cb(err);
-            if (!inst) return cb(null, null);
-            if (inst[idName] === this[fk]) {
-                cb(null, inst);
-            } else {
-                cb(new Error('Permission denied'));
-            }
-        }.bind(this));
-    };
+  this.prototype.__finders__[methodName] = function (id, cb) {
+    if (id === null) {
+      cb(null, null);
+      return;
+    }
+    anotherClass.findById(id, function (err, inst) {
+      if (err) {
+        return cb(err);
+      }
+      if (!inst) {
+        return cb(null, null);
+      }
+      if (inst[idName] === this[fk]) {
+        cb(null, inst);
+      } else {
+        cb(new Error('Permission denied'));
+      }
+    }.bind(this));
+  };
 
-    this.prototype[methodName] = function (refresh, p) {
-        if (arguments.length === 1) {
-            p = refresh;
-            refresh = false;
-        } else if (arguments.length > 2) {
-            throw new Error('Method can\'t be called with more than two arguments');
-        }
-        var self = this;
-        var cachedValue;
-        if (!refresh && this.__cachedRelations && (typeof this.__cachedRelations[methodName] !== 'undefined')) {
-            cachedValue = this.__cachedRelations[methodName];
-        }
-        if (p instanceof ModelBaseClass) { // acts as setter
-            this[fk] = p[idName];
-            this.__cachedRelations[methodName] = p;
-        } else if (typeof p === 'function') { // acts as async getter
-            if (typeof cachedValue === 'undefined') {
-                this.__finders__[methodName].apply(self, [this[fk], function(err, inst) {
-                    if (!err) {
-                        self.__cachedRelations[methodName] = inst;
-                    }
-                    p(err, inst);
-                }]);
-                return this[fk];
-            } else {
-                p(null, cachedValue);
-                return cachedValue;
-            }
-        } else if (typeof p === 'undefined') { // acts as sync getter
-            return this[fk];
-        } else { // setter
-            this[fk] = p;
-            delete this.__cachedRelations[methodName];
-        }
-    };
+  this.prototype[methodName] = function (refresh, p) {
+    if (arguments.length === 1) {
+      p = refresh;
+      refresh = false;
+    } else if (arguments.length > 2) {
+      throw new Error('Method can\'t be called with more than two arguments');
+    }
+    var self = this;
+    var cachedValue;
+    if (!refresh && this.__cachedRelations && (this.__cachedRelations[methodName] !== undefined)) {
+      cachedValue = this.__cachedRelations[methodName];
+    }
+    if (p instanceof ModelBaseClass) { // acts as setter
+      this[fk] = p[idName];
+      this.__cachedRelations[methodName] = p;
+    } else if (typeof p === 'function') { // acts as async getter
+      if (typeof cachedValue === 'undefined') {
+        this.__finders__[methodName].apply(self, [this[fk], function (err, inst) {
+          if (!err) {
+            self.__cachedRelations[methodName] = inst;
+          }
+          p(err, inst);
+        }]);
+        return this[fk];
+      } else {
+        p(null, cachedValue);
+        return cachedValue;
+      }
+    } else if (typeof p === 'undefined') { // acts as sync getter
+      return this[fk];
+    } else { // setter
+      this[fk] = p;
+      delete this.__cachedRelations[methodName];
+    }
+  };
 
 };
 
@@ -22261,45 +22796,38 @@ Relation.belongsTo = function (anotherClass, params) {
  * Post.hasAndBelongsToMany('tags'); creates connection model 'PostTag'
  */
 Relation.hasAndBelongsToMany = function hasAndBelongsToMany(anotherClass, params) {
-    params = params || {};
-    var models = this.dataSource.modelBuilder.models;
+  params = params || {};
+  var models = this.dataSource.modelBuilder.models;
 
-    if ('string' === typeof anotherClass) {
-        params.as = anotherClass;
-        if (params.model) {
-            anotherClass = params.model;
-        } else {
-            anotherClass = lookupModel(i8n.singularize(anotherClass)) ||
-                anotherClass;
-        }
-        if (typeof anotherClass === 'string') {
-            throw new Error('Could not find "' + anotherClass + '" relation for ' + this.modelName);
-        }
+  if ('string' === typeof anotherClass) {
+    params.as = anotherClass;
+    if (params.model) {
+      anotherClass = params.model;
+    } else {
+      anotherClass = lookupModel(models, i8n.singularize(anotherClass).toLowerCase()) ||
+        anotherClass;
     }
-
-    if (!params.through) {
-        var name1 = this.modelName + anotherClass.modelName;
-        var name2 = anotherClass.modelName + this.modelName;
-        params.through = lookupModel(name1) || lookupModel(name2) ||
-            this.dataSource.define(name1);
+    if (typeof anotherClass === 'string') {
+      throw new Error('Could not find "' + anotherClass + '" relation for ' + this.modelName);
     }
-    params.through.belongsTo(this);
-    params.through.belongsTo(anotherClass);
+  }
 
-    this.hasMany(anotherClass, {as: params.as, through: params.through});
+  if (!params.through) {
+    var name1 = this.modelName + anotherClass.modelName;
+    var name2 = anotherClass.modelName + this.modelName;
+    params.through = lookupModel(models, name1) || lookupModel(models, name2) ||
+      this.dataSource.define(name1);
+  }
+  params.through.belongsTo(this);
+  params.through.belongsTo(anotherClass);
 
-    function lookupModel(modelName) {
-        var lookupClassName = modelName.toLowerCase();
-        for (var name in models) {
-            if (name.toLowerCase() === lookupClassName) {
-                return models[name];
-            }
-        }
-    }
+  this.hasMany(anotherClass, {as: params.as, through: params.through});
 
 };
 
-},{"./model.js":75,"./scope.js":77,"inflection":61}],77:[function(require,module,exports){
+},{"./model.js":77,"./scope.js":79,"inflection":84}],79:[function(require,module,exports){
+var utils = require('./utils');
+var defineCachedRelations = utils.defineCachedRelations;
 /**
  * Module exports
  */
@@ -22307,192 +22835,190 @@ exports.defineScope = defineScope;
 
 function defineScope(cls, targetClass, name, params, methods) {
 
-    // collect meta info about scope
-    if (!cls._scopeMeta) {
-        cls._scopeMeta = {};
-    }
+  // collect meta info about scope
+  if (!cls._scopeMeta) {
+    cls._scopeMeta = {};
+  }
 
-    // only makes sence to add scope in meta if base and target classes
-    // are same
-    if (cls === targetClass) {
-        cls._scopeMeta[name] = params;
-    } else {
-        if (!targetClass._scopeMeta) {
-            targetClass._scopeMeta = {};
+  // only makes sence to add scope in meta if base and target classes
+  // are same
+  if (cls === targetClass) {
+    cls._scopeMeta[name] = params;
+  } else {
+    if (!targetClass._scopeMeta) {
+      targetClass._scopeMeta = {};
+    }
+  }
+
+  // Define a property for the scope
+  Object.defineProperty(cls, name, {
+    enumerable: false,
+    configurable: true,
+    /**
+     * This defines a property for the scope. For example, user.accounts or
+     * User.vips. Please note the cls can be the model class or prototype of
+     * the model class.
+     *
+     * The property value is function. It can be used to query the scope,
+     * such as user.accounts(condOrRefresh, cb) or User.vips(cb). The value
+     * can also have child properties for create/build/delete. For example,
+     * user.accounts.create(act, cb).
+     *
+     */
+    get: function () {
+      var f = function caller(condOrRefresh, cb) {
+        var actualCond = {};
+        var actualRefresh = false;
+        var saveOnCache = true;
+        if (arguments.length === 1) {
+          cb = condOrRefresh;
+        } else if (arguments.length === 2) {
+          if (typeof condOrRefresh === 'boolean') {
+            actualRefresh = condOrRefresh;
+          } else {
+            actualCond = condOrRefresh;
+            actualRefresh = true;
+            saveOnCache = false;
+          }
+        } else {
+          throw new Error('Method can be only called with one or two arguments');
         }
-    }
 
-    // Define a property for the scope
-    Object.defineProperty(cls, name, {
-        enumerable: false,
-        configurable: true,
-        /**
-         * This defines a property for the scope. For example, user.accounts or
-         * User.vips. Please note the cls can be the model class or prototype of
-         * the model class.
-         *
-         * The property value is function. It can be used to query the scope,
-         * such as user.accounts(condOrRefresh, cb) or User.vips(cb). The value
-         * can also have child properties for create/build/delete. For example,
-         * user.accounts.create(act, cb).
-         *
-         */
-        get: function () {
-            var f = function caller(condOrRefresh, cb) {
-                var actualCond = {};
-                var actualRefresh = false;
-                var saveOnCache = true;
-                if (arguments.length === 1) {
-                    cb = condOrRefresh;
-                } else if (arguments.length === 2) {
-                    if (typeof condOrRefresh === 'boolean') {
-                        actualRefresh = condOrRefresh;
-                    } else {
-                        actualCond = condOrRefresh;
-                        actualRefresh = true;
-                        saveOnCache = false;
-                    }
-                } else {
-                    throw new Error('Method can be only called with one or two arguments');
-                }
-
-                if (!this.__cachedRelations || (typeof this.__cachedRelations[name] == 'undefined') || actualRefresh) {
-                    var self = this;
-                    var params = mergeParams(actualCond, caller._scope);
-                    return targetClass.find(params, function(err, data) {
-                        if (!err && saveOnCache) {
-                            if (!self.__cachedRelations) {
-                                self.__cachedRelations = {};
-                            }
-                            self.__cachedRelations[name] = data;
-                        }
-                        cb(err, data);
-                    });
-                } else {
-                    cb(null, this.__cachedRelations[name]);
-                }
-            };
-            f._scope = typeof params === 'function' ? params.call(this) : params;
-
-            f.build = build;
-            f.create = create;
-            f.destroyAll = destroyAll;
-            for (var i in methods) {
-                f[i] = methods[i].bind(this);
+        if (!this.__cachedRelations || (this.__cachedRelations[name] === undefined) || actualRefresh) {
+          var self = this;
+          var params = mergeParams(actualCond, caller._scope);
+          return targetClass.find(params, function (err, data) {
+            if (!err && saveOnCache) {
+              defineCachedRelations(self);
+              self.__cachedRelations[name] = data;
             }
+            cb(err, data);
+          });
+        } else {
+          cb(null, this.__cachedRelations[name]);
+        }
+      };
+      f._scope = typeof params === 'function' ? params.call(this) : params;
 
-            // define sub-scopes
-            Object.keys(targetClass._scopeMeta).forEach(function (name) {
-                Object.defineProperty(f, name, {
-                    enumerable: false,
-                    get: function () {
-                        mergeParams(f._scope, targetClass._scopeMeta[name]);
-                        return f;
-                    }
-                });
-            }.bind(this));
+      f.build = build;
+      f.create = create;
+      f.destroyAll = destroyAll;
+      for (var i in methods) {
+        f[i] = methods[i].bind(this);
+      }
+
+      // define sub-scopes
+      Object.keys(targetClass._scopeMeta).forEach(function (name) {
+        Object.defineProperty(f, name, {
+          enumerable: false,
+          get: function () {
+            mergeParams(f._scope, targetClass._scopeMeta[name]);
             return f;
-        }
-    });
-
-    // Wrap the property into a function for remoting
-    var fn = function() {
-        // primaryObject.scopeName, such as user.accounts
-        var f = this[name];
-        // set receiver to be the scope property whose value is a function
-        f.apply(this[name], arguments);
-    };
-
-    fn.shared = true;
-    fn.http = {verb: 'get', path: '/' + name};
-    fn.accepts = {arg: 'where', type: 'object'};
-    fn.description = 'Fetches ' + name;
-    fn.returns = {arg: name, type: 'array', root: true};
-
-    cls['__get__' + name] = fn;
-
-    var fn_create = function() {
-        var f = this[name].create;
-        f.apply(this[name], arguments);
-    };
-
-    fn_create.shared = true;
-    fn_create.http = {verb: 'post', path: '/' + name};
-    fn_create.accepts = {arg: 'data', type: 'object', http: {source: 'body'}};
-    fn_create.description = 'Creates ' + name;
-    fn_create.returns = {arg: 'data', type: 'object', root: true};
-
-    cls['__create__' + name] = fn_create;
-
-    var fn_delete = function() {
-        var f = this[name].destroyAll;
-        f.apply(this[name], arguments);
-    };
-    fn_delete.shared = true;
-    fn_delete.http = {verb: 'delete', path: '/' + name};
-    fn_delete.description = 'Deletes ' + name;
-    fn_delete.returns = {arg: 'data', type: 'object', root: true};
-
-    cls['__delete__' + name] = fn_delete;
-
-    // and it should have create/build methods with binded thisModelNameId param
-    function build(data) {
-        return new targetClass(mergeParams(this._scope, {where:data || {}}).where);
-    }
-
-    function create(data, cb) {
-        if (typeof data === 'function') {
-            cb = data;
-            data = {};
-        }
-        this.build(data).save(cb);
-    }
-
-    /*
-        Callback
-        - The callback will be called after all elements are destroyed
-        - For every destroy call which results in an error
-        - If fetching the Elements on which destroyAll is called results in an error
-    */
-    function destroyAll(cb) {
-        targetClass.find(this._scope, function (err, data) {
-            if (err) {
-                cb(err);
-            } else {
-                (function loopOfDestruction (data) {
-                    if(data.length > 0) {
-                        data.shift().destroy(function(err) {
-                            if(err && cb) cb(err);
-                            loopOfDestruction(data);
-                        });
-                    } else {
-                        if(cb) cb();
-                    }
-                }(data));
-            }
+          }
         });
+      }.bind(this));
+      return f;
+    }
+  });
+
+  // Wrap the property into a function for remoting
+  var fn = function () {
+    // primaryObject.scopeName, such as user.accounts
+    var f = this[name];
+    // set receiver to be the scope property whose value is a function
+    f.apply(this[name], arguments);
+  };
+
+  fn.shared = true;
+  fn.http = {verb: 'get', path: '/' + name};
+  fn.accepts = {arg: 'where', type: 'object'};
+  fn.description = 'Fetches ' + name;
+  fn.returns = {arg: name, type: 'array', root: true};
+
+  cls['__get__' + name] = fn;
+
+  var fn_create = function () {
+    var f = this[name].create;
+    f.apply(this[name], arguments);
+  };
+
+  fn_create.shared = true;
+  fn_create.http = {verb: 'post', path: '/' + name};
+  fn_create.accepts = {arg: 'data', type: 'object', http: {source: 'body'}};
+  fn_create.description = 'Creates ' + name;
+  fn_create.returns = {arg: 'data', type: 'object', root: true};
+
+  cls['__create__' + name] = fn_create;
+
+  var fn_delete = function () {
+    var f = this[name].destroyAll;
+    f.apply(this[name], arguments);
+  };
+  fn_delete.shared = true;
+  fn_delete.http = {verb: 'delete', path: '/' + name};
+  fn_delete.description = 'Deletes ' + name;
+  fn_delete.returns = {arg: 'data', type: 'object', root: true};
+
+  cls['__delete__' + name] = fn_delete;
+
+  // and it should have create/build methods with binded thisModelNameId param
+  function build(data) {
+    return new targetClass(mergeParams(this._scope, {where: data || {}}).where);
+  }
+
+  function create(data, cb) {
+    if (typeof data === 'function') {
+      cb = data;
+      data = {};
+    }
+    this.build(data).save(cb);
+  }
+
+  /*
+   Callback
+   - The callback will be called after all elements are destroyed
+   - For every destroy call which results in an error
+   - If fetching the Elements on which destroyAll is called results in an error
+   */
+  function destroyAll(cb) {
+    targetClass.find(this._scope, function (err, data) {
+      if (err) {
+        cb(err);
+      } else {
+        (function loopOfDestruction(data) {
+          if (data.length > 0) {
+            data.shift().destroy(function (err) {
+              if (err && cb) cb(err);
+              loopOfDestruction(data);
+            });
+          } else {
+            if (cb) cb();
+          }
+        }(data));
+      }
+    });
+  }
+
+  function mergeParams(base, update) {
+    base = base || {};
+    if (update.where) {
+      base.where = merge(base.where, update.where);
+    }
+    if (update.include) {
+      base.include = update.include;
+    }
+    if (update.collect) {
+      base.collect = update.collect;
     }
 
-    function mergeParams(base, update) {
-        base = base || {};
-        if (update.where) {
-            base.where = merge(base.where, update.where);
-        }
-        if (update.include) {
-            base.include = update.include;
-        }
-        if (update.collect) {
-            base.collect = update.collect;
-        }
-
-        // overwrite order
-        if (update.order) {
-            base.order = update.order;
-        }
-
-        return base;
-
+    // overwrite order
+    if (update.order) {
+      base.order = update.order;
     }
+
+    return base;
+
+  }
 }
 
 /**
@@ -22502,137 +23028,141 @@ function defineScope(cls, targetClass, name, params, methods) {
  * @returns {Object} `base`
  */
 function merge(base, update) {
-    base = base || {};
-    if (update) {
-        Object.keys(update).forEach(function (key) {
-            base[key] = update[key];
-        });
-    }
-    return base;
+  base = base || {};
+  if (update) {
+    Object.keys(update).forEach(function (key) {
+      base[key] = update[key];
+    });
+  }
+  return base;
 }
 
 
-},{}],78:[function(require,module,exports){
+},{"./utils":81}],80:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer");module.exports = function (Types) {
 
-    var List = require('./list.js');
-    var GeoPoint = require('./geo').GeoPoint;
+  var List = require('./list.js');
+  var GeoPoint = require('./geo').GeoPoint;
 
-    /**
-     * Schema types
-     */
-    Types.Text = function Text(value) {
-        if (!(this instanceof Text)) {
-            return value;
-        }
-        this.value = value;
-    }; // Text type
+  /**
+   * Schema types
+   */
+  Types.Text = function Text(value) {
+    if (!(this instanceof Text)) {
+      return value;
+    }
+    this.value = value;
+  }; // Text type
 
-    Types.Text.prototype.toObject = Types.Text.prototype.toJSON = function () {
-        return this.value;
-    };
+  Types.Text.prototype.toObject = Types.Text.prototype.toJSON = function () {
+    return this.value;
+  };
 
-    Types.JSON = function JSON(value) {
-        if (!(this instanceof JSON)) {
-            return value;
-        }
-        this.value = value;
-    }; // JSON Object
-    Types.JSON.prototype.toObject = Types.JSON.prototype.toJSON = function () {
-        return this.value;
-    };
+  Types.JSON = function JSON(value) {
+    if (!(this instanceof JSON)) {
+      return value;
+    }
+    this.value = value;
+  }; // JSON Object
+  Types.JSON.prototype.toObject = Types.JSON.prototype.toJSON = function () {
+    return this.value;
+  };
 
-    Types.Any = function Any(value) {
-        if (!(this instanceof Any)) {
-            return value;
-        }
-        this.value = value;
-    }; // Any Type
-    Types.Any.prototype.toObject = Types.Any.prototype.toJSON = function () {
-        return this.value;
-    };
+  Types.Any = function Any(value) {
+    if (!(this instanceof Any)) {
+      return value;
+    }
+    this.value = value;
+  }; // Any Type
+  Types.Any.prototype.toObject = Types.Any.prototype.toJSON = function () {
+    return this.value;
+  };
 
-    Types.schemaTypes = {};
-    Types.registerType = function (type, names) {
-        names = names || [];
-        names = names.concat([type.name]);
-        for (var n = 0; n < names.length; n++) {
-            this.schemaTypes[names[n].toLowerCase()] = type;
-        }
-    };
+  Types.schemaTypes = {};
+  Types.registerType = function (type, names) {
+    names = names || [];
+    names = names.concat([type.name]);
+    for (var n = 0; n < names.length; n++) {
+      this.schemaTypes[names[n].toLowerCase()] = type;
+    }
+  };
 
-    Types.registerType(Types.Text);
-    Types.registerType(Types.JSON);
-    Types.registerType(Types.Any);
+  Types.registerType(Types.Text);
+  Types.registerType(Types.JSON);
+  Types.registerType(Types.Any);
 
-    Types.registerType(String);
-    Types.registerType(Number);
-    Types.registerType(Boolean);
-    Types.registerType(Date);
-    Types.registerType(Buffer, ['Binary']);
-    Types.registerType(Array);
-    Types.registerType(GeoPoint);
-    Types.registerType(Object);
-}
-},{"./geo":67,"./list.js":72,"__browserify_Buffer":35}],79:[function(require,module,exports){
+  Types.registerType(String);
+  Types.registerType(Number);
+  Types.registerType(Boolean);
+  Types.registerType(Date);
+  Types.registerType(Buffer, ['Binary']);
+  Types.registerType(Array);
+  Types.registerType(GeoPoint);
+  Types.registerType(Object);
+};
+},{"./geo":69,"./list.js":74,"__browserify_Buffer":37}],81:[function(require,module,exports){
 var process=require("__browserify_process");exports.safeRequire = safeRequire;
 exports.fieldsToArray = fieldsToArray;
 exports.selectFields = selectFields;
 exports.removeUndefined = removeUndefined;
 exports.parseSettings = parseSettings;
 exports.mergeSettings = mergeSettings;
+exports.isPlainObject = isPlainObject;
+exports.defineCachedRelations = defineCachedRelations;
 
 var traverse = require('traverse');
 
 function safeRequire(module) {
-    try {
-        return require(module);
-    } catch (e) {
-        console.log('Run "npm install loopback-datasource-juggler ' + module + '" command to use loopback-datasource-juggler using ' + module + ' database engine');
-        process.exit(1);
-    }
+  try {
+    return require(module);
+  } catch (e) {
+    console.log('Run "npm install loopback-datasource-juggler ' + module
+      + '" command to use loopback-datasource-juggler using ' + module
+      + ' database engine');
+    process.exit(1);
+  }
 }
 
 function fieldsToArray(fields, properties) {
-    if(!fields) return;
-  
-    // include all properties by default
-    var result = properties;
-  
-    if(typeof fields === 'string') {
-      return [fields];
+  if (!fields) return;
+
+  // include all properties by default
+  var result = properties;
+
+  if (typeof fields === 'string') {
+    return [fields];
+  }
+
+  if (Array.isArray(fields) && fields.length > 0) {
+    // No empty array, including all the fields
+    return fields;
+  }
+
+  if ('object' === typeof fields) {
+    // { field1: boolean, field2: boolean ... }
+    var included = [];
+    var excluded = [];
+    var keys = Object.keys(fields);
+    if (!keys.length) return;
+
+    keys.forEach(function (k) {
+      if (fields[k]) {
+        included.push(k);
+      } else if ((k in fields) && !fields[k]) {
+        excluded.push(k);
+      }
+    });
+    if (included.length > 0) {
+      result = included;
+    } else if (excluded.length > 0) {
+      excluded.forEach(function (e) {
+        var index = result.indexOf(e);
+        result.splice(index, 1);
+      });
     }
-  
-    if (Array.isArray(fields) && fields.length > 0) {
-        // No empty array, including all the fields
-        return fields;
-    }
-  
-    if ('object' === typeof fields) {
-        // { field1: boolean, field2: boolean ... }
-        var included = [];
-        var excluded = [];
-        var keys = Object.keys(fields);
-        if(!keys.length) return;
-        
-        keys.forEach(function (k) {
-            if (fields[k]) {
-                included.push(k);
-            } else if ((k in fields) && !fields[k]) {
-                excluded.push(k);
-            }
-        });
-        if (included.length > 0) {
-            result = included;
-        } else if (excluded.length > 0) {
-            excluded.forEach(function (e) {
-                var index = result.indexOf(e);
-                result.splice(index, 1);
-            });
-        }
-    }
-    
-    return result;
+  }
+
+  return result;
 }
 
 function selectFields(fields) {
@@ -22640,10 +23170,10 @@ function selectFields(fields) {
   return function (obj) {
     var result = {};
     var key;
-    
+
     for (var i = 0; i < fields.length; i++) {
       key = fields[i];
-      
+
       result[key] = obj[key];
     }
     return result;
@@ -22656,24 +23186,25 @@ function selectFields(fields) {
  * @returns {exports.map|*}
  */
 function removeUndefined(query) {
-    if (typeof query !== 'object' || query === null) {
-        return query;
+  if (typeof query !== 'object' || query === null) {
+    return query;
+  }
+  // WARNING: [rfeng] Use map() will cause mongodb to produce invalid BSON
+  // as traverse doesn't transform the ObjectId correctly
+  return traverse(query).forEach(function (x) {
+    if (x === undefined) {
+      this.remove();
     }
-    // WARNING: [rfeng] Use map() will cause mongodb to produce invalid BSON
-    // as traverse doesn't transform the ObjectId correctly
-    return traverse(query).forEach(function (x) {
-        if (x === undefined) {
-            this.remove();
-        }
 
-        if (!Array.isArray(x) && (typeof x === 'object' && x !== null && x.constructor !== Object)) {
-            // This object is not a plain object
-            this.update(x, true); // Stop navigating into this object
-            return x;
-        }
+    if (!Array.isArray(x) && (typeof x === 'object' && x !== null
+      && x.constructor !== Object)) {
+      // This object is not a plain object
+      this.update(x, true); // Stop navigating into this object
+      return x;
+    }
 
-        return x;
-    });
+    return x;
+  });
 }
 
 var url = require('url');
@@ -22685,25 +23216,25 @@ var qs = require('qs');
  * @returns {Object} The settings object
  */
 function parseSettings(urlStr) {
-    if(!urlStr) {
-        return {};
+  if (!urlStr) {
+    return {};
+  }
+  var uri = url.parse(urlStr, false);
+  var settings = {};
+  settings.connector = uri.protocol && uri.protocol.split(':')[0]; // Remove the trailing :
+  settings.host = settings.hostname = uri.hostname;
+  settings.port = uri.port && Number(uri.port); // port is a string
+  settings.user = settings.username = uri.auth && uri.auth.split(':')[0]; // <username>:<password>
+  settings.password = uri.auth && uri.auth.split(':')[1];
+  settings.database = uri.pathname && uri.pathname.split('/')[1];  // remove the leading /
+  settings.url = urlStr;
+  if (uri.query) {
+    var params = qs.parse(uri.query);
+    for (var p in params) {
+      settings[p] = params[p];
     }
-    var uri = url.parse(urlStr, false);
-    var settings = {};
-    settings.connector = uri.protocol && uri.protocol.split(':')[0]; // Remove the trailing :
-    settings.host = settings.hostname = uri.hostname;
-    settings.port = uri.port && Number(uri.port); // port is a string
-    settings.user = settings.username = uri.auth && uri.auth.split(':')[0]; // <username>:<password>
-    settings.password = uri.auth && uri.auth.split(':')[1];
-    settings.database = uri.pathname && uri.pathname.split('/')[1];  // remove the leading /
-    settings.url = urlStr;
-    if(uri.query) {
-        var params = qs.parse(uri.query);
-        for(var p in params) {
-            settings[p] = params[p];
-        }
-    }
-    return settings;
+  }
+  return settings;
 }
 
 /**
@@ -22751,7 +23282,32 @@ function mergeSettings(target, src) {
 
   return dst;
 }
-},{"__browserify_process":36,"qs":81,"traverse":82,"url":53}],80:[function(require,module,exports){
+
+/**
+ * Define an non-enumerable __cachedRelations property
+ * @param {Object} obj The obj to receive the __cachedRelations
+ */
+function defineCachedRelations(obj) {
+  if (!obj.__cachedRelations) {
+    Object.defineProperty(obj, '__cachedRelations', {
+      writable: true,
+      enumerable: false,
+      configurable: true,
+      value: {}
+    });
+  }
+}
+
+/**
+ * Check if the argument is plain object
+ * @param {*) obj The obj value
+ * @returns {boolean}
+ */
+function isPlainObject(obj) {
+  return (typeof obj === 'object') && (obj !== null)
+    && (obj.constructor === Object);
+}
+},{"__browserify_process":38,"qs":85,"traverse":86,"url":55}],82:[function(require,module,exports){
 var process=require("__browserify_process");var util = require('util');
 /**
  * Module exports
@@ -22780,7 +23336,7 @@ function Validatable() {
 
 /**
  * Validate presence. This validation fails when validated field is blank.
- * 
+ *
  * Default error message "can't be blank"
  *
  * @example presence of title
@@ -22850,7 +23406,7 @@ Validatable.validatesNumericalityOf = getConfigurator('numericality');
 /**
  * Validate inclusion in set
  *
- * @example 
+ * @example
  * ```
  * User.validatesInclusionOf('gender', {in: ['male', 'female']});
  * User.validatesInclusionOf('role', {
@@ -22957,121 +23513,121 @@ Validatable.validatesUniquenessOf = getConfigurator('uniqueness', {async: true})
  * Presence validator
  */
 function validatePresence(attr, conf, err) {
-    if (blank(this[attr])) {
-        err();
-    }
+  if (blank(this[attr])) {
+    err();
+  }
 }
 
 /**
  * Length validator
  */
 function validateLength(attr, conf, err) {
-    if (nullCheck.call(this, attr, conf, err)) return;
+  if (nullCheck.call(this, attr, conf, err)) return;
 
-    var len = this[attr].length;
-    if (conf.min && len < conf.min) {
-        err('min');
-    }
-    if (conf.max && len > conf.max) {
-        err('max');
-    }
-    if (conf.is && len !== conf.is) {
-        err('is');
-    }
+  var len = this[attr].length;
+  if (conf.min && len < conf.min) {
+    err('min');
+  }
+  if (conf.max && len > conf.max) {
+    err('max');
+  }
+  if (conf.is && len !== conf.is) {
+    err('is');
+  }
 }
 
 /**
  * Numericality validator
  */
 function validateNumericality(attr, conf, err) {
-    if (nullCheck.call(this, attr, conf, err)) return;
+  if (nullCheck.call(this, attr, conf, err)) return;
 
-    if (typeof this[attr] !== 'number') {
-        return err('number');
-    }
-    if (conf.int && this[attr] !== Math.round(this[attr])) {
-        return err('int');
-    }
+  if (typeof this[attr] !== 'number') {
+    return err('number');
+  }
+  if (conf.int && this[attr] !== Math.round(this[attr])) {
+    return err('int');
+  }
 }
 
 /**
  * Inclusion validator
  */
 function validateInclusion(attr, conf, err) {
-    if (nullCheck.call(this, attr, conf, err)) return;
+  if (nullCheck.call(this, attr, conf, err)) return;
 
-    if (!~conf.in.indexOf(this[attr])) {
-        err()
-    }
+  if (!~conf.in.indexOf(this[attr])) {
+    err()
+  }
 }
 
 /**
  * Exclusion validator
  */
 function validateExclusion(attr, conf, err) {
-    if (nullCheck.call(this, attr, conf, err)) return;
+  if (nullCheck.call(this, attr, conf, err)) return;
 
-    if (~conf.in.indexOf(this[attr])) {
-        err()
-    }
+  if (~conf.in.indexOf(this[attr])) {
+    err()
+  }
 }
 
 /**
  * Format validator
  */
 function validateFormat(attr, conf, err) {
-    if (nullCheck.call(this, attr, conf, err)) return;
+  if (nullCheck.call(this, attr, conf, err)) return;
 
-    if (typeof this[attr] === 'string') {
-        if (!this[attr].match(conf['with'])) {
-            err();
-        }
-    } else {
-        err();
+  if (typeof this[attr] === 'string') {
+    if (!this[attr].match(conf['with'])) {
+      err();
     }
+  } else {
+    err();
+  }
 }
 
 /**
  * Custom validator
  */
 function validateCustom(attr, conf, err, done) {
-    conf.customValidator.call(this, err, done);
+  conf.customValidator.call(this, err, done);
 }
 
 /**
  * Uniqueness validator
  */
 function validateUniqueness(attr, conf, err, done) {
-    var cond = {where: {}};
-    cond.where[attr] = this[attr];
-    this.constructor.find(cond, function (error, found) {
-        if (error) {
-            return err();
-        }
-        if (found.length > 1) {
-            err();
-        } else if (found.length === 1 && (!this.id || !found[0].id || found[0].id.toString() != this.id.toString())) {
-            err();
-        }
-        done();
-    }.bind(this));
+  var cond = {where: {}};
+  cond.where[attr] = this[attr];
+  this.constructor.find(cond, function (error, found) {
+    if (error) {
+      return err();
+    }
+    if (found.length > 1) {
+      err();
+    } else if (found.length === 1 && (!this.id || !found[0].id || found[0].id.toString() != this.id.toString())) {
+      err();
+    }
+    done();
+  }.bind(this));
 }
 
 var validators = {
-    presence:     validatePresence,
-    length:       validateLength,
-    numericality: validateNumericality,
-    inclusion:    validateInclusion,
-    exclusion:    validateExclusion,
-    format:       validateFormat,
-    custom:       validateCustom,
-    uniqueness:   validateUniqueness
+  presence: validatePresence,
+  length: validateLength,
+  numericality: validateNumericality,
+  inclusion: validateInclusion,
+  exclusion: validateExclusion,
+  format: validateFormat,
+  custom: validateCustom,
+  uniqueness: validateUniqueness
 };
 
 function getConfigurator(name, opts) {
-    return function () {
-        configure(this, name, arguments, opts);
-    };
+  return function () {
+    configure(this, name, arguments, opts);
+  };
 }
 
 /**
@@ -23095,193 +23651,193 @@ function getConfigurator(name, opts) {
  * ```
  */
 Validatable.prototype.isValid = function (callback, data) {
-    var valid = true, inst = this, wait = 0, async = false;
+  var valid = true, inst = this, wait = 0, async = false;
 
-    // exit with success when no errors
-    if (!this.constructor._validations) {
-        cleanErrors(this);
-        if (callback) {
-            this.trigger('validate', function (validationsDone) {
-                validationsDone.call(inst, function() {
-                    callback(valid);
-                });
-            });
-        }
-        return valid;
+  // exit with success when no errors
+  if (!this.constructor._validations) {
+    cleanErrors(this);
+    if (callback) {
+      this.trigger('validate', function (validationsDone) {
+        validationsDone.call(inst, function () {
+          callback(valid);
+        });
+      });
     }
+    return valid;
+  }
 
-    Object.defineProperty(this, 'errors', {
-        enumerable: false,
-        configurable: true,
-        value: new Errors
+  Object.defineProperty(this, 'errors', {
+    enumerable: false,
+    configurable: true,
+    value: new Errors
+  });
+
+  this.trigger('validate', function (validationsDone) {
+    var inst = this,
+      asyncFail = false;
+
+    this.constructor._validations.forEach(function (v) {
+      if (v[2] && v[2].async) {
+        async = true;
+        wait += 1;
+        process.nextTick(function () {
+          validationFailed(inst, v, done);
+        });
+      } else {
+        if (validationFailed(inst, v)) {
+          valid = false;
+        }
+      }
+
     });
 
-    this.trigger('validate', function (validationsDone) {
-        var inst = this,
-            asyncFail = false;
-
-        this.constructor._validations.forEach(function (v) {
-            if (v[2] && v[2].async) {
-                async = true;
-                wait += 1;
-                process.nextTick(function () {
-                    validationFailed(inst, v, done);
-                });
-            } else {
-                if (validationFailed(inst, v)) {
-                    valid = false;
-                }
-            }
-
-        });
-
-        if (!async) {
-            validationsDone.call(inst, function() {
-                if (valid) cleanErrors(inst);
-                if (callback) {
-                    callback(valid);
-                }
-            });
+    if (!async) {
+      validationsDone.call(inst, function () {
+        if (valid) cleanErrors(inst);
+        if (callback) {
+          callback(valid);
         }
-
-        function done(fail) {
-            asyncFail = asyncFail || fail;
-            if (--wait === 0) {
-                validationsDone.call(inst, function () {
-                    if (valid && !asyncFail) cleanErrors(inst);
-                    if (callback) {
-                        callback(valid && !asyncFail);
-                    }
-                });
-            }
-        }
-
-    }, data);
-
-    if (async) {
-        // in case of async validation we should return undefined here,
-        // because not all validations are finished yet
-        return;
-    } else {
-        return valid;
+      });
     }
+
+    function done(fail) {
+      asyncFail = asyncFail || fail;
+      if (--wait === 0) {
+        validationsDone.call(inst, function () {
+          if (valid && !asyncFail) cleanErrors(inst);
+          if (callback) {
+            callback(valid && !asyncFail);
+          }
+        });
+      }
+    }
+
+  }, data);
+
+  if (async) {
+    // in case of async validation we should return undefined here,
+    // because not all validations are finished yet
+    return;
+  } else {
+    return valid;
+  }
 
 };
 
 function cleanErrors(inst) {
-    Object.defineProperty(inst, 'errors', {
-        enumerable: false,
-        configurable: true,
-        value: false
-    });
+  Object.defineProperty(inst, 'errors', {
+    enumerable: false,
+    configurable: true,
+    value: false
+  });
 }
 
 function validationFailed(inst, v, cb) {
-    var attr = v[0];
-    var conf = v[1];
-    var opts = v[2] || {};
+  var attr = v[0];
+  var conf = v[1];
+  var opts = v[2] || {};
 
-    if (typeof attr !== 'string') return false;
+  if (typeof attr !== 'string') return false;
 
-    // here we should check skip validation conditions (if, unless)
-    // that can be specified in conf
-    if (skipValidation(inst, conf, 'if')) return false;
-    if (skipValidation(inst, conf, 'unless')) return false;
+  // here we should check skip validation conditions (if, unless)
+  // that can be specified in conf
+  if (skipValidation(inst, conf, 'if')) return false;
+  if (skipValidation(inst, conf, 'unless')) return false;
 
-    var fail = false;
-    var validator = validators[conf.validation];
-    var validatorArguments = [];
-    validatorArguments.push(attr);
-    validatorArguments.push(conf);
-    validatorArguments.push(function onerror(kind) {
-        var message, code = conf.validation;
-        if (conf.message) {
-            message = conf.message;
-        }
-        if (!message && defaultMessages[conf.validation]) {
-            message = defaultMessages[conf.validation];
-        }
-        if (!message) {
-            message = 'is invalid';
-        }
-        if (kind) {
-            code += '.' + kind;
-            if (message[kind]) {
-                // get deeper
-                message = message[kind];
-            } else if (defaultMessages.common[kind]) {
-                message = defaultMessages.common[kind];
-            } else {
-                message = 'is invalid';
-            }
-        }
-        inst.errors.add(attr, message, code);
-        fail = true;
-    });
-    if (cb) {
-        validatorArguments.push(function () {
-            cb(fail);
-        });
+  var fail = false;
+  var validator = validators[conf.validation];
+  var validatorArguments = [];
+  validatorArguments.push(attr);
+  validatorArguments.push(conf);
+  validatorArguments.push(function onerror(kind) {
+    var message, code = conf.validation;
+    if (conf.message) {
+      message = conf.message;
     }
-    validator.apply(inst, validatorArguments);
-    return fail;
+    if (!message && defaultMessages[conf.validation]) {
+      message = defaultMessages[conf.validation];
+    }
+    if (!message) {
+      message = 'is invalid';
+    }
+    if (kind) {
+      code += '.' + kind;
+      if (message[kind]) {
+        // get deeper
+        message = message[kind];
+      } else if (defaultMessages.common[kind]) {
+        message = defaultMessages.common[kind];
+      } else {
+        message = 'is invalid';
+      }
+    }
+    inst.errors.add(attr, message, code);
+    fail = true;
+  });
+  if (cb) {
+    validatorArguments.push(function () {
+      cb(fail);
+    });
+  }
+  validator.apply(inst, validatorArguments);
+  return fail;
 }
 
 function skipValidation(inst, conf, kind) {
-    var doValidate = true;
-    if (typeof conf[kind] === 'function') {
-        doValidate = conf[kind].call(inst);
-        if (kind === 'unless') doValidate = !doValidate;
-    } else if (typeof conf[kind] === 'string') {
-        if (typeof inst[conf[kind]] === 'function') {
-            doValidate = inst[conf[kind]].call(inst);
-            if (kind === 'unless') doValidate = !doValidate;
-        } else if (inst.__data.hasOwnProperty(conf[kind])) {
-            doValidate = inst[conf[kind]];
-            if (kind === 'unless') doValidate = !doValidate;
-        } else {
-            doValidate = kind === 'if';
-        }
+  var doValidate = true;
+  if (typeof conf[kind] === 'function') {
+    doValidate = conf[kind].call(inst);
+    if (kind === 'unless') doValidate = !doValidate;
+  } else if (typeof conf[kind] === 'string') {
+    if (typeof inst[conf[kind]] === 'function') {
+      doValidate = inst[conf[kind]].call(inst);
+      if (kind === 'unless') doValidate = !doValidate;
+    } else if (inst.__data.hasOwnProperty(conf[kind])) {
+      doValidate = inst[conf[kind]];
+      if (kind === 'unless') doValidate = !doValidate;
+    } else {
+      doValidate = kind === 'if';
     }
-    return !doValidate;
+  }
+  return !doValidate;
 }
 
 var defaultMessages = {
-    presence: 'can\'t be blank',
-    length: {
-        min: 'too short',
-        max: 'too long',
-        is: 'length is wrong'
-    },
-    common: {
-        blank: 'is blank',
-        'null': 'is null'
-    },
-    numericality: {
-        'int': 'is not an integer',
-        'number': 'is not a number'
-    },
-    inclusion: 'is not included in the list',
-    exclusion: 'is reserved',
-    uniqueness: 'is not unique'
+  presence: 'can\'t be blank',
+  length: {
+    min: 'too short',
+    max: 'too long',
+    is: 'length is wrong'
+  },
+  common: {
+    blank: 'is blank',
+    'null': 'is null'
+  },
+  numericality: {
+    'int': 'is not an integer',
+    'number': 'is not a number'
+  },
+  inclusion: 'is not included in the list',
+  exclusion: 'is reserved',
+  uniqueness: 'is not unique'
 };
 
 function nullCheck(attr, conf, err) {
-    var isNull = this[attr] === null || !(attr in this);
-    if (isNull) {
-        if (!conf.allowNull) {
-            err('null');
-        }
-        return true;
-    } else {
-        if (blank(this[attr])) {
-            if (!conf.allowBlank) {
-                err('blank');
-            }
-            return true;
-        }
+  var isNull = this[attr] === null || !(attr in this);
+  if (isNull) {
+    if (!conf.allowNull) {
+      err('null');
     }
-    return false;
+    return true;
+  } else {
+    if (blank(this[attr])) {
+      if (!conf.allowBlank) {
+        err('blank');
+      }
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -23292,83 +23848,685 @@ function nullCheck(attr, conf, err) {
  * @returns {Boolean} whether `v` blank or not
  */
 function blank(v) {
-    if (typeof v === 'undefined') return true;
-    if (v instanceof Array && v.length === 0) return true;
-    if (v === null) return true;
-    if (typeof v == 'string' && v === '') return true;
-    return false;
+  if (typeof v === 'undefined') return true;
+  if (v instanceof Array && v.length === 0) return true;
+  if (v === null) return true;
+  if (typeof v == 'string' && v === '') return true;
+  return false;
 }
 
 function configure(cls, validation, args, opts) {
-    if (!cls._validations) {
-        Object.defineProperty(cls, '_validations', {
-            writable: true,
-            configurable: true,
-            enumerable: false,
-            value: []
-        });
-    }
-    args = [].slice.call(args);
-    var conf;
-    if (typeof args[args.length - 1] === 'object') {
-        conf = args.pop();
-    } else {
-        conf = {};
-    }
-    if (validation === 'custom' && typeof args[args.length - 1] === 'function') {
-        conf.customValidator = args.pop();
-    }
-    conf.validation = validation;
-    args.forEach(function (attr) {
-        cls._validations.push([attr, conf, opts]);
+  if (!cls._validations) {
+    Object.defineProperty(cls, '_validations', {
+      writable: true,
+      configurable: true,
+      enumerable: false,
+      value: []
     });
+  }
+  args = [].slice.call(args);
+  var conf;
+  if (typeof args[args.length - 1] === 'object') {
+    conf = args.pop();
+  } else {
+    conf = {};
+  }
+  if (validation === 'custom' && typeof args[args.length - 1] === 'function') {
+    conf.customValidator = args.pop();
+  }
+  conf.validation = validation;
+  args.forEach(function (attr) {
+    cls._validations.push([attr, conf, opts]);
+  });
 }
 
 function Errors() {
-    Object.defineProperty(this, 'codes', {
-        enumerable: false,
-        configurable: true,
-        value: {}
-    });
+  Object.defineProperty(this, 'codes', {
+    enumerable: false,
+    configurable: true,
+    value: {}
+  });
 }
 
 Errors.prototype.add = function (field, message, code) {
-    code = code || 'invalid';
-    if (!this[field]) {
-        this[field] = [];
-        this.codes[field] = [];
-    }
-    this[field].push(message);
-    this.codes[field].push(code);
+  code = code || 'invalid';
+  if (!this[field]) {
+    this[field] = [];
+    this.codes[field] = [];
+  }
+  this[field].push(message);
+  this.codes[field].push(code);
 };
 
 function ErrorCodes(messages) {
-    var c = this;
-    Object.keys(messages).forEach(function(field) {
-        c[field] = messages[field].codes;
-    });
+  var c = this;
+  Object.keys(messages).forEach(function (field) {
+    c[field] = messages[field].codes;
+  });
 }
 
 function ValidationError(obj) {
-    if (!(this instanceof ValidationError)) return new ValidationError(obj);
+  if (!(this instanceof ValidationError)) return new ValidationError(obj);
 
-    this.name = 'ValidationError';
-    this.message = 'The Model instance is not valid. ' +
-      'See `details` property of the error object for more info.';
-    this.statusCode = 422;
+  this.name = 'ValidationError';
+  this.message = 'The Model instance is not valid. ' +
+    'See `details` property of the error object for more info.';
+  this.statusCode = 422;
 
-    this.details = {
-      context: obj && obj.constructor && obj.constructor.modelName,
-      codes: obj.errors && obj.errors.codes,
-      messages: obj.errors
-    };
+  this.details = {
+    context: obj && obj.constructor && obj.constructor.modelName,
+    codes: obj.errors && obj.errors.codes,
+    messages: obj.errors
+  };
 
-    Error.captureStackTrace(this, this.constructor);
+  Error.captureStackTrace(this, this.constructor);
 }
 
 util.inherits(ValidationError, Error);
 
-},{"__browserify_process":36,"util":55}],81:[function(require,module,exports){
+},{"__browserify_process":38,"util":57}],83:[function(require,module,exports){
+module.exports=require(20)
+},{"__browserify_process":38}],84:[function(require,module,exports){
+/*!
+ * inflection
+ * Copyright(c) 2011 Ben Lin <ben@dreamerslab.com>
+ * MIT Licensed
+ *
+ * @fileoverview
+ * A port of inflection-js to node.js module.
+ */
+
+( function ( root ){
+
+  /**
+   * @description This is a list of nouns that use the same form for both singular and plural.
+   *              This list should remain entirely in lower case to correctly match Strings.
+   * @private
+   */
+  var uncountable_words = [
+    'equipment', 'information', 'rice', 'money', 'species',
+    'series', 'fish', 'sheep', 'moose', 'deer', 'news'
+  ];
+
+  /**
+   * @description These rules translate from the singular form of a noun to its plural form.
+   * @private
+   */
+  var plural_rules = [
+
+    // do not replace if its already a plural word
+    [ new RegExp( '(m)en$',      'gi' )],
+    [ new RegExp( '(pe)ople$',   'gi' )],
+    [ new RegExp( '(child)ren$', 'gi' )],
+    [ new RegExp( '([ti])a$',    'gi' )],
+    [ new RegExp( '((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$','gi' )],
+    [ new RegExp( '(hive)s$',           'gi' )],
+    [ new RegExp( '(tive)s$',           'gi' )],
+    [ new RegExp( '(curve)s$',          'gi' )],
+    [ new RegExp( '([lr])ves$',         'gi' )],
+    [ new RegExp( '([^fo])ves$',        'gi' )],
+    [ new RegExp( '([^aeiouy]|qu)ies$', 'gi' )],
+    [ new RegExp( '(s)eries$',          'gi' )],
+    [ new RegExp( '(m)ovies$',          'gi' )],
+    [ new RegExp( '(x|ch|ss|sh)es$',    'gi' )],
+    [ new RegExp( '([m|l])ice$',        'gi' )],
+    [ new RegExp( '(bus)es$',           'gi' )],
+    [ new RegExp( '(o)es$',             'gi' )],
+    [ new RegExp( '(shoe)s$',           'gi' )],
+    [ new RegExp( '(cris|ax|test)es$',  'gi' )],
+    [ new RegExp( '(octop|vir)i$',      'gi' )],
+    [ new RegExp( '(alias|status)es$',  'gi' )],
+    [ new RegExp( '^(ox)en',            'gi' )],
+    [ new RegExp( '(vert|ind)ices$',    'gi' )],
+    [ new RegExp( '(matr)ices$',        'gi' )],
+    [ new RegExp( '(quiz)zes$',         'gi' )],
+
+    // original rule
+    [ new RegExp( '(m)an$', 'gi' ),                 '$1en' ],
+    [ new RegExp( '(pe)rson$', 'gi' ),              '$1ople' ],
+    [ new RegExp( '(child)$', 'gi' ),               '$1ren' ],
+    [ new RegExp( '^(ox)$', 'gi' ),                 '$1en' ],
+    [ new RegExp( '(ax|test)is$', 'gi' ),           '$1es' ],
+    [ new RegExp( '(octop|vir)us$', 'gi' ),         '$1i' ],
+    [ new RegExp( '(alias|status)$', 'gi' ),        '$1es' ],
+    [ new RegExp( '(bu)s$', 'gi' ),                 '$1ses' ],
+    [ new RegExp( '(buffal|tomat|potat)o$', 'gi' ), '$1oes' ],
+    [ new RegExp( '([ti])um$', 'gi' ),              '$1a' ],
+    [ new RegExp( 'sis$', 'gi' ),                   'ses' ],
+    [ new RegExp( '(?:([^f])fe|([lr])f)$', 'gi' ),  '$1$2ves' ],
+    [ new RegExp( '(hive)$', 'gi' ),                '$1s' ],
+    [ new RegExp( '([^aeiouy]|qu)y$', 'gi' ),       '$1ies' ],
+    [ new RegExp( '(x|ch|ss|sh)$', 'gi' ),          '$1es' ],
+    [ new RegExp( '(matr|vert|ind)ix|ex$', 'gi' ),  '$1ices' ],
+    [ new RegExp( '([m|l])ouse$', 'gi' ),           '$1ice' ],
+    [ new RegExp( '(quiz)$', 'gi' ),                '$1zes' ],
+
+    [ new RegExp( 's$', 'gi' ), 's' ],
+    [ new RegExp( '$', 'gi' ),  's' ]
+  ];
+
+  /**
+   * @description These rules translate from the plural form of a noun to its singular form.
+   * @private
+   */
+  var singular_rules = [
+
+    // do not replace if its already a singular word
+    [ new RegExp( '(m)an$',                 'gi' )],
+    [ new RegExp( '(pe)rson$',              'gi' )],
+    [ new RegExp( '(child)$',               'gi' )],
+    [ new RegExp( '^(ox)$',                 'gi' )],
+    [ new RegExp( '(ax|test)is$',           'gi' )],
+    [ new RegExp( '(octop|vir)us$',         'gi' )],
+    [ new RegExp( '(alias|status)$',        'gi' )],
+    [ new RegExp( '(bu)s$',                 'gi' )],
+    [ new RegExp( '(buffal|tomat|potat)o$', 'gi' )],
+    [ new RegExp( '([ti])um$',              'gi' )],
+    [ new RegExp( 'sis$',                   'gi' )],
+    [ new RegExp( '(?:([^f])fe|([lr])f)$',  'gi' )],
+    [ new RegExp( '(hive)$',                'gi' )],
+    [ new RegExp( '([^aeiouy]|qu)y$',       'gi' )],
+    [ new RegExp( '(x|ch|ss|sh)$',          'gi' )],
+    [ new RegExp( '(matr|vert|ind)ix|ex$',  'gi' )],
+    [ new RegExp( '([m|l])ouse$',           'gi' )],
+    [ new RegExp( '(quiz)$',                'gi' )],
+
+    // original rule
+    [ new RegExp( '(m)en$', 'gi' ),                                                       '$1an' ],
+    [ new RegExp( '(pe)ople$', 'gi' ),                                                    '$1rson' ],
+    [ new RegExp( '(child)ren$', 'gi' ),                                                  '$1' ],
+    [ new RegExp( '([ti])a$', 'gi' ),                                                     '$1um' ],
+    [ new RegExp( '((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$','gi' ), '$1$2sis' ],
+    [ new RegExp( '(hive)s$', 'gi' ),                                                     '$1' ],
+    [ new RegExp( '(tive)s$', 'gi' ),                                                     '$1' ],
+    [ new RegExp( '(curve)s$', 'gi' ),                                                    '$1' ],
+    [ new RegExp( '([lr])ves$', 'gi' ),                                                   '$1f' ],
+    [ new RegExp( '([^fo])ves$', 'gi' ),                                                  '$1fe' ],
+    [ new RegExp( '([^aeiouy]|qu)ies$', 'gi' ),                                           '$1y' ],
+    [ new RegExp( '(s)eries$', 'gi' ),                                                    '$1eries' ],
+    [ new RegExp( '(m)ovies$', 'gi' ),                                                    '$1ovie' ],
+    [ new RegExp( '(x|ch|ss|sh)es$', 'gi' ),                                              '$1' ],
+    [ new RegExp( '([m|l])ice$', 'gi' ),                                                  '$1ouse' ],
+    [ new RegExp( '(bus)es$', 'gi' ),                                                     '$1' ],
+    [ new RegExp( '(o)es$', 'gi' ),                                                       '$1' ],
+    [ new RegExp( '(shoe)s$', 'gi' ),                                                     '$1' ],
+    [ new RegExp( '(cris|ax|test)es$', 'gi' ),                                            '$1is' ],
+    [ new RegExp( '(octop|vir)i$', 'gi' ),                                                '$1us' ],
+    [ new RegExp( '(alias|status)es$', 'gi' ),                                            '$1' ],
+    [ new RegExp( '^(ox)en', 'gi' ),                                                      '$1' ],
+    [ new RegExp( '(vert|ind)ices$', 'gi' ),                                              '$1ex' ],
+    [ new RegExp( '(matr)ices$', 'gi' ),                                                  '$1ix' ],
+    [ new RegExp( '(quiz)zes$', 'gi' ),                                                   '$1' ],
+    [ new RegExp( 'ss$', 'gi' ),                                                          'ss' ],
+    [ new RegExp( 's$', 'gi' ),                                                           '' ]
+  ];
+
+  /**
+   * @description This is a list of words that should not be capitalized for title case.
+   * @private
+   */
+  var non_titlecased_words = [
+    'and', 'or', 'nor', 'a', 'an', 'the', 'so', 'but', 'to', 'of', 'at','by',
+    'from', 'into', 'on', 'onto', 'off', 'out', 'in', 'over', 'with', 'for'
+  ];
+
+  /**
+   * @description These are regular expressions used for converting between String formats.
+   * @private
+   */
+  var id_suffix         = new RegExp( '(_ids|_id)$', 'g' );
+  var underbar          = new RegExp( '_', 'g' );
+  var space_or_underbar = new RegExp( '[\ _]', 'g' );
+  var uppercase         = new RegExp( '([A-Z])', 'g' );
+  var underbar_prefix   = new RegExp( '^_' );
+
+  var inflector = {
+
+  /**
+   * A helper method that applies rules based replacement to a String.
+   * @private
+   * @function
+   * @param {String} str String to modify and return based on the passed rules.
+   * @param {Array: [RegExp, String]} rules Regexp to match paired with String to use for replacement
+   * @param {Array: [String]} skip Strings to skip if they match
+   * @param {String} override String to return as though this method succeeded (used to conform to APIs)
+   * @returns {String} Return passed String modified by passed rules.
+   * @example
+   *
+   *     this._apply_rules( 'cows', singular_rules ); // === 'cow'
+   */
+    _apply_rules : function( str, rules, skip, override ){
+      if( override ){
+        str = override;
+      }else{
+        var ignore = ( inflector.indexOf( skip, str.toLowerCase()) > -1 );
+
+        if( !ignore ){
+          var i = 0;
+          var j = rules.length;
+
+          for( ; i < j; i++ ){
+            if( str.match( rules[ i ][ 0 ])){
+              if( rules[ i ][ 1 ] !== undefined ){
+                str = str.replace( rules[ i ][ 0 ], rules[ i ][ 1 ]);
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      return str;
+    },
+
+
+
+  /**
+   * This lets us detect if an Array contains a given element.
+   * @public
+   * @function
+   * @param {Array} arr The subject array.
+   * @param {Object} item Object to locate in the Array.
+   * @param {Number} fromIndex Starts checking from this position in the Array.(optional)
+   * @param {Function} compareFunc Function used to compare Array item vs passed item.(optional)
+   * @returns {Number} Return index position in the Array of the passed item.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.indexOf([ 'hi','there' ], 'guys' ); // === -1
+   *     inflection.indexOf([ 'hi','there' ], 'hi' ); // === 0
+   */
+    indexOf : function( arr, item, fromIndex, compareFunc ){
+      if( !fromIndex ){
+        fromIndex = -1;
+      }
+
+      var index = -1;
+      var i     = fromIndex;
+      var j     = arr.length;
+
+      for( ; i < j; i++ ){
+        if( arr[ i ]  === item || compareFunc && compareFunc( arr[ i ], item )){
+          index = i;
+          break;
+        }
+      }
+
+      return index;
+    },
+
+
+
+  /**
+   * This function adds pluralization support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @param {String} plural Overrides normal output with said String.(optional)
+   * @returns {String} Singular English language nouns are returned in plural form.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.pluralize( 'person' ); // === 'people'
+   *     inflection.pluralize( 'octopus' ); // === "octopi"
+   *     inflection.pluralize( 'Hat' ); // === 'Hats'
+   *     inflection.pluralize( 'person', 'guys' ); // === 'guys'
+   */
+    pluralize : function ( str, plural ){
+      return inflector._apply_rules( str, plural_rules, uncountable_words, plural );
+    },
+
+
+
+  /**
+   * This function adds singularization support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @param {String} singular Overrides normal output with said String.(optional)
+   * @returns {String} Plural English language nouns are returned in singular form.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.singularize( 'people' ); // === 'person'
+   *     inflection.singularize( 'octopi' ); // === "octopus"
+   *     inflection.singularize( 'Hats' ); // === 'Hat'
+   *     inflection.singularize( 'guys', 'person' ); // === 'person'
+   */
+    singularize : function ( str, singular ){
+      return inflector._apply_rules( str, singular_rules, uncountable_words, singular );
+    },
+
+
+
+  /**
+   * This function adds camelization support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @param {Boolean} lowFirstLetter Default is to capitalize the first letter of the results.(optional)
+   *                                 Passing true will lowercase it.
+   * @returns {String} Lower case underscored words will be returned in camel case.
+   *                  additionally '/' is translated to '::'
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.camelize( 'message_properties' ); // === 'MessageProperties'
+   *     inflection.camelize( 'message_properties', true ); // === 'messageProperties'
+   */
+    camelize : function ( str, lowFirstLetter ){
+      var str_path = str.toLowerCase().split( '/' );
+      var i        = 0;
+      var j        = str_path.length;
+
+      for( ; i < j; i++ ){
+        var str_arr = str_path[ i ].split( '_' );
+        var initX   = (( lowFirstLetter && i + 1 === j ) ? ( 1 ) : ( 0 ));
+        var k       = initX;
+        var l       = str_arr.length;
+
+        for( ; k < l; k++ ){
+          str_arr[ k ] = str_arr[ k ].charAt( 0 ).toUpperCase() + str_arr[ k ].substring( 1 );
+        }
+
+        str_path[ i ] = str_arr.join( '' );
+      }
+
+      return str_path.join( '::' );
+    },
+
+
+
+  /**
+   * This function adds underscore support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @param {Boolean} allUpperCase Default is to lowercase and add underscore prefix.(optional)
+   *                  Passing true will return as entered.
+   * @returns {String} Camel cased words are returned as lower cased and underscored.
+   *                  additionally '::' is translated to '/'.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.underscore( 'MessageProperties' ); // === 'message_properties'
+   *     inflection.underscore( 'messageProperties' ); // === 'message_properties'
+   *     inflection.underscore( 'MP', true ); // === 'MP'
+   */
+    underscore : function ( str, allUpperCase ){
+      if( allUpperCase && str === str.toUpperCase()) return str;
+
+      var str_path = str.split( '::' );
+      var i        = 0;
+      var j        = str_path.length;
+
+      for( ; i < j; i++ ){
+        str_path[ i ] = str_path[ i ].replace( uppercase, '_$1' );
+        str_path[ i ] = str_path[ i ].replace( underbar_prefix, '' );
+      }
+
+      return str_path.join( '/' ).toLowerCase();
+    },
+
+
+
+  /**
+   * This function adds humanize support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @param {Boolean} lowFirstLetter Default is to capitalize the first letter of the results.(optional)
+   *                                 Passing true will lowercase it.
+   * @returns {String} Lower case underscored words will be returned in humanized form.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.humanize( 'message_properties' ); // === 'Message properties'
+   *     inflection.humanize( 'message_properties', true ); // === 'message properties'
+   */
+    humanize : function( str, lowFirstLetter ){
+      str = str.toLowerCase();
+      str = str.replace( id_suffix, '' );
+      str = str.replace( underbar, ' ' );
+
+      if( !lowFirstLetter ){
+        str = inflector.capitalize( str );
+      }
+
+      return str;
+    },
+
+
+
+  /**
+   * This function adds capitalization support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} All characters will be lower case and the first will be upper.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.capitalize( 'message_properties' ); // === 'Message_properties'
+   *     inflection.capitalize( 'message properties', true ); // === 'Message properties'
+   */
+    capitalize : function ( str ){
+      str = str.toLowerCase();
+
+      return str.substring( 0, 1 ).toUpperCase() + str.substring( 1 );
+    },
+
+
+
+  /**
+   * This function adds dasherization support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} Replaces all spaces or underbars with dashes.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.dasherize( 'message_properties' ); // === 'message-properties'
+   *     inflection.dasherize( 'Message Properties' ); // === 'Message-Properties'
+   */
+    dasherize : function ( str ){
+      return str.replace( space_or_underbar, '-' );
+    },
+
+
+
+  /**
+   * This function adds titleize support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} Capitalizes words as you would for a book title.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.titleize( 'message_properties' ); // === 'Message Properties'
+   *     inflection.titleize( 'message properties to keep' ); // === 'Message Properties to Keep'
+   */
+    titleize : function ( str ){
+      str         = str.toLowerCase().replace( underbar, ' ');
+      var str_arr = str.split(' ');
+      var i       = 0;
+      var j       = str_arr.length;
+
+      for( ; i < j; i++ ){
+        var d = str_arr[ i ].split( '-' );
+        var k = 0;
+        var l = d.length;
+
+        for( ; k < l; k++){
+          if( inflector.indexOf( non_titlecased_words, d[ k ].toLowerCase()) < 0 ){
+            d[ k ] = inflector.capitalize( d[ k ]);
+          }
+        }
+
+        str_arr[ i ] = d.join( '-' );
+      }
+
+      str = str_arr.join( ' ' );
+      str = str.substring( 0, 1 ).toUpperCase() + str.substring( 1 );
+
+      return str;
+    },
+
+
+
+  /**
+   * This function adds demodulize support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} Removes module names leaving only class names.(Ruby style)
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.demodulize( 'Message::Bus::Properties' ); // === 'Properties'
+   */
+    demodulize : function ( str ){
+      var str_arr = str.split( '::' );
+
+      return str_arr[ str_arr.length - 1 ];
+    },
+
+
+
+  /**
+   * This function adds tableize support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} Return camel cased words into their underscored plural form.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.tableize( 'MessageBusProperty' ); // === 'message_bus_properties'
+   */
+    tableize : function ( str ){
+      str = inflector.underscore( str );
+      str = inflector.pluralize( str );
+
+      return str;
+    },
+
+
+
+  /**
+   * This function adds classification support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} Underscored plural nouns become the camel cased singular form.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.classify( 'message_bus_properties' ); // === 'MessageBusProperty'
+   */
+    classify : function ( str ){
+      str = inflector.camelize( str );
+      str = inflector.singularize( str );
+
+      return str;
+    },
+
+
+
+  /**
+   * This function adds foreign key support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @param {Boolean} dropIdUbar Default is to seperate id with an underbar at the end of the class name,
+                                 you can pass true to skip it.(optional)
+   * @returns {String} Underscored plural nouns become the camel cased singular form.
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.foreign_key( 'MessageBusProperty' ); // === 'message_bus_property_id'
+   *     inflection.foreign_key( 'MessageBusProperty', true ); // === 'message_bus_propertyid'
+   */
+    foreign_key : function( str, dropIdUbar ){
+      str = inflector.demodulize( str );
+      str = inflector.underscore( str ) + (( dropIdUbar ) ? ( '' ) : ( '_' )) + 'id';
+
+      return str;
+    },
+
+
+
+  /**
+   * This function adds ordinalize support to every String object.
+   * @public
+   * @function
+   * @param {String} str The subject string.
+   * @returns {String} Return all found numbers their sequence like "22nd".
+   * @example
+   *
+   *     var inflection = require( 'inflection' );
+   *
+   *     inflection.ordinalize( 'the 1 pitch' ); // === 'the 1st pitch'
+   */
+    ordinalize : function ( str ){
+      var str_arr = str.split(' ');
+      var i       = 0;
+      var j       = str_arr.length;
+
+      for( ; i < j; i++ ){
+        var k = parseInt( str_arr[ i ], 10 );
+
+        if( !isNaN( k )){
+          var ltd = str_arr[ i ].substring( str_arr[ i ].length - 2 );
+          var ld  = str_arr[ i ].substring( str_arr[ i ].length - 1 );
+          var suf = 'th';
+
+          if( ltd != '11' && ltd != '12' && ltd != '13' ){
+            if( ld === '1' ){
+              suf = 'st';
+            }else if( ld === '2' ){
+              suf = 'nd';
+            }else if( ld === '3' ){
+              suf = 'rd';
+            }
+          }
+
+          str_arr[ i ] += suf;
+        }
+      }
+
+      return str_arr.join( ' ' );
+    }
+  };
+
+  if( typeof exports === 'undefined' ) return root.inflection = inflector;
+
+/**
+ * @public
+ */
+  inflector.version = "1.2.5";
+/**
+ * Exports module.
+ */
+  module.exports = inflector;
+})( this );
+
+},{}],85:[function(require,module,exports){
 /**
  * Object#toString() ref for stringify().
  */
@@ -23736,7 +24894,7 @@ function decode(str) {
   }
 }
 
-},{}],82:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -24052,7 +25210,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],83:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /**
  * Expose the `Swagger` plugin.
  */
@@ -24091,7 +25249,7 @@ function Swagger(remotes, options, models) {
 
   classes.forEach(function (item) {
     resourceDoc.apis.push({
-      path: '/' + name + '/' + item.name,
+      path: '/' + name + item.http.path,
       description: item.ctor.sharedCtor && item.ctor.sharedCtor.description
     });
 
@@ -24105,6 +25263,7 @@ function Swagger(remotes, options, models) {
 
     helper.method(api, {
       path: item.name,
+      http: { path: item.http.path },
       returns: { type: 'object', root: true }
     });
     function api(callback) {
@@ -24178,7 +25337,7 @@ function addDynamicBasePathGetter(remotes, path, obj) {
       var headers = ctx.req.headers;
       var host = headers.Host || headers.host;
 
-      basePath = 'http://' + host + initialPath;
+      basePath = ctx.req.protocol + '://' + host + initialPath;
 
       next();
     });
@@ -24301,13 +25460,13 @@ function prepareDataType(type) {
   return type;
 }
 
-},{"../":84}],84:[function(require,module,exports){
+},{"../":88}],88:[function(require,module,exports){
 /**
  * remotes ~ public api
  */
 
 module.exports = require('./lib/remote-objects');
-},{"./lib/remote-objects":86}],85:[function(require,module,exports){
+},{"./lib/remote-objects":90}],89:[function(require,module,exports){
 /*!
  * Expose `ExportsHelper`.
  */
@@ -24442,7 +25601,7 @@ function method(fn, options) {
   return self;
 }
 
-},{"debug":57}],86:[function(require,module,exports){
+},{"debug":59}],90:[function(require,module,exports){
 /*!
  * Expose `RemoteObjects`.
  */
@@ -24880,7 +26039,7 @@ RemoteObjects.prototype.getScope = function(ctx, method) {
   return ctx.instance || method.ctor;
 }
 
-},{"./exports-helper":85,"./shared-class":87,"assert":21,"debug":57,"eventemitter2":89,"util":55}],87:[function(require,module,exports){
+},{"./exports-helper":89,"./shared-class":91,"assert":23,"debug":59,"eventemitter2":93,"util":57}],91:[function(require,module,exports){
 /**
  * Expose `SharedClass`.
  */
@@ -24915,6 +26074,8 @@ function SharedClass(name, ctor) {
     assert(ctor.sharedCtor, 'must define a sharedCtor');
     this.sharedCtor = new SharedMethod(ctor.sharedCtor, 'sharedCtor');
   }
+
+  this.http = util._extend({ path: '/' + this.name }, ctor.http);
   
   assert(this.name, 'must include a remoteNamespace when creating a SharedClass');
 }
@@ -24961,7 +26122,8 @@ function eachRemoteFunctionInObject(obj, f) {
     }
   }
 }
-},{"./shared-method":88,"assert":21,"debug":57,"util":55}],88:[function(require,module,exports){
+
+},{"./shared-method":92,"assert":23,"debug":59,"util":57}],92:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer");/**
  * Expose `SharedMethod`.
  */
@@ -25221,7 +26383,7 @@ SharedMethod.toResult = function(returns, raw) {
   }
 };
 
-},{"__browserify_Buffer":35,"assert":21,"debug":57,"events":29,"traverse":90,"util":55}],89:[function(require,module,exports){
+},{"__browserify_Buffer":37,"assert":23,"debug":59,"events":31,"traverse":94,"util":57}],93:[function(require,module,exports){
 var process=require("__browserify_process");;!function(exports, undefined) {
 
   var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
@@ -25784,9 +26946,9 @@ var process=require("__browserify_process");;!function(exports, undefined) {
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-},{"__browserify_process":36}],90:[function(require,module,exports){
-module.exports=require(82)
-},{}],91:[function(require,module,exports){
+},{"__browserify_process":38}],94:[function(require,module,exports){
+module.exports=require(86)
+},{}],95:[function(require,module,exports){
 /**
  * Module dependencies
  */
@@ -25843,7 +27005,7 @@ function uid(length, cb) {
 
 module.exports = uid;
 
-},{"crypto":24}],92:[function(require,module,exports){
+},{"crypto":26}],96:[function(require,module,exports){
 //  Underscore.string
 //  (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>
 //  Underscore.string is freely distributable under the terms of the MIT license.
@@ -26518,7 +27680,7 @@ module.exports = uid;
   root._.string = root._.str = _s;
 }(this, String);
 
-},{}],93:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 module.exports={
   "name": "loopback",
   "description": "LoopBack: Open Mobile Platform for Node.js",
@@ -26530,7 +27692,7 @@ module.exports={
     "Platform",
     "mBaaS"
   ],
-  "version": "1.5.3",
+  "version": "1.6.1",
   "scripts": {
     "test": "mocha -R spec",
     "build-js": "mkdir -p dist && ./node_modules/.bin/browserify index.js -s loopback -o dist/loopback.js --ignore passport --ignore ./lib-cov/express --ignore ./lib-cov/connect --ignore nodemailer",
@@ -26541,7 +27703,7 @@ module.exports={
   "dependencies": {
     "debug": "~0.7.2",
     "express": "~3.4.0",
-    "strong-remoting": "~1.1.0",
+    "strong-remoting": "~1.2.1",
     "inflection": "~1.2.5",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6",
@@ -26555,10 +27717,10 @@ module.exports={
     "canonical-json": "0.0.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~1.2.11"
+    "loopback-datasource-juggler": "~1.2.13"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": "~1.2.11",
+    "loopback-datasource-juggler": "~1.2.13",
     "mocha": "~1.14.0",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.8.1",
@@ -26589,3 +27751,5 @@ module.exports={
 }
 
 },{}]},{},[1])
+(1)
+});
