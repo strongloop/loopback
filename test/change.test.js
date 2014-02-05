@@ -42,11 +42,11 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.track(modelName, modelIds, callback)', function () {
+  describe('Change.rectifyModelChanges(modelName, modelIds, callback)', function () {
     describe('using an existing untracked model', function () {
       beforeEach(function(done) {
         var test = this;
-        Change.track(this.modelName, [this.modelId], function(err, trakedChagnes) {
+        Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trakedChagnes) {
           if(err) return done(err);
           test.trakedChagnes = trakedChagnes;
           done();
