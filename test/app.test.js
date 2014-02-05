@@ -400,6 +400,14 @@ describe('app', function() {
     });
   });
 
+  describe('enableAuth', function() {
+    it('should set app.isAuthEnabled to true', function() {
+      expect(app.isAuthEnabled).to.not.equal(true);
+      app.enableAuth();
+      expect(app.isAuthEnabled).to.equal(true);
+    });
+  });
+
   describe('app.get("/", loopback.status())', function () {
     it('should return the status of the application', function (done) {
       var app = loopback();
