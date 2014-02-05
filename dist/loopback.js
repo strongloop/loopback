@@ -13,7 +13,9 @@ var datasourceJuggler = require('loopback-datasource-juggler');
 loopback.Connector = require('./lib/connectors/base-connector');
 loopback.Memory = require('./lib/connectors/memory');
 loopback.Mail = require('./lib/connectors/mail');
-loopback.Server = require('./lib/connectors/server');
+if(loopback.isBrowser) {
+  loopback.Server = require('./lib/connectors/server');
+}
 
 /**
  * Types
@@ -22,7 +24,7 @@ loopback.Server = require('./lib/connectors/server');
 loopback.GeoPoint = require('loopback-datasource-juggler/lib/geo').GeoPoint;
 loopback.ValidationError = datasourceJuggler.ValidationError;
 
-},{"./lib/connectors/base-connector":5,"./lib/connectors/mail":6,"./lib/connectors/memory":7,"./lib/connectors/server":8,"./lib/loopback":9,"loopback-datasource-juggler":64,"loopback-datasource-juggler/lib/geo":69}],2:[function(require,module,exports){
+},{"./lib/connectors/base-connector":5,"./lib/connectors/mail":6,"./lib/connectors/memory":7,"./lib/connectors/server":8,"./lib/loopback":9,"loopback-datasource-juggler":65,"loopback-datasource-juggler/lib/geo":70}],2:[function(require,module,exports){
 var process=require("__browserify_process"),__dirname="/lib";/*!
  * Module dependencies.
  */
@@ -838,7 +840,7 @@ app.listen = function(cb) {
   return server;
 }
 
-},{"../":1,"./compat":4,"./loopback":9,"__browserify_process":38,"assert":23,"fs":22,"http":32,"loopback-datasource-juggler":64,"path":42,"strong-remoting":88,"strong-remoting/ext/swagger":87,"underscore.string":96}],3:[function(require,module,exports){
+},{"../":1,"./compat":4,"./loopback":9,"__browserify_process":39,"assert":24,"fs":23,"http":33,"loopback-datasource-juggler":65,"path":43,"strong-remoting":89,"strong-remoting/ext/swagger":88,"underscore.string":97}],3:[function(require,module,exports){
 module.exports = browserExpress;
 
 function browserExpress() {
@@ -905,7 +907,7 @@ compat.getClassNameForRemoting = function(Ctor) {
   return Ctor.modelName;
 };
 
-},{"assert":23}],5:[function(require,module,exports){
+},{"assert":24}],5:[function(require,module,exports){
 /**
  * Expose `Connector`.
  */
@@ -960,7 +962,7 @@ Connector._createJDBAdapter = function (jdbModule) {
 Connector.prototype._addCrudOperationsFromJDBAdapter = function (connector) {
   
 }
-},{"assert":23,"debug":59,"events":31,"util":57}],6:[function(require,module,exports){
+},{"assert":24,"debug":60,"events":32,"util":58}],6:[function(require,module,exports){
 var process=require("__browserify_process");/**
  * Dependencies.
  */
@@ -1121,7 +1123,7 @@ MailConnector.prototype.mailer =
 Mailer.mailer =
 Mailer.prototype.mailer = mailer;
 
-},{"__browserify_process":38,"assert":23,"debug":59,"nodemailer":22}],7:[function(require,module,exports){
+},{"__browserify_process":39,"assert":24,"debug":60,"nodemailer":23}],7:[function(require,module,exports){
 /**
  * Expose `Memory`.
  */
@@ -1162,15 +1164,18 @@ inherits(Memory, Connector);
 
 Memory.initialize = JdbMemory.initialize;
 
-},{"./base-connector":5,"assert":23,"debug":59,"loopback-datasource-juggler/lib/connectors/memory":66,"util":57}],8:[function(require,module,exports){
-/*!
+},{"./base-connector":5,"assert":24,"debug":60,"loopback-datasource-juggler/lib/connectors/memory":67,"util":58}],8:[function(require,module,exports){
+var process=require("__browserify_process");/*!
  * Dependencies.
  */
 
 var assert = require('assert')
   , loopback = require('../loopback')
   , debug = require('debug')
-  , path = require('path');
+  , path = require('path')
+  , request = require('browser-request')
+  , Connector = require('loopback-datasource-juggler').Connector
+  , util = require('util');
 
 /*!
  * Export the ServerConnector class.
@@ -1182,30 +1187,67 @@ module.exports = ServerConnector;
  * Create an instance of the connector with the given `settings`.
  */
 
-function ServerConnector(settings) {
+function ServerConnector(settings, dataSource) {
+  Connector.call(this, 'server', settings);
   this.settings = settings;
+  this.dataSource = dataSource;
+  dataSource.DataAccessObject = dataSource.constructor.DataAccessObject;
+  settings.base = settings.base || '/';
+  dataSource.connect = this.connect;
 }
+util.inherits(ServerConnector, Connector);
 
 ServerConnector.initialize = function(dataSource, callback) {
-  var connector = dataSource.connector = new ServerConnector(dataSource.settings);
-  connector.dataSource = dataSource;
-  dataSource.DataAccessObject = function() {}; // unused for this connector
+  var connector = dataSource.connector = new ServerConnector(dataSource.settings, dataSource);
+
   var remoteModels = connector.settings.discover;
   if(remoteModels) {
+    remoteModels = remoteModels.sort(function(remoteModel) {
+      var settings = remoteModel.settings;
+      var trackChanges = settings && settings.trackChanges;
+      return trackChanges ? 1 : 0;
+    });
     remoteModels.forEach(connector.buildModel.bind(connector));
   }
   callback();
 }
 
-ServerConnector.prototype.invoke = function(ctx, callback) {
-  var req = ctx.toRequest();
-  console.log(req);
+ServerConnector.prototype.connect = function(callback) {
+  process.nextTick(function () {
+    callback && callback(null, self.db);
+  });
 }
 
-ServerConnector.prototype.createRequest = function(method, args) {
-  var baseUrl = path.join(this.settings.base || '/');
-  var route = (method.routes && method.routes[0]) || {path: '/'};
-  var url = path.join(baseUrl, route.path);
+ServerConnector.prototype.requestModel = function(model, req, callback) {
+  var Model = loopback.getModel(model);
+  var modelPath = '/' + Model.pluralModelName;
+  var url = path.join(this.settings.base, modelPath, req.url || '');
+  this.request(url, req, callback);
+}
+
+ServerConnector.prototype.requestModelById = function(model, id, req, callback) {
+  var Model = loopback.getModel(model);
+  var modelPath = '/' + Model.pluralModelName;
+  var url = path.join(this.settings.base, modelPath, id.toString(), req.url || '');
+  this.request(url, req, callback);
+}
+
+ServerConnector.prototype.request = function(url, req, callback) {
+  request({
+    url: url,
+    method: req.method || 'GET',
+    body: req.body,
+    json: req.json || true
+  }, function(err, res, body) {
+    if(res.statusCode >= 400) {
+      if(res.statusCode === 404 && req.ignoreNotFound) {
+        return callback && callback(null, null);
+      }
+      err = body.error || body;
+      body = undefined;
+    }
+    callback && callback(err, body);
+  });
 }
 
 ServerConnector.prototype.buildModel = function(remoteModel) {
@@ -1218,17 +1260,22 @@ ServerConnector.prototype.buildModel = function(remoteModel) {
     remoteModel.properties || {},
     remoteModel.settings
   );
-  
-console.log(remoteModel.settings);
 
   Model.attachTo(dataSource);
 
+  return;
+
   if(!Model.defineMethod) {
     Model.defineMethod = function defineMethod(method) {
-      var scope = method.fullName.indexOf('.prototype.') > -1
-        ? Model.prototype : Model;
+      var isStatic = method.fullName.indexOf('.prototype.') === -1;
+      var scope = isStatic ? Model : Model.prototype;
+      var methodName = isStatic ? method.name : method.name.replace('prototype.', '');
 
-      scope[method.name] = function() {
+      if(methodName === 'Change') {
+        return; // skip
+      }
+
+      scope[methodName] = function() {
         console.log(method.name);
         var callback = arguments[arguments.length - 1];
         var ctx = new Context(
@@ -1236,10 +1283,10 @@ console.log(remoteModel.settings);
           remoteModel,
           Model,
           method,
-          arguments
+          arguments,
+          callback
         );
-        if(typeof callback !== 'function') callback = undefined;
-        connector.invoke(ctx, callback);
+        ctx.invoke();
       };
     }
   }
@@ -1247,12 +1294,180 @@ console.log(remoteModel.settings);
   remoteModel.methods.forEach(Model.defineMethod.bind(Model));
 }
 
-function Context(base, meta, model, method, args) {
+/**
+ * Create a new model instance for the given data
+ * @param {String} model The model name
+ * @param {Object} data The model data
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.create = function (model, data, callback) {
+  this.requestModel(model, {
+    method: 'POST',
+    body: data
+  }, callback);
+};
+
+/**
+ * Save the model instance for the given data
+ * @param {String} model The model name
+ * @param {Object} data The model data
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.save = function (model, data, callback) {
+  var idValue = this.getIdValue(model, data);
+  if(idValue) {
+    this.requestModel(model, {
+      method: 'PUT',
+      body: data
+    }, callback);
+  } else {
+    this.create(model, data, callback);
+  }
+};
+
+/**
+ * Check if a model instance exists by id
+ * @param {String} model The model name
+ * @param {*} id The id value
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.exists = function (model, id, callback) {
+  this.requestModel(model, {
+    url: '/exists'
+  }, callback);
+};
+
+/**
+ * Find a model instance by id
+ * @param {String} model The model name
+ * @param {*} id The id value
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.find = function find(model, id, callback) {
+  this.requestModelById(model, id, {
+    ignoreNotFound: true
+  }, callback);
+};
+
+/**
+ * Update if the model instance exists with the same id or create a new instance
+ *
+ * @param {String} model The model name
+ * @param {Object} data The model instance data
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.updateOrCreate = function updateOrCreate(model, data, callback) {
+  var self = this;
+  var idValue = self.getIdValue(model, data);
+
+  if (idValue === null || idValue === undefined) {
+    return this.create(data, callback);
+  }
+  this.find(model, idValue, function (err, inst) {
+    if (err) {
+      return callback(err);
+    }
+    if (inst) {
+      self.updateAttributes(model, idValue, data, callback);
+    } else {
+      self.create(model, data, function (err, id) {
+        if (err) {
+          return callback(err);
+        }
+        if (id) {
+          self.setIdValue(model, data, id);
+          callback(null, data);
+        } else {
+          callback(null, null); // wtf?
+        }
+      });
+    }
+  });
+};
+
+/**
+ * Delete a model instance by id
+ * @param {String} model The model name
+ * @param {*} id The id value
+ * @param [callback] The callback function
+ */
+
+ServerConnector.prototype.destroy = function destroy(model, id, callback) {
+  this.requestModelById(model, id, {
+    method: 'DELETE'
+  }, callback);
+};
+
+/**
+ * Find matching model instances by the filter
+ *
+ * @param {String} model The model name
+ * @param {Object} filter The filter
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.all = function all(model, filter, callback) {
+  this.requestModel(model, {
+    query: {filter: filter}
+  }, callback);
+};
+
+/**
+ * Delete all instances for the given model
+ * @param {String} model The model name
+ * @param {Object} [where] The filter for where
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.destroyAll = function destroyAll(model, where, callback) {
+  this.requestModel(model, {
+    method: 'DELETE',
+    query: {where: where}
+  }, callback);
+};
+
+/**
+ * Count the number of instances for the given model
+ *
+ * @param {String} model The model name
+ * @param {Function} [callback] The callback function
+ * @param {Object} filter The filter for where
+ *
+ */
+
+ServerConnector.prototype.count = function count(model, callback, where) {
+  this.requestModel(model, {
+    url: '/count',
+    query: {where: where}
+  }, callback);
+};
+
+/**
+ * Update properties for the model instance data
+ * @param {String} model The model name
+ * @param {Object} data The model data
+ * @param {Function} [callback] The callback function
+ */
+
+ServerConnector.prototype.updateAttributes = function updateAttrs(model, id, data, callback) {
+  this.requestModelById(model, id, {
+    method: 'PUT',
+    url: '/updateAttributes'
+  }, callback);
+};
+
+function Context(base, meta, model, method, args, callback) {
   this.base = base;
   this.meta = meta;
   this.model = model;
   this.method = method;
   this.args = this.mapArgs(args);
+  this.callback = callback;
 }
 
 /**
@@ -1266,11 +1481,18 @@ Context.prototype.toRequest = function() {
     query: this.query(),
     method: this.verb(),
     body: this.body(),
-    headers: this.headers()
+    headers: this.headers(),
+    json: this.isJSON()
   }
 }
 
+Context.prototype.isJSON = function() {
+  return true;
+}
+
 Context.prototype.url = function() {
+  var ctx = this;
+  var args = this.args;
   var url = path.join(
     this.base,
     this.meta.baseRoute.path,
@@ -1278,6 +1500,13 @@ Context.prototype.url = function() {
   );
 
   // replace url fragments with url params
+  this.method.accepts.forEach(function(param) {
+    var argName = param.arg;
+    var val = args[argName];
+    if(param && param.http && param.http.source === 'path') {
+      url = url.replace(':' + argName, val);
+    }
+  });
   return url;
 }
 
@@ -1371,7 +1600,17 @@ Context.prototype.mapArgs = function(args) {
   return result;
 }
 
-},{"../loopback":9,"assert":23,"debug":59,"path":42}],9:[function(require,module,exports){
+Context.prototype.handleResponse = function(err, res, body) {
+  // TODO handle `returns` correctly
+  this.callback.call(this, err, body);
+}
+
+Context.prototype.invoke = function() {
+  var req = this.toRequest();
+  request(req, this.handleResponse.bind(this));
+}
+
+},{"../loopback":9,"__browserify_process":39,"assert":24,"browser-request":22,"debug":60,"loopback-datasource-juggler":65,"path":43,"util":58}],9:[function(require,module,exports){
 var __dirname="/lib";/*!
  * Module dependencies.
  */
@@ -1695,6 +1934,7 @@ loopback.RoleMapping = require('./models/role').RoleMapping;
 loopback.ACL = require('./models/acl').ACL;
 loopback.Scope = require('./models/acl').Scope;
 loopback.Change = require('./models/change');
+loopback.Checkpoint = require('./models/checkpoint');
 
 /*!
  * Automatically attach these models to dataSources
@@ -1714,7 +1954,7 @@ loopback.ACL.autoAttach = dataSourceTypes.DB;
 loopback.Scope.autoAttach = dataSourceTypes.DB;
 loopback.Application.autoAttach = dataSourceTypes.DB;
 
-},{"../package.json":97,"./application":2,"./compat":4,"./models/access-token":11,"./models/acl":12,"./models/application":13,"./models/change":14,"./models/email":16,"./models/model":17,"./models/role":18,"./models/user":19,"assert":23,"ejs":60,"events":31,"express":3,"fs":22,"inflection":63,"loopback-datasource-juggler":64,"path":42}],10:[function(require,module,exports){
+},{"../package.json":98,"./application":2,"./compat":4,"./models/access-token":11,"./models/acl":12,"./models/application":13,"./models/change":14,"./models/checkpoint":15,"./models/email":16,"./models/model":17,"./models/role":18,"./models/user":19,"assert":24,"ejs":61,"events":32,"express":3,"fs":23,"inflection":64,"loopback-datasource-juggler":65,"path":43}],10:[function(require,module,exports){
 var loopback = require('../loopback');
 var AccessToken = require('./access-token');
 var debug = require('debug')('loopback:security:access-context');
@@ -1966,7 +2206,7 @@ module.exports.AccessRequest = AccessRequest;
 
 
 
-},{"../loopback":9,"./access-token":11,"debug":59}],11:[function(require,module,exports){
+},{"../loopback":9,"./access-token":11,"debug":60}],11:[function(require,module,exports){
 var process=require("__browserify_process");/*!
  * Module Dependencies.
  */
@@ -2187,7 +2427,7 @@ function tokenIdForRequest(req, options) {
   return null;
 }
 
-},{"../loopback":9,"./acl":12,"./role":18,"__browserify_process":38,"assert":23,"crypto":26,"uid2":95}],12:[function(require,module,exports){
+},{"../loopback":9,"./acl":12,"./role":18,"__browserify_process":39,"assert":24,"crypto":27,"uid2":96}],12:[function(require,module,exports){
 var process=require("__browserify_process");/*!
  Schema ACL options
 
@@ -2646,7 +2886,7 @@ Scope.checkPermission = function (scope, model, property, accessType, callback) 
 module.exports.ACL = ACL;
 module.exports.Scope = Scope;
 
-},{"../loopback":9,"./access-context":10,"./role":18,"__browserify_process":38,"assert":23,"async":20,"debug":59}],13:[function(require,module,exports){
+},{"../loopback":9,"./access-context":10,"./role":18,"__browserify_process":39,"assert":24,"async":20,"debug":60}],13:[function(require,module,exports){
 var loopback = require('../loopback');
 var assert = require('assert');
 
@@ -2870,7 +3110,7 @@ Application.authenticate = function (appId, key, cb) {
 module.exports = Application;
 
 
-},{"../loopback":9,"assert":23,"crypto":26}],14:[function(require,module,exports){
+},{"../loopback":9,"assert":24,"crypto":27}],14:[function(require,module,exports){
 /**
  * Module Dependencies.
  */
@@ -2900,7 +3140,8 @@ var properties = {
  */
 
 var options = {
-  trackChanges: false
+  trackChanges: false,
+  strict: true
 };
 
 /**
@@ -3189,9 +3430,12 @@ Change.prototype.isBasedOn = function(change) {
 Change.diff = function(modelName, since, remoteChanges, callback) {
   var remoteChangeIndex = {};
   var modelIds = [];
-  remoteChanges.forEach(function(ch) {
+  var Change = this;
+  remoteChanges.map(function(ch) {
+    ch = new Change(ch);
     modelIds.push(ch.modelId);
-    remoteChangeIndex[ch.modelId] = new Change(ch);
+    remoteChangeIndex[ch.modelId] = ch;
+    return ch;
   });
 
   // normalize `since`
@@ -3209,8 +3453,11 @@ Change.diff = function(modelName, since, remoteChanges, callback) {
     var localModelIds = [];
 
     localChanges.forEach(function(localChange) {
+      localChange = new Change(localChange);
       localModelIds.push(localChange.modelId);
       var remoteChange = remoteChangeIndex[localChange.modelId];
+
+      if(!remoteChange) return;
       if(!localChange.equals(remoteChange)) {
         if(remoteChange.isBasedOn(localChange)) {
           deltas.push(remoteChange);
@@ -3309,7 +3556,7 @@ Conflict.prototype.resolve = function(cb) {
   this.sourceChange.save(cb);
 }
 
-},{"../loopback":9,"./checkpoint":15,"assert":23,"async":20,"canonical-json":58,"crypto":26}],15:[function(require,module,exports){
+},{"../loopback":9,"./checkpoint":15,"assert":24,"async":20,"canonical-json":59,"crypto":27}],15:[function(require,module,exports){
 /**
  * Module Dependencies.
  */
@@ -3368,7 +3615,7 @@ Checkpoint.current = function(cb) {
 }
 
 
-},{"../loopback":9,"assert":23}],16:[function(require,module,exports){
+},{"../loopback":9,"assert":24}],16:[function(require,module,exports){
 /*!
  * Module Dependencies.
  */
@@ -3735,7 +3982,7 @@ Model.changes = function(since, filter, callback) {
     checkpoint: {gt: since},
     modelName: this.modelName
   }, function(err, changes) {
-    if(err) return cb(err);
+    if(err) return callback(err);
     var ids = changes.map(function(change) {
       return change.modelId.toString();
     });
@@ -3918,7 +4165,6 @@ Model.bulkUpdate = function(updates, callback) {
         // tasks.push(model.save.bind(model));
         tasks.push(function(cb) {
           var model = new Model(update.data);
-          debugger;
           model.save(cb);
         });
       break;
@@ -3941,9 +4187,10 @@ Model.bulkUpdate = function(updates, callback) {
  */
 
 Model.getChangeModel = function() {
-  var changeModel = this.Change;
+  var changeModelName = this.modelName + '-change';
+  var changeModel = this.Change || loopback.getModel(changeModelName);
   if(changeModel) return changeModel;
-  this.Change = changeModel = require('./change').extend(this.modelName + '-change');
+  this.Change = changeModel = require('./change').extend(changeModelName);
   changeModel.attachTo(this.dataSource);
   return changeModel;
 }
@@ -4014,7 +4261,7 @@ Model.enableChangeTracking = function() {
   }
 }
 
-},{"../compat":4,"../loopback":9,"./access-token":11,"./acl":12,"./change":14,"assert":23,"async":20,"loopback-datasource-juggler":64}],18:[function(require,module,exports){
+},{"../compat":4,"../loopback":9,"./access-token":11,"./acl":12,"./change":14,"assert":24,"async":20,"loopback-datasource-juggler":65}],18:[function(require,module,exports){
 var process=require("__browserify_process");var loopback = require('../loopback');
 var debug = require('debug')('loopback:security:role');
 var assert = require('assert');
@@ -4472,7 +4719,7 @@ module.exports = {
 
 
 
-},{"../loopback":9,"./access-context":10,"__browserify_process":38,"assert":23,"async":20,"debug":59}],19:[function(require,module,exports){
+},{"../loopback":9,"./access-context":10,"__browserify_process":39,"assert":24,"async":20,"debug":60}],19:[function(require,module,exports){
 var __dirname="/lib/models";/**
  * Module Dependencies.
  */
@@ -4968,7 +5215,7 @@ User.setup = function () {
 
 User.setup();
 
-},{"../loopback":9,"./access-token":11,"./acl":12,"./email":16,"./role":18,"assert":23,"bcryptjs":21,"crypto":26,"debug":59,"passport":22,"passport-local":24,"path":42}],20:[function(require,module,exports){
+},{"../loopback":9,"./access-token":11,"./acl":12,"./email":16,"./role":18,"assert":24,"bcryptjs":21,"crypto":27,"debug":60,"passport":23,"passport-local":25,"path":43}],20:[function(require,module,exports){
 var process=require("__browserify_process");/*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
@@ -5925,7 +6172,7 @@ var process=require("__browserify_process");/*global setImmediate: false, setTim
 
 }());
 
-},{"__browserify_process":38}],21:[function(require,module,exports){
+},{"__browserify_process":39}],21:[function(require,module,exports){
 var process=require("__browserify_process");/*
  bcrypt.js (c) 2013 Daniel Wirtz <dcode@dcode.io>
  Released under the Apache License, Version 2.0
@@ -5968,9 +6215,422 @@ typeof b&&p(Error("Illegal 'callback': "+b));"number"==typeof a?m.genSalt(a,func
 a,b){"function"!=typeof b&&p(Error("Illegal 'callback': "+b));m.hash(c,a.substr(0,29),function(c,d){b(c,a===d)})};m.getRounds=function(c){"string"!=typeof c&&p(Error("Illegal type of 'hash': "+typeof c));return parseInt(c.split("$")[2],10)};m.getSalt=function(c){"string"!=typeof c&&p(Error("Illegal type of 'hash': "+typeof c));60!=c.length&&p(Error("Illegal hash length: "+c.length+" != 60"));return c.substring(0,29)};"undefined"!=typeof module&&module.exports?module.exports=m:"undefined"!=typeof define&&
 define.amd?define("bcrypt",function(){return m}):(n.dcodeIO||(n.dcodeIO={}),n.dcodeIO.bcrypt=m)})(this);
 
-},{"__browserify_process":38,"crypto":26}],22:[function(require,module,exports){
+},{"__browserify_process":39,"crypto":27}],22:[function(require,module,exports){
+// Browser Request
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+var XHR = XMLHttpRequest
+if (!XHR) throw new Error('missing XMLHttpRequest')
+
+module.exports = request
+request.log = {
+  'trace': noop, 'debug': noop, 'info': noop, 'warn': noop, 'error': noop
+}
+
+var DEFAULT_TIMEOUT = 3 * 60 * 1000 // 3 minutes
+
+//
+// request
+//
+
+function request(options, callback) {
+  // The entry-point to the API: prep the options object and pass the real work to run_xhr.
+  if(typeof callback !== 'function')
+    throw new Error('Bad callback given: ' + callback)
+
+  if(!options)
+    throw new Error('No options given')
+
+  var options_onResponse = options.onResponse; // Save this for later.
+
+  if(typeof options === 'string')
+    options = {'uri':options};
+  else
+    options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
+
+  options.onResponse = options_onResponse // And put it back.
+
+  if (options.verbose) request.log = getLogger();
+
+  if(options.url) {
+    options.uri = options.url;
+    delete options.url;
+  }
+
+  if(!options.uri && options.uri !== "")
+    throw new Error("options.uri is a required argument");
+
+  if(typeof options.uri != "string")
+    throw new Error("options.uri must be a string");
+
+  var unsupported_options = ['proxy', '_redirectsFollowed', 'maxRedirects', 'followRedirect']
+  for (var i = 0; i < unsupported_options.length; i++)
+    if(options[ unsupported_options[i] ])
+      throw new Error("options." + unsupported_options[i] + " is not supported")
+
+  options.callback = callback
+  options.method = options.method || 'GET';
+  options.headers = options.headers || {};
+  options.body    = options.body || null
+  options.timeout = options.timeout || request.DEFAULT_TIMEOUT
+
+  if(options.headers.host)
+    throw new Error("Options.headers.host is not supported");
+
+  if(options.json) {
+    options.headers.accept = options.headers.accept || 'application/json'
+    if(options.method !== 'GET')
+      options.headers['content-type'] = 'application/json'
+
+    if(typeof options.json !== 'boolean')
+      options.body = JSON.stringify(options.json)
+    else if(typeof options.body !== 'string')
+      options.body = JSON.stringify(options.body)
+  }
+
+  // If onResponse is boolean true, call back immediately when the response is known,
+  // not when the full request is complete.
+  options.onResponse = options.onResponse || noop
+  if(options.onResponse === true) {
+    options.onResponse = callback
+    options.callback = noop
+  }
+
+  // XXX Browsers do not like this.
+  //if(options.body)
+  //  options.headers['content-length'] = options.body.length;
+
+  // HTTP basic authentication
+  if(!options.headers.authorization && options.auth)
+    options.headers.authorization = 'Basic ' + b64_enc(options.auth.username + ':' + options.auth.password);
+
+  return run_xhr(options)
+}
+
+var req_seq = 0
+function run_xhr(options) {
+  var xhr = new XHR
+    , timed_out = false
+    , is_cors = is_crossDomain(options.uri)
+    , supports_cors = ('withCredentials' in xhr)
+
+  req_seq += 1
+  xhr.seq_id = req_seq
+  xhr.id = req_seq + ': ' + options.method + ' ' + options.uri
+  xhr._id = xhr.id // I know I will type "_id" from habit all the time.
+
+  if(is_cors && !supports_cors) {
+    var cors_err = new Error('Browser does not support cross-origin request: ' + options.uri)
+    cors_err.cors = 'unsupported'
+    return options.callback(cors_err, xhr)
+  }
+
+  xhr.timeoutTimer = setTimeout(too_late, options.timeout)
+  function too_late() {
+    timed_out = true
+    var er = new Error('ETIMEDOUT')
+    er.code = 'ETIMEDOUT'
+    er.duration = options.timeout
+
+    request.log.error('Timeout', { 'id':xhr._id, 'milliseconds':options.timeout })
+    return options.callback(er, xhr)
+  }
+
+  // Some states can be skipped over, so remember what is still incomplete.
+  var did = {'response':false, 'loading':false, 'end':false}
+
+  xhr.onreadystatechange = on_state_change
+  xhr.open(options.method, options.uri, true) // asynchronous
+  if(is_cors)
+    xhr.withCredentials = !! options.withCredentials
+  xhr.send(options.body)
+  return xhr
+
+  function on_state_change(event) {
+    if(timed_out)
+      return request.log.debug('Ignoring timed out state change', {'state':xhr.readyState, 'id':xhr.id})
+
+    request.log.debug('State change', {'state':xhr.readyState, 'id':xhr.id, 'timed_out':timed_out})
+
+    if(xhr.readyState === XHR.OPENED) {
+      request.log.debug('Request started', {'id':xhr.id})
+      for (var key in options.headers)
+        xhr.setRequestHeader(key, options.headers[key])
+    }
+
+    else if(xhr.readyState === XHR.HEADERS_RECEIVED)
+      on_response()
+
+    else if(xhr.readyState === XHR.LOADING) {
+      on_response()
+      on_loading()
+    }
+
+    else if(xhr.readyState === XHR.DONE) {
+      on_response()
+      on_loading()
+      on_end()
+    }
+  }
+
+  function on_response() {
+    if(did.response)
+      return
+
+    did.response = true
+    request.log.debug('Got response', {'id':xhr.id, 'status':xhr.status})
+    clearTimeout(xhr.timeoutTimer)
+    xhr.statusCode = xhr.status // Node request compatibility
+
+    // Detect failed CORS requests.
+    if(is_cors && xhr.statusCode == 0) {
+      var cors_err = new Error('CORS request rejected: ' + options.uri)
+      cors_err.cors = 'rejected'
+
+      // Do not process this request further.
+      did.loading = true
+      did.end = true
+
+      return options.callback(cors_err, xhr)
+    }
+
+    options.onResponse(null, xhr)
+  }
+
+  function on_loading() {
+    if(did.loading)
+      return
+
+    did.loading = true
+    request.log.debug('Response body loading', {'id':xhr.id})
+    // TODO: Maybe simulate "data" events by watching xhr.responseText
+  }
+
+  function on_end() {
+    if(did.end)
+      return
+
+    did.end = true
+    request.log.debug('Request done', {'id':xhr.id})
+
+    xhr.body = xhr.responseText
+    if(options.json) {
+      try        { xhr.body = JSON.parse(xhr.responseText) }
+      catch (er) { return options.callback(er, xhr)        }
+    }
+
+    options.callback(null, xhr, xhr.body)
+  }
+
+} // request
+
+request.withCredentials = false;
+request.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
+
+//
+// defaults
+//
+
+request.defaults = function(options, requester) {
+  var def = function (method) {
+    var d = function (params, callback) {
+      if(typeof params === 'string')
+        params = {'uri': params};
+      else {
+        params = JSON.parse(JSON.stringify(params));
+      }
+      for (var i in options) {
+        if (params[i] === undefined) params[i] = options[i]
+      }
+      return method(params, callback)
+    }
+    return d
+  }
+  var de = def(request)
+  de.get = def(request.get)
+  de.post = def(request.post)
+  de.put = def(request.put)
+  de.head = def(request.head)
+  return de
+}
+
+//
+// HTTP method shortcuts
+//
+
+var shortcuts = [ 'get', 'put', 'post', 'head' ];
+shortcuts.forEach(function(shortcut) {
+  var method = shortcut.toUpperCase();
+  var func   = shortcut.toLowerCase();
+
+  request[func] = function(opts) {
+    if(typeof opts === 'string')
+      opts = {'method':method, 'uri':opts};
+    else {
+      opts = JSON.parse(JSON.stringify(opts));
+      opts.method = method;
+    }
+
+    var args = [opts].concat(Array.prototype.slice.apply(arguments, [1]));
+    return request.apply(this, args);
+  }
+})
+
+//
+// CouchDB shortcut
+//
+
+request.couch = function(options, callback) {
+  if(typeof options === 'string')
+    options = {'uri':options}
+
+  // Just use the request API to do JSON.
+  options.json = true
+  if(options.body)
+    options.json = options.body
+  delete options.body
+
+  callback = callback || noop
+
+  var xhr = request(options, couch_handler)
+  return xhr
+
+  function couch_handler(er, resp, body) {
+    if(er)
+      return callback(er, resp, body)
+
+    if((resp.statusCode < 200 || resp.statusCode > 299) && body.error) {
+      // The body is a Couch JSON object indicating the error.
+      er = new Error('CouchDB error: ' + (body.error.reason || body.error.error))
+      for (var key in body)
+        er[key] = body[key]
+      return callback(er, resp, body);
+    }
+
+    return callback(er, resp, body);
+  }
+}
+
+//
+// Utility
+//
+
+function noop() {}
+
+function getLogger() {
+  var logger = {}
+    , levels = ['trace', 'debug', 'info', 'warn', 'error']
+    , level, i
+
+  for(i = 0; i < levels.length; i++) {
+    level = levels[i]
+
+    logger[level] = noop
+    if(typeof console !== 'undefined' && console && console[level])
+      logger[level] = formatted(console, level)
+  }
+
+  return logger
+}
+
+function formatted(obj, method) {
+  return formatted_logger
+
+  function formatted_logger(str, context) {
+    if(typeof context === 'object')
+      str += ' ' + JSON.stringify(context)
+
+    return obj[method].call(obj, str)
+  }
+}
+
+// Return whether a URL is a cross-domain request.
+function is_crossDomain(url) {
+  var rurl = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/
+
+  // jQuery #8138, IE may throw an exception when accessing
+  // a field from window.location if document.domain has been set
+  var ajaxLocation
+  try { ajaxLocation = location.href }
+  catch (e) {
+    // Use the href attribute of an A element since IE will modify it given document.location
+    ajaxLocation = document.createElement( "a" );
+    ajaxLocation.href = "";
+    ajaxLocation = ajaxLocation.href;
+  }
+
+  var ajaxLocParts = rurl.exec(ajaxLocation.toLowerCase()) || []
+    , parts = rurl.exec(url.toLowerCase() )
+
+  var result = !!(
+    parts &&
+    (  parts[1] != ajaxLocParts[1]
+    || parts[2] != ajaxLocParts[2]
+    || (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (ajaxLocParts[3] || (ajaxLocParts[1] === "http:" ? 80 : 443))
+    )
+  )
+
+  //console.debug('is_crossDomain('+url+') -> ' + result)
+  return result
+}
+
+// MIT License from http://phpjs.org/functions/base64_encode:358
+function b64_enc (data) {
+    // Encodes string using MIME base64 algorithm
+    var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    var o1, o2, o3, h1, h2, h3, h4, bits, i = 0, ac = 0, enc="", tmp_arr = [];
+
+    if (!data) {
+        return data;
+    }
+
+    // assume utf8 data
+    // data = this.utf8_encode(data+'');
+
+    do { // pack three octets into four hexets
+        o1 = data.charCodeAt(i++);
+        o2 = data.charCodeAt(i++);
+        o3 = data.charCodeAt(i++);
+
+        bits = o1<<16 | o2<<8 | o3;
+
+        h1 = bits>>18 & 0x3f;
+        h2 = bits>>12 & 0x3f;
+        h3 = bits>>6 & 0x3f;
+        h4 = bits & 0x3f;
+
+        // use hexets to index into b64, and append result to encoded string
+        tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
+    } while (i < data.length);
+
+    enc = tmp_arr.join('');
+
+    switch (data.length % 3) {
+        case 1:
+            enc = enc.slice(0, -2) + '==';
+        break;
+        case 2:
+            enc = enc.slice(0, -1) + '=';
+        break;
+    }
+
+    return enc;
+}
 
 },{}],23:[function(require,module,exports){
+
+},{}],24:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -6313,9 +6973,9 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":57}],24:[function(require,module,exports){
-module.exports=require(22)
-},{}],25:[function(require,module,exports){
+},{"util/":58}],25:[function(require,module,exports){
+module.exports=require(23)
+},{}],26:[function(require,module,exports){
 var Buffer = require('buffer').Buffer;
 var intSize = 4;
 var zeroBuffer = new Buffer(intSize); zeroBuffer.fill(0);
@@ -6352,7 +7012,7 @@ function hash(buf, fn, hashSize, bigEndian) {
 
 module.exports = { hash: hash };
 
-},{"buffer":39}],26:[function(require,module,exports){
+},{"buffer":40}],27:[function(require,module,exports){
 var Buffer = require('buffer').Buffer
 var sha = require('./sha')
 var sha256 = require('./sha256')
@@ -6451,7 +7111,7 @@ each(['createCredentials'
   }
 })
 
-},{"./md5":27,"./rng":28,"./sha":29,"./sha256":30,"buffer":39}],27:[function(require,module,exports){
+},{"./md5":28,"./rng":29,"./sha":30,"./sha256":31,"buffer":40}],28:[function(require,module,exports){
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
  * Digest Algorithm, as defined in RFC 1321.
@@ -6616,7 +7276,7 @@ module.exports = function md5(buf) {
   return helpers.hash(buf, core_md5, 16);
 };
 
-},{"./helpers":25}],28:[function(require,module,exports){
+},{"./helpers":26}],29:[function(require,module,exports){
 // Original code adapted from Robert Kieffer.
 // details at https://github.com/broofa/node-uuid
 (function() {
@@ -6649,7 +7309,7 @@ module.exports = function md5(buf) {
 
 }())
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -6752,7 +7412,7 @@ module.exports = function sha1(buf) {
   return helpers.hash(buf, core_sha1, 20, true);
 };
 
-},{"./helpers":25}],30:[function(require,module,exports){
+},{"./helpers":26}],31:[function(require,module,exports){
 
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -6833,7 +7493,7 @@ module.exports = function sha256(buf) {
   return helpers.hash(buf, core_sha256, 32, true);
 };
 
-},{"./helpers":25}],31:[function(require,module,exports){
+},{"./helpers":26}],32:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7135,7 +7795,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var http = module.exports;
 var EventEmitter = require('events').EventEmitter;
 var Request = require('./lib/request');
@@ -7212,7 +7872,7 @@ var xhrHttp = (function () {
     }
 })();
 
-},{"./lib/request":33,"events":31}],33:[function(require,module,exports){
+},{"./lib/request":34,"events":32}],34:[function(require,module,exports){
 var Stream = require('stream');
 var Response = require('./response');
 var Base64 = require('Base64');
@@ -7383,7 +8043,7 @@ var indexOf = function (xs, x) {
     return -1;
 };
 
-},{"./response":34,"Base64":35,"inherits":36,"stream":48}],34:[function(require,module,exports){
+},{"./response":35,"Base64":36,"inherits":37,"stream":49}],35:[function(require,module,exports){
 var Stream = require('stream');
 var util = require('util');
 
@@ -7505,7 +8165,7 @@ var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{"stream":48,"util":57}],35:[function(require,module,exports){
+},{"stream":49,"util":58}],36:[function(require,module,exports){
 ;(function () {
 
   var object = typeof exports != 'undefined' ? exports : this; // #8: web workers
@@ -7567,7 +8227,7 @@ var isArray = Array.isArray || function (xs) {
 
 }());
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -7592,7 +8252,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"PcZj9L":[function(require,module,exports){
 var TA = require('typedarray')
 var xDataView = typeof DataView === 'undefined'
@@ -9437,7 +10097,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 },{}]},{},[])
 ;;module.exports=require("native-buffer-browserify").Buffer
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -9492,7 +10152,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var base64 = require('base64-js')
 var TA = require('typedarray')
 
@@ -10647,7 +11307,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":40,"typedarray":41}],40:[function(require,module,exports){
+},{"base64-js":41,"typedarray":42}],41:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -10774,7 +11434,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 }());
 
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var undefined = (void 0); // Paranoia
 
 // Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
@@ -11406,7 +12066,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 
 }());
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -11632,7 +12292,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-},{"__browserify_process":38}],43:[function(require,module,exports){
+},{"__browserify_process":39}],44:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*! http://mths.be/punycode v1.2.3 by @mathias */
 ;(function(root) {
 
@@ -12142,7 +12802,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 
 }(this));
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12228,7 +12888,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12315,13 +12975,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":44,"./encode":45}],47:[function(require,module,exports){
+},{"./decode":45,"./encode":46}],48:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12395,7 +13055,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":51,"./writable.js":53,"inherits":36,"process/browser.js":49}],48:[function(require,module,exports){
+},{"./readable.js":52,"./writable.js":54,"inherits":37,"process/browser.js":50}],49:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12524,9 +13184,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":47,"./passthrough.js":50,"./readable.js":51,"./transform.js":52,"./writable.js":53,"events":31,"inherits":36}],49:[function(require,module,exports){
-module.exports=require(38)
-},{}],50:[function(require,module,exports){
+},{"./duplex.js":48,"./passthrough.js":51,"./readable.js":52,"./transform.js":53,"./writable.js":54,"events":32,"inherits":37}],50:[function(require,module,exports){
+module.exports=require(39)
+},{}],51:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12569,7 +13229,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":52,"inherits":36}],51:[function(require,module,exports){
+},{"./transform.js":53,"inherits":37}],52:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13504,7 +14164,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":48,"__browserify_process":38,"buffer":39,"events":31,"inherits":36,"process/browser.js":49,"string_decoder":54}],52:[function(require,module,exports){
+},{"./index.js":49,"__browserify_process":39,"buffer":40,"events":32,"inherits":37,"process/browser.js":50,"string_decoder":55}],53:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -13710,7 +14370,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":47,"inherits":36}],53:[function(require,module,exports){
+},{"./duplex.js":48,"inherits":37}],54:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14098,7 +14758,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":48,"buffer":39,"inherits":36,"process/browser.js":49}],54:[function(require,module,exports){
+},{"./index.js":49,"buffer":40,"inherits":37,"process/browser.js":50}],55:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14291,7 +14951,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":39}],55:[function(require,module,exports){
+},{"buffer":40}],56:[function(require,module,exports){
 /*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
 (function () {
   "use strict";
@@ -14924,14 +15584,14 @@ function parseHost(host) {
 
 }());
 
-},{"punycode":43,"querystring":46}],56:[function(require,module,exports){
+},{"punycode":44,"querystring":47}],57:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 var process=require("__browserify_process"),global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15519,7 +16179,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"./support/isBuffer":56,"__browserify_process":38,"inherits":36}],58:[function(require,module,exports){
+},{"./support/isBuffer":57,"__browserify_process":39,"inherits":37}],59:[function(require,module,exports){
 
 /*
 The original version of this code is taken from Douglas Crockford's json2.js:
@@ -15741,7 +16401,7 @@ var stringify = function (value, replacer, space) {
 module.exports = stringify
 
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -15880,7 +16540,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
 /*!
  * EJS
@@ -16239,7 +16899,7 @@ if (require.extensions) {
   });
 }
 
-},{"./filters":61,"./utils":62,"fs":22,"path":42}],61:[function(require,module,exports){
+},{"./filters":62,"./utils":63,"fs":23,"path":43}],62:[function(require,module,exports){
 /*!
  * EJS - Filters
  * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
@@ -16442,7 +17102,7 @@ exports.json = function(obj){
   return JSON.stringify(obj);
 };
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 
 /*!
  * EJS
@@ -16468,7 +17128,7 @@ exports.escape = function(html){
 };
  
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /*!
  * inflection
  * Copyright(c) 2011 Ben Lin <ben@dreamerslab.com>
@@ -17096,7 +17756,7 @@ exports.escape = function(html){
   module.exports = inflector;
 })( this );
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 var __dirname="/node_modules/loopback-datasource-juggler";var fs = require('fs');
 
 exports.ModelBuilder = exports.LDL = require('./lib/model-builder.js').ModelBuilder;
@@ -17121,7 +17781,7 @@ exports.__defineGetter__('test', function () {
     return require(commonTest);
 });
 
-},{"./lib/connector.js":65,"./lib/datasource.js":68,"./lib/model-builder.js":75,"./lib/model.js":77,"./lib/validations.js":82,"fs":22}],65:[function(require,module,exports){
+},{"./lib/connector.js":66,"./lib/datasource.js":69,"./lib/model-builder.js":76,"./lib/model.js":78,"./lib/validations.js":83,"fs":23}],66:[function(require,module,exports){
 var process=require("__browserify_process");module.exports = Connector;
 
 /**
@@ -17293,7 +17953,7 @@ Connector.prototype.getType = function () {
 
 
 
-},{"__browserify_process":38}],66:[function(require,module,exports){
+},{"__browserify_process":39}],67:[function(require,module,exports){
 var process=require("__browserify_process");var util = require('util');
 var Connector = require('../connector');
 var geo = require('../geo');
@@ -17700,7 +18360,7 @@ function merge(base, update) {
   });
   return base;
 }
-},{"../connector":65,"../geo":69,"../utils":81,"__browserify_process":38,"async":83,"fs":22,"util":57}],67:[function(require,module,exports){
+},{"../connector":66,"../geo":70,"../utils":82,"__browserify_process":39,"async":84,"fs":23,"util":58}],68:[function(require,module,exports){
 /**
  * Module exports class Model
  */
@@ -18655,7 +19315,7 @@ DataAccessObject.scope = function (name, filter, targetClass) {
 jutil.mixin(DataAccessObject, Inclusion);
 jutil.mixin(DataAccessObject, Relation);
 
-},{"./connectors/memory":66,"./geo":69,"./include.js":71,"./jutil":73,"./relations.js":78,"./scope.js":79,"./utils":81,"./validations.js":82,"util":57}],68:[function(require,module,exports){
+},{"./connectors/memory":67,"./geo":70,"./include.js":72,"./jutil":74,"./relations.js":79,"./scope.js":80,"./utils":82,"./validations.js":83,"util":58}],69:[function(require,module,exports){
 var process=require("__browserify_process");/*!
  * Module dependencies
  */
@@ -20414,7 +21074,7 @@ DataSource.registerType = function (type) {
 };
 
 
-},{"./dao.js":67,"./jutil":73,"./list.js":74,"./model-builder.js":75,"./model-definition.js":76,"./model.js":77,"./utils":81,"__browserify_process":38,"assert":23,"async":83,"events":31,"fs":22,"path":42,"util":57}],69:[function(require,module,exports){
+},{"./dao.js":68,"./jutil":74,"./list.js":75,"./model-builder.js":76,"./model-definition.js":77,"./model.js":78,"./utils":82,"__browserify_process":39,"assert":24,"async":84,"events":32,"fs":23,"path":43,"util":58}],70:[function(require,module,exports){
 /**
  * Dependencies.
  */
@@ -20611,7 +21271,7 @@ function geoDistance(x1, y1, x2, y2, options) {
 }
 
 
-},{"assert":23}],70:[function(require,module,exports){
+},{"assert":24}],71:[function(require,module,exports){
 /**
  * Module exports
  */
@@ -20680,7 +21340,7 @@ function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var utils = require('./utils');
 var isPlainObject = utils.isPlainObject;
 var defineCachedRelations = utils.defineCachedRelations;
@@ -20846,7 +21506,7 @@ Inclusion.include = function (objects, include, cb) {
 };
 
 
-},{"./utils":81}],72:[function(require,module,exports){
+},{"./utils":82}],73:[function(require,module,exports){
 module.exports = function getIntrospector(ModelBuilder) {
 
   function introspectType(value) {
@@ -20908,7 +21568,7 @@ module.exports = function getIntrospector(ModelBuilder) {
 
 
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var util = require('util');
 /**
  *
@@ -21019,7 +21679,7 @@ exports.proxy = function (fn, proxies) {
 };
 
 
-},{"util":57}],74:[function(require,module,exports){
+},{"util":58}],75:[function(require,module,exports){
 module.exports = List;
 
 /**
@@ -21258,7 +21918,7 @@ function ListItem(data, parent) {
 }
 
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 /*!
  * Module dependencies
  */
@@ -21901,7 +22561,7 @@ ModelBuilder.prototype.buildModelFromInstance = function (name, json, options) {
 
 
 
-},{"./introspection":72,"./list.js":74,"./model-definition.js":76,"./model.js":77,"./types":80,"./utils":81,"assert":23,"events":31,"inflection":84,"util":57}],76:[function(require,module,exports){
+},{"./introspection":73,"./list.js":75,"./model-definition.js":77,"./model.js":78,"./types":81,"./utils":82,"assert":24,"events":32,"inflection":85,"util":58}],77:[function(require,module,exports){
 var assert = require('assert');
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
@@ -22206,7 +22866,7 @@ ModelDefinition.prototype.toJSON = function (forceRebuild) {
   return json;
 };
 
-},{"./model":77,"./model-builder":75,"./types":80,"assert":23,"events":31,"traverse":86,"util":57}],77:[function(require,module,exports){
+},{"./model":78,"./model-builder":76,"./types":81,"assert":24,"events":32,"traverse":87,"util":58}],78:[function(require,module,exports){
 /**
  * Module exports class Model
  */
@@ -22508,7 +23168,7 @@ ModelBaseClass.getDataSource = function () {
 jutil.mixin(ModelBaseClass, Hookable);
 jutil.mixin(ModelBaseClass, validations.Validatable);
 
-},{"./hooks":70,"./jutil":73,"./list":74,"./validations.js":82,"traverse":86,"util":57}],78:[function(require,module,exports){
+},{"./hooks":71,"./jutil":74,"./list":75,"./validations.js":83,"traverse":87,"util":58}],79:[function(require,module,exports){
 /**
  * Dependencies
  */
@@ -22825,7 +23485,7 @@ Relation.hasAndBelongsToMany = function hasAndBelongsToMany(anotherClass, params
 
 };
 
-},{"./model.js":77,"./scope.js":79,"inflection":84}],79:[function(require,module,exports){
+},{"./model.js":78,"./scope.js":80,"inflection":85}],80:[function(require,module,exports){
 var utils = require('./utils');
 var defineCachedRelations = utils.defineCachedRelations;
 /**
@@ -23038,7 +23698,7 @@ function merge(base, update) {
 }
 
 
-},{"./utils":81}],80:[function(require,module,exports){
+},{"./utils":82}],81:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer");module.exports = function (Types) {
 
   var List = require('./list.js');
@@ -23100,7 +23760,7 @@ var Buffer=require("__browserify_Buffer");module.exports = function (Types) {
   Types.registerType(GeoPoint);
   Types.registerType(Object);
 };
-},{"./geo":69,"./list.js":74,"__browserify_Buffer":37}],81:[function(require,module,exports){
+},{"./geo":70,"./list.js":75,"__browserify_Buffer":38}],82:[function(require,module,exports){
 var process=require("__browserify_process");exports.safeRequire = safeRequire;
 exports.fieldsToArray = fieldsToArray;
 exports.selectFields = selectFields;
@@ -23307,7 +23967,7 @@ function isPlainObject(obj) {
   return (typeof obj === 'object') && (obj !== null)
     && (obj.constructor === Object);
 }
-},{"__browserify_process":38,"qs":85,"traverse":86,"url":55}],82:[function(require,module,exports){
+},{"__browserify_process":39,"qs":86,"traverse":87,"url":56}],83:[function(require,module,exports){
 var process=require("__browserify_process");var util = require('util');
 /**
  * Module exports
@@ -23924,9 +24584,9 @@ function ValidationError(obj) {
 
 util.inherits(ValidationError, Error);
 
-},{"__browserify_process":38,"util":57}],83:[function(require,module,exports){
+},{"__browserify_process":39,"util":58}],84:[function(require,module,exports){
 module.exports=require(20)
-},{"__browserify_process":38}],84:[function(require,module,exports){
+},{"__browserify_process":39}],85:[function(require,module,exports){
 /*!
  * inflection
  * Copyright(c) 2011 Ben Lin <ben@dreamerslab.com>
@@ -24526,7 +25186,7 @@ module.exports=require(20)
   module.exports = inflector;
 })( this );
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /**
  * Object#toString() ref for stringify().
  */
@@ -24894,7 +25554,7 @@ function decode(str) {
   }
 }
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var traverse = module.exports = function (obj) {
     return new Traverse(obj);
 };
@@ -25210,7 +25870,7 @@ var hasOwnProperty = Object.hasOwnProperty || function (obj, key) {
     return key in obj;
 };
 
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /**
  * Expose the `Swagger` plugin.
  */
@@ -25460,13 +26120,13 @@ function prepareDataType(type) {
   return type;
 }
 
-},{"../":88}],88:[function(require,module,exports){
+},{"../":89}],89:[function(require,module,exports){
 /**
  * remotes ~ public api
  */
 
 module.exports = require('./lib/remote-objects');
-},{"./lib/remote-objects":90}],89:[function(require,module,exports){
+},{"./lib/remote-objects":91}],90:[function(require,module,exports){
 /*!
  * Expose `ExportsHelper`.
  */
@@ -25601,7 +26261,7 @@ function method(fn, options) {
   return self;
 }
 
-},{"debug":59}],90:[function(require,module,exports){
+},{"debug":60}],91:[function(require,module,exports){
 /*!
  * Expose `RemoteObjects`.
  */
@@ -26039,7 +26699,7 @@ RemoteObjects.prototype.getScope = function(ctx, method) {
   return ctx.instance || method.ctor;
 }
 
-},{"./exports-helper":89,"./shared-class":91,"assert":23,"debug":59,"eventemitter2":93,"util":57}],91:[function(require,module,exports){
+},{"./exports-helper":90,"./shared-class":92,"assert":24,"debug":60,"eventemitter2":94,"util":58}],92:[function(require,module,exports){
 /**
  * Expose `SharedClass`.
  */
@@ -26123,7 +26783,7 @@ function eachRemoteFunctionInObject(obj, f) {
   }
 }
 
-},{"./shared-method":92,"assert":23,"debug":59,"util":57}],92:[function(require,module,exports){
+},{"./shared-method":93,"assert":24,"debug":60,"util":58}],93:[function(require,module,exports){
 var Buffer=require("__browserify_Buffer");/**
  * Expose `SharedMethod`.
  */
@@ -26383,7 +27043,7 @@ SharedMethod.toResult = function(returns, raw) {
   }
 };
 
-},{"__browserify_Buffer":37,"assert":23,"debug":59,"events":31,"traverse":94,"util":57}],93:[function(require,module,exports){
+},{"__browserify_Buffer":38,"assert":24,"debug":60,"events":32,"traverse":95,"util":58}],94:[function(require,module,exports){
 var process=require("__browserify_process");;!function(exports, undefined) {
 
   var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
@@ -26946,9 +27606,9 @@ var process=require("__browserify_process");;!function(exports, undefined) {
 
 }(typeof process !== 'undefined' && typeof process.title !== 'undefined' && typeof exports !== 'undefined' ? exports : window);
 
-},{"__browserify_process":38}],94:[function(require,module,exports){
-module.exports=require(86)
-},{}],95:[function(require,module,exports){
+},{"__browserify_process":39}],95:[function(require,module,exports){
+module.exports=require(87)
+},{}],96:[function(require,module,exports){
 /**
  * Module dependencies
  */
@@ -27005,7 +27665,7 @@ function uid(length, cb) {
 
 module.exports = uid;
 
-},{"crypto":26}],96:[function(require,module,exports){
+},{"crypto":27}],97:[function(require,module,exports){
 //  Underscore.string
 //  (c) 2010 Esa-Matti Suuronen <esa-matti aet suuronen dot org>
 //  Underscore.string is freely distributable under the terms of the MIT license.
@@ -27680,7 +28340,7 @@ module.exports = uid;
   root._.string = root._.str = _s;
 }(this, String);
 
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 module.exports={
   "name": "loopback",
   "description": "LoopBack: Open Mobile Platform for Node.js",
@@ -27714,7 +28374,8 @@ module.exports={
     "underscore": "~1.5.2",
     "uid2": "0.0.3",
     "async": "~0.2.9",
-    "canonical-json": "0.0.3"
+    "canonical-json": "0.0.3",
+    "browser-request": "~0.3.1"
   },
   "peerDependencies": {
     "loopback-datasource-juggler": "~1.2.13"

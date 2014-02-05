@@ -1,13 +1,28 @@
 <!doctype html>
-<html lang="en" ng-app="myApp">
+<html lang="en" ng-app>
 <head>
   <meta charset="utf-8">
   <title>My AngularJS App</title>
   <link rel="stylesheet" href="css/app.css"/>
 </head>
 <body>
+  <style>
+    body {font-size: 24px;}
+  </style>
+  <ul ng-controller="ListCtrl">
+    <li ng-repeat="color in colors" style="color: {{color.name}}">
+      {{color.name}}
+    </li>
+    <li>
+      <form ng-submit="add()">
+        <input placeholder="enter a color" ng-model="newColor" />
+      </form>
+    </li>
+  </ul>
+
   <script src="loopback.js"></script>
   <script src="loopback-remote-models.js"></script>
   <script src="client.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
 </body>
 </html>

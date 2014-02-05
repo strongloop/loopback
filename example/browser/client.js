@@ -14,29 +14,48 @@ app.dataSource('local', {
 });
 
 var Color = loopback.getModel('Color');
-var LocalColor = app.model('LocalColor', {dataSource: 'local'});
+var LocalColor = app.model('LocalColor', {
+  dataSource: 'local',
+  options: {trackChanges: true}
+});
 
-LocalColor.create([
-  {name: 'red'},
-  {name: 'green'},
-  {name: 'blue'}
-], function() {
-  LocalColor.replicate(0, Color, {}, function() {
-    console.log(arguments);
+
+function replicate() {
+  LocalColor.currentCheckpoint(function(err, cp) {
+    LocalColor.replicate(cp, Color, {}, function() {
+      console.log('replicated local to remote');
+    });
   });
-}); 
+}
 
+LocalColor.on('deleted', replicate);
+LocalColor.on('changed', replicate);
+LocalColor.on('deletedAll', replicate);
 
-// Color.create([
-//   {name: 'red'},
-//   {name: 'green'},
-//   {name: 'blue'}
-// ], function() {
-//   Color.find(function(err, colors) {
-//     console.log(colors);
-//   });
-// });
+setInterval(function() {
+  Color.currentCheckpoint(function(err, cp) {
+    Color.replicate(cp, LocalColor, {}, function() {
+      console.log('replicated remote to local');
+    });
+  });
+}, 100);
 
-// Color.find({where: {name: 'green'}}, function(err, colors) {
-//   console.log(colors);
-// });
+function ListCtrl($scope) {
+  LocalColor.on('changed', update);
+  LocalColor.on('deleted', update);
+
+  function update() {
+    LocalColor.find({sort: 'name'}, function(err, colors) {
+      $scope.colors = colors;
+      $scope.$apply();
+    });
+  }
+
+  $scope.add = function() {
+    LocalColor.create({name: $scope.newColor});
+    $scope.newColor = null;
+  }
+
+  update();
+}
+

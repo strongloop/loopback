@@ -12,7 +12,9 @@ var datasourceJuggler = require('loopback-datasource-juggler');
 loopback.Connector = require('./lib/connectors/base-connector');
 loopback.Memory = require('./lib/connectors/memory');
 loopback.Mail = require('./lib/connectors/mail');
-loopback.Server = require('./lib/connectors/server');
+if(loopback.isBrowser) {
+  loopback.Server = require('./lib/connectors/server');
+}
 
 /**
  * Types
