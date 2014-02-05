@@ -19,12 +19,18 @@ var LocalColor = app.model('LocalColor', {
   options: {trackChanges: true}
 });
 
+LocalColor.beforeCreate = function(next, color) {
+  color.id = Math.random().toString().split('.')[1];
+  next();
+}
 
 function replicate() {
   LocalColor.currentCheckpoint(function(err, cp) {
-    LocalColor.replicate(cp, Color, {}, function() {
-      console.log('replicated local to remote');
-    });
+    setTimeout(function() {
+      LocalColor.replicate(cp, Color, {}, function() {
+        console.log('replicated local to remote');
+      });
+    }, 0);
   });
 }
 
@@ -38,7 +44,7 @@ setInterval(function() {
       console.log('replicated remote to local');
     });
   });
-}, 100);
+}, 1000);
 
 function ListCtrl($scope) {
   LocalColor.on('changed', update);
@@ -47,6 +53,7 @@ function ListCtrl($scope) {
   function update() {
     LocalColor.find({sort: 'name'}, function(err, colors) {
       $scope.colors = colors;
+      console.log(colors);
       $scope.$apply();
     });
   }
@@ -54,6 +61,10 @@ function ListCtrl($scope) {
   $scope.add = function() {
     LocalColor.create({name: $scope.newColor});
     $scope.newColor = null;
+  }
+
+  $scope.del = function(color) {
+    color.destroy();
   }
 
   update();

@@ -11,7 +11,10 @@
   </style>
   <ul ng-controller="ListCtrl">
     <li ng-repeat="color in colors" style="color: {{color.name}}">
-      {{color.name}}
+      <form ng-submit="color.save()">
+        <input placeholder="{{color.name}}" ng-model="color.name" />
+        <a href="#" ng-click="del(color)">delete</a>
+      </form>
     </li>
     <li>
       <form ng-submit="add()">
