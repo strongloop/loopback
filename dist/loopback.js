@@ -3512,6 +3512,18 @@ Change.getCheckpointModel = function() {
   return checkpointModel;
 }
 
+/**
+ * Get the model instance.
+ * @callback  {Function} callback
+ * @param {Error} err
+ * @param {Model} model The Model instance
+ */
+
+Change.prototype.getModelInst = function(callback) {
+  var Model = this.getModelCtor();
+  assert(Model, 'unkown model + ', this.modelName);
+  Model.findById(this.modelId, callback);
+}
 
 /**
  * When two changes conflict a conflict is created.
@@ -3538,8 +3550,8 @@ Conflict.prototype.fetch = function(cb) {
 
   async.parallel(tasks, cb);
 
-  function getSourceModel(change, cb) {
-    conflict.sourceModel.getModel(function(err, model) {
+  function getSourceModel(cb) {
+    conflict.sourceChange.getModelInst(function(err, model) {
       if(err) return cb(err);
       conflict.source = model;
       cb();
@@ -3547,7 +3559,7 @@ Conflict.prototype.fetch = function(cb) {
   }
 
   function getTargetModel(cb) {
-    conflict.targetModel.getModel(function(err, model) {
+    conflict.targetChange.getModelInst(function(err, model) {
       if(err) return cb(err);
       conflict.target = model;
       cb();

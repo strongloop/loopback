@@ -13,6 +13,17 @@ app.dataSource('local', {
   connector: loopback.Memory
 });
 
+var network = {
+  available: true,
+  toggle: function() {
+    this.available = !this.available;
+    replicate();
+    replicateFromRemote();
+  },
+  status: function() {
+    return this.available ? 'on' : 'off';
+  }
+};
 var Color = loopback.getModel('Color');
 var LocalColor = app.model('LocalColor', {
   dataSource: 'local',
@@ -24,36 +35,79 @@ LocalColor.beforeCreate = function(next, color) {
   next();
 }
 
-function replicate() {
-  LocalColor.currentCheckpoint(function(err, cp) {
-    setTimeout(function() {
-      LocalColor.replicate(cp, Color, {}, function() {
-        console.log('replicated local to remote');
+var localConflicts = [];
+
+function ReplicationCtlr($scope) {
+  var interval = 1000;
+  $scope.replicate = replicate;
+  $scope.replicateFromRemote = replicate;
+  $scope.conflicts = [];
+  
+  $scope.resolveUsingRemote = function(conflict) {
+    conflict.source.name = conflict.target.name;
+    conflict.source.save(function() {
+      conflict.source.resolve();
+    });
+  }
+
+  LocalColor.on('deleted', replicate);
+  LocalColor.on('changed', replicate);
+  LocalColor.on('deletedAll', replicate);
+
+  setInterval(replicateFromRemote, interval);
+  setInterval(replicate, interval);
+  
+  function replicate() {
+    // reset the conflicts array
+    while($scope.conflicts.shift());
+    
+    if(network.available) {
+      LocalColor.currentCheckpoint(function(err, cp) {
+        setTimeout(function() {
+          LocalColor.replicate(cp, Color, {}, function(err, conflicts) {
+            // console.log('replicated local to remote');
+            conflicts.forEach(function(conflict) {
+              conflict.fetch(function() {
+                var local = conflict.source.name;
+                var remote = conflict.target.name;
+                if(local !== remote) {
+                  $scope.conflicts.push(conflict)
+                }
+                $scope.$apply();
+              });
+            });
+          });
+        }, 0);
+      });    
+    }
+  }
+
+  function replicateFromRemote() {
+    if(network.available) {
+      Color.currentCheckpoint(function(err, cp) {
+        Color.replicate(0, LocalColor, {}, function() {
+          // console.log('replicated remote to local');
+        });
       });
-    }, 0);
-  });
+    }
+  }
 }
 
-LocalColor.on('deleted', replicate);
-LocalColor.on('changed', replicate);
-LocalColor.on('deletedAll', replicate);
+function NetworkCtrl($scope) {
+  $scope.network = network;
+}
 
-setInterval(function() {
-  Color.currentCheckpoint(function(err, cp) {
-    Color.replicate(cp, LocalColor, {}, function() {
-      console.log('replicated remote to local');
-    });
-  });
-}, 1000);
+function ConflictCtrl($scope) {
+  $scope.conflicts = localConflicts;
+}
 
 function ListCtrl($scope) {
   LocalColor.on('changed', update);
   LocalColor.on('deleted', update);
 
   function update() {
-    LocalColor.find({sort: 'name'}, function(err, colors) {
+    LocalColor.find({order: 'name ASC'}, function(err, colors) {
       $scope.colors = colors;
-      console.log(colors);
       $scope.$apply();
     });
   }

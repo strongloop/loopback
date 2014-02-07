@@ -9,10 +9,21 @@
   <style>
     body {font-size: 24px;}
   </style>
+  <h1 ng-controller="NetworkCtrl">
+    <input style="font-size: 48px;" type="checkbox" ng-model="network.available" />Enable Network
+  </h1>
+  <ul ng-controller="ReplicationCtlr">
+    <h2 ng-show="conflicts.length">Conflicts:</h2>
+    <li ng-repeat="conflict in conflicts">
+      <button ng-click="conflict.resolve()">Use local {{conflict.source.name}}</button>
+      <button ng-click="resolveUsingRemote(conflict)">Use remote {{conflict.target.name}}</button>
+    </li>
+  </ul>
   <ul ng-controller="ListCtrl">
     <li ng-repeat="color in colors" style="color: {{color.name}}">
       <form ng-submit="color.save()">
         <input placeholder="{{color.name}}" ng-model="color.name" />
+        {{color.conflict}}
         <a href="#" ng-click="del(color)">delete</a>
       </form>
     </li>
