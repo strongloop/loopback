@@ -39,6 +39,10 @@ var localConflicts = [];
 
 function ReplicationCtlr($scope) {
   var interval = 1000;
+  var remoteIntervalId;
+  var localIntervalId;
+  
+  $scope.status = 'idle';
   $scope.replicate = replicate;
   $scope.replicateFromRemote = replicate;
   $scope.conflicts = [];
@@ -54,8 +58,41 @@ function ReplicationCtlr($scope) {
   LocalColor.on('changed', replicate);
   LocalColor.on('deletedAll', replicate);
 
-  setInterval(replicateFromRemote, interval);
-  setInterval(replicate, interval);
+  var messages = [];
+  function flash(msg) {
+    messages.push(msg);
+  }
+  
+  setInterval(function() {
+    var msg = messages.shift();
+    
+    if(msg) {
+      $scope.status = msg;
+    }
+    if(!messages.length) {
+      messages.push(msg);
+    }
+  }, 500);
+
+  $scope.reset = function() {
+    flash('reset');
+    clearInterval(localIntervalId);
+    clearInterval(remoteIntervalId);
+    localIntervalId = setInterval(replicateFromRemote, interval);
+    remoteIntervalId = setInterval(replicate, interval);
+    replicate();
+    replicateFromRemote();
+  }
+  
+  $scope.enable = function() {
+    $scope.enabled = true;
+    $scope.reset();
+  }
+  
+  $scope.disable = function() {
+    $scope.enabled = false;
+    $scope.reset();
+  }
   
   function replicate() {
     // reset the conflicts array
@@ -64,6 +101,7 @@ function ReplicationCtlr($scope) {
     if(network.available) {
       LocalColor.currentCheckpoint(function(err, cp) {
         setTimeout(function() {
+          flash('replicating local to remote');
           LocalColor.replicate(cp, Color, {}, function(err, conflicts) {
             // console.log('replicated local to remote');
             conflicts.forEach(function(conflict) {
@@ -106,6 +144,7 @@ function ListCtrl($scope) {
   LocalColor.on('deleted', update);
 
   function update() {
+    alert('change event');
     LocalColor.find({order: 'name ASC'}, function(err, colors) {
       $scope.colors = colors;
       $scope.$apply();

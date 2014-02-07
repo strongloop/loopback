@@ -13,6 +13,12 @@
     <input style="font-size: 48px;" type="checkbox" ng-model="network.available" />Enable Network
   </h1>
   <ul ng-controller="ReplicationCtlr">
+    <h2>Status: {{status}}</h2>
+    <button ng-click="reset()">Reset</button>
+    <button ng-click="replicate()">Replicate</button>
+    Auto Replication:
+    <button ng-click="enable()" ng-disabled="enabled">Enable</button>
+    <button ng-click="disable()" ng-disabled="!enabled">Disable</button>
     <h2 ng-show="conflicts.length">Conflicts:</h2>
     <li ng-repeat="conflict in conflicts">
       <button ng-click="conflict.resolve()">Use local {{conflict.source.name}}</button>
