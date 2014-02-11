@@ -1,0 +1,35 @@
+* {padding: 10px;}
+body {font-size: 12px;}
+table{
+  margin-bottom:20px;
+  width:100%;
+}
+tfoot{
+  text-align:center;
+}
+td,th{
+  padding:5px;
+  border:1px solid #333;
+}
+th:empty,
+td:empty{
+  border:none;
+}
+th{
+  font-weight:bold;
+}
+tr:nth-of-type(odd){
+  background:rgba(255,255,136,0.5);
+}
+td:nth-of-type(odd),
+th:nth-of-type(odd){
+  background:rgba(255,255,136,0.5);
+}
+td:nth-of-type(odd),
+tr:nth-of-type(odd),
+th:nth-of-type(odd){
+  background:rgba(255,255,136,0.5);
+}
+
+input {margin-right: 20px !important;}
+button {margin-right: 20px !important;}

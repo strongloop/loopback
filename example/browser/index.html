@@ -3,22 +3,16 @@
 <head>
   <meta charset="utf-8">
   <title>My AngularJS App</title>
-  <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="app.css"/>
 </head>
 <body>
-  <style>
-    body {font-size: 24px;}
-  </style>
   <h1 ng-controller="NetworkCtrl">
-    <input style="font-size: 48px;" type="checkbox" ng-model="network.available" />Enable Network
+    <input style="font-size: 48px;" type="checkbox" ng-model="network.available" />Online
   </h1>
   <ul ng-controller="ReplicationCtlr">
-    <h2>Status: {{status}}</h2>
-    <button ng-click="reset()">Reset</button>
-    <button ng-click="replicate()">Replicate</button>
-    Auto Replication:
-    <button ng-click="enable()" ng-disabled="enabled">Enable</button>
-    <button ng-click="disable()" ng-disabled="!enabled">Disable</button>
+    <button ng-click="replicate()">Push</button>
+    <button ng-click="replicateFromRemote()">Pull</button>
     <h2 ng-show="conflicts.length">Conflicts:</h2>
     <li ng-repeat="conflict in conflicts">
       <button ng-click="conflict.resolve()">Use local {{conflict.source.name}}</button>
@@ -30,7 +24,7 @@
       <form ng-submit="color.save()">
         <input placeholder="{{color.name}}" ng-model="color.name" />
         {{color.conflict}}
-        <a href="#" ng-click="del(color)">delete</a>
+        <a href="#" ng-click="color.destroy()">delete</a>
       </form>
     </li>
     <li>
@@ -39,6 +33,47 @@
       </form>
     </li>
   </ul>
+
+  <h1>Local Changes</h1>
+  <table ng-controller="ChangeCtrl">
+    <thead>
+      <th>type</th>
+      <th>rev</th>
+      <th>prev</th>
+      <th>base</th>
+      <th>checkpoint</th>
+      <th>modelId</th>
+    </thead>
+    <tr ng-repeat="change in changes">
+      <td>{{change.type()}}</h3>
+      <td>{{change.rev}}</td>
+      <td>{{change.prev}}</td>
+      <td>{{change.base}}</td>
+      <td>{{change.checkpoint}}</td>
+      <td>{{change.modelId}}</td>
+    </tr>
+  </table>
+  
+  <h1>Remote Changes</h1>
+  <table ng-controller="RemoteChangeCtrl">
+    <thead>
+      <th>type</th>
+      <th>rev</th>
+      <th>prev</th>
+      <th>base</th>
+      <th>checkpoint</th>
+      <th>modelId</th>
+    </thead>
+    <tr ng-repeat="change in changes">
+      <td>{{change.type()}}</h3>
+      <td>{{change.rev}}</td>
+      <td>{{change.prev}}</td>
+      <td>{{change.base}}</td>
+      <td>{{change.checkpoint}}</td>
+      <td>{{change.modelId}}</td>
+    </tr>
+  </table>
+
 
   <script src="loopback.js"></script>
   <script src="loopback-remote-models.js"></script>
