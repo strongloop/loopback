@@ -43,5 +43,5 @@
     "type": "git",
     "url": "https://github.com/strongloop/loopback"
   },
-  "license": "MIT"
+  "license": "Dual MIT/StrongLoop"
 }
