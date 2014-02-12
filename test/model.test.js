@@ -1,4 +1,6 @@
+require('./support');
 var ACL = require('../').ACL;
+var loopback = require('../');
 
 describe('Model', function() {
 
@@ -194,21 +196,21 @@ describe('Model', function() {
     });
   });
 
-    describe('Model.deleteById([callback])', function () {
-        it("Delete a model instance from the attached data source", function (done) {
-            User.create({first: 'joe', last: 'bob'}, function (err, user) {
-                User.deleteById(user.id, function (err) {
-                    User.findById(user.id, function (err, notFound) {
-                        assert(!err);
-                        assert.equal(notFound, null);
-                        done();
-                    });
-                });
-            });
-        });
-    });
+  describe('Model.deleteById([callback])', function () {
+      it("Delete a model instance from the attached data source", function (done) {
+          User.create({first: 'joe', last: 'bob'}, function (err, user) {
+              User.deleteById(user.id, function (err) {
+                  User.findById(user.id, function (err, notFound) {
+                      assert(!err);
+                      assert.equal(notFound, null);
+                      done();
+                  });
+              });
+          });
+      });
+  });
 
-    describe('Model.destroyAll(callback)', function() {
+  describe('Model.destroyAll(callback)', function() {
     it("Delete all Model instances from data source", function(done) {
       (new TaskEmitter())
         .task(User, 'create', {first: 'jill'})
@@ -260,7 +262,8 @@ describe('Model', function() {
     });
   });
 
-  describe('Remote Methods', function(){
+  describe.onServer('Remote Methods', function(){
+
     beforeEach(function () {
       User.login = function (username, password, fn) {
         if(username === 'foo' && password === 'bar') {
