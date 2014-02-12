@@ -9,35 +9,35 @@
     "Platform",
     "mBaaS"
   ],
-  "version": "1.6.1",
+  "version": "1.6.2",
   "scripts": {
     "test": "mocha -R spec"
   },
   "dependencies": {
-    "debug": "~0.7.2",
-    "express": "~3.4.0",
-    "strong-remoting": "~1.2.1",
-    "inflection": "~1.2.5",
-    "passport": "~0.1.17",
+    "debug": "~0.7.4",
+    "express": "~3.4.8",
+    "strong-remoting": "~1.2.4",
+    "inflection": "~1.2.7",
+    "passport": "~0.2.0",
     "passport-local": "~0.1.6",
-    "nodemailer": "~0.5.7",
-    "ejs": "~0.8.4",
+    "nodemailer": "~0.6.0",
+    "ejs": "~0.8.5",
     "bcryptjs": "~0.7.10",
     "underscore.string": "~2.3.3",
-    "underscore": "~1.5.2",
+    "underscore": "~1.6.0",
     "uid2": "0.0.3",
-    "async": "~0.2.9"
+    "async": "~0.2.10"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~1.2.13"
+    "loopback-datasource-juggler": "~1.3.0"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": "~1.2.13",
-    "mocha": "~1.14.0",
+    "loopback-datasource-juggler": "~1.3.0",
+    "mocha": "~1.17.1",
     "strong-task-emitter": "0.0.x",
-    "supertest": "~0.8.1",
-    "chai": "~1.8.1",
-    "loopback-testing": "~0.1.0",
+    "supertest": "~0.9.0",
+    "chai": "~1.9.0",
+    "loopback-testing": "~0.1.2",
     "browserify": "~3.14.1",
     "grunt": "~0.4.2",
     "grunt-browserify": "~1.3.0",
