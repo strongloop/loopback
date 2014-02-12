@@ -76,10 +76,17 @@ describe('app', function() {
     });
   });
 
+  describe('app.models', function() {
+    it('is unique per app instance', function() {
+      var Color = app.model('Color', { dataSource: 'db' });
+      expect(app.models.Color).to.equal(Color);
+      var anotherApp = loopback();
+      expect(anotherApp.models.Color).to.equal(undefined);
+    });
+  });
+
   describe('app.boot([options])', function () {
     beforeEach(function () {
-      var app = this.app = loopback();
-
       app.boot({
         app: {
           port: 3000, 
@@ -390,6 +397,14 @@ describe('app', function() {
           expect(this.address().address).to.equal('127.0.0.1');
           done();
         });
+    });
+  });
+
+  describe('enableAuth', function() {
+    it('should set app.isAuthEnabled to true', function() {
+      expect(app.isAuthEnabled).to.not.equal(true);
+      app.enableAuth();
+      expect(app.isAuthEnabled).to.equal(true);
     });
   });
 
