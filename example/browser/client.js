@@ -1,6 +1,7 @@
 // client app
 var app = loopback();
 
+// remote models
 app.dataSource('api', {
   connector: loopback.Server,
   host: 'localhost',
@@ -9,6 +10,7 @@ app.dataSource('api', {
   discover: loopback.remoteModels
 });
 
+// local storage
 app.dataSource('local', {
   connector: loopback.Memory
 });
@@ -22,18 +24,21 @@ var network = {
     return this.available ? 'on' : 'off';
   }
 };
+
+// get the remote model "Color"
 var Color = loopback.getModel('Color');
+
+// define a local model for offline data
 var LocalColor = app.model('LocalColor', {
   dataSource: 'local',
   options: {trackChanges: true}
 });
 
+// generate a random client id
 LocalColor.beforeCreate = function(next, color) {
   color.id = Math.random().toString().split('.')[1];
   next();
 }
-
-var localConflicts = [];
 
 function ReplicationCtlr($scope) {
   var interval = 1000;
@@ -52,6 +57,13 @@ function ReplicationCtlr($scope) {
     });
   }
 
+  $scope.resolveUsingLocal = function(conflict) {
+    conflict.resolve(function(err) {
+      if(err) return console.log('resolveUsingLocal', err);
+      conflict.source.save();
+    });
+  }
+
   LocalColor.on('deleted', replicate);
   LocalColor.on('changed', replicate);
   LocalColor.on('deletedAll', replicate);
@@ -63,6 +75,7 @@ function ReplicationCtlr($scope) {
     
     if(network.available) {
       LocalColor.currentCheckpoint(function(err, cp) {
+        if(err) alert('Replication Error:', err.message);
         setTimeout(function() {
           LocalColor.replicate(cp, Color, {}, function(err, conflicts) {
             conflicts.forEach(function(conflict) {
@@ -86,19 +99,18 @@ function ReplicationCtlr($scope) {
     if(network.available) {
       Color.currentCheckpoint(function(err, cp) {
         Color.replicate(cp, LocalColor, {}, function(err, conflicts) {
-
+          if(err) alert('Replication from Remote Error:', err.message);
         });
       });
     }
   }
+
+  // get initial data
+  replicateFromRemote();
 }
 
 function NetworkCtrl($scope) {
   $scope.network = network;
-}
-
-function ConflictCtrl($scope) {
-  $scope.conflicts = localConflicts;
 }
 
 function ListCtrl($scope) {
@@ -119,35 +131,3 @@ function ListCtrl($scope) {
 
   update();
 }
-
-function ChangeCtrl($scope) {
-  var Change = LocalColor.getChangeModel();
-
-  Change.on('changed', update);
-  Change.on('deleted', update);
-
-  function update() {
-    Change.find({order: 'checkpoint ASC'}, function(err, changes) {
-      $scope.changes = changes;
-      $scope.$apply();
-    });
-  }
-
-  update();
-}
-
-function RemoteChangeCtrl($scope) {
-  var Change = Color.getChangeModel();
-
-  setInterval(update, 5000);
-
-  function update() {
-    Change.find({order: 'checkpoint ASC'}, function(err, changes) {
-      $scope.changes = changes;
-      $scope.$apply();
-    });
-  }
-
-  update();
-}
-
