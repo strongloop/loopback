@@ -1,9 +1,10 @@
 Copyright (c) 2013-2014 StrongLoop, Inc.
 
-The project uses a "dual licensing" model. Under this model, users may choose to
-use the project under the MIT License, or under the StrongLoop License.
+loopback uses a 'dual license' model. Users may use loopback under the terms of 
+the MIT license, or under the StrongLoop License. The text of both is included 
+below.
 
-The MIT License (MIT)
+MIT license
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-The StrongLoop License
+StrongLoop License
 
 STRONGLOOP SUBSCRIPTION AGREEMENT
 PLEASE READ THIS AGREEMENT CAREFULLY BEFORE YOU AGREE TO THESE TERMS.  IF YOU
@@ -39,7 +40,7 @@ is the date Customer agrees to these terms or installs or uses the Software (as
 defined below).  This Agreement applies to Customer's use of the Software but it
 shall be superseded by any signed agreement between you and StrongLoop
 concerning the Software.
-1. Subscriptions and Licenses. 
+1. Subscriptions and Licenses.
 1.1 Subscriptions.  StrongLoop offers five different subscription levels to its
 customers, each as more particularly described on StrongLoop's website located
 at www.strongloop.com (the "StrongLoop Site"):  (1) Free; (2) Developer; (3)
@@ -196,7 +197,7 @@ SOFTWARE AND DOCUMENTATION ARE NOT DESIGNED, MANUFACTURED OR INTENDED FOR USE IN
 THE PLANNING, CONSTRUCTION, MAINTENANCE, CONTROL, OR DIRECT OPERATION OF NUCLEAR
 FACILITIES, AIRCRAFT NAVIGATION, CONTROL OR COMMUNICATION SYSTEMS, WEAPONS
 SYSTEMS, OR DIRECT LIFE SUPPORT SYSTEMS.
-6. Limitation of Liability.  
+6. Limitation of Liability.
       6.1 Exclusion of Liability.  IN NO EVENT WILL STRONGLOOP OR ITS LICENSORS
       BE LIABLE UNDER THIS AGREEMENT FOR ANY INDIRECT, RELIANCE, PUNITIVE,
       CONSEQUENTIAL, SPECIAL, EXEMPLARY, OR INCIDENTAL DAMAGES OF ANY KIND AND
