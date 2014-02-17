@@ -38,7 +38,6 @@ describe('app', function() {
       });
 
       it('uses plural name as shared class name', function() {
-        loopback.compat.usePluralNamesForRemoting = true;
         var Color = db.createModel('color', {name: String});
         app.model(Color);
         expect(app.remotes().exports).to.eql({ colors: Color });
@@ -49,7 +48,6 @@ describe('app', function() {
         app.model(Color);
         expect(app.remoteObjects()).to.eql({ colors: Color });
       });
-;
     });
   });
 
