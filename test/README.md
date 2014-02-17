@@ -2,12 +2,9 @@
    - [app](#app)
      - [app.model(Model)](#app-appmodelmodel)
      - [app.models()](#app-appmodels)
-<<<<<<< HEAD
-=======
    - [loopback](#loopback)
      - [loopback.createDataSource(options)](#loopback-loopbackcreatedatasourceoptions)
      - [loopback.remoteMethod(Model, fn, [options]);](#loopback-loopbackremotemethodmodel-fn-options)
->>>>>>> master
    - [DataSource](#datasource)
      - [dataSource.createModel(name, properties, settings)](#datasource-datasourcecreatemodelname-properties-settings)
      - [dataSource.operations()](#datasource-datasourceoperations)
@@ -56,7 +53,7 @@
        - [user.verify(options, fn)](#user-verification-userverifyoptions-fn)
        - [User.confirm(options, fn)](#user-verification-userconfirmoptions-fn)
 <a name=""></a>
- 
+
 <a name="app"></a>
 # app
 <a name="app-appmodelmodel"></a>
@@ -82,8 +79,6 @@ assert.equal(models.length, 1);
 assert.equal(models[0].modelName, 'color');
 ```
 
-<<<<<<< HEAD
-=======
 <a name="loopback"></a>
 # loopback
 <a name="loopback-loopbackcreatedatasourceoptions"></a>
@@ -123,7 +118,6 @@ assert.equal(Product.stats.http.verb, 'get');
 assert.equal(Product.stats.shared, true);
 ```
 
->>>>>>> master
 <a name="datasource"></a>
 # DataSource
 <a name="datasource-datasourcecreatemodelname-properties-settings"></a>
@@ -163,7 +157,7 @@ List the enabled and disabled operations.
 // assert the defaults
 // - true: the method should be remote enabled
 // - false: the method should not be remote enabled
-// - 
+// -
 existsAndShared('_forDB', false);
 existsAndShared('create', true);
 existsAndShared('updateOrCreate', false);
@@ -437,7 +431,7 @@ joe.save(function () {
   joe2.save(function (err) {
     assert(err, 'should get a validation error');
     assert(joe2.errors.email, 'model should have email error');
-    
+
     done();
   });
 });
@@ -514,7 +508,7 @@ Save specified attributes to the attached data source.
 User.create({first: 'joe', age: 100}, function (err, user) {
   assert(!err);
   assert.equal(user.first, 'joe');
-  
+
   user.updateAttributes({
     first: 'updatedFirst',
     last: 'updatedLast'
@@ -536,7 +530,7 @@ Update when record with id=data.id found, insert otherwise.
 User.upsert({first: 'joe', id: 7}, function (err, user) {
   assert(!err);
   assert.equal(user.first, 'joe');
-  
+
   User.upsert({first: 'bob', id: 7}, function (err, updatedUser) {
     assert(!err);
     assert.equal(updatedUser.first, 'bob');
@@ -717,7 +711,7 @@ User.beforeRemote('create', function(ctx, user, next) {
   assert(ctx.res.end);
   next();
 });
-        
+
 // invoke save
 request(app)
   .post('/users')
@@ -748,7 +742,7 @@ User.beforeRemote('create', function(ctx, user, next) {
   assert(ctx.res.end);
   next();
 });
-        
+
 // invoke save
 request(app)
   .post('/users')
@@ -812,7 +806,7 @@ Object.keys(MyModel.properties).forEach(function (key) {
   assert(p);
   assert(o);
   assert(typeof p.type === 'function');
-  
+
   if(typeof o === 'function') {
     // the normalized property
     // should match the given property
@@ -931,11 +925,11 @@ request(app)
   .end(function(err, res){
     if(err) return done(err);
     var session = res.body;
-    
+
     assert(session.uid);
     assert(session.id);
     assert.equal((new Buffer(session.id, 'base64')).length, 64);
-    
+
     done();
   });
 ```
@@ -970,17 +964,17 @@ function login(fn) {
     .end(function(err, res){
       if(err) return done(err);
       var session = res.body;
-    
+
       assert(session.uid);
       assert(session.id);
-      
+
       fn(null, session.id);
     });
 }
 
 function logout(err, sid) {
   request(app)
-    .post('/users/logout') 
+    .post('/users/logout')
     .expect(200)
     .send({sid: sid})
     .end(verify(sid, done));
@@ -1064,7 +1058,7 @@ Verify a user's email address.
 ```js
 User.afterRemote('create', function(ctx, user, next) {
   assert(user, 'afterRemote should include result');
-  
+
   var options = {
     type: 'email',
     to: user.email,
@@ -1073,19 +1067,19 @@ User.afterRemote('create', function(ctx, user, next) {
     protocol: ctx.req.protocol,
     host: ctx.req.get('host')
   };
-      
+
   user.verify(options, function (err, result) {
     assert(result.email);
     assert(result.email.message);
     assert(result.token);
-    
-    
+
+
     var lines = result.email.message.split('\n');
     assert(lines[4].indexOf('To: bar@bat.com') === 0);
     done();
   });
 });
-    
+
 request(app)
   .post('/users')
   .expect('Content-Type', /json/)
@@ -1103,7 +1097,7 @@ Confirm a user verification.
 ```js
 User.afterRemote('create', function(ctx, user, next) {
   assert(user, 'afterRemote should include result');
-  
+
   var options = {
     type: 'email',
     to: user.email,
@@ -1112,10 +1106,10 @@ User.afterRemote('create', function(ctx, user, next) {
     protocol: ctx.req.protocol,
     host: ctx.req.get('host')
   };
-      
+
   user.verify(options, function (err, result) {
     if(err) return done(err);
-    
+
     request(app)
       .get('/users/confirm?uid=' + result.uid + '&token=' + encodeURIComponent(result.token) + '&redirect=' + encodeURIComponent(options.redirect))
       .expect(302)
@@ -1126,7 +1120,7 @@ User.afterRemote('create', function(ctx, user, next) {
       });
   });
 });
-    
+
 request(app)
   .post('/users')
   .expect('Content-Type', /json/)
