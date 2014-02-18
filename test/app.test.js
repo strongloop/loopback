@@ -85,6 +85,14 @@ describe('app', function() {
     });
   });
 
+  describe('app.clearHandlerCache(type)', function() {
+    it('clears handler of given type from cache', function() {
+      var restHandler = app.handler('rest');
+      app.clearHandlerCache('rest');
+      expect(restHandler).to.not.equal(app.handler('rest'));
+    });
+  });
+
   describe('app.boot([options])', function () {
     beforeEach(function () {
       app.boot({
