@@ -29,6 +29,14 @@ describe('app', function() {
       expect(app.remotes().exports).to.eql({ color: Color });
     });
 
+    it('clears handler cache', function() {
+      var originalRestHandler = app.handler('rest');
+      var Color = db.createModel('color', {name: String});
+      app.model(Color);
+      var newRestHandler = app.handler('rest');
+      expect(originalRestHandler).to.not.equal(newRestHandler);
+    });
+
     describe('in compat mode', function() {
       before(function() {
         loopback.compat.usePluralNamesForRemoting = true;
@@ -89,7 +97,7 @@ describe('app', function() {
     beforeEach(function () {
       app.boot({
         app: {
-          port: 3000, 
+          port: 3000,
           host: '127.0.0.1',
           restApiRoot: '/rest-api',
           foo: {bar: 'bat'},
@@ -106,7 +114,7 @@ describe('app', function() {
         dataSources: {
           'the-db': {
             connector: 'memory'
-          } 
+          }
         }
       });
     });
@@ -153,14 +161,14 @@ describe('app', function() {
           var app = loopback();
           app.boot({
             app: {
-              port: undefined, 
+              port: undefined,
               host: undefined
             }
           });
           return app;
         }
       });
-      
+
       it('should be honored', function() {
         var assertHonored = function (portKey, hostKey) {
           process.env[hostKey] = randomPort();

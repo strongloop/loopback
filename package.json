@@ -64,5 +64,8 @@
     "passport": false,
     "passport-local": false
   },
-  "license": "MIT"
+  "license": {
+    "name": "Dual MIT/StrongLoop",
+    "url": "https://github.com/strongloop/loopback/blob/master/LICENSE"
+  }
 }

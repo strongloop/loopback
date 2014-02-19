@@ -16,6 +16,8 @@ describe('role model', function () {
 
   beforeEach(function() {
     ds = loopback.createDataSource({connector: 'memory'});
+    // Re-attach the models so that they can have isolated store to avoid
+    // pollutions from other tests
     User.attachTo(ds);
     Role.attachTo(ds);
     RoleMapping.attachTo(ds);
