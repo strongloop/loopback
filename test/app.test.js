@@ -29,12 +29,14 @@ describe('app', function() {
       expect(app.remotes().exports).to.eql({ color: Color });
     });
 
-    it('clears handler cache', function() {
-      var originalRestHandler = app.handler('rest');
-      var Color = db.createModel('color', {name: String});
-      app.model(Color);
-      var newRestHandler = app.handler('rest');
-      expect(originalRestHandler).to.not.equal(newRestHandler);
+    it('updates REST API when a new model is added', function(done) {
+      app.use(loopback.rest());
+      request(app).get('/colors').expect(404, function(err, res) {
+        if (err) return done(err);
+        var Color = db.createModel('color', {name: String});
+        app.model(Color);
+        request(app).get('/colors').expect(200, done);
+      });
     });
 
     describe('in compat mode', function() {
