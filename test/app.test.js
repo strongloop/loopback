@@ -428,7 +428,8 @@ describe('app', function() {
 
           assert.equal(typeof res.body, 'object');
           assert(res.body.started);
-          assert(res.body.uptime);
+          // The number can be 0
+          assert(res.body.uptime !== undefined);
 
           var elapsed = Date.now() - Number(new Date(res.body.started));
 
