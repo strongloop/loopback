@@ -100,6 +100,7 @@ describe('app', function() {
           port: 3000,
           host: '127.0.0.1',
           restApiRoot: '/rest-api',
+          loggerFormat: 'short',
           foo: {bar: 'bat'},
           baz: true
         },
@@ -129,6 +130,10 @@ describe('app', function() {
 
     it('should have restApiRoot setting', function() {
       assert.equal(this.app.get('restApiRoot'), '/rest-api');
+    });
+
+    it('should have loggerFormat setting', function() {
+      assert.equal(this.app.get('loggerFormat'), 'short');
     });
 
     it('should have other settings', function () {
@@ -235,6 +240,26 @@ describe('app', function() {
       assert(app.dataSources.theDb);
       assertValidDataSource(app.dataSources.theDb);
       assert(app.dataSources.TheDb);
+    });
+
+    describe('by default', function() {
+      beforeEach(function() {
+        this.app = loopback();
+      });
+
+      it('sets loggerFormat to dev when "env" is "dev"', function() {
+        this.app.set('env', 'dev');
+        this.app.boot();
+
+        assert.equal(this.app.get('loggerFormat'), 'dev');
+      });
+
+      it('sets loggerFormat to default when "env" is not "dev"', function() {
+        this.app.set('env', 'production');
+        this.app.boot();
+
+        assert.equal(this.app.get('loggerFormat'), 'default');
+      });
     });
   });
 
