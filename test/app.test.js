@@ -197,6 +197,12 @@ describe('app', function() {
         var app = this.boot();
         assert.equal(app.get('host'), process.env.npm_config_host);
 
+        delete process.env.npm_config_host;
+        delete process.env.OPENSHIFT_SLS_IP;
+        delete process.env.OPENSHIFT_NODEJS_IP;
+        delete process.env.HOST;
+        delete process.env.npm_package_config_host;
+
         process.env.npm_config_port = randomPort();
         process.env.OPENSHIFT_SLS_PORT = randomPort();
         process.env.OPENSHIFT_NODEJS_PORT = randomPort();
@@ -206,6 +212,12 @@ describe('app', function() {
         var app = this.boot();
         assert.equal(app.get('host'), process.env.npm_config_host);
         assert.equal(app.get('port'), process.env.npm_config_port);
+
+        delete process.env.npm_config_port;
+        delete process.env.OPENSHIFT_SLS_PORT;
+        delete process.env.OPENSHIFT_NODEJS_PORT;
+        delete process.env.PORT;
+        delete process.env.npm_package_config_port;
       });
 
       function randomHost() {
@@ -215,6 +227,18 @@ describe('app', function() {
       function randomPort() {
         return Math.floor(Math.random() * 10000);
       }
+
+      it('should honor 0 for free port', function () {
+        var app = loopback();
+        app.boot({app: {port: 0}});
+        assert.equal(app.get('port'), 0);
+      });
+
+      it('should default to port 3000', function () {
+        var app = loopback();
+        app.boot({app: {port: undefined}});
+        assert.equal(app.get('port'), 3000);
+      });
     });
 
     it('Instantiate models', function () {
