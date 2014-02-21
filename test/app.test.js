@@ -29,6 +29,16 @@ describe('app', function() {
       expect(app.remotes().exports).to.eql({ color: Color });
     });
 
+    it('updates REST API when a new model is added', function(done) {
+      app.use(loopback.rest());
+      request(app).get('/colors').expect(404, function(err, res) {
+        if (err) return done(err);
+        var Color = db.createModel('color', {name: String});
+        app.model(Color);
+        request(app).get('/colors').expect(200, done);
+      });
+    });
+
     describe('in compat mode', function() {
       before(function() {
         loopback.compat.usePluralNamesForRemoting = true;
@@ -38,7 +48,6 @@ describe('app', function() {
       });
 
       it('uses plural name as shared class name', function() {
-        loopback.compat.usePluralNamesForRemoting = true;
         var Color = db.createModel('color', {name: String});
         app.model(Color);
         expect(app.remotes().exports).to.eql({ colors: Color });
@@ -49,7 +58,6 @@ describe('app', function() {
         app.model(Color);
         expect(app.remoteObjects()).to.eql({ colors: Color });
       });
-;
     });
   });
 
@@ -89,7 +97,7 @@ describe('app', function() {
     beforeEach(function () {
       app.boot({
         app: {
-          port: 3000, 
+          port: 3000,
           host: '127.0.0.1',
           restApiRoot: '/rest-api',
           foo: {bar: 'bat'},
@@ -106,7 +114,7 @@ describe('app', function() {
         dataSources: {
           'the-db': {
             connector: 'memory'
-          } 
+          }
         }
       });
     });
@@ -153,14 +161,14 @@ describe('app', function() {
           var app = loopback();
           app.boot({
             app: {
-              port: undefined, 
+              port: undefined,
               host: undefined
             }
           });
           return app;
         }
       });
-      
+
       it('should be honored', function() {
         var assertHonored = function (portKey, hostKey) {
           process.env[hostKey] = randomPort();
@@ -189,6 +197,12 @@ describe('app', function() {
         var app = this.boot();
         assert.equal(app.get('host'), process.env.npm_config_host);
 
+        delete process.env.npm_config_host;
+        delete process.env.OPENSHIFT_SLS_IP;
+        delete process.env.OPENSHIFT_NODEJS_IP;
+        delete process.env.HOST;
+        delete process.env.npm_package_config_host;
+
         process.env.npm_config_port = randomPort();
         process.env.OPENSHIFT_SLS_PORT = randomPort();
         process.env.OPENSHIFT_NODEJS_PORT = randomPort();
@@ -198,6 +212,12 @@ describe('app', function() {
         var app = this.boot();
         assert.equal(app.get('host'), process.env.npm_config_host);
         assert.equal(app.get('port'), process.env.npm_config_port);
+
+        delete process.env.npm_config_port;
+        delete process.env.OPENSHIFT_SLS_PORT;
+        delete process.env.OPENSHIFT_NODEJS_PORT;
+        delete process.env.PORT;
+        delete process.env.npm_package_config_port;
       });
 
       function randomHost() {
@@ -207,6 +227,18 @@ describe('app', function() {
       function randomPort() {
         return Math.floor(Math.random() * 10000);
       }
+
+      it('should honor 0 for free port', function () {
+        var app = loopback();
+        app.boot({app: {port: 0}});
+        assert.equal(app.get('port'), 0);
+      });
+
+      it('should default to port 3000', function () {
+        var app = loopback();
+        app.boot({app: {port: undefined}});
+        assert.equal(app.get('port'), 3000);
+      });
     });
 
     it('Instantiate models', function () {
@@ -420,7 +452,8 @@ describe('app', function() {
 
           assert.equal(typeof res.body, 'object');
           assert(res.body.started);
-          assert(res.body.uptime);
+          // The number can be 0
+          assert(res.body.uptime !== undefined);
 
           var elapsed = Date.now() - Number(new Date(res.body.started));
 
