@@ -20,6 +20,7 @@ describe('Application', function () {
       assert(app.masterKey);
       assert(app.created);
       assert(app.modified);
+      assert.equal(typeof app.id, 'string');
       done(err, result);
     });
   });
