@@ -9,6 +9,9 @@ var userMemory = loopback.createDataSource({
 
 describe('User', function(){
   var validCredentials = {email: 'foo@bar.com', password: 'bar'};
+  var invalidCredentials = {email: 'foo1@bar.com', password: 'bar1'};
+  var incompleteCredentials = {password: 'bar1'};
+
   beforeEach(function() {
     User = loopback.User.extend('user');
     User.email = loopback.Email.extend('email');
@@ -131,6 +134,40 @@ describe('User', function(){
           assert.equal(accessToken.id.length, 64);
           assert(accessToken.user === undefined);
           
+          done();
+        });
+    });
+
+    it('Login a user over REST by providing invalid credentials', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .send(invalidCredentials)
+        .end(function(err, res){
+          done();
+        });
+    });
+
+    it('Login a user over REST by providing incomplete credentials', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .send(incompleteCredentials)
+        .end(function(err, res){
+          done();
+        });
+    });
+
+    it('Login a user over REST with the wrong Content-Type', function(done) {
+      request(app)
+        .post('/users/login')
+        .set('Content-Type', null)
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .send(validCredentials)
+        .end(function(err, res){
           done();
         });
     });
