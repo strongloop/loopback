@@ -23,10 +23,6 @@
           "type": "hasMany",
           "foreignKey": "userId"
         },
-        "account": {
-          "model": "account",
-          "type": "belongsTo"
-        },
         "transactions": {
           "model": "transaction",
           "type": "hasMany"
@@ -103,6 +99,11 @@
         "transactions": {
           "model": "transaction",
           "type": "hasMany"
+        },
+        "user": {
+          "model": "user",
+          "type": "belongsTo",
+          "foreignKey": "userId"
         }
       },
       "acls": [
