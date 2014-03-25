@@ -5,7 +5,7 @@ var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
 var app = require(path.join(ACCESS_CONTROL_APP, 'app.js'));
 var assert = require('assert');
 var USER = {email: 'test@test.test', password: 'test'};
-var CURRENT_USER = {email: 'current@test.test', password: 'test'};
+var CURRENT_USER = {email: 'foo@bar.com', password: 'bar', emailVerified: true};
 
 describe('access control - integration', function () {
 
@@ -165,7 +165,8 @@ describe('access control - integration', function () {
         // Create an account under the given user
         app.models.account.create({
           userId: self.user.id,
-          balance: 100
+          balance: 100,
+          emailVerified: true
         }, function(err, act) {
           self.url = '/api/accounts/' + act.id;
           done();

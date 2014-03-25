@@ -8,7 +8,8 @@ var userMemory = loopback.createDataSource({
 });
 
 describe('User', function(){
-  var validCredentials = {email: 'foo@bar.com', password: 'bar'};
+
+  var validCredsWithEmailVerified = {email: 'foo11@bar.com', password: 'bar', emailVerified: true};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'bar1'};
   var incompleteCredentials = {password: 'bar1'};
 
@@ -30,7 +31,7 @@ describe('User', function(){
     app.use(loopback.rest());
     app.model(User);
     
-    User.create(validCredentials, done);
+    User.create(validCredsWithEmailVerified, done);
   });
   
   afterEach(function (done) {
@@ -41,7 +42,7 @@ describe('User', function(){
   
   describe('User.create', function(){
     it('Create a new user', function(done) {
-      User.create({email: 'f@b.com', password: 'bar'}, function (err, user) {
+      User.create({email: 'f@b.com', password: 'bar', emailVerified: true}, function (err, user) {
         assert(!err);
         assert(user.id);
         assert(user.email);
@@ -110,11 +111,11 @@ describe('User', function(){
   
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
-      User.login(validCredentials, function (err, accessToken) {
+      User.login(validCredsWithEmailVerified, function (err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
-        
+
         done();
       });
     });
@@ -124,7 +125,7 @@ describe('User', function(){
         .post('/users/login')
         .expect('Content-Type', /json/)
         .expect(200)
-        .send(validCredentials)
+        .send(validCredsWithEmailVerified)
         .end(function(err, res){
           if(err) return done(err);
           var accessToken = res.body;
@@ -166,7 +167,7 @@ describe('User', function(){
         .set('Content-Type', null)
         .expect('Content-Type', /json/)
         .expect(400)
-        .send(validCredentials)
+        .send(validCredsWithEmailVerified)
         .end(function(err, res){
           done();
         });
@@ -175,7 +176,7 @@ describe('User', function(){
     it('Returns current user when `include` is `USER`', function(done) {
       request(app)
         .post('/users/login?include=USER')
-        .send(validCredentials)
+        .send(validCredsWithEmailVerified)
         .expect(200)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
@@ -183,14 +184,14 @@ describe('User', function(){
           var token = res.body;
           expect(token.user, 'body.user').to.not.equal(undefined);
           expect(token.user, 'body.user')
-            .to.have.property('email', validCredentials.email);
+            .to.have.property('email', validCredsWithEmailVerified.email);
           done();
         });
     });
 
     it('Login should only allow correct credentials', function(done) {
-      User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
-        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) { 
+      User.create(validCredsWithEmailVerified, function(user, err) {
+        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) {
           assert(err);
           assert(!accessToken);
           done();
@@ -204,7 +205,7 @@ describe('User', function(){
       login(logout);
       
       function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+        User.login({email: 'foo11@bar.com', password: 'bar'}, fn);
       }
       
       function logout(err, accessToken) {
@@ -219,7 +220,7 @@ describe('User', function(){
           .post('/users/login')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'foo@bar.com', password: 'bar'})
+          .send({email: 'foo11@bar.com', password: 'bar'})
           .end(function(err, res){
             if(err) return done(err);
             var accessToken = res.body;
@@ -382,7 +383,7 @@ describe('User', function(){
     describe('User.resetPassword(options, cb)', function () {
       it('Creates a temp accessToken to allow a user to change password', function (done) {
         var calledBack = false;
-        var email = 'foo@bar.com';
+        var email = 'foo11@bar.com';
 
         User.resetPassword({
           email: email
