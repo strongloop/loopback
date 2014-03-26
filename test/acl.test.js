@@ -297,6 +297,28 @@ describe('security ACLs', function () {
     });
   });
 
+  it('should report helpful error when ACL is not attached', function(done) {
+    // HACK(bajtos) We need an ACL model that was not attached yet
+    // Since other tests are already attaching ACL to a datasource,
+    // we have to reload the module.
+    delete require('module')._cache[require.resolve('../lib/models/acl.js')];
+    acl = require('../lib/models/acl');
+    loopback.ACL = ACL = acl.ACL;
+    loopback.Scope = Scope = acl.Scope;
+
+    // Verify the assumption that ACL.find is not defined yet
+    expect(ACL.find).to.equal(undefined);
+
+    ACL.checkAccess({
+      model: 'User',
+      property: ACL.ALL,
+      accessType: ACL.ALL
+    }, function(err) {
+      if (!err) done(new Error('ACL.checkAccess was supposed to throw'));
+      expect(err.message).to.contain('app.autoAttach');
+      done();
+    });
+  });
 });
 
 
