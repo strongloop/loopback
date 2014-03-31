@@ -55,6 +55,7 @@ describe('access control - integration', function () {
       return '/api/accessTokens/' + this.randomToken.id;
     }
   });
+  */
 
   describe('/users', function () {
 
@@ -94,6 +95,10 @@ describe('access control - integration', function () {
       });
       lt.describe.whenCalledRemotely('GET', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
+        it('should not include a password', function() {
+          var user = this.res.body;
+          assert.equal(user.password, undefined);
+        });
       });
       lt.describe.whenCalledRemotely('PUT', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
@@ -136,7 +141,6 @@ describe('access control - integration', function () {
       return '/api/banks/' + this.bank.id;
     }
   });
-  */
 
   describe('/accounts', function () {
     lt.beforeEach.givenModel('account');
