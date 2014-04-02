@@ -1,5 +1,7 @@
 # LoopBack
 
+For a quick introduction and overview, see http://loopback.io/.
+
 ## Documentation
 
 [See the full documentation](http://docs.strongloop.com/display/DOC/LoopBack).
