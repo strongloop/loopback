@@ -4,6 +4,7 @@ var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'app.js'));
 var assert = require('assert');
+var expect = require('chai').expect;
 
 describe('relations - integration', function () {
 
@@ -95,4 +96,113 @@ describe('relations - integration', function () {
     });
   });
 
+  describe('hasAndBelongsToMany', function() {
+    beforeEach(function defineProductAndCategoryModels() {
+      var product = app.model(
+        'product',
+        { properties: { id: 'string', name: 'string' }, dataSource: 'db' }
+
+      );
+      var category = app.model(
+        'category',
+        { properties: { id: 'string', name: 'string' }, dataSource: 'db' }
+      );
+      product.hasAndBelongsToMany(category);
+      category.hasAndBelongsToMany(product);
+    });
+
+    lt.beforeEach.givenModel('category');
+
+    beforeEach(function createProductsInCategory(done) {
+      var test = this;
+      this.category.products.create({
+        name: 'a-product'
+      }, function(err, product) {
+        if (err) return done(err);
+        test.product = product;
+        done();
+      });
+    });
+
+    beforeEach(function createAnotherCategoryAndProduct(done) {
+      app.models.category.create({ name: 'another-category' },
+        function(err, cat) {
+          if (err) return done(err);
+          cat.products.create({ name: 'another-product' }, done);
+        });
+    });
+
+    afterEach(function(done) {
+      this.app.models.product.destroyAll(done);
+    });
+
+    it.skip('allows to find related objects via where filter', function(done) {
+      //TODO https://github.com/strongloop/loopback-datasource-juggler/issues/94
+      var expectedProduct = this.product;
+      // Note: the URL format is not final
+      this.get('/api/products?filter[where][categoryId]=' + this.category.id)
+        .expect(200, function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql([
+            {
+              id: expectedProduct.id,
+              name: expectedProduct.name
+            }
+          ]);
+          done();
+        });
+    });
+
+    it('allows to find related object via URL scope', function(done) {
+      var expectedProduct = this.product;
+      this.get('/api/categories/' + this.category.id + '/products')
+        .expect(200, function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql([
+            {
+              id: expectedProduct.id,
+              name: expectedProduct.name
+            }
+          ]);
+          done();
+        });
+    });
+
+    it('includes requested related models in `find`', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/categories/findOne?filter[where][id]=' +
+        this.category.id + '&filter[include]=products';
+
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.have.property('products');
+          expect(res.body.products).to.eql([
+            {
+              id: expectedProduct.id,
+              name: expectedProduct.name
+            }
+          ]);
+          done();
+        });
+    });
+
+    it.skip('includes requested related models in `findById`', function(done) {
+      //TODO https://github.com/strongloop/loopback-datasource-juggler/issues/93
+      var expectedProduct = this.product;
+      // Note: the URL format is not final
+      var url = '/api/categories/' + this.category.id + '?include=products';
+
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.have.property('products');
+          expect(res.body.products).to.eql([
+            {
+              id: expectedProduct.id,
+              name: expectedProduct.name
+            }
+          ]);
+          done();
+        });
+    });
+  });
 });

@@ -66,5 +66,4 @@ describe('remoting - integration', function () {
     });
   });
 
-})
-;
+});
