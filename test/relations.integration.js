@@ -107,14 +107,10 @@ describe('relations - integration', function () {
         done();
       });
     });
-    lt.describe.whenCalledRemotely('GET', '/api/widgets/:id', function () {
-      it('should succeed with statusCode 200', function () {
-        assert.equal(this.res.statusCode, 200);
-      });
-    });
     lt.describe.whenCalledRemotely('GET', '/api/widgets/:id/store', function () {
       it('should succeed with statusCode 200', function () {
         assert.equal(this.res.statusCode, 200);
+        assert.equal(this.res.body.id, this.store.id);
       });
     });
   });
