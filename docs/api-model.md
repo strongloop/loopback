@@ -49,7 +49,7 @@ var oracle = loopback.createDataSource({
 User.attachTo(oracle);
 ```
     
-**Note:** until a model is attached to a data source it will **not** have any **attached methods**.
+NOTE: until a model is attached to a data source it will not have any attached methods.
 
 ### Properties
 
