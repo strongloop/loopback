@@ -96,6 +96,29 @@ describe('relations - integration', function () {
     });
   });
 
+  describe('/widgets/:id/store', function () {
+    beforeEach(function (done) {
+      var self = this;
+      this.store.widgets.create({
+        name: this.widgetName
+      }, function(err, widget) {
+        self.widget = widget;
+        self.url = '/api/widgets/' + self.widget.id + '/store';
+        done();
+      });
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/widgets/:id', function () {
+      it('should succeed with statusCode 200', function () {
+        assert.equal(this.res.statusCode, 200);
+      });
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/widgets/:id/store', function () {
+      it('should succeed with statusCode 200', function () {
+        assert.equal(this.res.statusCode, 200);
+      });
+    });
+  });
+
   describe('hasAndBelongsToMany', function() {
     beforeEach(function defineProductAndCategoryModels() {
       var product = app.model(
