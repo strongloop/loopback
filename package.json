@@ -62,7 +62,8 @@
     "express": "./lib/browser-express.js",
     "connect": false,
     "passport": false,
-    "passport-local": false
+    "passport-local": false,
+    "nodemailer": false
   },
   "license": {
     "name": "Dual MIT/StrongLoop",
