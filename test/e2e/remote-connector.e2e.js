@@ -25,4 +25,15 @@ describe('RemoteConnector', function() {
       done();
     });
   });
+
+  it('should be able to call save', function (done) {
+    var m = new TestModel({
+      foo: 'bar'
+    });
+    m.save(function(err, data) {
+      if(err) return done(err);
+      assert(m.id);
+      done();
+    });
+  });
 });

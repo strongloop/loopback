@@ -30,4 +30,14 @@ describe('RemoteConnector', function() {
       done();
     });
   });
+
+  it('should alow instance methods to be called remotely', function (done) {
+    var data = {foo: 'bar'};
+    var m = new this.LocalModel(data);
+    m.save(function(err, result) {
+      if(err) return done(err);
+      expect(result).to.deep.equal({id: 2, foo: 'bar'});
+      done();
+    });
+  });
 });
