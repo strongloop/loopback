@@ -30,7 +30,15 @@
   "widget": {
     "properties": {},
     "public": true,
-    "dataSource": "db"
+    "dataSource": "db",
+    "options": {
+      "relations": {
+        "store": {
+          "model": "store",
+          "type": "belongsTo"
+        }
+      }
+    }
   },
   "store": {
     "properties": {},
