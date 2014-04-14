@@ -9,7 +9,7 @@
     "Platform",
     "mBaaS"
   ],
-  "version": "1.7.5",
+  "version": "1.7.6",
   "scripts": {
     "test": "mocha -R spec"
   },
