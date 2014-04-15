@@ -70,6 +70,40 @@ describe('security scopes', function () {
 });
 
 describe('security ACLs', function () {
+  it('should order ACL entries based on the matching score', function() {
+    var acls = [
+      {
+        "model": "account",
+        "accessType": "*",
+        "permission": "DENY",
+        "principalType": "ROLE",
+        "principalId": "$everyone"
+      },
+      {
+        "model": "account",
+        "accessType": "*",
+        "permission": "ALLOW",
+        "principalType": "ROLE",
+        "principalId": "$owner"
+      },
+      {
+        "model": "account",
+        "accessType": "READ",
+        "permission": "ALLOW",
+        "principalType": "ROLE",
+        "principalId": "$everyone"
+      }];
+    var req = {
+      model: 'account',
+      property: 'find',
+      accessType: 'WRITE'
+    };
+    var perm = ACL.resolvePermission(acls, req);
+    assert.deepEqual(perm, { model: 'account',
+      property: 'find',
+      accessType: 'WRITE',
+      permission: 'ALLOW' });
+  });
 
   it("should allow access to models for the given principal by wildcard", function () {
     ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,

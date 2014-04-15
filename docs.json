@@ -12,6 +12,7 @@
     "lib/models/application.js",
     "lib/models/email.js",
     "lib/models/model.js",
+    "lib/models/data-model.js",
     "lib/models/role.js",
     "lib/models/user.js",
     "lib/models/change.js",

@@ -9,40 +9,65 @@
     "Platform",
     "mBaaS"
   ],
-  "version": "1.5.3",
+  "version": "1.7.7",
   "scripts": {
     "test": "mocha -R spec"
   },
   "dependencies": {
-    "debug": "~0.7.2",
-    "express": "~3.4.0",
-    "strong-remoting": "~1.1.0",
-    "inflection": "~1.2.5",
-    "passport": "~0.1.17",
+    "debug": "~0.7.4",
+    "express": "~3.4.8",
+    "strong-remoting": "~1.3.1",
+    "inflection": "~1.3.5",
+    "passport": "~0.2.0",
     "passport-local": "~0.1.6",
-    "nodemailer": "~0.5.7",
-    "ejs": "~0.8.4",
-    "bcryptjs": "~0.7.10",
+    "nodemailer": "~0.6.0",
+    "ejs": "~0.8.5",
+    "bcryptjs": "~0.7.12",
     "underscore.string": "~2.3.3",
-    "underscore": "~1.5.2",
+    "underscore": "~1.6.0",
     "uid2": "0.0.3",
-    "async": "~0.2.9",
+    "async": "~0.2.10",
     "canonical-json": "0.0.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~1.2.11"
+    "loopback-datasource-juggler": "~1.3.11"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": "~1.2.11",
-    "mocha": "~1.14.0",
+    "loopback-datasource-juggler": "~1.3.11",
+    "mocha": "~1.17.1",
     "strong-task-emitter": "0.0.x",
-    "supertest": "~0.8.1",
-    "chai": "~1.8.1",
-    "loopback-testing": "~0.1.0"
+    "supertest": "~0.9.0",
+    "chai": "~1.9.0",
+    "loopback-testing": "~0.1.2",
+    "browserify": "~3.41.0",
+    "grunt": "~0.4.2",
+    "grunt-browserify": "~1.3.1",
+    "grunt-contrib-uglify": "~0.3.2",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.2",
+    "karma-firefox-launcher": "~0.1.3",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.2",
+    "karma": "~0.10.9",
+    "karma-browserify": "~0.2.0",
+    "karma-mocha": "~0.1.1",
+    "grunt-karma": "~0.6.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/strongloop/loopback"
   },
-  "license": "MIT"
+  "browser": {
+    "express": "./lib/browser-express.js",
+    "connect": false,
+    "passport": false,
+    "passport-local": false,
+    "nodemailer": false
+  },
+  "license": {
+    "name": "Dual MIT/StrongLoop",
+    "url": "https://github.com/strongloop/loopback/blob/master/LICENSE"
+  }
 }

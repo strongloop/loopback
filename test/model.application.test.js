@@ -20,6 +20,7 @@ describe('Application', function () {
       assert(app.masterKey);
       assert(app.created);
       assert(app.modified);
+      assert.equal(typeof app.id, 'string');
       done(err, result);
     });
   });
@@ -121,7 +122,8 @@ describe('Application', function () {
   it('Authenticate with application id & clientKey', function (done) {
     Application.authenticate(registeredApp.id, registeredApp.clientKey,
       function (err, result) {
-        assert.equal(result, 'clientKey');
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'clientKey');
         done(err, result);
       });
   });
@@ -129,7 +131,8 @@ describe('Application', function () {
   it('Authenticate with application id & javaScriptKey', function (done) {
     Application.authenticate(registeredApp.id, registeredApp.javaScriptKey,
       function (err, result) {
-        assert.equal(result, 'javaScriptKey');
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'javaScriptKey');
         done(err, result);
       });
   });
@@ -137,7 +140,8 @@ describe('Application', function () {
   it('Authenticate with application id & restApiKey', function (done) {
     Application.authenticate(registeredApp.id, registeredApp.restApiKey,
       function (err, result) {
-        assert.equal(result, 'restApiKey');
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'restApiKey');
         done(err, result);
       });
   });
@@ -145,7 +149,8 @@ describe('Application', function () {
   it('Authenticate with application id & masterKey', function (done) {
     Application.authenticate(registeredApp.id, registeredApp.masterKey,
       function (err, result) {
-        assert.equal(result, 'masterKey');
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'masterKey');
         done(err, result);
       });
   });
@@ -153,7 +158,8 @@ describe('Application', function () {
   it('Authenticate with application id & windowsKey', function (done) {
     Application.authenticate(registeredApp.id, registeredApp.windowsKey,
       function (err, result) {
-        assert.equal(result, 'windowsKey');
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'windowsKey');
         done(err, result);
       });
   });
@@ -170,13 +176,14 @@ describe('Application', function () {
 describe('Application subclass', function () {
   it('should use subclass model name', function (done) {
     var MyApp = Application.extend('MyApp');
-    MyApp.attachTo(loopback.createDataSource({connector: loopback.Memory}));
-    MyApp.register('rfeng', 'MyApp2',
-      {description: 'My second mobile application'}, function (err, result) {
+    var ds = loopback.createDataSource({connector: loopback.Memory});
+    MyApp.attachTo(ds);
+    MyApp.register('rfeng', 'MyApp123',
+      {description: 'My 123 mobile application'}, function (err, result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
-        assert.equal(app.name, 'MyApp2');
-        assert.equal(app.description, 'My second mobile application');
+        assert.equal(app.name, 'MyApp123');
+        assert.equal(app.description, 'My 123 mobile application');
         assert(app.clientKey);
         assert(app.javaScriptKey);
         assert(app.restApiKey);
@@ -184,14 +191,17 @@ describe('Application subclass', function () {
         assert(app.masterKey);
         assert(app.created);
         assert(app.modified);
-        MyApp.findById(app.id, function (err, myApp) {
-          assert(!err);
-          assert(myApp);
-
-          Application.findById(app.id, function (err, myApp) {
+        // Remove all instances from Application model to avoid left-over data
+        Application.destroyAll(function () {
+          MyApp.findById(app.id, function (err, myApp) {
             assert(!err);
-            assert(myApp === null);
-            done(err, myApp);
+            assert(myApp);
+
+            Application.findById(app.id, function (err, myApp) {
+              assert(!err);
+              assert(myApp === null);
+              done(err, myApp);
+            });
           });
         });
       });

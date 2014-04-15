@@ -179,9 +179,9 @@ User.afterRemote('**', function (ctx, user, next) {
 
 Remote hooks are provided with a Context `ctx` object which contains transport specific data (eg. for http: `req` and `res`). The `ctx` object also has a set of consistent apis across transports.
 
-#### ctx.user
+#### ctx.req.accessToken
 
-A `Model` representing the user calling the method remotely. **Note:** this is undefined if the remote method is not invoked by a logged in user.
+The `accessToken` of the user calling the method remotely. **Note:** this is undefined if the remote method is not invoked by a logged in user (or other principal).
 
 #### ctx.result
 

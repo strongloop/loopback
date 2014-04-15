@@ -4,20 +4,25 @@ var passport = require('passport');
 var MailConnector = require('../lib/connectors/mail');
 
 var userMemory = loopback.createDataSource({
-  connector: loopback.Memory
+  connector: 'memory'
 });
 
 describe('User', function(){
+  var validCredentials = {email: 'foo@bar.com', password: 'bar'};
+  var invalidCredentials = {email: 'foo1@bar.com', password: 'bar1'};
+  var incompleteCredentials = {password: 'bar1'};
+
   beforeEach(function() {
     User = loopback.User.extend('user');
     User.email = loopback.Email.extend('email');
     loopback.autoAttach();
+
+    // Update the AccessToken relation to use the subclass of User
+    AccessToken.belongsTo(User);
   
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
-    
-    User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});  
-    AccessToken.belongsTo(User);  
+
   });
   
   beforeEach(function (done) {
@@ -25,7 +30,7 @@ describe('User', function(){
     app.use(loopback.rest());
     app.model(User);
     
-    User.create({email: 'foo@bar.com', password: 'bar'}, done);
+    User.create(validCredentials, done);
   });
   
   afterEach(function (done) {
@@ -105,7 +110,7 @@ describe('User', function(){
   
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
-      User.login({email: 'foo@bar.com', password: 'bar'}, function (err, accessToken) {
+      User.login(validCredentials, function (err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
@@ -119,7 +124,7 @@ describe('User', function(){
         .post('/users/login')
         .expect('Content-Type', /json/)
         .expect(200)
-        .send({email: 'foo@bar.com', password: 'bar'})
+        .send(validCredentials)
         .end(function(err, res){
           if(err) return done(err);
           var accessToken = res.body;
@@ -127,11 +132,62 @@ describe('User', function(){
           assert(accessToken.userId);
           assert(accessToken.id);
           assert.equal(accessToken.id.length, 64);
+          assert(accessToken.user === undefined);
           
           done();
         });
     });
-    
+
+    it('Login a user over REST by providing invalid credentials', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .send(invalidCredentials)
+        .end(function(err, res){
+          done();
+        });
+    });
+
+    it('Login a user over REST by providing incomplete credentials', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .send(incompleteCredentials)
+        .end(function(err, res){
+          done();
+        });
+    });
+
+    it('Login a user over REST with the wrong Content-Type', function(done) {
+      request(app)
+        .post('/users/login')
+        .set('Content-Type', null)
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .send(validCredentials)
+        .end(function(err, res){
+          done();
+        });
+    });
+
+    it('Returns current user when `include` is `USER`', function(done) {
+      request(app)
+        .post('/users/login?include=USER')
+        .send(validCredentials)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) return done(err);
+          var token = res.body;
+          expect(token.user, 'body.user').to.not.equal(undefined);
+          expect(token.user, 'body.user')
+            .to.have.property('email', validCredentials.email);
+          done();
+        });
+    });
+
     it('Login should only allow correct credentials', function(done) {
       User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
         User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) { 

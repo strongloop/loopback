@@ -11,6 +11,7 @@ describe('access control - integration', function () {
 
   lt.beforeEach.withApp(app);
 
+  /*
   describe('accessToken', function() {
     // it('should be a sublcass of AccessToken', function () {
     //   assert(app.models.accessToken.prototype instanceof loopback.AccessToken);
@@ -54,6 +55,7 @@ describe('access control - integration', function () {
       return '/api/accessTokens/' + this.randomToken.id;
     }
   });
+  */
 
   describe('/users', function () {
 
@@ -93,6 +95,10 @@ describe('access control - integration', function () {
       });
       lt.describe.whenCalledRemotely('GET', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
+        it('should not include a password', function() {
+          var user = this.res.body;
+          assert.equal(user.password, undefined);
+        });
       });
       lt.describe.whenCalledRemotely('PUT', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
@@ -147,6 +153,7 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', urlForAccount);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'GET', urlForAccount);
 
+
     lt.it.shouldBeDeniedWhenCalledAnonymously('POST', '/api/accounts');
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('POST', '/api/accounts');
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'POST', '/api/accounts');
@@ -156,10 +163,23 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'PUT', urlForAccount);
 
     lt.describe.whenLoggedInAsUser(CURRENT_USER, function() {
-      beforeEach(function() {
-        this.url = '/api/accounts/' + this.user.accountId;
+      beforeEach(function(done) {
+        var self = this;
+
+        // Create an account under the given user
+        app.models.account.create({
+          userId: self.user.id,
+          balance: 100
+        }, function(err, act) {
+          self.url = '/api/accounts/' + act.id;
+          done();
+        });
+
       });
       lt.describe.whenCalledRemotely('PUT', '/api/accounts/:id', function() {
+        lt.it.shouldBeAllowed();
+      });
+      lt.describe.whenCalledRemotely('GET', '/api/accounts/:id', function() {
         lt.it.shouldBeAllowed();
       });
       lt.describe.whenCalledRemotely('DELETE', '/api/accounts/:id', function() {

@@ -1,4 +1,5 @@
 var async = require('async');
+require('./support');
 var loopback = require('../');
 var ACL = loopback.ACL;
 var Change = loopback.Change;
@@ -197,21 +198,21 @@ describe('Model', function() {
     });
   });
 
-    describe('Model.deleteById([callback])', function () {
-        it("Delete a model instance from the attached data source", function (done) {
-            User.create({first: 'joe', last: 'bob'}, function (err, user) {
-                User.deleteById(user.id, function (err) {
-                    User.findById(user.id, function (err, notFound) {
-                        assert(!err);
-                        assert.equal(notFound, null);
-                        done();
-                    });
-                });
-            });
-        });
-    });
+  describe('Model.deleteById([callback])', function () {
+      it("Delete a model instance from the attached data source", function (done) {
+          User.create({first: 'joe', last: 'bob'}, function (err, user) {
+              User.deleteById(user.id, function (err) {
+                  User.findById(user.id, function (err, notFound) {
+                      assert(!err);
+                      assert.equal(notFound, null);
+                      done();
+                  });
+              });
+          });
+      });
+  });
 
-    describe('Model.destroyAll(callback)', function() {
+  describe('Model.destroyAll(callback)', function() {
     it("Delete all Model instances from data source", function(done) {
       (new TaskEmitter())
         .task(User, 'create', {first: 'jill'})
@@ -263,7 +264,8 @@ describe('Model', function() {
     });
   });
 
-  describe('Remote Methods', function(){
+  describe.onServer('Remote Methods', function(){
+
     beforeEach(function () {
       User.login = function (username, password, fn) {
         if(username === 'foo' && password === 'bar') {
@@ -429,6 +431,37 @@ describe('Model', function() {
         });
       });
     })
+
+    describe('in compat mode', function() {
+      before(function() {
+        loopback.compat.usePluralNamesForRemoting = true;
+      });
+      after(function() {
+        loopback.compat.usePluralNamesForRemoting = false;
+      });
+
+      it('correctly install before/after hooks', function(done) {
+        var hooksCalled = [];
+
+        User.beforeRemote('**', function(ctx, user, next) {
+          hooksCalled.push('beforeRemote');
+          next();
+        });
+
+        User.afterRemote('**', function(ctx, user, next) {
+          hooksCalled.push('afterRemote');
+          next();
+        });
+
+        request(app).get('/users')
+          .expect(200, function(err, res) {
+            if (err) return done(err);
+            expect(hooksCalled, 'hooks called')
+              .to.eql(['beforeRemote', 'afterRemote']);
+            done();
+          });
+      });
+    });
   });
 
   describe('Model.hasMany(Model)', function() {
@@ -703,6 +736,16 @@ describe('Model', function() {
           });
         });
       });
+    });
+  });
+
+  describe('Model._getACLModel()', function() {
+    it('should return the subclass of ACL', function() {
+      var Model = require('../').Model;
+      var acl = ACL.extend('acl');
+      Model._ACL(null); // Reset the ACL class for the base model
+      var model = Model._ACL();
+      assert.equal(model, acl);
     });
   });
 });

@@ -49,7 +49,7 @@ var oracle = loopback.createDataSource({
 User.attachTo(oracle);
 ```
     
-**Note:** until a model is attached to a data source it will **not** have any **attached methods**.
+NOTE: until a model is attached to a data source it will not have any attached methods.
 
 ### Properties
 
@@ -257,7 +257,7 @@ User.findById(23, function(err, user) {
 Find a single instance that matches the given where expression.
 
 ```js
-User.findOne({id: 23}, function(err, user) {
+User.findOne({where: {id: 23}}, function(err, user) {
   console.info(user.id); // 23
 });
 ```
