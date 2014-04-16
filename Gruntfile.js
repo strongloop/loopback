@@ -143,7 +143,8 @@ module.exports = function(grunt) {
 
           // list of files / patterns to load in the browser
           files: [
-            'test/e2e/remote-connector.e2e.js'
+            'test/e2e/remote-connector.e2e.js',
+            'test/e2e/replication.e2e.js'
           ],
 
           // list of files to exclude
