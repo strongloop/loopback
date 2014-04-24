@@ -268,7 +268,7 @@ describe('security ACLs', function () {
 
               log('ACL 2: ', acl.toObject());
 
-              ACL.checkAccess({
+              ACL.checkAccessForContext({
                 principals: [
                   {type: ACL.USER, id: userId}
                 ],
@@ -279,7 +279,7 @@ describe('security ACLs', function () {
                 assert(!err && access.permission === ACL.ALLOW);
               });
 
-              ACL.checkAccess({
+              ACL.checkAccessForContext({
                 principals: [
                   {type: ACL.ROLE, id: Role.EVERYONE}
                 ],
