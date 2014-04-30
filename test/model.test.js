@@ -18,6 +18,8 @@ describe('Model', function() {
       'gender': String,
       'domain': String,
       'email': String
+    }, {
+      trackChanges: true
     });
   });
 
