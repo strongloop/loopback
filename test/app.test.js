@@ -327,6 +327,7 @@ describe('app', function() {
     });
   });
 
+  /*
   describe('installMiddleware()', function() {
     var app;
     beforeEach(function() { app = loopback(); });
@@ -422,6 +423,7 @@ describe('app', function() {
         .end(done);
     });
   });
+  */
 
   describe('listen()', function() {
     it('starts http server', function(done) {
