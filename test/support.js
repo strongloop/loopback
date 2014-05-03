@@ -49,19 +49,3 @@ assert.isFunc = function (obj, name) {
   assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');
   assert(typeof obj[name] === 'function', name + ' is not a function');
 }
-
-describe.onServer = function describeOnServer(name, fn) {
-  if (loopback.isServer) {
-    describe(name, fn);
-  } else {
-    describe.skip(name, fn);
-  }
-};
-
-describe.inBrowser = function describeInBrowser(name, fn) {
-  if (loopback.isBrowser) {
-    describe(name, fn);
-  } else {
-    describe.skip(name, fn);
-  }
-};
