@@ -9,7 +9,7 @@ describe('Change', function(){
     Change = loopback.Change.extend('change');
     Change.attachTo(memory);
 
-    TestModel = loopback.Model.extend('chtest');
+    TestModel = loopback.DataModel.extend('chtest');
     this.modelName = TestModel.modelName;
     TestModel.attachTo(memory);
   });
