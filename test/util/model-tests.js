@@ -1,19 +1,3 @@
-/*
-
-Before merging notes:
-
- - must fix the ".skip" tests below before merging
- [x] somehow need to handle callback values that are model typed
- [x] findById isn't getting an id... perhaps a remoting bug?
-
- eg.
-
- User.create({name: 'joe'}, function(err, user) {
-   assert(user instanceof User); // ...!
- });
-
-*/
-
 var async = require('async');
 var describe = require('./describe');
 var loopback = require('../../');
@@ -120,24 +104,6 @@ describe('Model Tests', function() {
     });
   });
 
-  describe.skip('Model.validatesUniquenessOf(property, options)', function() {
-    it("Ensure the value for `property` is unique", function(done) {
-      User.validatesUniquenessOf('email', {message: 'email is not unique'});
-      
-      var joe = new User({email: 'joe@joe.com'});
-      var joe2 = new User({email: 'joe@joe.com'});
-
-      joe.save(function () {
-        joe2.save(function (err) {
-          assert(err, 'should get a validation error');
-          assert(joe2.errors.email, 'model should have email error');
-          
-          done();
-        });
-      });
-    });
-  });
-
   describe('myModel.isValid()', function() {
     it("Validate the model instance", function() {
       User.validatesNumericalityOf('age', {int: true});
@@ -158,19 +124,7 @@ describe('Model Tests', function() {
     });
   });
 
-  describe.skip('Model.attachTo(dataSource)', function() {
-    it("Attach a model to a [DataSource](#data-source)", function() {
-      var MyModel = loopback.createModel('my-model', {name: String});
-      
-      assert(MyModel.find === undefined, 'should not have data access methods');
-      
-      MyModel.attachTo(dataSource);
-      
-      assert(typeof MyModel.find === 'function', 'should have data access methods after attaching to a data source');
-    });
-  });
-
-  describe.skip('Model.create([data], [callback])', function() {
+  describe('Model.create([data], [callback])', function() {
     it("Create an instance of Model with given data and save to the attached data source", function(done) {
       User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
         assert(user instanceof User);
@@ -191,7 +145,7 @@ describe('Model Tests', function() {
     });
   });
 
-  describe.skip('model.updateAttributes(data, [callback])', function() {
+  describe('model.updateAttributes(data, [callback])', function() {
     it("Save specified attributes to the attached data source", function(done) {
       User.create({first: 'joe', age: 100}, function (err, user) {
         assert(!err);

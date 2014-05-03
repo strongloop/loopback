@@ -11,6 +11,36 @@ describe('Model', function() {
       connector: loopback.Memory
     }
   });
+
+  describe('Model.validatesUniquenessOf(property, options)', function() {
+    it("Ensure the value for `property` is unique", function(done) {
+      User.validatesUniquenessOf('email', {message: 'email is not unique'});
+      
+      var joe = new User({email: 'joe@joe.com'});
+      var joe2 = new User({email: 'joe@joe.com'});
+
+      joe.save(function () {
+        joe2.save(function (err) {
+          assert(err, 'should get a validation error');
+          assert(joe2.errors.email, 'model should have email error');
+          
+          done();
+        });
+      });
+    });
+  });
+
+  describe('Model.attachTo(dataSource)', function() {
+    it("Attach a model to a [DataSource](#data-source)", function() {
+      var MyModel = loopback.createModel('my-model', {name: String});
+      
+      assert(MyModel.find === undefined, 'should not have data access methods');
+      
+      MyModel.attachTo(dataSource);
+      
+      assert(typeof MyModel.find === 'function', 'should have data access methods after attaching to a data source');
+    });
+  });
 });
 
 describe.onServer('Remote Methods', function(){
@@ -62,7 +92,7 @@ describe.onServer('Remote Methods', function(){
     app.use(loopback.rest());
     app.model(User);
   });
-  
+
   describe('Example Remote Method', function () {
     it('Call the method using HTTP / REST', function(done) {
       request(app)
