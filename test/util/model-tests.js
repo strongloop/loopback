@@ -47,6 +47,8 @@ describe('Model Tests', function() {
       trackChanges: true
     });
 
+    // enable destroy all for testing
+    User.destroyAll.shared = true;
     User.attachTo(dataSource);
   });
 
@@ -207,28 +209,6 @@ describe('Model Tests', function() {
               });
           });
       });
-  });
-
-  describe('Model.destroyAll(callback)', function() {
-    it("Delete all Model instances from data source", function(done) {
-      (new TaskEmitter())
-        .task(User, 'create', {first: 'jill'})
-        .task(User, 'create', {first: 'bob'})
-        .task(User, 'create', {first: 'jan'})
-        .task(User, 'create', {first: 'sam'})
-        .task(User, 'create', {first: 'suzy'})
-        .on('done', function () {
-          User.count(function (err, count) {
-            assert.equal(count, 5);
-            User.destroyAll(function () {
-              User.count(function (err, count) {
-                assert.equal(count, 0);
-                done();
-              });
-            });
-          });
-        });
-    });
   });
 
   describe('Model.findById(id, callback)', function() {

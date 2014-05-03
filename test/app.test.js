@@ -1,5 +1,7 @@
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
+var loopback = require('../');
+var DataModel = loopback.DataModel;
 
 describe('app', function() {
 
@@ -11,21 +13,24 @@ describe('app', function() {
     });
 
     it("Expose a `Model` to remote clients", function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = DataModel.extend('color', {name: String});
       app.model(Color);
+      Color.attachTo(db);
 
       expect(app.models()).to.eql([Color]);
     });
 
     it('uses singlar name as app.remoteObjects() key', function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = DataModel.extend('color', {name: String});
       app.model(Color);
+      Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({ color: Color });
     });
 
     it('uses singular name as shared class name', function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = DataModel.extend('color', {name: String});
       app.model(Color);
+      Color.attachTo(db);
       expect(app.remotes().exports).to.eql({ color: Color });
     });
 
@@ -33,8 +38,9 @@ describe('app', function() {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
         if (err) return done(err);
-        var Color = db.createModel('color', {name: String});
+        var Color = DataModel.extend('color', {name: String});
         app.model(Color);
+        Color.attachTo(db);
         request(app).get('/colors').expect(200, done);
       });
     });

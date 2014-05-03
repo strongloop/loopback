@@ -14,6 +14,22 @@ describe('Model', function() {
 
   describe('Model.validatesUniquenessOf(property, options)', function() {
     it("Ensure the value for `property` is unique", function(done) {
+      var User = DataModel.extend('user', {
+        'first': String,
+        'last': String,
+        'age': Number,
+        'password': String,
+        'gender': String,
+        'domain': String,
+        'email': String
+      });
+
+      var dataSource = loopback.createDataSource({
+        connector: loopback.Memory
+      });
+
+      User.attachTo(dataSource);
+      
       User.validatesUniquenessOf('email', {message: 'email is not unique'});
       
       var joe = new User({email: 'joe@joe.com'});
@@ -33,6 +49,9 @@ describe('Model', function() {
   describe('Model.attachTo(dataSource)', function() {
     it("Attach a model to a [DataSource](#data-source)", function() {
       var MyModel = loopback.createModel('my-model', {name: String});
+      var dataSource = loopback.createDataSource({
+        connector: loopback.Memory
+      });
       
       assert(MyModel.find === undefined, 'should not have data access methods');
       
@@ -91,6 +110,27 @@ describe.onServer('Remote Methods', function(){
     app = loopback();
     app.use(loopback.rest());
     app.model(User);
+  });
+  
+  describe('Model.destroyAll(callback)', function() {
+    it("Delete all Model instances from data source", function(done) {
+      (new TaskEmitter())
+        .task(User, 'create', {first: 'jill'})
+        .task(User, 'create', {first: 'bob'})
+        .task(User, 'create', {first: 'jan'})
+        .task(User, 'create', {first: 'sam'})
+        .task(User, 'create', {first: 'suzy'})
+        .on('done', function () {
+          User.count(function (err, count) {
+            User.destroyAll(function () {
+              User.count(function (err, count) {
+                assert.equal(count, 0);
+                done();
+              });
+            });
+          });
+        });
+    });
   });
 
   describe('Example Remote Method', function () {
@@ -326,7 +366,7 @@ describe.onServer('Remote Methods', function(){
     
   describe('Model.extend()', function(){
     it('Create a new model by extending an existing model', function() {
-      var User = loopback.Model.extend('test-user', {
+      var User = loopback.DataModel.extend('test-user', {
         email: String
       });
       

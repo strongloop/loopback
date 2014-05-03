@@ -36,38 +36,42 @@ describe('DataSource', function() {
     });
   });
 
-  describe('dataSource.operations()', function() {
-    it("List the enabled and disabled operations", function() {
+  describe('DataModel Methods', function() {
+    it("List the enabled and disabled methods", function() {
+      var TestModel = loopback.DataModel.extend('TestDataModel');
+      TestModel.attachTo(loopback.memory());
+      
       // assert the defaults
       // - true: the method should be remote enabled
       // - false: the method should not be remote enabled
       // - 
-      existsAndShared('_forDB', false);
-      existsAndShared('create', true);
-      existsAndShared('updateOrCreate', true);
-      existsAndShared('upsert', true);
-      existsAndShared('findOrCreate', false);
-      existsAndShared('exists', true);
-      existsAndShared('find', true);
-      existsAndShared('findOne', true);
-      existsAndShared('destroyAll', false);
-      existsAndShared('count', true);
-      existsAndShared('include', false);
-      existsAndShared('relationNameFor', false);
-      existsAndShared('hasMany', false);
-      existsAndShared('belongsTo', false);
-      existsAndShared('hasAndBelongsToMany', false);
-      existsAndShared('save', false);
-      existsAndShared('isNewRecord', false);
-      existsAndShared('_adapter', false);
-      existsAndShared('destroyById', true);
-      existsAndShared('destroy', false);
-      existsAndShared('updateAttributes', true);
-      existsAndShared('reload', false);
+      existsAndShared(TestModel, '_forDB', false);
+      existsAndShared(TestModel, 'create', true);
+      existsAndShared(TestModel, 'updateOrCreate', true);
+      existsAndShared(TestModel, 'upsert', true);
+      existsAndShared(TestModel, 'findOrCreate', false);
+      existsAndShared(TestModel, 'exists', true);
+      existsAndShared(TestModel, 'find', true);
+      existsAndShared(TestModel, 'findOne', true);
+      existsAndShared(TestModel, 'destroyAll', false);
+      existsAndShared(TestModel, 'count', true);
+      existsAndShared(TestModel, 'include', false);
+      existsAndShared(TestModel, 'relationNameFor', false);
+      existsAndShared(TestModel, 'hasMany', false);
+      existsAndShared(TestModel, 'belongsTo', false);
+      existsAndShared(TestModel, 'hasAndBelongsToMany', false);
+      // existsAndShared(TestModel.prototype, 'updateAttributes', true);
+      existsAndShared(TestModel.prototype, 'save', false);
+      existsAndShared(TestModel.prototype, 'isNewRecord', false);
+      existsAndShared(TestModel.prototype, '_adapter', false);
+      existsAndShared(TestModel.prototype, 'destroy', false);
+      existsAndShared(TestModel.prototype, 'reload', false);
       
-      function existsAndShared(name, isRemoteEnabled) {
-        var op = memory.getOperation(name);
-        assert(op.remoteEnabled === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
+      function existsAndShared(scope, name, isRemoteEnabled) {
+        var fn = scope[name];
+        assert(fn, name + ' should be defined!');
+        console.log(name, fn.shared, isRemoteEnabled);
+        assert(!!fn.shared === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
       }
     });
   });
