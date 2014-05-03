@@ -9,7 +9,6 @@ describe('RemoteConnector', function() {
     beforeEach: function(done) {
       var test = this;
       remoteApp = loopback();
-      remoteApp.use(loopback.logger('dev'));
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
         test.dataSource = loopback.createDataSource({
@@ -22,7 +21,9 @@ describe('RemoteConnector', function() {
     },
     onDefine: function(Model) {
       var RemoteModel = Model.extend(Model.modelName);
-      RemoteModel.attachTo(loopback.memory());
+      RemoteModel.attachTo(loopback.createDataSource({
+        connector: loopback.Memory
+      }));
       remoteApp.model(RemoteModel);
     }
   });
