@@ -30,7 +30,7 @@ describe('RemoteConnector', function() {
     });
     m.save(function(err, data) {
       if(err) return done(err);
-      assert(m.id);
+      assert(data.foo === 'bar');
       done();
     });
   });

@@ -512,12 +512,15 @@ describe.onServer('Remote Methods', function(){
     beforeEach(function(done) {
       var test = this;
       this.dataSource = dataSource;
-      var SourceModel = this.SourceModel = this.dataSource.createModel('SourceModel', {}, {
+      var SourceModel = this.SourceModel = DataModel.extend('SourceModel', {}, {
         trackChanges: true
       });
-      var TargetModel = this.TargetModel = this.dataSource.createModel('TargetModel', {}, {
+      SourceModel.attachTo(dataSource);
+      
+      var TargetModel = this.TargetModel = DataModel.extend('TargetModel', {}, {
         trackChanges: true
       });
+      TargetModel.attachTo(dataSource);
 
       var createOne = SourceModel.create.bind(SourceModel, {
         name: 'baz'
