@@ -5,7 +5,7 @@ var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var DataModel = loopback.DataModel;
 
-describe('Model', function() {
+describe('Model / DataModel', function() {
   defineModelTestsWithDataSource({
     dataSource: {
       connector: loopback.Memory
@@ -209,12 +209,6 @@ describe.onServer('Remote Methods', function(){
   });
 
   describe('Remote Method invoking context', function () {
-    // describe('ctx.user', function() {
-    //   it("The remote user model calling the method remotely", function(done) {
-    //     done(new Error('test not implemented'));
-    //   });
-    // });
-
     describe('ctx.req', function() {
       it("The express ServerRequest object", function(done) {
         var hookCalled = false;

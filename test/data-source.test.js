@@ -70,7 +70,6 @@ describe('DataSource', function() {
       function existsAndShared(scope, name, isRemoteEnabled) {
         var fn = scope[name];
         assert(fn, name + ' should be defined!');
-        console.log(name, fn.shared, isRemoteEnabled);
         assert(!!fn.shared === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
       }
     });
