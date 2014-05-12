@@ -1,6 +1,7 @@
 {
   "name": "loopback",
   "description": "LoopBack: Open Mobile Platform for Node.js",
+  "homepage": "http://loopback.io",
   "keywords": [
     "StrongLoop",
     "LoopBack",
