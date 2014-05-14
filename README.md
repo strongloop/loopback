@@ -1,10 +1,10 @@
-LoopBack is a Node.js mobile backend framework that enables you to:
+LoopBack is an enterprise Node.js framework that enables you to:
 
-  * Create dynamic REST APIs with little or no coding
-  * Access data from Oracle, MySQL, PostgreSQL, MS SQL Server, MongoDB, SOAP and REST APIs
-  * Incorporate model relationships and access controls
+  * Create dynamic end-to-end REST APIs with little or no coding
+  * Easily access data from Oracle, MySQL, PostgreSQL, MS SQL Server, MongoDB, SOAP and other REST APIs
+  * Incorporate model relationships and access controls for complex APIs
   * Run your application on-premises or in the cloud  
-  * Use built-in push, geolocation, and file services
+  * Use built-in push, geolocation, and file services for mobile use cases
   * Easily create client apps using Android, iOS, and JavaScript SDKs
 
 LoopBack consists of:
