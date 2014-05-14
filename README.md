@@ -1,6 +1,63 @@
-# LoopBack
+# What is LoopBack?
 
-For a quick introduction and overview, see http://loopback.io/.
+LoopBack is a Node.js mobile backend framework that you can run on-premises or in the cloud that enables you to:
+
+  * Create dynamic REST APIs
+  * Access data from Oracle, MySQL, PostgreSQL, MS SQL Server, MongoDB, SOAP and REST APIs
+  * Push, geolocation, and file services
+  * Android, iOS, and JavaScript SDKs
+
+LoopBack consists of:
+  * A library of Node.js modules.
+  * A command line tool, `slc lb`, for creating and working with LoopBack applications.
+  * Client SDKs for native and web-based mobile clients.
+
+For more details, see http://loopback.io/.
+
+## LoopBack modules 
+The LoopBack Node.js modules are illustrated below:
+
+![LoopBack modules](http://content.screencast.com/users/RaymondFeng/folders/Jing/media/74fcdafa-7d4b-4b9e-9f1f-f303b2b6adc4/00000065.png)
+
+* Frameworks
+  * [loopback](https://github.com/strongloop/loopback)
+  * [loopback-datasource-juggler](https://github.com/strongloop/loopback-datasource-juggler)
+  * [strong-remoting](https://github.com/strongloop/strong-remoting)
+
+* Enterprise Connectors
+  * [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb)
+  * [loopback-connector-mysql](https://github.com/strongloop/loopback-connector-mysql)
+  * [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)
+  * [loopback-connector-postgresql](https://github.com/strongloop/loopback-connector-postgresql)
+  * [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)
+  * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap) 
+
+* Mobile services
+  * [loopback-push-notification](https://github.com/strongloop/loopback-push-notification)
+  * [loopback-storage-service](https://github.com/strongloop/loopback-storage-service)
+
+* Clients
+  * [loopback-ios](https://github.com/strongloop/loopback-ios)
+  * [loopback-remoting-ios](https://github.com/strongloop/loopback-remoting-ios)
+  * [loopback-android](https://github.com/strongloop/loopback-android)
+  * [loopback-remoting-android](https://github.com/strongloop/loopback-remoting-android)
+  * [loopback-angular](https://github.com/strongloop/loopback-angular)
+
+* Tools
+  * [loopback-explorer](https://github.com/strongloop/loopback-explorer)
+  * [loopback-workspace](https://github.com/strongloop/loopback-workspace)
+  * [strong-cli](https://github.com/strongloop/strong-cli)
+
+* Examples
+  * [loopback-example-full-stack](https://github.com/strongloop/loopback-example-full-stack)
+  * [loopback-example-office-supplies](https://github.com/strongloop/loopback-example-office-supplies)
+  * [loopback-example-todo](https://github.com/strongloop/loopback-example-todo)
+  * [loopback-example-access-control](https://github.com/strongloop/loopback-example-access-control)
+  * [loopback-example-proxy](https://github.com/strongloop/loopback-example-proxy)
+  * [strongloop-community/loopback-example-datagraph](https://github.com/strongloop-community/loopback-example-datagraph)
+  * [strongloop-community/loopback-mysql-example](https://github.com/strongloop-community/loopback-mysql-example)
+  * [strongloop-community/loopback-examples-ios](https://github.com/strongloop-community/loopback-examples-ios)
+  * [strongloop-community/loopback-example-ssl](https://github.com/strongloop-community/loopback-example-ssl)
 
 ## Documentation
 
