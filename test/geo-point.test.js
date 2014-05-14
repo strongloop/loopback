@@ -1,10 +1,17 @@
+// Compare two float numbers
+function floatEqual(f1, f2, epsilon) {
+  epsilon = epsilon || 0.000001;
+  return Math.abs(f1 - f2) < epsilon;
+}
+
 describe('GeoPoint', function() {
   describe('geoPoint.distanceTo(geoPoint, options)', function() {
     it("Get the distance to another `GeoPoint`", function() {
       var here = new GeoPoint({lat: 10, lng: 10});
       var there = new GeoPoint({lat: 5, lng: 5});
-      
-      assert.equal(here.distanceTo(there, {type: 'meters'}), 782777.923052584);
+
+      // AssertionError: 782777.923052586 == 782777.923052584
+      assert(floatEqual(here.distanceTo(there, {type: 'meters'}), 782777.923052584));
     });
   });
 
@@ -13,7 +20,7 @@ describe('GeoPoint', function() {
       var here = new GeoPoint({lat: 10, lng: 10});
       var there = new GeoPoint({lat: 5, lng: 5});
       
-      assert.equal(GeoPoint.distanceBetween(here, there, {type: 'feet'}), 2568169.038886431);
+      assert(floatEqual(GeoPoint.distanceBetween(here, there, {type: 'feet'}), 2568169.038886431));
     });
   });
   
