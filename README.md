@@ -1,15 +1,16 @@
 # What is LoopBack?
 
-LoopBack is a Node.js mobile backend framework that you can run on-premises or in the cloud that enables you to:
+LoopBack is a Node.js mobile backend framework that enables you to:
 
   * Create dynamic REST APIs
   * Access data from Oracle, MySQL, PostgreSQL, MS SQL Server, MongoDB, SOAP and REST APIs
-  * Push, geolocation, and file services
-  * Android, iOS, and JavaScript SDKs
+  * Run your application on-premises or in the cloud  
+  * Use built-in push, geolocation, and file services
+  * Easily create client apps using Android, iOS, and JavaScript SDKs
 
 LoopBack consists of:
   * A library of Node.js modules.
-  * A command line tool, `slc lb`, for creating and working with LoopBack applications.
+  * A command line tool, `slc`, for creating and working with LoopBack applications.
   * Client SDKs for native and web-based mobile clients.
 
 For more details, see http://loopback.io/.
