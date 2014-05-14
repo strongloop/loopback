@@ -1,4 +1,4 @@
-LoopBack is an enterprise Node.js framework that enables you to:
+LoopBack is a highly extensible, open source Node.js framework that enables you to:
 
   * Create dynamic end-to-end REST APIs with little or no coding
   * Easily access data from Oracle, MySQL, PostgreSQL, MS SQL Server, MongoDB, SOAP and other REST APIs
