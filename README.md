@@ -2,8 +2,9 @@
 
 LoopBack is a Node.js mobile backend framework that enables you to:
 
-  * Create dynamic REST APIs
+  * Create dynamic REST APIs with little or no coding
   * Access data from Oracle, MySQL, PostgreSQL, MS SQL Server, MongoDB, SOAP and REST APIs
+  * Incorporate model relationships and access controls
   * Run your application on-premises or in the cloud  
   * Use built-in push, geolocation, and file services
   * Easily create client apps using Android, iOS, and JavaScript SDKs
