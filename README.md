@@ -1,5 +1,3 @@
-# What is LoopBack?
-
 LoopBack is a Node.js mobile backend framework that enables you to:
 
   * Create dynamic REST APIs with little or no coding
