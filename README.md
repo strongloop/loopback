@@ -61,25 +61,13 @@ The LoopBack Node.js modules are illustrated below:
   * [strongloop-community/loopback-examples-ios](https://github.com/strongloop-community/loopback-examples-ios)
   * [strongloop-community/loopback-example-ssl](https://github.com/strongloop-community/loopback-example-ssl)
 
-## Documentation
+## Resources 
 
-[See the full documentation](http://docs.strongloop.com/display/DOC/LoopBack).
-
-## API
-
-[Browse the API documentation](http://apidocs.strongloop.com/loopback).
-
-## Mailing List
-
-Discuss features and ask questions on [LoopBack Forum](https://groups.google.com/forum/#!forum/loopbackjs).
-
-## Issues
-
-File any issues [here on GitHub](https://github.com/strongloop/loopback/issues).
-
-## Features
-
-Read about the [features of LoopBack](https://github.com/strongloop/loopback/wiki/Features).
+  * [Documentation](http://docs.strongloop.com/display/DOC/LoopBack).
+  * [API documentation](http://apidocs.strongloop.com/loopback).
+  * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
+  * [GitHub issues](https://github.com/strongloop/loopback/issues).
+  * Read more about the [LoopBack's features](https://github.com/strongloop/loopback/wiki/Features).
 
 ## Contributing
 
