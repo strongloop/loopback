@@ -178,7 +178,7 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.type()', function () {
+  describe('change.type()', function () {
     it('CREATE', function () {
       var change = new Change({
         rev: this.revisionForModel
@@ -223,6 +223,24 @@ describe('Change', function(){
       var otherChange = new Change({
         rev: this.revisionForModel
       });
+
+      assert.equal(change.equals(otherChange), true);
+    });
+
+    it('should return true when both changes are deletes', function () {
+      var REV = 'foo';
+      var change = new Change({
+        rev: null,
+        prev: REV,
+      });
+
+      var otherChange = new Change({
+        rev: undefined,
+        prev: REV
+      });
+
+      assert.equal(change.type(), Change.DELETE);
+      assert.equal(otherChange.type(), Change.DELETE);
 
       assert.equal(change.equals(otherChange), true);
     });
