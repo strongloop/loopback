@@ -3,8 +3,9 @@ describe('GeoPoint', function() {
     it("Get the distance to another `GeoPoint`", function() {
       var here = new GeoPoint({lat: 10, lng: 10});
       var there = new GeoPoint({lat: 5, lng: 5});
-      
-      assert.equal(here.distanceTo(there, {type: 'meters'}), 782777.923052584);
+      var distance = here.distanceTo(there, {type: 'meters'});
+
+      assert.equal(Math.floor(distance), 782777);
     });
   });
 
@@ -12,8 +13,9 @@ describe('GeoPoint', function() {
     it("Get the distance between two points", function() {
       var here = new GeoPoint({lat: 10, lng: 10});
       var there = new GeoPoint({lat: 5, lng: 5});
+      var distance = GeoPoint.distanceBetween(here, there, {type: 'feet'});
       
-      assert.equal(GeoPoint.distanceBetween(here, there, {type: 'feet'}), 2568169.038886431);
+      assert.equal(Math.floor(distance), 2568169);
     });
   });
   
