@@ -1,6 +1,7 @@
 {
   "name": "loopback",
   "description": "LoopBack: Open Mobile Platform for Node.js",
+  "homepage": "http://loopback.io",
   "keywords": [
     "StrongLoop",
     "LoopBack",
@@ -9,7 +10,7 @@
     "Platform",
     "mBaaS"
   ],
-  "version": "1.8.1",
+  "version": "1.8.2",
   "scripts": {
     "test": "mocha -R spec"
   },
@@ -29,10 +30,10 @@
     "async": "~0.2.10"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~1.3.11"
+    "loopback-datasource-juggler": "^1.3.11"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": "~1.3.11",
+    "loopback-datasource-juggler": "^1.3.11",
     "mocha": "~1.17.1",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.9.0",
