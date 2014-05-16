@@ -479,7 +479,7 @@ describe.onServer('Remote Methods', function(){
       var result;
       var current;
 
-      async.parallel(tasks, function(err) {
+      async.series(tasks, function(err) {
         if(err) return done(err);
 
         assert.equal(result, current + 1);
@@ -495,85 +495,10 @@ describe.onServer('Remote Methods', function(){
 
       function checkpoint(cb) {
         User.checkpoint(function(err, cp) {
-          result = cp.id;
+          result = cp.seq;
           cb(err);
         });
       }
-    });
-  });
-
-  describe('Replication / Change APIs', function() {
-    beforeEach(function(done) {
-      var test = this;
-      this.dataSource = dataSource;
-      var SourceModel = this.SourceModel = DataModel.extend('SourceModel', {}, {
-        trackChanges: true
-      });
-      SourceModel.attachTo(dataSource);
-      
-      var TargetModel = this.TargetModel = DataModel.extend('TargetModel', {}, {
-        trackChanges: true
-      });
-      TargetModel.attachTo(dataSource);
-
-      var createOne = SourceModel.create.bind(SourceModel, {
-        name: 'baz'
-      });
-
-      async.parallel([
-        createOne,
-        function(cb) {
-          SourceModel.currentCheckpoint(function(err, id) {
-            if(err) return cb(err);
-            test.startingCheckpoint = id;
-            cb();
-          });
-        }
-      ], process.nextTick.bind(process, done));
-    });
-
-    describe('Model.changes(since, filter, callback)', function() {
-      it('Get changes since the given checkpoint', function (done) {
-        this.SourceModel.changes(this.startingCheckpoint, {}, function(err, changes) {
-          assert.equal(changes.length, 1);
-          done();
-        });
-      });
-    });
-
-    describe.skip('Model.replicate(since, targetModel, options, callback)', function() {
-      it('Replicate data using the target model', function (done) {
-        var test = this;
-        var options = {};
-        var sourceData;
-        var targetData;
-
-        this.SourceModel.replicate(this.startingCheckpoint, this.TargetModel, 
-        options, function(err, conflicts) {
-          assert(conflicts.length === 0);
-          async.parallel([
-            function(cb) {
-              test.SourceModel.find(function(err, result) {
-                if(err) return cb(err);
-                sourceData = result;
-                cb();
-              });
-            },
-            function(cb) {
-              test.TargetModel.find(function(err, result) {
-                if(err) return cb(err);
-                targetData = result;
-                cb();
-              });
-            }
-          ], function(err) {
-            if(err) return done(err);
-
-            assert.deepEqual(sourceData, targetData);
-            done();
-          });
-        });
-      });
     });
   });
 

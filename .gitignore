@@ -11,3 +11,4 @@
 *.swp
 *.swo
 node_modules
+dist

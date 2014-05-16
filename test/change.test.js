@@ -6,12 +6,12 @@ describe('Change', function(){
     var memory = loopback.createDataSource({
       connector: loopback.Memory
     });
-    Change = loopback.Change.extend('change');
-    Change.attachTo(memory);
-
-    TestModel = loopback.DataModel.extend('chtest');
+    TestModel = loopback.DataModel.extend('chtest', {}, {
+      trackChanges: true
+    });
     this.modelName = TestModel.modelName;
     TestModel.attachTo(memory);
+    Change = TestModel.getChangeModel();
   });
 
   beforeEach(function(done) {
@@ -46,16 +46,16 @@ describe('Change', function(){
     describe('using an existing untracked model', function () {
       beforeEach(function(done) {
         var test = this;
-        Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trakedChagnes) {
+        Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trackedChanges) {
           if(err) return done(err);
-          test.trakedChagnes = trakedChagnes;
+          test.trackedChanges = trackedChanges;
           done();
         });
       });
 
       it('should create an entry', function () {
-        assert(Array.isArray(this.trakedChagnes));
-        assert.equal(this.trakedChagnes[0].modelId, this.modelId);
+        assert(Array.isArray(this.trackedChanges));
+        assert.equal(this.trackedChanges[0].modelId, this.modelId);
       });
 
       it('should only create one change', function (done) {
