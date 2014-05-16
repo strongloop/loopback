@@ -62,7 +62,6 @@ describe('RemoteConnector', function() {
     ServerModel.setupRemoting();
 
     var m = new RemoteModel({foo: 'bar'});
-    console.log(m.save.toString());
     m.save(function(err, inst) {
       assert(inst instanceof RemoteModel);
       assert(calledServerCreate);
