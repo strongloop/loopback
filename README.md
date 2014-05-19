@@ -71,4 +71,4 @@ The LoopBack Node.js modules are illustrated below:
 
 A brief guide for [contributing to LoopBack projects](https://github.com/strongloop/loopback/wiki/How-To-Contribute).
 
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/8caf6b5cce4be4d13c01ea9aafc9f407 "githalytics.com")](http://githalytics.com/strongloop/loopback)
+[![Analytics](https://beacon.strongloop.com/UA-37775386-1/loopback/readme?pixel)](https://github.com/strongloop/loopback)
