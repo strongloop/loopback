@@ -15,9 +15,11 @@ LoopBack consists of:
 For more details, see http://loopback.io/.
 
 ## LoopBack modules 
-The LoopBack Node.js modules are illustrated below:
 
-![LoopBack modules](http://content.screencast.com/users/RaymondFeng/folders/Jing/media/74fcdafa-7d4b-4b9e-9f1f-f303b2b6adc4/00000065.png)
+In addition to the [main LoopBack module](https://github.com/strongloop/loopback), LoopBack consists of numerous other modules that implement specific functionality, 
+as illustrated below:
+
+![LoopBack modules](./docs/assets/lb-modules.png "LoopBack modules")
 
 * Frameworks
   * [loopback](https://github.com/strongloop/loopback)
