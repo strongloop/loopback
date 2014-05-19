@@ -31,7 +31,8 @@ describe('app', function() {
       var Color = DataModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
-      expect(app.remotes().exports).to.eql({ color: Color });
+      var classes = app.remotes().classes().map(function(c) {return c.name});
+      expect(classes).to.contain('color');
     });
 
     it('updates REST API when a new model is added', function(done) {
@@ -56,7 +57,8 @@ describe('app', function() {
       it('uses plural name as shared class name', function() {
         var Color = db.createModel('color', {name: String});
         app.model(Color);
-        expect(app.remotes().exports).to.eql({ colors: Color });
+        var classes = app.remotes().classes().map(function(c) {return c.name});
+        expect(classes).to.contain('colors');
       });
 
       it('uses plural name as app.remoteObjects() key', function() {

@@ -48,14 +48,16 @@ describe('Change', function(){
         var test = this;
         Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trackedChanges) {
           if(err) return done(err);
-          test.trackedChanges = trackedChanges;
           done();
         });
       });
 
-      it('should create an entry', function () {
-        assert(Array.isArray(this.trackedChanges));
-        assert.equal(this.trackedChanges[0].modelId, this.modelId);
+      it('should create an entry', function (done) {
+        var test = this;
+        Change.find(function(err, trackedChanges) {
+          assert.equal(trackedChanges[0].modelId, test.modelId.toString());
+          done();
+        });
       });
 
       it('should only create one change', function (done) {
@@ -67,12 +69,12 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.findOrCreate(modelName, modelId, callback)', function () {
+  describe('Change.findOrCreateChange(modelName, modelId, callback)', function () {
     
     describe('when a change doesnt exist', function () {
       beforeEach(function(done) {
         var test = this;
-        Change.findOrCreate(this.modelName, this.modelId, function(err, result) {
+        Change.findOrCreateChange(this.modelName, this.modelId, function(err, result) {
           if(err) return done(err);
           test.result = result;
           done();
@@ -102,7 +104,7 @@ describe('Change', function(){
 
       beforeEach(function(done) {
         var test = this;
-        Change.findOrCreate(this.modelName, this.modelId, function(err, result) {
+        Change.findOrCreateChange(this.modelName, this.modelId, function(err, result) {
           if(err) return done(err);
           test.result = result;
           done();

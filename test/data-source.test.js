@@ -36,7 +36,7 @@ describe('DataSource', function() {
     });
   });
 
-  describe('DataModel Methods', function() {
+  describe.skip('DataModel Methods', function() {
     it("List the enabled and disabled methods", function() {
       var TestModel = loopback.DataModel.extend('TestDataModel');
       TestModel.attachTo(loopback.memory());
@@ -61,16 +61,18 @@ describe('DataSource', function() {
       existsAndShared(TestModel, 'belongsTo', false);
       existsAndShared(TestModel, 'hasAndBelongsToMany', false);
       // existsAndShared(TestModel.prototype, 'updateAttributes', true);
-      existsAndShared(TestModel.prototype, 'save', false);
-      existsAndShared(TestModel.prototype, 'isNewRecord', false);
-      existsAndShared(TestModel.prototype, '_adapter', false);
-      existsAndShared(TestModel.prototype, 'destroy', false);
-      existsAndShared(TestModel.prototype, 'reload', false);
+      existsAndShared(TestModel, 'save', false, true);
+      existsAndShared(TestModel, 'isNewRecord', false, true);
+      existsAndShared(TestModel, '_adapter', false, true);
+      existsAndShared(TestModel, 'destroy', false, true);
+      existsAndShared(TestModel, 'reload', false, true);
       
-      function existsAndShared(scope, name, isRemoteEnabled) {
+      function existsAndShared(Model, name, isRemoteEnabled, isProto) {
+        var scope = isProto ? Model.prototype : Model;
         var fn = scope[name];
+        var actuallyEnabled = Model.getRemoteMethod(name);
         assert(fn, name + ' should be defined!');
-        assert(!!fn.shared === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
+        assert(actuallyEnabled === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
       }
     });
   });

@@ -53,11 +53,11 @@ describe('Model / DataModel', function() {
         connector: loopback.Memory
       });
       
-      assert(MyModel.find === undefined, 'should not have data access methods');
-      
       MyModel.attachTo(dataSource);
       
-      assert(typeof MyModel.find === 'function', 'should have data access methods after attaching to a data source');
+      MyModel.find(function(err, results) {
+        assert(results.length === 0, 'should have data access methods after attaching to a data source');
+      });
     });
   });
 });
