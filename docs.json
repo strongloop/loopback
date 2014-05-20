@@ -2,9 +2,7 @@
   "title": "LoopBack Documentation",
   "content": [
     "lib/application.js",
-    {"title": "LoopBack", "depth": 3},
     "lib/loopback.js",
-    {"title": "Middleware", "depth": 3},
     "lib/middleware/token.js",
     "lib/models/access-token.js",
     "lib/models/access-context.js",
