@@ -71,6 +71,8 @@ as illustrated below:
 
 ## Contributing
 
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute.
+
 A brief guide for [contributing to LoopBack projects](https://github.com/strongloop/loopback/wiki/How-To-Contribute).
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
