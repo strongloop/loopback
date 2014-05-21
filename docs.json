@@ -13,6 +13,9 @@
     "lib/models/data-model.js",
     "lib/models/role.js",
     "lib/models/user.js",
+    "lib/models/change.js",
+    "docs/api-datasource.md",
+    "docs/api-geopoint.md",
     "docs/api-model.md",
     "docs/api-model-remote.md"
   ],
