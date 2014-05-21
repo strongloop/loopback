@@ -51,16 +51,15 @@ describe('User', function(){
 
     it('Email is required', function (done) {
       User.create({password: '123'}, function (err) {
-        assert.deepEqual(err, {name: "ValidationError",
-            message: "The Model instance is not valid. See `details` "
-              + "property of the error object for more info.",
-            statusCode: 422,
-            details: {
-              context: "user",
-              codes: {email: ["presence", "format.blank", "uniqueness"]},
-              messages: {email: ["can't be blank", "is blank",
-                "Email already exists"]}}}
-        );
+        assert(err);
+        assert.equal(err.name, "ValidationError");
+        assert.equal(err.statusCode, 422);
+        assert.equal(err.details.context, "user");
+        assert.deepEqual(err.details.codes.email, [
+          'presence',
+          'format.blank',
+          'uniqueness'
+        ]);
 
         done();
       });
