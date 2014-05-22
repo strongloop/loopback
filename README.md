@@ -19,7 +19,7 @@ For more details, see http://loopback.io/.
 In addition to the [main LoopBack module](https://github.com/strongloop/loopback), LoopBack consists of numerous other modules that implement specific functionality, 
 as illustrated below:
 
-![LoopBack modules](./docs/assets/lb-modules.png "LoopBack modules")
+![LoopBack modules](https://github.com/strongloop/loopback/raw/master/docs/assets/lb-modules.png "LoopBack modules")
 
 * Frameworks
   * [loopback](https://github.com/strongloop/loopback)
