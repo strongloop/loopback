@@ -30,6 +30,7 @@ as illustrated below:
   * [loopback-connector-mongodb](https://github.com/strongloop/loopback-connector-mongodb)
   * [loopback-connector-mysql](https://github.com/strongloop/loopback-connector-mysql)
   * [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)
+  * [loopback-connector-mssql](https://github.com/strongloop/loopback-connector-mssql)
   * [loopback-connector-postgresql](https://github.com/strongloop/loopback-connector-postgresql)
   * [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)
   * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap) 
@@ -57,7 +58,7 @@ as illustrated below:
   * [loopback-example-access-control](https://github.com/strongloop/loopback-example-access-control)
   * [loopback-example-proxy](https://github.com/strongloop/loopback-example-proxy)
   * [strongloop-community/loopback-example-datagraph](https://github.com/strongloop-community/loopback-example-datagraph)
-  * [strongloop-community/loopback-mysql-example](https://github.com/strongloop-community/loopback-mysql-example)
+  * [strongloop-community/loopback-example-database](https://github.com/strongloop-community/loopback-example-database)
   * [strongloop-community/loopback-examples-ios](https://github.com/strongloop-community/loopback-examples-ios)
   * [strongloop-community/loopback-example-ssl](https://github.com/strongloop-community/loopback-example-ssl)
 
