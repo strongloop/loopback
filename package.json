@@ -3,6 +3,9 @@
   "description": "LoopBack: Open Mobile Platform for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
+    "framework",
+    "web",
+    "API framework",
     "StrongLoop",
     "LoopBack",
     "Mobile",
