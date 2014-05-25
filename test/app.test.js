@@ -61,9 +61,11 @@ describe('app', function() {
     });
   });
 
-  describe('app.model(name, properties, options)', function () {
-    it('Sugar for defining a fully built model', function () {
-      var app = loopback();
+  describe('app.model(name, config)', function () {
+    var app;
+
+    beforeEach(function() {
+      app = loopback();
       app.boot({
         app: {port: 3000, host: '127.0.0.1'},
         dataSources: {
@@ -72,15 +74,38 @@ describe('app', function() {
           }
         }
       });
+    });
 
+    it('Sugar for defining a fully built model', function () {
       app.model('foo', {
         dataSource: 'db'
       });
 
       var Foo = app.models.foo;
-      var f = new Foo;
+      var f = new Foo();
 
       assert(f instanceof loopback.Model);
+    });
+
+    it('interprets extra first-level keys as options', function() {
+      app.model('foo', {
+        dataSource: 'db',
+        base: 'User'
+      });
+
+      expect(app.models.foo.definition.settings.base).to.equal('User');
+    });
+
+    it('prefers config.options.key over config.key', function() {
+      app.model('foo', {
+        dataSource: 'db',
+        base: 'User',
+        options: {
+          base: 'Application'
+        }
+      });
+
+      expect(app.models.foo.definition.settings.base).to.equal('Application');
     });
   });
 
