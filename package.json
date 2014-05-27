@@ -19,6 +19,7 @@
     "sqlserver",
     "mssql",
     "postgres",
+    "postgresql",
     "soap",
     "StrongLoop",
     "framework",
