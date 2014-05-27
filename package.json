@@ -10,7 +10,7 @@
     "Platform",
     "mBaaS"
   ],
-  "version": "2.0.0-beta1",
+  "version": "2.0.0-beta2",
   "scripts": {
     "test": "mocha -R spec"
   },
@@ -31,10 +31,10 @@
     "canonical-json": "0.0.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~1.6.0"
+    "loopback-datasource-juggler": "2.0.0-beta1"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": "~1.6.0",
+    "loopback-datasource-juggler": "2.0.0-beta1",
     "mocha": "~1.17.1",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.9.0",
