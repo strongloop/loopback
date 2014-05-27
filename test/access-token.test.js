@@ -32,6 +32,27 @@ describe('loopback.token(options)', function() {
           .end(done);
       });
   });
+
+  it('should skip when req.token is already present', function(done) {
+    var tokenStub = { id: 'stub id' };
+    app.use(function(req, res, next) {
+      req.accessToken = tokenStub;
+      next();
+    });
+    app.use(loopback.token({ model: Token }));
+    app.get('/', function(req, res, next) {
+      res.send(req.accessToken);
+    });
+
+    request(app).get('/')
+      .set('Authorization', this.token.id)
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body).to.eql(tokenStub);
+        done();
+      });
+  });
 });
 
 describe('AccessToken', function () {
