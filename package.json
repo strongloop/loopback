@@ -17,6 +17,8 @@
     "app",
     "auth",
     "security",
+    "orm",
+    "database",
     "oracle",
     "mysql",
     "nosql",
@@ -27,7 +29,9 @@
     "express",
     "restify",
     "koa",
-    "postgres"
+    "postgres",
+    "postgresql",
+    "soap"
   ],
   "version": "1.8.4",
   "scripts": {
