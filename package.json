@@ -19,8 +19,9 @@
     "sqlserver",
     "mssql",
     "postgres",
+    "soap",
     "StrongLoop",
-    "loopback",
+    "framework",
     "mobile",
     "mBaaS"
   ],
