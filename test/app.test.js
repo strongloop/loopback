@@ -128,6 +128,14 @@ describe('app', function() {
     });
   });
 
+  describe('app.dataSource', function() {
+    it('looks up the connector in `app.connectors`', function() {
+      app.connector('custom', loopback.Memory);
+      app.dataSource('custom', { connector: 'custom' });
+      expect(app.dataSources.custom.name).to.equal(loopback.Memory.name);
+    });
+  });
+
   describe('app.boot([options])', function () {
     beforeEach(function () {
       app.boot({
@@ -500,6 +508,41 @@ describe('app', function() {
 
           done();
         });
+    });
+  });
+
+  describe('app.connectors', function() {
+    it('is unique per app instance', function() {
+      app.connectors.foo = 'bar';
+      var anotherApp = loopback();
+      expect(anotherApp.connectors.foo).to.equal(undefined);
+    });
+
+    it('includes Remote connector', function() {
+      expect(app.connectors.remote).to.equal(loopback.Remote);
+    });
+
+    it('includes Memory connector', function() {
+      expect(app.connectors.memory).to.equal(loopback.Memory);
+    });
+  });
+
+  describe('app.connector', function() {
+     // any connector will do
+    it('adds the connector to the registry', function() {
+      app.connector('foo-bar', loopback.Memory);
+      expect(app.connectors['foo-bar']).to.equal(loopback.Memory);
+    });
+
+    it('adds a classified alias', function() {
+      app.connector('foo-bar', loopback.Memory);
+      expect(app.connectors.FooBar).to.equal(loopback.Memory);
+    });
+
+    it('adds a camelized alias', function() {
+      app.connector('FOO-BAR', loopback.Memory);
+      console.log(app.connectors);
+      expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
     });
   });
 });
