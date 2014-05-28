@@ -14,8 +14,12 @@ function checkResult(err, result) {
   assert(!err);
 }
 
-describe('security scopes', function () {
+var ds = null;
+before(function() {
+  ds = loopback.createDataSource({connector: loopback.Memory});
+});
 
+describe('security scopes', function () {
   beforeEach(function() {
     var ds = this.ds = loopback.createDataSource({connector: loopback.Memory});
     testModel = loopback.DataModel.extend('testModel');
@@ -156,7 +160,6 @@ describe('security ACLs', function () {
   });
 
   it("should honor defaultPermission from the model", function () {
-    var ds = this.ds;
     var Customer = ds.createModel('Customer', {
       name: {
         type: String,
@@ -188,7 +191,6 @@ describe('security ACLs', function () {
   });
 
   it("should honor static ACLs from the model", function () {
-    var ds = this.ds;
     var Customer = ds.createModel('Customer', {
       name: {
         type: String,
@@ -226,7 +228,6 @@ describe('security ACLs', function () {
   it("should check access against LDL, ACL, and Role", function () {
     // var log = console.log;
     var log = function() {};
-    var ds = this.ds;
 
     // Create
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {

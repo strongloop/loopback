@@ -69,9 +69,11 @@ describe('app', function() {
     });
   });
 
-  describe('app.model(name, properties, options)', function () {
-    it('Sugar for defining a fully built model', function () {
-      var app = loopback();
+  describe('app.model(name, config)', function () {
+    var app;
+
+    beforeEach(function() {
+      app = loopback();
       app.boot({
         app: {port: 3000, host: '127.0.0.1'},
         dataSources: {
@@ -80,24 +82,65 @@ describe('app', function() {
           }
         }
       });
+    });
 
+    it('Sugar for defining a fully built model', function () {
       app.model('foo', {
         dataSource: 'db'
       });
 
       var Foo = app.models.foo;
-      var f = new Foo;
+      var f = new Foo();
 
       assert(f instanceof loopback.Model);
+    });
+
+    it('interprets extra first-level keys as options', function() {
+      app.model('foo', {
+        dataSource: 'db',
+        base: 'User'
+      });
+
+      expect(app.models.foo.definition.settings.base).to.equal('User');
+    });
+
+    it('prefers config.options.key over config.key', function() {
+      app.model('foo', {
+        dataSource: 'db',
+        base: 'User',
+        options: {
+          base: 'Application'
+        }
+      });
+
+      expect(app.models.foo.definition.settings.base).to.equal('Application');
     });
   });
 
   describe('app.models', function() {
     it('is unique per app instance', function() {
+      app.dataSource('db', { connector: 'memory' });
       var Color = app.model('Color', { dataSource: 'db' });
       expect(app.models.Color).to.equal(Color);
       var anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);
+    });
+  });
+
+  describe('app.dataSources', function() {
+    it('is unique per app instance', function() {
+      app.dataSource('ds', { connector: 'memory' });
+      expect(app.datasources.ds).to.not.equal(undefined);
+      var anotherApp = loopback();
+      expect(anotherApp.datasources.ds).to.equal(undefined);
+    });
+  });
+
+  describe('app.dataSource', function() {
+    it('looks up the connector in `app.connectors`', function() {
+      app.connector('custom', loopback.Memory);
+      app.dataSource('custom', { connector: 'custom' });
+      expect(app.dataSources.custom.name).to.equal(loopback.Memory.name);
     });
   });
 
@@ -473,6 +516,41 @@ describe('app', function() {
 
           done();
         });
+    });
+  });
+
+  describe('app.connectors', function() {
+    it('is unique per app instance', function() {
+      app.connectors.foo = 'bar';
+      var anotherApp = loopback();
+      expect(anotherApp.connectors.foo).to.equal(undefined);
+    });
+
+    it('includes Remote connector', function() {
+      expect(app.connectors.remote).to.equal(loopback.Remote);
+    });
+
+    it('includes Memory connector', function() {
+      expect(app.connectors.memory).to.equal(loopback.Memory);
+    });
+  });
+
+  describe('app.connector', function() {
+     // any connector will do
+    it('adds the connector to the registry', function() {
+      app.connector('foo-bar', loopback.Memory);
+      expect(app.connectors['foo-bar']).to.equal(loopback.Memory);
+    });
+
+    it('adds a classified alias', function() {
+      app.connector('foo-bar', loopback.Memory);
+      expect(app.connectors.FooBar).to.equal(loopback.Memory);
+    });
+
+    it('adds a camelized alias', function() {
+      app.connector('FOO-BAR', loopback.Memory);
+      console.log(app.connectors);
+      expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
     });
   });
 });
