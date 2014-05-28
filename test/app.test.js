@@ -111,10 +111,20 @@ describe('app', function() {
 
   describe('app.models', function() {
     it('is unique per app instance', function() {
+      app.dataSource('db', { connector: 'memory' });
       var Color = app.model('Color', { dataSource: 'db' });
       expect(app.models.Color).to.equal(Color);
       var anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);
+    });
+  });
+
+  describe('app.dataSources', function() {
+    it('is unique per app instance', function() {
+      app.dataSource('ds', { connector: 'memory' });
+      expect(app.datasources.ds).to.not.equal(undefined);
+      var anotherApp = loopback();
+      expect(anotherApp.datasources.ds).to.equal(undefined);
     });
   });
 
