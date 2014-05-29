@@ -1,5 +1,7 @@
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
+var loopback = require('../');
+var DataModel = loopback.DataModel;
 
 describe('app', function() {
 
@@ -11,30 +13,35 @@ describe('app', function() {
     });
 
     it("Expose a `Model` to remote clients", function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = DataModel.extend('color', {name: String});
       app.model(Color);
+      Color.attachTo(db);
 
       expect(app.models()).to.eql([Color]);
     });
 
     it('uses singlar name as app.remoteObjects() key', function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = DataModel.extend('color', {name: String});
       app.model(Color);
+      Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({ color: Color });
     });
 
     it('uses singular name as shared class name', function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = DataModel.extend('color', {name: String});
       app.model(Color);
-      expect(app.remotes().exports).to.eql({ color: Color });
+      Color.attachTo(db);
+      var classes = app.remotes().classes().map(function(c) {return c.name});
+      expect(classes).to.contain('color');
     });
 
     it('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
         if (err) return done(err);
-        var Color = db.createModel('color', {name: String});
+        var Color = DataModel.extend('color', {name: String});
         app.model(Color);
+        Color.attachTo(db);
         request(app).get('/colors').expect(200, done);
       });
     });
@@ -50,7 +57,8 @@ describe('app', function() {
       it('uses plural name as shared class name', function() {
         var Color = db.createModel('color', {name: String});
         app.model(Color);
-        expect(app.remotes().exports).to.eql({ colors: Color });
+        var classes = app.remotes().classes().map(function(c) {return c.name});
+        expect(classes).to.contain('colors');
       });
 
       it('uses plural name as app.remoteObjects() key', function() {
@@ -319,6 +327,7 @@ describe('app', function() {
     });
   });
 
+  /*
   describe('installMiddleware()', function() {
     var app;
     beforeEach(function() { app = loopback(); });
@@ -414,6 +423,7 @@ describe('app', function() {
         .end(done);
     });
   });
+  */
 
   describe('listen()', function() {
     it('starts http server', function(done) {

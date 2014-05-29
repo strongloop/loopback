@@ -125,7 +125,7 @@ function createTestApp(testToken, done) {
   app.use(loopback.rest());
   app.enableAuth();
 
-  var TestModel = loopback.Model.extend('test', {}, {
+  var TestModel = loopback.DataModel.extend('test', {}, {
     acls: [
       {
         principalType: "ROLE",

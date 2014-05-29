@@ -1,42 +1,70 @@
 var loopback = require('../');
+var defineModelTestsWithDataSource = require('./util/model-tests');
 
 describe('RemoteConnector', function() {
+  var remoteApp;
+  var remote;
+
+  defineModelTestsWithDataSource({
+    beforeEach: function(done) {
+      var test = this;
+      remoteApp = loopback();
+      remoteApp.use(loopback.rest());
+      remoteApp.listen(0, function() {
+        test.dataSource = loopback.createDataSource({
+          host: remoteApp.get('host'),
+          port: remoteApp.get('port'),
+          connector: loopback.Remote
+        });
+        done();
+      });
+    },
+    onDefine: function(Model) {
+      var RemoteModel = Model.extend(Model.modelName);
+      RemoteModel.attachTo(loopback.createDataSource({
+        connector: loopback.Memory
+      }));
+      remoteApp.model(RemoteModel);
+    }
+  });
+
   beforeEach(function(done) {
-    var LocalModel = this.LocalModel = loopback.DataModel.extend('LocalModel');
-    var RemoteModel = loopback.DataModel.extend('LocalModel');
-    var localApp = loopback();
-    var remoteApp = loopback();
-    localApp.model(LocalModel);
-    remoteApp.model(RemoteModel);
+    var test = this;
+    remoteApp = this.remoteApp = loopback();
     remoteApp.use(loopback.rest());
-    RemoteModel.attachTo(loopback.memory());
+    var ServerModel = this.ServerModel = loopback.DataModel.extend('TestModel');
+
+    remoteApp.model(ServerModel);
+
     remoteApp.listen(0, function() {
-      var ds = loopback.createDataSource({
+      test.remote = loopback.createDataSource({
         host: remoteApp.get('host'),
         port: remoteApp.get('port'),
         connector: loopback.Remote
       });
-
-      LocalModel.attachTo(ds);
       done();
     });
   });
 
-  it('should alow methods to be called remotely', function (done) {
-    var data = {foo: 'bar'};
-    this.LocalModel.create(data, function(err, result) {
-      if(err) return done(err);
-      expect(result).to.deep.equal({id: 1, foo: 'bar'});
-      done();
-    });
-  });
+  it('should support the save method', function (done) {
+    var calledServerCreate = false;
+    var RemoteModel = loopback.DataModel.extend('TestModel');
+    RemoteModel.attachTo(this.remote);
 
-  it('should alow instance methods to be called remotely', function (done) {
-    var data = {foo: 'bar'};
-    var m = new this.LocalModel(data);
-    m.save(function(err, result) {
-      if(err) return done(err);
-      expect(result).to.deep.equal({id: 2, foo: 'bar'});
+    var ServerModel = this.ServerModel;
+
+    ServerModel.create = function(data, cb) {
+      calledServerCreate = true;
+      data.id = 1;
+      cb(null, data);
+    }
+
+    ServerModel.setupRemoting();
+
+    var m = new RemoteModel({foo: 'bar'});
+    m.save(function(err, inst) {
+      assert(inst instanceof RemoteModel);
+      assert(calledServerCreate);
       done();
     });
   });
