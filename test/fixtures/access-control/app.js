@@ -9,9 +9,6 @@ app.use(loopback.cookieParser('secret'));
 app.use(loopback.token({model: app.models.accessToken}));
 app.use(apiPath, loopback.rest());
 
-if(loopback.isExpress3) {
-  app.use(app.router);
-}
 app.use(loopback.urlNotFound());
 app.use(loopback.errorHandler());
 app.enableAuth();
