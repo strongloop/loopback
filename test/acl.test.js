@@ -296,7 +296,6 @@ describe('security ACLs', function () {
       });
     });
   });
-
 });
 
 

@@ -541,7 +541,6 @@ describe('app', function() {
 
     it('adds a camelized alias', function() {
       app.connector('FOO-BAR', loopback.Memory);
-      console.log(app.connectors);
       expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
     });
   });
