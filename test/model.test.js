@@ -5,6 +5,8 @@ var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var DataModel = loopback.DataModel;
 
+var describe = require('./util/describe');
+
 describe('Model / DataModel', function() {
   defineModelTestsWithDataSource({
     dataSource: {
