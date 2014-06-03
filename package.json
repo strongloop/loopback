@@ -34,7 +34,7 @@
     "debug": "~0.8.1",
     "express": "4.x",
     "body-parser": "~1.2.2",
-    "strong-remoting": "2.0.0-beta2",
+    "strong-remoting": "2.0.0-beta3",
     "inflection": "~1.3.5",
     "passport": "~0.2.0",
     "passport-local": "~1.0.0",

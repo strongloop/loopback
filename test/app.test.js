@@ -3,6 +3,9 @@ var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
 var loopback = require('../');
 var DataModel = loopback.DataModel;
 
+var describe = require('./util/describe');
+var it = require('./util/it');
+
 describe('app', function() {
 
   describe('app.model(Model)', function() {
@@ -35,7 +38,7 @@ describe('app', function() {
       expect(classes).to.contain('color');
     });
 
-    it('updates REST API when a new model is added', function(done) {
+    it.onServer('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
         if (err) return done(err);
@@ -76,6 +79,8 @@ describe('app', function() {
       app = loopback();
       app.boot({
         app: {port: 3000, host: '127.0.0.1'},
+        // prevent loading of models.json, it is not available in the browser
+        models: {},
         dataSources: {
           db: {
             connector: 'memory'
@@ -144,7 +149,7 @@ describe('app', function() {
     });
   });
 
-  describe('app.boot([options])', function () {
+  describe.onServer('app.boot([options])', function () {
     beforeEach(function () {
       app.boot({
         app: {
@@ -313,7 +318,7 @@ describe('app', function() {
     });
   });
 
-  describe('app.boot(appRootDir)', function () {
+  describe.onServer('app.boot(appRootDir)', function () {
     it('Load config files', function () {
       var app = loopback();
 
@@ -327,7 +332,7 @@ describe('app', function() {
     });
   });
 
-  describe('listen()', function() {
+  describe.onServer('listen()', function() {
     it('starts http server', function(done) {
       var app = loopback();
       app.set('port', 0);
@@ -387,7 +392,7 @@ describe('app', function() {
     });
   });
 
-  describe('enableAuth', function() {
+  describe.onServer('enableAuth', function() {
     it('should set app.isAuthEnabled to true', function() {
       expect(app.isAuthEnabled).to.not.equal(true);
       app.enableAuth();
@@ -395,7 +400,7 @@ describe('app', function() {
     });
   });
 
-  describe('app.get("/", loopback.status())', function () {
+  describe.onServer('app.get("/", loopback.status())', function () {
     it('should return the status of the application', function (done) {
       var app = loopback();
       app.get('/', loopback.status());
@@ -454,6 +459,28 @@ describe('app', function() {
     it('adds a camelized alias', function() {
       app.connector('FOO-BAR', loopback.Memory);
       expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
+    });
+  });
+
+  describe('app.settings', function() {
+    it('can be altered via `app.set(key, value)`', function() {
+      app.set('write-key', 'write-value');
+      expect(app.settings).to.have.property('write-key', 'write-value');
+    });
+
+    it('can be read via `app.get(key)`', function() {
+      app.settings['read-key'] = 'read-value';
+      expect(app.get('read-key')).to.equal('read-value');
+    });
+
+    it('is unique per app instance', function() {
+      var app1 = loopback();
+      var app2 = loopback();
+
+      expect(app1.settings).to.not.equal(app2.settings);
+
+      app1.set('key', 'value');
+      expect(app2.get('key'), 'app2 value').to.equal(undefined);
     });
   });
 });

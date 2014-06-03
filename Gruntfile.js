@@ -66,7 +66,8 @@ module.exports = function(grunt) {
           files: [
             'test/support.js',
             'test/model.test.js',
-            'test/geo-point.test.js'
+            'test/geo-point.test.js',
+            'test/app.test.js'
           ],
 
           // list of files to exclude
