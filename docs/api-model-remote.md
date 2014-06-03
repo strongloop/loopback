@@ -126,7 +126,7 @@ Run a function before or after a remote method is called by a client.
 
 ```js
 // *.save === prototype.save
-User.beforeRemote('*.save', function(ctx, user, next) {
+User.beforeRemote('*.save', function(ctx, next) {
   if(ctx.user) {
     next();
   } else {
@@ -134,8 +134,8 @@ User.beforeRemote('*.save', function(ctx, user, next) {
   }
 });
 
-User.afterRemote('*.save', function(ctx, user, next) {
-  console.log('user has been saved', user);
+User.afterRemote('*.save', function(ctx, next) {
+  console.log('user has been saved', ctx.user);
   next();
 });
 ```
@@ -144,7 +144,7 @@ Remote hooks also support wildcards. Run a function before any remote method is 
 
 ```js
 // ** will match both prototype.* and *.*
-User.beforeRemote('**', function(ctx, user, next) {
+User.beforeRemote('**', function(ctx, next) {
   console.log(ctx.methodString, 'was invoked remotely'); // users.prototype.save was invoked remotely
   next();
 });
@@ -160,7 +160,7 @@ User.beforeRemote('*', ...);
 User.beforeRemote('prototype.*', ...);
 
 // prevent password hashes from being sent to clients
-User.afterRemote('**', function (ctx, user, next) {
+User.afterRemote('**', function (ctx, next) {
   if(ctx.result) {
     if(Array.isArray(ctx.result)) {
       ctx.result.forEach(function (result) {
