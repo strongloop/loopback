@@ -33,7 +33,7 @@
   "dependencies": {
     "debug": "~0.8.1",
     "express": "~3.5.0",
-    "strong-remoting": "~1.4.0",
+    "strong-remoting": "~1.5.0",
     "inflection": "~1.3.5",
     "passport": "~0.2.0",
     "passport-local": "~1.0.0",
