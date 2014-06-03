@@ -122,7 +122,8 @@ as follows (assuming `name` as the name of the input parameter to resolve):
 
 ### Remote hooks
 
-Run a function before or after a remote method is called by a client.
+A _remote hook_ enables you to execute a function before or after a remote method is called by a client.
+The `beforeRemote` function runs before the remote method and `afterRemote` runs after.
 
 ```js
 // *.save === prototype.save
@@ -139,6 +140,8 @@ User.afterRemote('*.save', function(ctx, user, next) {
   next();
 });
 ```
+
+***NOTE***:  The second argument to the hook(`user` in the above example) is the `ctx.result` which is not always available.
     
 Remote hooks also support wildcards. Run a function before any remote method is called.
 
