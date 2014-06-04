@@ -12,9 +12,7 @@
     "lib/models/model.js",
     "lib/models/data-model.js",
     "lib/models/role.js",
-    "lib/models/user.js",
-    "docs/api-model.md",
-    "docs/api-model-remote.md"
+    "lib/models/user.js"
   ],
   "assets": "/docs/assets"
 }
