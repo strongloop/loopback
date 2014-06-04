@@ -5,7 +5,6 @@
     "lib/loopback.js",
     "lib/middleware/token.js",
     "lib/models/access-token.js",
-    "lib/models/access-context.js",
     "lib/models/acl.js",
     "lib/models/application.js",
     "lib/models/email.js",
