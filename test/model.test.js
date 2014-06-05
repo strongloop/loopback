@@ -3,11 +3,11 @@ var loopback = require('../');
 var ACL = loopback.ACL;
 var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
-var DataModel = loopback.DataModel;
+var PersistedModel = loopback.PersistedModel;
 
 var describe = require('./util/describe');
 
-describe('Model / DataModel', function() {
+describe('Model / PersistedModel', function() {
   defineModelTestsWithDataSource({
     dataSource: {
       connector: loopback.Memory
@@ -16,7 +16,7 @@ describe('Model / DataModel', function() {
 
   describe('Model.validatesUniquenessOf(property, options)', function() {
     it("Ensure the value for `property` is unique", function(done) {
-      var User = DataModel.extend('user', {
+      var User = PersistedModel.extend('user', {
         'first': String,
         'last': String,
         'age': Number,
@@ -71,7 +71,7 @@ describe.onServer('Remote Methods', function(){
   var app;
 
   beforeEach(function () {
-    User = DataModel.extend('user', {
+    User = PersistedModel.extend('user', {
       'first': String,
       'last': String,
       'age': Number,
@@ -362,7 +362,7 @@ describe.onServer('Remote Methods', function(){
     
   describe('Model.extend()', function(){
     it('Create a new model by extending an existing model', function() {
-      var User = loopback.DataModel.extend('test-user', {
+      var User = loopback.PersistedModel.extend('test-user', {
         email: String
       });
       

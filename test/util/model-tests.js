@@ -3,7 +3,7 @@ var describe = require('./describe');
 var loopback = require('../../');
 var ACL = loopback.ACL;
 var Change = loopback.Change;
-var DataModel = loopback.DataModel;
+var PersistedModel = loopback.PersistedModel;
 var RemoteObjects = require('strong-remoting');
 
 module.exports = function defineModelTestsWithDataSource(options) {
@@ -22,11 +22,11 @@ describe('Model Tests', function() {
     // setup a model / datasource
     dataSource = this.dataSource || loopback.createDataSource(options.dataSource);
 
-    var extend = DataModel.extend;
+    var extend = PersistedModel.extend;
 
     // create model hook
-    DataModel.extend = function() {
-      var extendedModel = extend.apply(DataModel, arguments);
+    PersistedModel.extend = function() {
+      var extendedModel = extend.apply(PersistedModel, arguments);
 
       if(options.onDefine) {
         options.onDefine.call(test, extendedModel);
@@ -35,7 +35,7 @@ describe('Model Tests', function() {
       return extendedModel;
     }
 
-    User = DataModel.extend('user', {
+    User = PersistedModel.extend('user', {
       'first': String,
       'last': String,
       'age': Number,

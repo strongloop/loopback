@@ -36,9 +36,9 @@ describe('DataSource', function() {
     });
   });
 
-  describe.skip('DataModel Methods', function() {
+  describe.skip('PersistedModel Methods', function() {
     it("List the enabled and disabled methods", function() {
-      var TestModel = loopback.DataModel.extend('TestDataModel');
+      var TestModel = loopback.PersistedModel.extend('TestPersistedModel');
       TestModel.attachTo(loopback.memory());
       
       // assert the defaults

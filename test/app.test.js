@@ -1,7 +1,7 @@
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
 var loopback = require('../');
-var DataModel = loopback.DataModel;
+var PersistedModel = loopback.PersistedModel;
 
 var describe = require('./util/describe');
 var it = require('./util/it');
@@ -16,7 +16,7 @@ describe('app', function() {
     });
 
     it("Expose a `Model` to remote clients", function() {
-      var Color = DataModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
 
@@ -24,14 +24,14 @@ describe('app', function() {
     });
 
     it('uses singlar name as app.remoteObjects() key', function() {
-      var Color = DataModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({ color: Color });
     });
 
     it('uses singular name as shared class name', function() {
-      var Color = DataModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
       var classes = app.remotes().classes().map(function(c) {return c.name});
@@ -42,7 +42,7 @@ describe('app', function() {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
         if (err) return done(err);
-        var Color = DataModel.extend('color', {name: String});
+        var Color = PersistedModel.extend('color', {name: String});
         app.model(Color);
         Color.attachTo(db);
         request(app).get('/colors').expect(200, done);
