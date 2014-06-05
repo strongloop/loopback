@@ -3,7 +3,7 @@ var loopback = require('../');
 var ACL = loopback.ACL;
 var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
-var DataModel = loopback.DataModel;
+var PersistedModel = loopback.PersistedModel;
 
 describe('Replication / Change APIs', function() {
   beforeEach(function() {
@@ -11,12 +11,12 @@ describe('Replication / Change APIs', function() {
     var dataSource = this.dataSource = loopback.createDataSource({
       connector: loopback.Memory
     });
-    var SourceModel = this.SourceModel = DataModel.extend('SourceModel', {}, {
+    var SourceModel = this.SourceModel = PersistedModel.extend('SourceModel', {}, {
       trackChanges: true
     });
     SourceModel.attachTo(dataSource);
     
-    var TargetModel = this.TargetModel = DataModel.extend('TargetModel', {}, {
+    var TargetModel = this.TargetModel = PersistedModel.extend('TargetModel', {}, {
       trackChanges: true
     });
     TargetModel.attachTo(dataSource);

@@ -3,13 +3,13 @@ var loopback = require('../');
 describe('hidden properties', function () {
   beforeEach(function (done) {
     var app = this.app = loopback();
-    var Product = this.Product = loopback.DataModel.extend('product',
+    var Product = this.Product = loopback.PersistedModel.extend('product',
       {},
       {hidden: ['secret']}
     );
     Product.attachTo(loopback.memory());
     
-    var Category = this.Category = loopback.DataModel.extend('category');
+    var Category = this.Category = loopback.PersistedModel.extend('category');
     Category.attachTo(loopback.memory());
     Category.hasMany(Product);
     

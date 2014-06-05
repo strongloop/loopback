@@ -1,6 +1,6 @@
 var loopback = require('../../');
 
-var CartItem = exports.CartItem = loopback.DataModel.extend('CartItem', {
+var CartItem = exports.CartItem = loopback.PersistedModel.extend('CartItem', {
   tax: {type: Number, default: 0.1},
   price: Number,
   item: String,

@@ -32,7 +32,7 @@ describe('RemoteConnector', function() {
     var test = this;
     remoteApp = this.remoteApp = loopback();
     remoteApp.use(loopback.rest());
-    var ServerModel = this.ServerModel = loopback.DataModel.extend('TestModel');
+    var ServerModel = this.ServerModel = loopback.PersistedModel.extend('TestModel');
 
     remoteApp.model(ServerModel);
 
@@ -48,7 +48,7 @@ describe('RemoteConnector', function() {
 
   it('should support the save method', function (done) {
     var calledServerCreate = false;
-    var RemoteModel = loopback.DataModel.extend('TestModel');
+    var RemoteModel = loopback.PersistedModel.extend('TestModel');
     RemoteModel.attachTo(this.remote);
 
     var ServerModel = this.ServerModel;
