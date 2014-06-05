@@ -136,6 +136,20 @@ describe('app', function() {
 
   });
 
+  describe('app.model(ModelCtor, config)', function() {
+    it('attaches the model to a datasource', function() {
+      app.dataSource('db', { connector: 'memory' });
+      var TestModel = loopback.Model.extend('TestModel');
+      // TestModel was most likely already defined in a different test,
+      // thus TestModel.dataSource may be already set
+      delete TestModel.dataSource;
+
+      app.model(TestModel, { dataSource: 'db' });
+
+      expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
+    });
+  });
+
   describe('app.models', function() {
     it('is unique per app instance', function() {
       app.dataSource('db', { connector: 'memory' });
