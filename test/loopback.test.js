@@ -1,4 +1,11 @@
 describe('loopback', function() {
+  var nameCounter = 0;
+  var uniqueModelName;
+
+  beforeEach(function() {
+    uniqueModelName = 'TestModel-' + (++nameCounter);
+  });
+
   describe('exports', function() {
     it('ValidationError', function() {
       expect(loopback.ValidationError).to.be.a('function')
@@ -117,6 +124,97 @@ describe('loopback', function() {
         assert(loopback.getModelByType(MyModel) === MyCustomModel);
         assert(loopback.getModelByType(MyCustomModel) === MyCustomModel);
       });
+    });
+  });
+
+  describe('loopback.createModelFromConfig(config)', function() {
+    it('creates the model', function() {
+      var model = loopback.createModelFromConfig({
+        name: uniqueModelName
+      });
+
+      expect(model.prototype).to.be.instanceof(loopback.Model);
+    });
+
+    it('interprets extra first-level keys as options', function() {
+      var model = loopback.createModelFromConfig({
+        name: uniqueModelName,
+        base: 'User'
+      });
+
+      expect(model.prototype).to.be.instanceof(loopback.User);
+    });
+
+    it('prefers config.options.key over config.key', function() {
+      var model = loopback.createModelFromConfig({
+        name: uniqueModelName,
+        base: 'User',
+        options: {
+          base: 'Application'
+        }
+      });
+
+      expect(model.prototype).to.be.instanceof(loopback.Application);
+    });
+  });
+
+  describe('loopback.configureModel(ModelCtor, config)', function() {
+    it('adds new relations', function() {
+      var model = loopback.Model.extend(uniqueModelName);
+
+      loopback.configureModel(model, {
+        relations: {
+          owner: {
+            type: 'belongsTo',
+            model: 'User'
+          }
+        }
+      });
+
+      expect(model.settings.relations).to.have.property('owner');
+    });
+
+    it('updates existing relations', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        relations: {
+          owner: {
+            type: 'belongsTo',
+            model: 'User'
+          }
+        }
+      });
+
+      loopback.configureModel(model, {
+        relations: {
+          owner: {
+            model: 'Application'
+          }
+        }
+      });
+
+      expect(model.settings.relations.owner).to.eql({
+        type: 'belongsTo',
+        model: 'Application'
+      });
+    });
+
+    it('updates relations before attaching to a dataSource', function() {
+      var db = loopback.createDataSource({ connector: loopback.Memory });
+      var model = loopback.Model.extend(uniqueModelName);
+
+      loopback.configureModel(model, {
+        dataSource: db,
+        relations: {
+          owner: {
+            type: 'belongsTo',
+            model: 'User'
+          }
+        }
+      });
+
+      var owner = model.prototype.owner;
+      expect(owner, 'model.prototype.owner').to.be.a('function');
+      expect(owner._targetClass).to.equal('User');
     });
   });
 });
