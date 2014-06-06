@@ -6,6 +6,7 @@ var app = require(path.join(ACCESS_CONTROL_APP, 'app.js'));
 var assert = require('assert');
 var USER = {email: 'test@test.test', password: 'test'};
 var CURRENT_USER = {email: 'current@test.test', password: 'test'};
+var debug = require('debug')('loopback:test:access-control.integration');
 
 describe('access control - integration', function () {
 
@@ -99,6 +100,10 @@ describe('access control - integration', function () {
       lt.describe.whenCalledRemotely('GET', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
         it('should not include a password', function() {
+          debug('GET /api/users/:id response: %s\nheaders: %j\nbody string: %s',
+            this.res.statusCode,
+            this.res.headers,
+            this.res.text);
           var user = this.res.body;
           assert.equal(user.password, undefined);
         });
