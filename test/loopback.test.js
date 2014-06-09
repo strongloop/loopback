@@ -127,9 +127,9 @@ describe('loopback', function() {
     });
   });
 
-  describe('loopback.createModelFromConfig(config)', function() {
+  describe('loopback.createModel(config)', function() {
     it('creates the model', function() {
-      var model = loopback.createModelFromConfig({
+      var model = loopback.createModel({
         name: uniqueModelName
       });
 
@@ -137,7 +137,7 @@ describe('loopback', function() {
     });
 
     it('interprets extra first-level keys as options', function() {
-      var model = loopback.createModelFromConfig({
+      var model = loopback.createModel({
         name: uniqueModelName,
         base: 'User'
       });
@@ -146,7 +146,7 @@ describe('loopback', function() {
     });
 
     it('prefers config.options.key over config.key', function() {
-      var model = loopback.createModelFromConfig({
+      var model = loopback.createModel({
         name: uniqueModelName,
         base: 'User',
         options: {
