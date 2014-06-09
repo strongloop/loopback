@@ -52,7 +52,7 @@
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.12.1",
     "chai": "~1.9.1",
-    "loopback-testing": "~0.1.2",
+    "loopback-testing": "~0.2.0",
     "browserify": "~4.1.5",
     "grunt": "~0.4.5",
     "grunt-browserify": "~2.1.0",
