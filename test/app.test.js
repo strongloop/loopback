@@ -29,6 +29,13 @@ describe('app', function() {
       expect(app.remotes().exports).to.eql({ color: Color });
     });
 
+    it('registers existing models to app.models', function() {
+      var Color = db.createModel('color', {name: String});
+      app.model(Color);
+      expect(app.models.color).to.eql(Color);
+      expect(app.models.Color).to.eql(Color);
+    });
+
     it('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
