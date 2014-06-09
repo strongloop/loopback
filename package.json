@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "loopback-datasource-juggler": ">=1.4.0 <1.6.0",
-    "mocha": "~1.18.0",
+    "mocha": "~1.20.1",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.12.1",
     "chai": "~1.9.1",
