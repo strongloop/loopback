@@ -1,6 +1,5 @@
 var User;
 var AccessToken = loopback.AccessToken;
-var passport = require('passport');
 var MailConnector = require('../lib/connectors/mail');
 
 var userMemory = loopback.createDataSource({
@@ -9,6 +8,7 @@ var userMemory = loopback.createDataSource({
 
 describe('User', function(){
   var validCredentials = {email: 'foo@bar.com', password: 'bar'};
+  var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'bar1'};
   var incompleteCredentials = {password: 'bar1'};
 
@@ -115,6 +115,44 @@ describe('User', function(){
         assert.equal(accessToken.id.length, 64);
         
         done();
+      });
+    });
+
+    it('Login a user by providing credentials with TTL', function(done) {
+      User.login(validCredentialsWithTTL, function (err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+        assert.equal(accessToken.ttl, validCredentialsWithTTL.ttl);
+        assert.equal(accessToken.id.length, 64);
+
+        done();
+      });
+    });
+
+    it('Login a user using a custom createAccessToken', function(done) {
+      var createToken = User.prototype.createAccessToken; // Save the original method
+      // Override createAccessToken
+      User.prototype.createAccessToken = function(ttl, cb) {
+        // Reduce the ttl by half for testing purpose
+        this.accessTokens.create({ttl: ttl /2 }, cb);
+      };
+      User.login(validCredentialsWithTTL, function (err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+        assert.equal(accessToken.ttl, 1800);
+        assert.equal(accessToken.id.length, 64);
+
+        User.findById(accessToken.userId, function(err, user) {
+          user.createAccessToken(120, function (err, accessToken) {
+            assert(accessToken.userId);
+            assert(accessToken.id);
+            assert.equal(accessToken.ttl, 60);
+            assert.equal(accessToken.id.length, 64);
+            // Restore create access token
+            User.prototype.createAccessToken = createToken;
+            done();
+          });
+        });
       });
     });
     
