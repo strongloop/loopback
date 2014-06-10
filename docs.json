@@ -3,6 +3,8 @@
   "content": [
     "lib/application.js",
     "lib/loopback.js",
+    "lib/runtime.js",
+    "lib/registry.js",
     "lib/middleware/token.js",
     "lib/models/access-token.js",
     "lib/models/access-context.js",
