@@ -77,6 +77,40 @@ describe('role model', function () {
 
   });
 
+
+  it("should automatically generate role id", function () {
+
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
+      // console.log('User: ', user.id);
+      Role.create({name: 'userRole'}, function (err, role) {
+        assert(role.id);
+        role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function (err, p) {
+          assert(p.id);
+          assert.equal(p.roleId, role.id);
+          Role.find(function (err, roles) {
+            assert(!err);
+            assert.equal(roles.length, 1);
+            assert.equal(roles[0].name, 'userRole');
+          });
+          role.principals(function (err, principals) {
+            assert(!err);
+            // console.log(principals);
+            assert.equal(principals.length, 1);
+            assert.equal(principals[0].principalType, RoleMapping.USER);
+            assert.equal(principals[0].principalId, user.id);
+          });
+          role.users(function (err, users) {
+            assert(!err);
+            assert.equal(users.length, 1);
+            assert.equal(users[0].principalType, RoleMapping.USER);
+            assert.equal(users[0].principalId, user.id);
+          });
+        });
+      });
+    });
+
+  });
+
   it("should support getRoles() and isInRole()", function () {
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
