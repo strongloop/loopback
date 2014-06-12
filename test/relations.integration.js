@@ -5,6 +5,7 @@ var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'app.js'));
 var assert = require('assert');
 var expect = require('chai').expect;
+var debug = require('debug')('loopback:test:relations.integration');
 
 describe('relations - integration', function () {
 
@@ -28,13 +29,19 @@ describe('relations - integration', function () {
       this.url = '/api/stores/' + this.store.id + '/widgets';
     });
     lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets', function() {
+
       it('should succeed with statusCode 200', function() {
         assert.equal(this.res.statusCode, 200);
       });
       describe('widgets (response.body)', function() {
         beforeEach(function() {
+          debug('GET /api/stores/:id/widgets response: %s' +
+              '\nheaders: %j\nbody string: %s',
+            this.res.statusCode,
+            this.res.headers,
+            this.res.text);
           this.widgets = this.res.body;
-          this.widget = this.res.body[0];
+          this.widget = this.res.body && this.res.body[0];
         });      
         it('should be an array', function() {
           assert(Array.isArray(this.widgets));
