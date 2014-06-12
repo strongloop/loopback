@@ -69,8 +69,11 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', urlForUser);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER,'GET', urlForUser);
 
-    lt.it.shouldBeAllowedWhenCalledAnonymously('POST', '/api/users');
-    lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users');
+    lt.it.shouldBeAllowedWhenCalledAnonymously(
+      'POST', '/api/users', newUserData());
+
+    lt.it.shouldBeAllowedWhenCalledByUser(
+      CURRENT_USER, 'POST', '/api/users', newUserData());
 
     lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users/logout');
 
@@ -111,6 +114,15 @@ describe('access control - integration', function () {
 
     function urlForUser() {
       return '/api/users/' + this.randomUser.id;
+    }
+
+    var userCounter;
+    function newUserData() {
+      userCounter = userCounter ? ++userCounter : 1;
+      return {
+        email: 'new-' + userCounter + '@test.test',
+        password: 'test'
+      };
     }
   });
 
