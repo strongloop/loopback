@@ -41,9 +41,9 @@ as illustrated below:
 
 * Clients
   * [loopback-ios](https://github.com/strongloop/loopback-ios)
-  * [loopback-remoting-ios](https://github.com/strongloop/loopback-remoting-ios)
+  * [strong-remoting-ios](https://github.com/strongloop/strong-remoting-ios)
   * [loopback-android](https://github.com/strongloop/loopback-android)
-  * [loopback-remoting-android](https://github.com/strongloop/loopback-remoting-android)
+  * [strong-remoting-android](https://github.com/strongloop/strong-remoting-android)
   * [loopback-angular](https://github.com/strongloop/loopback-angular)
 
 * Tools

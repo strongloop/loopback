@@ -102,11 +102,15 @@ describe('security ACLs', function () {
       property: 'find',
       accessType: 'WRITE'
     };
+
+    acls = acls.map(function(a) { return new ACL(a)});
+
     var perm = ACL.resolvePermission(acls, req);
     assert.deepEqual(perm, { model: 'account',
       property: 'find',
       accessType: 'WRITE',
-      permission: 'ALLOW' });
+      permission: 'ALLOW',
+      methodNames: []});
   });
 
   it("should allow access to models for the given principal by wildcard", function () {
@@ -297,7 +301,6 @@ describe('security ACLs', function () {
       });
     });
   });
-
 });
 
 
