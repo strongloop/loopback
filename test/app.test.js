@@ -585,4 +585,9 @@ describe('app', function() {
       expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
     });
   });
+
+  it('exposes loopback as a property', function() {
+    var app = loopback();
+    expect(app.loopback).to.equal(loopback);
+  });
 });
