@@ -524,4 +524,9 @@ describe('app', function() {
       expect(app2.get('key'), 'app2 value').to.equal(undefined);
     });
   });
+
+  it('exposes loopback as a property', function() {
+    var app = loopback();
+    expect(app.loopback).to.equal(loopback);
+  });
 });
