@@ -81,13 +81,38 @@ describe('app.enableAuth()', function() {
 
   beforeEach(createTestingToken);
 
-  it('should prevent remote method calls if the accessToken doesnt have access', function (done) {
+  it('prevents remote call with 401 status on denied ACL', function (done) {
     createTestAppAndRequest(this.token, done)
       .del('/tests/123')
       .expect(401)
       .set('authorization', this.token.id)
       .end(done);
   });
+
+  it('prevent remote call with app setting status on denied ACL', function (done) {
+    createTestAppAndRequest(this.token, {app:{aclErrorStatus:403}}, done)
+      .del('/tests/123')
+      .expect(403)
+      .set('authorization', this.token.id)
+      .end(done);
+  });
+
+  it('prevent remote call with app setting status on denied ACL', function (done) {
+    createTestAppAndRequest(this.token, {model:{aclErrorStatus:404}}, done)
+      .del('/tests/123')
+      .expect(404)
+      .set('authorization', this.token.id)
+      .end(done);
+  });
+
+  it('prevent remote call if the accessToken is missing and required', function (done) {
+    createTestAppAndRequest(null, done)
+      .del('/tests/123')
+      .expect(401)
+      .set('authorization', null)
+      .end(done);
+  });
+
 });
 
 function createTestingToken(done) {
@@ -99,12 +124,19 @@ function createTestingToken(done) {
   });
 }
 
-function createTestAppAndRequest(testToken, done) {
-  var app = createTestApp(testToken, done);
+function createTestAppAndRequest(testToken, settings, done) {
+  var app = createTestApp(testToken, settings, done);
   return request(app);
 }
 
-function createTestApp(testToken, done) {
+function createTestApp(testToken, settings, done) {
+  done = arguments[arguments.length-1];
+  if(settings == done) settings = {};
+  settings = settings || {};
+
+  var appSettings = settings.app || {};
+  var modelSettings = settings.model || {};
+
   var app = loopback();
 
   app.use(loopback.cookieParser('secret'));
@@ -125,7 +157,11 @@ function createTestApp(testToken, done) {
   app.use(loopback.rest());
   app.enableAuth();
 
-  var TestModel = loopback.PersistedModel.extend('test', {}, {
+  Object.keys(appSettings).forEach(function(key){
+    app.set(key, appSettings[key]);
+  });
+
+  var modelOptions = {
     acls: [
       {
         principalType: "ROLE",
@@ -135,7 +171,13 @@ function createTestApp(testToken, done) {
         property: 'removeById'
       }
     ]
+  };
+
+  Object.keys(modelSettings).forEach(function(key){
+    modelOptions[key] = modelSettings[key];
   });
+
+  var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
 
   TestModel.attachTo(loopback.memory());
   app.model(TestModel);
