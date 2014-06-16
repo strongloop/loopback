@@ -23,7 +23,6 @@ describe('DataSource', function() {
       assert.isFunc(Color, 'destroyAll');
       assert.isFunc(Color, 'count');
       assert.isFunc(Color, 'include');
-      assert.isFunc(Color, 'relationNameFor');
       assert.isFunc(Color, 'hasMany');
       assert.isFunc(Color, 'belongsTo');
       assert.isFunc(Color, 'hasAndBelongsToMany');
@@ -53,7 +52,6 @@ describe('DataSource', function() {
       existsAndShared('destroyAll', false);
       existsAndShared('count', true);
       existsAndShared('include', false);
-      existsAndShared('relationNameFor', false);
       existsAndShared('hasMany', false);
       existsAndShared('belongsTo', false);
       existsAndShared('hasAndBelongsToMany', false);
