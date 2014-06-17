@@ -5,6 +5,12 @@ var memory = loopback.createDataSource({
   connector: loopback.Memory
 });
 
+server.use(loopback.context());
+server.use(function(req, res, next) {
+  loopback.getCurrentContext().set('http', {req: req, res: res});
+  next();
+});
+
 server.use(loopback.rest());
 server.model(CartItem);
 

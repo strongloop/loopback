@@ -46,7 +46,8 @@
     "strong-remoting": "^2.4.0",
     "uid2": "0.0.3",
     "underscore": "~1.7.0",
-    "underscore.string": "~2.3.3"
+    "underscore.string": "~2.3.3",
+    "continuation-local-storage": "~3.1.1"
   },
   "peerDependencies": {
     "loopback-datasource-juggler": "^2.8.0"

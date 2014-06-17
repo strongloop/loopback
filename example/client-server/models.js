@@ -18,6 +18,10 @@ CartItem.sum = function(cartId, callback) {
         return prev + cur;
       }, 0);
 
+    var ns = loopback.getCurrentContext();
+    if (ns && ns.get('http')) {
+      console.log('Remote call via url: %s', ns.get('http').req.url);
+    }
     callback(null, total);
   });
 }

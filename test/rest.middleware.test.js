@@ -130,6 +130,49 @@ describe('loopback.rest', function() {
     });
   });
 
+  it('should pass req to remote method via context', function(done) {
+    var User = givenUserModelWithAuth();
+    User.getToken = function(cb) {
+      var context = loopback.getCurrentContext();
+      var req = context.get('http').req;
+      expect(req).to.have.property('accessToken');
+
+      var juggler = require('loopback-datasource-juggler');
+      expect(juggler.getCurrentContext().get('http').req)
+        .to.have.property('accessToken');
+
+      var remoting = require('strong-remoting');
+      expect(remoting.getCurrentContext().get('http').req)
+        .to.have.property('accessToken');
+
+      cb(null, req && req.accessToken ? req.accessToken.id : null);
+    };
+    // Set up the ACL
+    User.settings.acls.push({principalType: 'ROLE',
+      principalId: '$authenticated', permission: 'ALLOW', property: 'getToken'});
+
+    loopback.remoteMethod(User.getToken, {
+      accepts: [],
+      returns: [{ type: 'object', name: 'id' }]
+    });
+
+    app.use(loopback.context({enableHttpContext: true}));
+    app.enableAuth();
+    app.use(loopback.rest());
+
+    givenLoggedInUser(function(err, token) {
+      if (err) return done(err);
+      request(app).get('/users/getToken')
+        .set('Authorization', token.id)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body.id).to.equal(token.id);
+          done();
+        });
+    });
+  });
+
   function givenUserModelWithAuth() {
     // NOTE(bajtos) It is important to create a custom AccessToken model here,
     // in order to overwrite the entry created by previous tests in
