@@ -22,8 +22,7 @@ CartItem.sum = function(cartId, callback) {
   });
 }
 
-loopback.remoteMethod(
-  CartItem.sum,
+CartItem.remoteMethod('sum',
   {
     accepts: {arg: 'cartId', type: 'number'},
     returns: {arg: 'total', type: 'number'}
