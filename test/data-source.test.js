@@ -23,7 +23,6 @@ describe('DataSource', function() {
       assert.isFunc(Color, 'destroyAll');
       assert.isFunc(Color, 'count');
       assert.isFunc(Color, 'include');
-      assert.isFunc(Color, 'relationNameFor');
       assert.isFunc(Color, 'hasMany');
       assert.isFunc(Color, 'belongsTo');
       assert.isFunc(Color, 'hasAndBelongsToMany');
@@ -44,28 +43,29 @@ describe('DataSource', function() {
       // assert the defaults
       // - true: the method should be remote enabled
       // - false: the method should not be remote enabled
-      // - 
-      existsAndShared(TestModel, '_forDB', false);
-      existsAndShared(TestModel, 'create', true);
-      existsAndShared(TestModel, 'updateOrCreate', true);
-      existsAndShared(TestModel, 'upsert', true);
-      existsAndShared(TestModel, 'findOrCreate', false);
-      existsAndShared(TestModel, 'exists', true);
-      existsAndShared(TestModel, 'find', true);
-      existsAndShared(TestModel, 'findOne', true);
-      existsAndShared(TestModel, 'destroyAll', false);
-      existsAndShared(TestModel, 'count', true);
-      existsAndShared(TestModel, 'include', false);
-      existsAndShared(TestModel, 'relationNameFor', false);
-      existsAndShared(TestModel, 'hasMany', false);
-      existsAndShared(TestModel, 'belongsTo', false);
-      existsAndShared(TestModel, 'hasAndBelongsToMany', false);
-      // existsAndShared(TestModel.prototype, 'updateAttributes', true);
-      existsAndShared(TestModel, 'save', false, true);
-      existsAndShared(TestModel, 'isNewRecord', false, true);
-      existsAndShared(TestModel, '_adapter', false, true);
-      existsAndShared(TestModel, 'destroy', false, true);
-      existsAndShared(TestModel, 'reload', false, true);
+      // -
+      existsAndShared('_forDB', false);
+      existsAndShared('create', true);
+      existsAndShared('updateOrCreate', true);
+      existsAndShared('upsert', true);
+      existsAndShared('findOrCreate', false);
+      existsAndShared('exists', true);
+      existsAndShared('find', true);
+      existsAndShared('findOne', true);
+      existsAndShared('destroyAll', false);
+      existsAndShared('count', true);
+      existsAndShared('include', false);
+      existsAndShared('hasMany', false);
+      existsAndShared('belongsTo', false);
+      existsAndShared('hasAndBelongsToMany', false);
+      existsAndShared('save', false);
+      existsAndShared('isNewRecord', false);
+      existsAndShared('_adapter', false);
+      existsAndShared('destroyById', true);
+      existsAndShared('destroy', false);
+      existsAndShared('updateAttributes', true);
+      existsAndShared('updateAll', true);
+      existsAndShared('reload', false);
       
       function existsAndShared(Model, name, isRemoteEnabled, isProto) {
         var scope = isProto ? Model.prototype : Model;
