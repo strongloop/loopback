@@ -44,10 +44,10 @@
     "async": "~0.9.0"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": ">=1.4.0 <1.6.0"
+    "loopback-datasource-juggler": ">=1.4.0 <1.7.0"
   },
   "devDependencies": {
-    "loopback-datasource-juggler": ">=1.4.0 <1.6.0",
+    "loopback-datasource-juggler": ">=1.4.0 <1.7.0",
     "mocha": "~1.20.1",
     "strong-task-emitter": "0.0.x",
     "supertest": "~0.12.1",
