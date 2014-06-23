@@ -1,6 +1,8 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  grunt.loadNpmTasks('grunt-mocha-test');
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -53,86 +55,38 @@ module.exports = function(grunt) {
         }
       }
     },
-    karma: {
-      unit: {
+    mochaTest: {
+      'unit': {
+        src: 'test/*.js',
         options: {
-          // base path, that will be used to resolve files and exclude
-          basePath: '',
-
-          // frameworks to use
-          frameworks: ['mocha', 'browserify'],
-
-          // list of files / patterns to load in the browser
-          files: [
-            'test/support.js',
-            'test/model.test.js',
-            'test/geo-point.test.js',
-            'test/app.test.js'
-          ],
-
-          // list of files to exclude
-          exclude: [
-            
-          ],
-
-          // test results reporter to use
-          // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-          reporters: ['dots'],
-
-          // web server port
-          port: 9876,
-
-          // cli runner port
-          runnerPort: 9100,
-
-          // enable / disable colors in the output (reporters and logs)
-          colors: true,
-
-          // level of logging
-          // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-          logLevel: 'warn',
-
-          // enable / disable watching file and executing tests whenever any file changes
-          autoWatch: true,
-
-          // Start these browsers, currently available:
-          // - Chrome
-          // - ChromeCanary
-          // - Firefox
-          // - Opera
-          // - Safari (only Mac)
-          // - PhantomJS
-          // - IE (only Windows)
-          browsers: [
-            'Chrome'
-          ],
-
-          // If browser does not capture in given timeout [ms], kill it
-          captureTimeout: 60000,
-
-          // Continuous Integration mode
-          // if true, it capture browsers, run tests and exit
-          singleRun: false,
-
-          // Browserify config (all optional)
-          browserify: {
-            // extensions: ['.coffee'],
-            ignore: [
-              'nodemailer',
-              'passport',
-              'passport-local',
-              'superagent',
-              'supertest'
-            ],
-            // transform: ['coffeeify'],
-            // debug: true,
-            // noParse: ['jquery'],
-            watch: true,
-          },
-
-          // Add browserify to preprocessors
-          preprocessors: {'test/*': ['browserify']}
+          reporter: 'dot',
         }
+      },
+      'unit-xml': {
+        src: 'test/*.js',
+        options: {
+          reporter: 'xunit',
+          captureFile: 'xunit.xml'
+        }
+      }
+    },
+    karma: {
+      'unit-once': {
+        configFile: 'test/karma.conf.js',
+        browsers: [ 'PhantomJS' ],
+        singleRun: true,
+        reporters: ['dots', 'junit'],
+
+        // increase the timeout for slow build slaves (e.g. Travis-ci)
+        browserNoActivityTimeout: 30000,
+
+        // CI friendly test output
+        junitReporter: {
+          outputFile: 'karma-xunit.xml'
+        },
+      },
+      unit: {
+        configFile: 'test/karma.conf.js',
       },
       e2e: {
         options: {
@@ -234,4 +188,10 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', ['browserify']);
 
+  grunt.registerTask('test', [
+    process.env.JENKINS_HOME ? 'mochaTest:unit-xml' : 'mochaTest:unit',
+   'karma:unit-once']);
+
+  // alias for sl-ci-run and `npm test`
+  grunt.registerTask('mocha-and-karma', ['test']);
 };
