@@ -1,8 +1,9 @@
 var loopback = require('../../../');
+var boot = require('loopback-boot');
 var path = require('path');
 var app = module.exports = loopback();
 
-app.boot(__dirname);
+boot(app, __dirname);
 app.use(loopback.favicon());
 app.use(loopback.cookieParser({secret: app.get('cookieSecret')}));
 var apiPath = '/api';
