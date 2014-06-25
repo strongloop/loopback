@@ -64,7 +64,7 @@ as illustrated below:
 
 ## Resources 
 
-  * [Documentation](http://docs.strongloop.com/display/DOC/LoopBack).
+  * [Documentation](http://docs.strongloop.com/display/LB/LoopBack).
   * [API documentation](http://apidocs.strongloop.com/loopback).
   * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
   * [GitHub issues](https://github.com/strongloop/loopback/issues).

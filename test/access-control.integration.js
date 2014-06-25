@@ -6,6 +6,7 @@ var app = require(path.join(ACCESS_CONTROL_APP, 'app.js'));
 var assert = require('assert');
 var USER = {email: 'test@test.test', password: 'test'};
 var CURRENT_USER = {email: 'current@test.test', password: 'test'};
+var debug = require('debug')('loopback:test:access-control.integration');
 
 describe('access control - integration', function () {
 
@@ -69,8 +70,11 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', urlForUser);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER,'GET', urlForUser);
 
-    lt.it.shouldBeAllowedWhenCalledAnonymously('POST', '/api/users');
-    lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users');
+    lt.it.shouldBeAllowedWhenCalledAnonymously(
+      'POST', '/api/users', newUserData());
+
+    lt.it.shouldBeAllowedWhenCalledByUser(
+      CURRENT_USER, 'POST', '/api/users', newUserData());
 
     lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users/logout');
 
@@ -96,6 +100,10 @@ describe('access control - integration', function () {
       lt.describe.whenCalledRemotely('GET', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
         it('should not include a password', function() {
+          debug('GET /api/users/:id response: %s\nheaders: %j\nbody string: %s',
+            this.res.statusCode,
+            this.res.headers,
+            this.res.text);
           var user = this.res.body;
           assert.equal(user.password, undefined);
         });
@@ -111,6 +119,15 @@ describe('access control - integration', function () {
 
     function urlForUser() {
       return '/api/users/' + this.randomUser.id;
+    }
+
+    var userCounter;
+    function newUserData() {
+      userCounter = userCounter ? ++userCounter : 1;
+      return {
+        email: 'new-' + userCounter + '@test.test',
+        password: 'test'
+      };
     }
   });
 

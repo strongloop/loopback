@@ -29,6 +29,15 @@ describe('app', function() {
       expect(app.remotes().exports).to.eql({ color: Color });
     });
 
+    it('registers existing models to app.models', function() {
+      var Color = db.createModel('color', {name: String});
+      app.model(Color);
+      expect(Color.app).to.be.equal(app);
+      expect(Color.shared).to.equal(true);
+      expect(app.models.color).to.equal(Color);
+      expect(app.models.Color).to.equal(Color);
+    });
+
     it('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
@@ -106,6 +115,38 @@ describe('app', function() {
       });
 
       expect(app.models.foo.definition.settings.base).to.equal('Application');
+    });
+
+    it('honors config.public options', function() {
+      app.model('foo', {
+        dataSource: 'db',
+        public: false
+      });
+      expect(app.models.foo.app).to.equal(app);
+      expect(app.models.foo.shared).to.equal(false);
+    });
+
+    it('defaults config.public to be true', function() {
+      app.model('foo', {
+        dataSource: 'db'
+      });
+      expect(app.models.foo.app).to.equal(app);
+      expect(app.models.foo.shared).to.equal(true);
+    });
+
+  });
+
+  describe('app.model(ModelCtor, config)', function() {
+    it('attaches the model to a datasource', function() {
+      app.dataSource('db', { connector: 'memory' });
+      var TestModel = loopback.Model.extend('TestModel');
+      // TestModel was most likely already defined in a different test,
+      // thus TestModel.dataSource may be already set
+      delete TestModel.dataSource;
+
+      app.model(TestModel, { dataSource: 'db' });
+
+      expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
   });
 
@@ -543,5 +584,10 @@ describe('app', function() {
       app.connector('FOO-BAR', loopback.Memory);
       expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
     });
+  });
+
+  it('exposes loopback as a property', function() {
+    var app = loopback();
+    expect(app.loopback).to.equal(loopback);
   });
 });
