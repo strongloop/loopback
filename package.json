@@ -31,25 +31,25 @@
     "test": "grunt mocha-and-karma"
   },
   "dependencies": {
-    "debug": "~0.8.1",
-    "express": "4.x",
-    "body-parser": "~1.2.2",
-    "strong-remoting": "~2.0.0-beta4",
-    "inflection": "~1.3.5",
-    "nodemailer": "~0.6.5",
-    "ejs": "~1.0.0",
-    "bcryptjs": "~0.7.12",
-    "underscore.string": "~2.3.3",
-    "underscore": "~1.6.0",
-    "uid2": "0.0.3",
     "async": "~0.9.0",
-    "canonical-json": "0.0.4"
+    "bcryptjs": "~1.0.4",
+    "body-parser": "~1.2.2",
+    "canonical-json": "0.0.4",
+    "debug": "~1.0.2",
+    "ejs": "~1.0.0",
+    "express": "4.x",
+    "inflection": "~1.3.7",
+    "nodemailer": "~0.7.0",
+    "strong-remoting": "~2.0.0-beta4",
+    "uid2": "0.0.3",
+    "underscore": "~1.6.0",
+    "underscore.string": "~2.3.3"
   },
   "peerDependencies": {
     "loopback-datasource-juggler": "~2.0.0-beta2"
   },
   "devDependencies": {
-    "browserify": "~4.1.6",
+    "browserify": "~4.1.11",
     "chai": "~1.9.1",
     "cookie-parser": "~1.1.0",
     "errorhandler": "~1.0.1",
