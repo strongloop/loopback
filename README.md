@@ -35,15 +35,16 @@ as illustrated below:
   * [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)
   * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap) 
 
-* Mobile services
-  * [loopback-push-notification](https://github.com/strongloop/loopback-push-notification)
-  * [loopback-storage-service](https://github.com/strongloop/loopback-storage-service)
+* Mobile Components
+  * [loopback-component-push](https://github.com/strongloop/loopback-component-push)
+  * [loopback-component-storage](https://github.com/strongloop/loopback-component-storage)
 
+* Security Components
+  * [loopback-component-passport](https://github.com/strongloop/loopback-component-passport)
+  
 * Clients
-  * [loopback-ios](https://github.com/strongloop/loopback-ios)
-  * [strong-remoting-ios](https://github.com/strongloop/strong-remoting-ios)
-  * [loopback-android](https://github.com/strongloop/loopback-android)
-  * [strong-remoting-android](https://github.com/strongloop/strong-remoting-android)
+  * [loopback-sdk-ios](https://github.com/strongloop/loopback-sdk-ios)
+  * [loopback-sdk-android](https://github.com/strongloop/loopback-sdk-android)
   * [loopback-angular](https://github.com/strongloop/loopback-angular)
 
 * Tools
