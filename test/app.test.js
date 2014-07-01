@@ -481,6 +481,18 @@ describe('app', function() {
       });
     });
 
+    it('updates "url" on "listening" event', function(done) {
+      var app = loopback();
+      app.set('port', 0);
+      app.set('host', undefined);
+
+      app.listen(function() {
+        expect(app.get('url'), 'url')
+          .to.equal('http://127.0.0.1:' + app.get('port') + '/');
+        done();
+      });
+    });
+
     it('forwards to http.Server.listen on more than one arg', function(done) {
       var app = loopback();
       app.set('port', 1);
