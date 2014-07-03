@@ -45,7 +45,9 @@ as illustrated below:
 * Clients
   * [loopback-sdk-ios](https://github.com/strongloop/loopback-sdk-ios)
   * [loopback-sdk-android](https://github.com/strongloop/loopback-sdk-android)
-  * [loopback-angular](https://github.com/strongloop/loopback-angular)
+  * [loopback-sdk-angular](https://github.com/strongloop/loopback-sdk-angular)
+  * [loopback-sdk-angular-cli](https://github.com/strongloop/loopback-sdk-angular-cli)
+  * [grunt-loopback-sdk-angular](https://github.com/strongloop/grunt-loopback-sdk-angular)
 
 * Tools
   * [loopback-explorer](https://github.com/strongloop/loopback-explorer)
