@@ -122,6 +122,147 @@ describe('relations - integration', function () {
     });
   });
 
+  describe('hasMany through', function() {
+
+    describe('/physicians/:id/patients/add', function () {
+
+      before(function (done) {
+        app.models.physician.destroyAll(function (err) {
+          app.models.patient.destroyAll(function (err) {
+            app.models.appointment.destroyAll(function (err) {
+              done();
+            });
+          });
+        });
+      });
+
+      before(function (done) {
+        var self = this;
+        app.models.physician.create({
+          name: 'ph1'
+        }, function (err, physician) {
+          self.physician = physician;
+          done();
+        });
+      });
+
+      before(function (done) {
+        var self = this;
+        app.models.patient.create({
+          name: 'pa1'
+        }, function (err, patient) {
+          self.patient = patient;
+          self.url = '/api/physicians/' + self.physician.id
+            + '/patients/add?foreignKey=' + self.patient.id;
+          done();
+        });
+      });
+
+      lt.describe.whenCalledRemotely('POST', '/api/physicians/:id/patients/add', function () {
+        it('should succeed with statusCode 200', function () {
+          assert.equal(this.res.statusCode, 200);
+          assert.equal(this.res.body.patientId, this.patient.id);
+          assert.equal(this.res.body.physicianId, this.physician.id);
+        });
+
+        it('should create a record in appointment', function (done) {
+          var self = this;
+          app.models.appointment.find(function (err, apps) {
+            assert.equal(apps.length, 1);
+            assert.equal(apps[0].patientId, self.patient.id);
+            done();
+          });
+        });
+
+        it('should connect physician to patient', function (done) {
+          var self = this;
+          self.physician.patients(function (err, patients) {
+            assert.equal(patients.length, 1);
+            assert.equal(patients[0].id, self.patient.id);
+            done();
+          });
+        });
+      });
+
+      describe('/physicians/:id/patients/remove', function () {
+
+        before(function (done) {
+          app.models.physician.destroyAll(function (err) {
+            app.models.patient.destroyAll(function (err) {
+              app.models.appointment.destroyAll(function (err) {
+                done();
+              });
+            });
+          });
+        });
+
+        before(function (done) {
+          var self = this;
+          app.models.physician.create({
+            name: 'ph1'
+          }, function (err, physician) {
+            self.physician = physician;
+            done();
+          });
+        });
+
+        before(function (done) {
+          var self = this;
+          self.physician.patients.create({
+            name: 'pa1'
+          }, function (err, patient) {
+            self.patient = patient;
+            self.url = '/api/physicians/' + self.physician.id
+              + '/patients/remove?foreignKey=' + self.patient.id;
+            done();
+          });
+        });
+
+        it('should create a record in appointment', function (done) {
+          var self = this;
+          app.models.appointment.find(function (err, apps) {
+            assert.equal(apps.length, 1);
+            assert.equal(apps[0].patientId, self.patient.id);
+            done();
+          });
+        });
+
+        it('should connect physician to patient', function (done) {
+          var self = this;
+          self.physician.patients(function (err, patients) {
+            assert.equal(patients.length, 1);
+            assert.equal(patients[0].id, self.patient.id);
+            done();
+          });
+        });
+
+        lt.describe.whenCalledRemotely('POST', '/api/physicians/:id/patients/remove', function () {
+          it('should succeed with statusCode 200', function () {
+            assert.equal(this.res.statusCode, 200);
+          });
+
+          it('should remove the record in appointment', function (done) {
+            var self = this;
+            app.models.appointment.find(function (err, apps) {
+              assert.equal(apps.length, 0);
+              done();
+            });
+          });
+
+          it('should remove the connection between physician and patient', function (done) {
+            var self = this;
+            // Need to refresh the cache
+            self.physician.patients(true, function (err, patients) {
+              assert.equal(patients.length, 0);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+
   describe('hasAndBelongsToMany', function() {
     beforeEach(function defineProductAndCategoryModels() {
       var product = app.model(
