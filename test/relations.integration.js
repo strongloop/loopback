@@ -124,7 +124,7 @@ describe('relations - integration', function () {
 
   describe('hasMany through', function() {
 
-    describe('/physicians/:id/patients/add', function () {
+    describe('PUT /physicians/:id/patients/:fk', function () {
 
       before(function (done) {
         app.models.physician.destroyAll(function (err) {
@@ -153,12 +153,12 @@ describe('relations - integration', function () {
         }, function (err, patient) {
           self.patient = patient;
           self.url = '/api/physicians/' + self.physician.id
-            + '/patients/add?foreignKey=' + self.patient.id;
+            + '/patients/' + self.patient.id;
           done();
         });
       });
 
-      lt.describe.whenCalledRemotely('POST', '/api/physicians/:id/patients/add', function () {
+      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/:fk', function () {
         it('should succeed with statusCode 200', function () {
           assert.equal(this.res.statusCode, 200);
           assert.equal(this.res.body.patientId, this.patient.id);
@@ -184,7 +184,7 @@ describe('relations - integration', function () {
         });
       });
 
-      describe('/physicians/:id/patients/remove', function () {
+      describe('DELETE /physicians/:id/patients/:fk', function () {
 
         before(function (done) {
           app.models.physician.destroyAll(function (err) {
@@ -213,7 +213,7 @@ describe('relations - integration', function () {
           }, function (err, patient) {
             self.patient = patient;
             self.url = '/api/physicians/' + self.physician.id
-              + '/patients/remove?foreignKey=' + self.patient.id;
+              + '/patients/' + self.patient.id;
             done();
           });
         });
@@ -236,7 +236,7 @@ describe('relations - integration', function () {
           });
         });
 
-        lt.describe.whenCalledRemotely('POST', '/api/physicians/:id/patients/remove', function () {
+        lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/remove', function () {
           it('should succeed with statusCode 200', function () {
             assert.equal(this.res.statusCode, 200);
           });
