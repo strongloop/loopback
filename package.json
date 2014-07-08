@@ -76,8 +76,6 @@
   "browser": {
     "express": "./lib/browser-express.js",
     "connect": false,
-    "passport": false,
-    "passport-local": false,
     "nodemailer": false
   },
   "license": {
