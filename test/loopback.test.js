@@ -13,12 +13,29 @@ describe('loopback', function() {
     });
   });
 
-  describe('loopback.createDataSource(options)', function(){
+  describe('loopback.createDataSource(options)', function() {
     it('Create a data source with a connector.', function() {
       var dataSource = loopback.createDataSource({
         connector: loopback.Memory
       });
       assert(dataSource.connector);
+    });
+  });
+
+  describe('data source created by loopback', function() {
+    it('should create model extending Model by default', function () {
+      var dataSource = loopback.createDataSource({
+        connector: loopback.Memory
+      });
+      var m1 = dataSource.createModel('m1', {});
+      assert(m1.prototype instanceof loopback.Model);
+    });
+  });
+
+  describe('model created by loopback', function() {
+    it('should extend from Model by default', function() {
+      var m1 = loopback.createModel('m1', {});
+      assert(m1.prototype instanceof loopback.Model);
     });
   });
 
