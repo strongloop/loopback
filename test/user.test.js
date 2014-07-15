@@ -443,11 +443,11 @@ describe('User', function(){
       
           user.verify(options, function (err, result) {
             assert(result.email);
-            assert(result.email.message);
+            assert(result.email.response);
             assert(result.token);
             
             
-            assert(~result.email.message.indexOf('To: bar@bat.com'));
+            assert(~result.email.response.toString('utf-8').indexOf('To: bar@bat.com'));
             done();
           });
         });
