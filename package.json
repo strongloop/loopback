@@ -37,7 +37,7 @@
     "ejs": "~1.0.0",
     "express": "3.x",
     "inflection": "~1.3.8",
-    "nodemailer": "~0.7.1",
+    "nodemailer": "~1.0.1",
     "nodemailer-stub-transport": "~0.1.4",
     "strong-remoting": "~1.5.1",
     "uid2": "0.0.3",

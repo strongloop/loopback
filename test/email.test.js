@@ -24,7 +24,8 @@ describe('Email and SMTP', function () {
       };
 
       MyEmail.send(options, function(err, mail) {
-        assert(mail.message);
+        assert(!err);
+        assert(mail.response);
         assert(mail.envelope);
         assert(mail.messageId);
         done(err);
@@ -41,7 +42,7 @@ describe('Email and SMTP', function () {
       });
 
       message.send(function (err, mail) {
-        assert(mail.message);
+        assert(mail.response);
         assert(mail.envelope);
         assert(mail.messageId);
         done(err);
