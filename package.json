@@ -26,7 +26,7 @@
     "mobile",
     "mBaaS"
   ],
-  "version": "2.0.0-beta5",
+  "version": "2.0.0-beta6",
   "scripts": {
     "test": "grunt mocha-and-karma"
   },
