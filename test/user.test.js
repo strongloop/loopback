@@ -53,6 +53,22 @@ describe('User', function(){
       });
     });
 
+    it('credentials/challenges are object types', function (done) {
+      User.create({email: 'f1@b.com', password: 'bar1',
+        credentials: {cert: 'xxxxx', key: '111'},
+        challenges: {x: 'X', a: 1}
+      }, function (err, user) {
+        assert(!err);
+        User.findById(user.id, function (err, user) {
+          assert(user.id);
+          assert(user.email);
+          assert.deepEqual(user.credentials, {cert: 'xxxxx', key: '111'});
+          assert.deepEqual(user.challenges, {x: 'X', a: 1});
+          done();
+        });
+      });
+    });
+
     it('Email is required', function (done) {
       User.create({password: '123'}, function (err) {
         assert(err);
