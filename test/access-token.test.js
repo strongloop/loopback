@@ -12,7 +12,25 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
-  it('should populate req.token from a header', function (done) {
+  it('should populate req.token from an authorization header', function (done) {
+    createTestAppAndRequest(this.token, done)
+      .get('/')
+      .set('authorization', this.token.id)
+      .expect(200)
+      .end(done);
+  });
+
+  it('should populate req.token from an X-Access-Token header', function (done) {
+    createTestAppAndRequest(this.token, done)
+      .get('/')
+      .set('X-Access-Token', this.token.id)
+      .expect(200)
+      .end(done);
+  });
+
+  it('should populate req.token from an authorization header with bearer token', function (done) {
+    var token = this.token.id;
+    token = 'Bearer '+ new Buffer(token).toString('base64');
     createTestAppAndRequest(this.token, done)
       .get('/')
       .set('authorization', this.token.id)
@@ -28,6 +46,20 @@ describe('loopback.token(options)', function() {
       .end(function(err, res) {
         request(app)
           .get('/')
+          .set('Cookie', res.header['set-cookie'])
+          .end(done);
+      });
+  });
+
+  it('should populate req.token from a header or a secure cookie', function (done) {
+    var app = createTestApp(this.token, done);
+    var id = this.token.id;
+    request(app)
+      .get('/token')
+      .end(function(err, res) {
+        request(app)
+          .get('/')
+          .set('authorization', id)
           .set('Cookie', res.header['set-cookie'])
           .end(done);
       });
