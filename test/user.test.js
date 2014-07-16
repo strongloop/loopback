@@ -8,6 +8,8 @@ var userMemory = loopback.createDataSource({
 
 describe('User', function(){
   var validCredentials = {email: 'foo@bar.com', password: 'bar'};
+  var validCredentialsEmailVerified = {email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
+  var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
   var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'bar1'};
   var incompleteCredentials = {password: 'bar1'};
@@ -30,7 +32,9 @@ describe('User', function(){
     app.use(loopback.rest());
     app.model(User);
     
-    User.create(validCredentials, done);
+    User.create(validCredentials, function(err, user) {
+      User.create(validCredentialsEmailVerified, done);
+    });
   });
   
   afterEach(function (done) {
@@ -49,6 +53,22 @@ describe('User', function(){
       });
     });
 
+    it('credentials/challenges are object types', function (done) {
+      User.create({email: 'f1@b.com', password: 'bar1',
+        credentials: {cert: 'xxxxx', key: '111'},
+        challenges: {x: 'X', a: 1}
+      }, function (err, user) {
+        assert(!err);
+        User.findById(user.id, function (err, user) {
+          assert(user.id);
+          assert(user.email);
+          assert.deepEqual(user.credentials, {cert: 'xxxxx', key: '111'});
+          assert.deepEqual(user.challenges, {x: 'X', a: 1});
+          done();
+        });
+      });
+    });
+
     it('Email is required', function (done) {
       User.create({password: '123'}, function (err) {
         assert(err);
@@ -57,8 +77,7 @@ describe('User', function(){
         assert.equal(err.details.context, "user");
         assert.deepEqual(err.details.codes.email, [
           'presence',
-          'format.blank',
-          'uniqueness'
+          'format.blank'
         ]);
 
         done();
@@ -104,6 +123,18 @@ describe('User', function(){
     it('Hashes the given password', function() {
       var u = new User({username: 'foo', password: 'bar'});
       assert(u.password !== 'bar');
+    });
+
+    it('Create a user over REST should remove emailVerified property', function(done) {
+      request(app)
+        .post('/users')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .send(validCredentialsEmailVerifiedOverREST)
+        .end(function(err, res){
+          assert(!res.body.emailVerified);
+          done();
+        });
     });
   });
   
@@ -155,7 +186,7 @@ describe('User', function(){
         });
       });
     });
-    
+
     it('Login a user over REST by providing credentials', function(done) {
       request(app)
         .post('/users/login')
@@ -234,6 +265,63 @@ describe('User', function(){
         });
       });
     });
+  });
+
+  describe('User.login requiring email verification', function() {
+    beforeEach(function() {
+      User.settings.emailVerificationRequired = true;
+    });
+
+    afterEach(function() {
+      User.settings.emailVerificationRequired = false;
+    });
+
+    it('Login a user by without email verification', function(done) {
+      User.login(validCredentials, function (err, accessToken) {
+        assert(err);
+        done();
+      });
+    });
+
+    it('Login a user by with email verification', function(done) {
+      User.login(validCredentialsEmailVerified, function (err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+        assert.equal(accessToken.id.length, 64);
+        done();
+      });
+    });
+
+    it('Login a user over REST when email verification is required', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .send(validCredentialsEmailVerified)
+        .end(function(err, res){
+          if(err) return done(err);
+          var accessToken = res.body;
+
+          assert(accessToken.userId);
+          assert(accessToken.id);
+          assert.equal(accessToken.id.length, 64);
+          assert(accessToken.user === undefined);
+
+          done();
+        });
+    });
+
+    it('Login a user over REST without email verification when it is required', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .send(validCredentials)
+        .end(function(err, res) {
+          done();
+        });
+    });
+
   });
   
   describe('User.logout', function() {

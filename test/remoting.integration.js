@@ -18,7 +18,7 @@ describe('remoting - integration', function () {
     it("should load remoting options", function () {
       var remotes = app.remotes();
       assert.deepEqual(remotes.options, {"json": {"limit": "1kb", "strict": false},
-        "urlencoded": {"limit": "8kb"}});
+        "urlencoded": {"limit": "8kb", "extended": true}});
     });
 
     it("rest handler", function () {
@@ -66,4 +66,33 @@ describe('remoting - integration', function () {
     });
   });
 
+  describe('Model', function() {
+    it('has expected remote methods', function() {
+      var storeClass = app.handler('rest').adapter
+        .getClasses()
+        .filter(function(c) { return c.name === 'store'; })[0];
+      var methods = storeClass.methods
+        .map(function(m) {
+          return [
+            m.name + '()',
+            m.getHttpMethod(),
+            m.getFullPath()
+          ].join(' ');
+        });
+
+      // The list of methods is from docs:
+      // http://docs.strongloop.com/display/LB/Exposing+models+over+a+REST+API
+      expect(methods).to.include.members([
+        'create() POST /stores',
+        'upsert() PUT /stores',
+        'exists() GET /stores/:id/exists',
+        'findById() GET /stores/:id',
+        'find() GET /stores',
+        'findOne() GET /stores/findOne',
+        'deleteById() DELETE /stores/:id',
+        'count() GET /stores/count',
+        'prototype.updateAttributes() PUT /stores/:id',
+      ]);
+    });
+  });
 });

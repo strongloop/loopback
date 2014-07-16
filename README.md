@@ -14,9 +14,9 @@ LoopBack consists of:
 
 For more details, see http://loopback.io/.
 
-## LoopBack modules 
+## LoopBack modules
 
-In addition to the [main LoopBack module](https://github.com/strongloop/loopback), LoopBack consists of numerous other modules that implement specific functionality, 
+In addition to the [main LoopBack module](https://github.com/strongloop/loopback), LoopBack consists of numerous other modules that implement specific functionality,
 as illustrated below:
 
 ![LoopBack modules](https://github.com/strongloop/loopback/raw/master/docs/assets/lb-modules.png "LoopBack modules")
@@ -33,18 +33,21 @@ as illustrated below:
   * [loopback-connector-mssql](https://github.com/strongloop/loopback-connector-mssql)
   * [loopback-connector-postgresql](https://github.com/strongloop/loopback-connector-postgresql)
   * [loopback-connector-rest](https://github.com/strongloop/loopback-connector-rest)
-  * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap) 
+  * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap)
 
-* Mobile services
-  * [loopback-push-notification](https://github.com/strongloop/loopback-push-notification)
-  * [loopback-storage-service](https://github.com/strongloop/loopback-storage-service)
+* Mobile Components
+  * [loopback-component-push](https://github.com/strongloop/loopback-component-push)
+  * [loopback-component-storage](https://github.com/strongloop/loopback-component-storage)
+
+* Security Components
+  * [loopback-component-passport](https://github.com/strongloop/loopback-component-passport)
 
 * Clients
-  * [loopback-ios](https://github.com/strongloop/loopback-ios)
-  * [strong-remoting-ios](https://github.com/strongloop/strong-remoting-ios)
-  * [loopback-android](https://github.com/strongloop/loopback-android)
-  * [strong-remoting-android](https://github.com/strongloop/strong-remoting-android)
-  * [loopback-angular](https://github.com/strongloop/loopback-angular)
+  * [loopback-sdk-ios](https://github.com/strongloop/loopback-sdk-ios)
+  * [loopback-sdk-android](https://github.com/strongloop/loopback-sdk-android)
+  * [loopback-sdk-angular](https://github.com/strongloop/loopback-sdk-angular)
+  * [loopback-sdk-angular-cli](https://github.com/strongloop/loopback-sdk-angular-cli)
+  * [grunt-loopback-sdk-angular](https://github.com/strongloop/grunt-loopback-sdk-angular)
 
 * Tools
   * [loopback-explorer](https://github.com/strongloop/loopback-explorer)
@@ -52,17 +55,17 @@ as illustrated below:
   * [strong-cli](https://github.com/strongloop/strong-cli)
 
 * Examples
+  * [loopback-example-database](https://github.com/strongloop/loopback-example-database)
+  * [loopback-example-datagraph](https://github.com/strongloop/loopback-example-datagraph)
   * [loopback-example-full-stack](https://github.com/strongloop/loopback-example-full-stack)
   * [loopback-example-office-supplies](https://github.com/strongloop/loopback-example-office-supplies)
   * [loopback-example-todo](https://github.com/strongloop/loopback-example-todo)
   * [loopback-example-access-control](https://github.com/strongloop/loopback-example-access-control)
   * [loopback-example-proxy](https://github.com/strongloop/loopback-example-proxy)
-  * [strongloop-community/loopback-example-datagraph](https://github.com/strongloop-community/loopback-example-datagraph)
-  * [strongloop-community/loopback-example-database](https://github.com/strongloop-community/loopback-example-database)
   * [strongloop-community/loopback-examples-ios](https://github.com/strongloop-community/loopback-examples-ios)
-  * [strongloop-community/loopback-example-ssl](https://github.com/strongloop-community/loopback-example-ssl)
+  * [loopback-example-ssl](https://github.com/strongloop/loopback-example-ssl)
 
-## Resources 
+## Resources
 
   * [Documentation](http://docs.strongloop.com/display/LB/LoopBack).
   * [API documentation](http://apidocs.strongloop.com/loopback).

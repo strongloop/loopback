@@ -198,10 +198,10 @@ describe('Model Tests', function() {
     });
   });
 
-  describe('Model.removeById(id, [callback])', function () {
+  describe('Model.deleteById(id, [callback])', function () {
       it("Delete a model instance from the attached data source", function (done) {
           User.create({first: 'joe', last: 'bob'}, function (err, user) {
-              User.removeById(user.id, function (err) {
+              User.deleteById(user.id, function (err) {
                   User.findById(user.id, function (err, notFound) {
                     assert.equal(notFound, null);
                     done();
