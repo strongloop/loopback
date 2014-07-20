@@ -33,6 +33,34 @@ describe('DataSource', function() {
       assert.isFunc(Color.prototype, 'updateAttributes');
       assert.isFunc(Color.prototype, 'reload');  
     });
+
+    it("should honor settings.base", function() {
+      var Base = memory.createModel('base');
+      var Color = memory.createModel('color', {name: String}, {base: Base});
+      assert.equal(Color.super_, Base);
+    });
+
+    it("should use loopback.PersistedModel as the base for DBs", function() {
+      var Color = memory.createModel('color', {name: String});
+      assert.equal(Color.super_, loopback.PersistedModel);
+    });
+
+    it("should use loopback.Model as the base for non DBs", function() {
+      // Mock up a non-DB connector
+      var Connector = function() {
+      };
+      Connector.prototype.getTypes = function() {
+        return ['rest'];
+      };
+
+      var ds = loopback.createDataSource({
+        connector: new Connector()
+      });
+
+      var Color = ds.createModel('color', {name: String});
+      assert.equal(Color.super_, loopback.Model);
+    });
+
   });
 
   describe.skip('PersistedModel Methods', function() {
