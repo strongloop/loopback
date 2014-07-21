@@ -57,28 +57,6 @@ describe('app', function() {
         request(app).get('/colors').expect(200, done);
       });
     });
-
-    describe('in compat mode', function() {
-      before(function() {
-        loopback.compat.usePluralNamesForRemoting = true;
-      });
-      after(function() {
-        loopback.compat.usePluralNamesForRemoting = false;
-      });
-
-      it('uses plural name as shared class name', function() {
-        var Color = db.createModel('color', {name: String});
-        app.model(Color);
-        var classes = app.remotes().classes().map(function(c) {return c.name});
-        expect(classes).to.contain('colors');
-      });
-
-      it('uses plural name as app.remoteObjects() key', function() {
-        var Color = db.createModel('color', {name: String});
-        app.model(Color);
-        expect(app.remoteObjects()).to.eql({ colors: Color });
-      });
-    });
   });
 
   describe('app.model(name, config)', function () {

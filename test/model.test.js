@@ -270,37 +270,6 @@ describe.onServer('Remote Methods', function(){
     });
   })
 
-  describe('in compat mode', function() {
-    before(function() {
-      loopback.compat.usePluralNamesForRemoting = true;
-    });
-    after(function() {
-      loopback.compat.usePluralNamesForRemoting = false;
-    });
-
-    it('correctly install before/after hooks', function(done) {
-      var hooksCalled = [];
-
-      User.beforeRemote('**', function(ctx, user, next) {
-        hooksCalled.push('beforeRemote');
-        next();
-      });
-
-      User.afterRemote('**', function(ctx, user, next) {
-        hooksCalled.push('afterRemote');
-        next();
-      });
-
-      request(app).get('/users')
-        .expect(200, function(err, res) {
-          if (err) return done(err);
-          expect(hooksCalled, 'hooks called')
-            .to.eql(['beforeRemote', 'afterRemote']);
-          done();
-        });
-    });
-  });
-
   describe('Model.hasMany(Model)', function() {
     it("Define a one to many relationship", function(done) {
       var Book = dataSource.createModel('book', {title: String, author: String});
