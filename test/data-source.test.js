@@ -37,12 +37,14 @@ describe('DataSource', function() {
     it("should honor settings.base", function() {
       var Base = memory.createModel('base');
       var Color = memory.createModel('color', {name: String}, {base: Base});
-      assert.equal(Color.super_, Base);
+      assert(Color.prototype instanceof Base);
+      assert.equal(Color.base, Base);
     });
 
     it("should use loopback.PersistedModel as the base for DBs", function() {
       var Color = memory.createModel('color', {name: String});
-      assert.equal(Color.super_, loopback.PersistedModel);
+      assert(Color.prototype instanceof loopback.PersistedModel);
+      assert.equal(Color.base, loopback.PersistedModel);
     });
 
     it("should use loopback.Model as the base for non DBs", function() {
@@ -58,7 +60,8 @@ describe('DataSource', function() {
       });
 
       var Color = ds.createModel('color', {name: String});
-      assert.equal(Color.super_, loopback.Model);
+      assert(Color.prototype instanceof loopback.Model);
+      assert.equal(Color.base, loopback.Model);
     });
 
   });
