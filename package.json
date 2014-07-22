@@ -26,7 +26,7 @@
     "mobile",
     "mBaaS"
   ],
-  "version": "2.0.0-beta7",
+  "version": "2.0.0",
   "scripts": {
     "test": "grunt mocha-and-karma"
   },
@@ -36,17 +36,18 @@
     "canonical-json": "0.0.4",
     "ejs": "~1.0.0",
     "express": "4.x",
-    "strong-remoting": "~2.0.0-beta5",
+    "strong-remoting": "^2.0.0",
     "bcryptjs": "~2.0.1",
     "debug": "~1.0.4",
     "inflection": "~1.3.8",
-    "nodemailer": "~0.7.1",
+    "nodemailer": "~1.0.1",
+    "nodemailer-stub-transport": "~0.1.4",
     "uid2": "0.0.3",
     "underscore": "~1.6.0",
     "underscore.string": "~2.3.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "~2.0.0-beta3"
+    "loopback-datasource-juggler": "^2.0.0"
   },
   "devDependencies": {
     "browserify": "~4.2.1",
@@ -71,7 +72,7 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-script-launcher": "~0.1.0",
     "loopback-boot": "^1.1.0",
-    "loopback-datasource-juggler": "~2.0.0-beta3",
+    "loopback-datasource-juggler": "^2.0.0",
     "loopback-testing": "~0.2.0",
     "mocha": "~1.20.1",
     "serve-favicon": "~2.0.1",

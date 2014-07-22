@@ -109,6 +109,15 @@ describe('User', function(){
         });
       });
     });
+
+    it('Requires a unique username', function(done) {
+      User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function () {
+        User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function (err) {
+          assert(err, 'should error because the username is not unique!');
+          done();
+        });
+      });
+    }); 
     
     it('Requires a password to login with basic auth', function(done) {
       User.create({email: 'b@c.com'}, function (err) {
@@ -426,7 +435,7 @@ describe('User', function(){
   });
   
   describe('Verification', function(){
-    
+
     describe('user.verify(options, fn)', function(){
       it('Verify a user\'s email address', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
@@ -443,11 +452,9 @@ describe('User', function(){
       
           user.verify(options, function (err, result) {
             assert(result.email);
-            assert(result.email.message);
+            assert(result.email.response);
             assert(result.token);
-            
-            
-            assert(~result.email.message.indexOf('To: bar@bat.com'));
+            assert(~result.email.response.toString('utf-8').indexOf('To: bar@bat.com'));
             done();
           });
         });
@@ -462,13 +469,15 @@ describe('User', function(){
           });
       });
     });
-  
-    describe('User.confirm(options, fn)', function(){
-      it('Confirm a user verification', function(done) {
-        User.afterRemote('create', function(ctx, user, next) {
+
+    describe('User.confirm(options, fn)', function () {
+      var options;
+
+      function testConfirm(testFunc, done) {
+        User.afterRemote('create', function (ctx, user, next) {
           assert(user, 'afterRemote should include result');
-          
-          var options = {
+
+          options = {
             type: 'email',
             to: user.email,
             from: 'noreply@myapp.org',
@@ -476,29 +485,73 @@ describe('User', function(){
             protocol: ctx.req.protocol,
             host: ctx.req.get('host')
           };
-      
+
           user.verify(options, function (err, result) {
-            if(err) return done(err);
-            
-            request(app)
-              .get('/users/confirm?uid=' + result.uid + '&token=' + encodeURIComponent(result.token) + '&redirect=' + encodeURIComponent(options.redirect))
-              .expect(302)
-              .expect('location', options.redirect)
-              .end(function(err, res){
-                if(err) return done(err);
-                done();
-              });
+            if (err) {
+              return done(err);
+            }
+            testFunc(result, done);
           });
         });
-            
+
         request(app)
           .post('/users')
           .expect('Content-Type', /json/)
           .expect(302)
           .send({email: 'bar@bat.com', password: 'bar'})
-          .end(function(err, res){
-            if(err) return done(err);
+          .end(function (err, res) {
+            if (err) {
+              return done(err);
+            }
           });
+      }
+
+      it('Confirm a user verification', function (done) {
+        testConfirm(function (result, done) {
+          request(app)
+            .get('/users/confirm?uid=' + (result.uid )
+              + '&token=' + encodeURIComponent(result.token)
+              + '&redirect=' + encodeURIComponent(options.redirect))
+            .expect(302)
+            .end(function (err, res) {
+              if (err) {
+                return done(err);
+              }
+              done();
+            });
+        }, done);
+      });
+
+      it('Report error for invalid user id during verification', function (done) {
+        testConfirm(function (result, done) {
+          request(app)
+            .get('/users/confirm?uid=' + (result.uid + '_invalid')
+              + '&token=' + encodeURIComponent(result.token)
+              + '&redirect=' + encodeURIComponent(options.redirect))
+            .expect(404)
+            .end(function (err, res) {
+              if (err) {
+                return done(err);
+              }
+              assert(res.body.error);
+              done();
+            });
+        }, done);
+      });
+
+      it('Report error for invalid token during verification', function (done) {
+        testConfirm(function (result, done) {
+          request(app)
+            .get('/users/confirm?uid=' + result.uid
+              + '&token=' + encodeURIComponent(result.token) + '_invalid'
+              + '&redirect=' + encodeURIComponent(options.redirect))
+            .expect(400)
+            .end(function (err, res) {
+              if (err) return done(err);
+              assert(res.body.error);
+              done();
+            });
+        }, done);
       });
     });
   });
