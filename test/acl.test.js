@@ -21,7 +21,8 @@ before(function() {
 
 describe('security scopes', function () {
   beforeEach(function() {
-    testModel = loopback.Model.extend('testModel');
+    var ds = this.ds = loopback.createDataSource({connector: loopback.Memory});
+    testModel = loopback.PersistedModel.extend('testModel');
     ACL.attachTo(ds);
     Role.attachTo(ds);
     RoleMapping.attachTo(ds);

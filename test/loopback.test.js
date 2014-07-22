@@ -124,7 +124,7 @@ describe('loopback', function() {
         });
         assert(loopback.getModel('MyModel') === MyModel);
         assert(loopback.getModel('MyCustomModel') === MyCustomModel);
-        assert(loopback.getModel('Invalid') === undefined);
+        assert(loopback.findModel('Invalid') === undefined);
       });
       it('should be able to get model by type', function () {
         var MyModel = loopback.createModel('MyModel', {}, {
@@ -140,6 +140,11 @@ describe('loopback', function() {
         });
         assert(loopback.getModelByType(MyModel) === MyCustomModel);
         assert(loopback.getModelByType(MyCustomModel) === MyCustomModel);
+      });
+
+      it('should throw when the model does not exist', function() {
+        expect(function() { loopback.getModel(uniqueModelName); })
+          .to.throw(Error, new RegExp('Model not found: ' + uniqueModelName));
       });
     });
   });

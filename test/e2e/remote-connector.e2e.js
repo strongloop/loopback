@@ -7,12 +7,10 @@ var assert = require('assert');
 describe('RemoteConnector', function() {
   before(function() {
     // setup the remote connector
-    var localApp = loopback();
     var ds = loopback.createDataSource({
       url: 'http://localhost:3000/api',
       connector: loopback.Remote
     });
-    localApp.model(TestModel);
     TestModel.attachTo(ds);
   });
 
@@ -32,7 +30,7 @@ describe('RemoteConnector', function() {
     });
     m.save(function(err, data) {
       if(err) return done(err);
-      assert(m.id);
+      assert(data.foo === 'bar');
       done();
     });
   });

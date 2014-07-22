@@ -5,9 +5,9 @@
     "lib/loopback.js",
     "lib/runtime.js",
     "lib/registry.js",
-{ "title": "Base model", "depth": 2 },     
+{ "title": "Base models", "depth": 2 },     
     "lib/models/model.js",    
-    "lib/models/data-model.js",
+    "lib/models/persisted-model.js",
 { "title": "Middleware", "depth": 2 },    
     "lib/middleware/rest.js",
     "lib/middleware/status.js",
@@ -19,7 +19,8 @@
     "lib/models/application.js",
     "lib/models/email.js",
     "lib/models/role.js",
-    "lib/models/user.js"
+    "lib/models/user.js",
+    "lib/models/change.js"
   ],
   "assets": "/docs/assets"
 }

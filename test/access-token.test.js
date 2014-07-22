@@ -200,7 +200,7 @@ function createTestApp(testToken, settings, done) {
         principalId: "$everyone",
         accessType: ACL.ALL,
         permission: ACL.DENY,
-        property: 'removeById'
+        property: 'deleteById'
       }
     ]
   };
@@ -209,7 +209,7 @@ function createTestApp(testToken, settings, done) {
     modelOptions[key] = modelSettings[key];
   });
 
-  var TestModel = loopback.Model.extend('test', {}, modelOptions);
+  var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
 
   TestModel.attachTo(loopback.memory());
   app.model(TestModel);

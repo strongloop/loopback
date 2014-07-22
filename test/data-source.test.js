@@ -35,12 +35,15 @@ describe('DataSource', function() {
     });
   });
 
-  describe('dataSource.operations()', function() {
-    it("List the enabled and disabled operations", function() {
+  describe.skip('PersistedModel Methods', function() {
+    it("List the enabled and disabled methods", function() {
+      var TestModel = loopback.PersistedModel.extend('TestPersistedModel');
+      TestModel.attachTo(loopback.memory());
+      
       // assert the defaults
       // - true: the method should be remote enabled
       // - false: the method should not be remote enabled
-      // - 
+      // -
       existsAndShared('_forDB', false);
       existsAndShared('create', true);
       existsAndShared('updateOrCreate', true);
@@ -61,11 +64,15 @@ describe('DataSource', function() {
       existsAndShared('destroyById', true);
       existsAndShared('destroy', false);
       existsAndShared('updateAttributes', true);
+      existsAndShared('updateAll', true);
       existsAndShared('reload', false);
       
-      function existsAndShared(name, isRemoteEnabled) {
-        var op = memory.getOperation(name);
-        assert(op.remoteEnabled === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
+      function existsAndShared(Model, name, isRemoteEnabled, isProto) {
+        var scope = isProto ? Model.prototype : Model;
+        var fn = scope[name];
+        var actuallyEnabled = Model.getRemoteMethod(name);
+        assert(fn, name + ' should be defined!');
+        assert(actuallyEnabled === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
       }
     });
   });

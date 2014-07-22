@@ -109,6 +109,15 @@ describe('User', function(){
         });
       });
     });
+
+    it('Requires a unique username', function(done) {
+      User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function () {
+        User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function (err) {
+          assert(err, 'should error because the username is not unique!');
+          done();
+        });
+      });
+    }); 
     
     it('Requires a password to login with basic auth', function(done) {
       User.create({email: 'b@c.com'}, function (err) {
@@ -443,9 +452,9 @@ describe('User', function(){
       
           user.verify(options, function (err, result) {
             assert(result.email);
-            assert(result.email.message);
+            assert(result.email.response);
             assert(result.token);
-            assert(~result.email.message.indexOf('To: bar@bat.com'));
+            assert(~result.email.response.toString('utf-8').indexOf('To: bar@bat.com'));
             done();
           });
         });

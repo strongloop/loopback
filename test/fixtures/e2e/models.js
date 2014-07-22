@@ -1,4 +1,6 @@
 var loopback = require('../../../');
-var DataModel = loopback.DataModel;
+var PersistedModel = loopback.PersistedModel;
 
-exports.TestModel = DataModel.extend('TestModel');
+exports.TestModel = PersistedModel.extend('TestModel', {}, {
+  trackChanges: true
+});

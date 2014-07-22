@@ -378,7 +378,6 @@ describe('relations - integration', function () {
     it.skip('allows to find related objects via where filter', function(done) {
       //TODO https://github.com/strongloop/loopback-datasource-juggler/issues/94
       var expectedProduct = this.product;
-      // Note: the URL format is not final
       this.get('/api/products?filter[where][categoryId]=' + this.category.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
