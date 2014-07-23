@@ -1,3 +1,5 @@
+[![Build Status](https://img.shields.io/travis/strongloop/loopback/master.svg)](https://travis-ci.org/strongloop/loopback)
+
 LoopBack is a highly extensible, open source Node.js framework that enables you to:
 
   * Create dynamic end-to-end REST APIs with little or no coding
