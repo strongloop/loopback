@@ -71,7 +71,6 @@ as illustrated below:
   * [API documentation](http://apidocs.strongloop.com/loopback).
   * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
   * [GitHub issues](https://github.com/strongloop/loopback/issues).
-  * Read more about the [LoopBack's features](https://github.com/strongloop/loopback/wiki/Features).
 
 ## Contributing
 
