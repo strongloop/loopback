@@ -1,6 +1,30 @@
 var loopback = require('../');
 var MyEmail;
 var assert = require('assert');
+var MailConnector = require('../lib/connectors/mail');
+
+describe('Email connector', function () {
+  it('should set up SMTP', function () {
+    var connector = new MailConnector({transports: [
+      {type: 'smtp', service: 'gmail'}
+    ]});
+    assert(connector.transportForName('smtp'));
+  });
+
+  it('should set up DIRECT', function () {
+    var connector = new MailConnector({transports: [
+      {type: 'direct', name: 'localhost'}
+    ]});
+    assert(connector.transportForName('direct'));
+  });
+
+  it('should set up STUB', function () {
+    var connector = new MailConnector({transports: [
+      {type: 'stub', service: 'gmail'}
+    ]});
+    assert(connector.transportForName('stub'));
+  });
+});
 
 describe('Email and SMTP', function () {
   beforeEach(function() {
