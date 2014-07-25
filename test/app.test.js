@@ -47,6 +47,18 @@ describe('app', function() {
       expect(app.models.Color).to.equal(Color);
     });
 
+    it("emits a `modelRemoted` event", function() {
+      var Color = PersistedModel.extend('color', {name: String});
+      Color.shared = true;
+      var remotedClass;
+      app.on('modelRemoted', function(sharedClass) {
+        remotedClass = sharedClass;
+      });
+      app.model(Color);
+      expect(remotedClass).to.exist;
+      expect(remotedClass).to.eql(Color.sharedClass);
+    });
+
     it.onServer('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
