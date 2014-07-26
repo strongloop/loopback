@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "description": "LoopBack: Open API Framework for Node.js",
+  "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
     "restful",
@@ -26,7 +26,7 @@
     "mobile",
     "mBaaS"
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "test": "grunt mocha-and-karma"
   },
