@@ -177,7 +177,7 @@ describe('app', function() {
     it('starts http server', function(done) {
       var app = loopback();
       app.set('port', 0);
-      app.get('/', function(req, res) { res.send(200, 'OK'); });
+      app.get('/', function(req, res) { res.status(200).send('OK'); });
 
       var server = app.listen();
 
