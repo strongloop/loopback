@@ -17,7 +17,7 @@ For more details, see http://loopback.io/.
 
 ## LoopBack modules
 
-The LoopBack framework includes of a set of Node.js modules that you can use independently or together.
+The LoopBack framework is a set of Node.js modules that you can use independently or together.
 
 ![LoopBack modules](https://github.com/strongloop/loopback/raw/master/docs/assets/lb-modules.png "LoopBack modules")
 
