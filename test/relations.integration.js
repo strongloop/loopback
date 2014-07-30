@@ -519,13 +519,8 @@ describe('relations - integration', function () {
     
     it('creates embedded models', function(done) {
       var url = '/api/todo-lists/' + this.todoList.id + '/items';
-      var listId = this.todoList.id;
       
-      var expected = [ 
-        { content: 'Todo 1', id: 1 },
-        { content: 'Todo 2', id: 2 },
-        { content: 'Todo 3', id: 3 }
-      ];
+      var expected = { content: 'Todo 3', id: 3 };
       
       this.post(url)
         .send({ content: 'Todo 3' })
@@ -587,7 +582,6 @@ describe('relations - integration', function () {
     // TODO - this.head is undefined
     
     it.skip('checks if an embedded model exists - ok', function(done) {
-      var expectedProduct = this.product;
       var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
       
       this.head(url)
@@ -597,7 +591,6 @@ describe('relations - integration', function () {
     });
     
     it.skip('checks if an embedded model exists - fail', function(done) {
-      var expectedProduct = this.product;
       var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
       
       this.head(url)
@@ -605,6 +598,292 @@ describe('relations - integration', function () {
           done();
         });
     });
+    
+  });
+  
+  describe('referencesMany', function() {
+    
+    before(function defineProductAndCategoryModels() {
+      var recipe = app.model(
+        'recipe',
+        { properties: { name: 'string' }, dataSource: 'db' }
+      );
+      var ingredient = app.model(
+        'ingredient',
+        { properties: { name: 'string' }, dataSource: 'db' }
+      );
+      recipe.referencesMany(ingredient);
+    });
+
+    before(function createRecipe(done) {
+      var test = this;
+      app.models.recipe.create({ name: 'Recipe' },
+        function(err, recipe) {
+          if (err) return done(err);
+          test.recipe = recipe;
+          recipe.ingredients.create({ 
+            name: 'Chocolate' }, 
+          function(err, ing) {
+            test.ingredient1 = ing.id;
+            done();
+          });
+        });
+    });
+    
+    before(function createIngredient(done) {
+      var test = this;
+      app.models.ingredient.create({ name: 'Sugar' }, function(err, ing) {
+        test.ingredient2 = ing.id;
+        done();
+      });
+    });
+
+    after(function(done) {
+      var app = this.app;
+      app.models.recipe.destroyAll(function() {
+        app.models.ingredient.destroyAll(done);
+      });
+    });
+    
+    it('keeps an array of ids', function(done) {
+      var url = '/api/recipes/' + this.recipe.id;
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.ingredientIds).to.eql([test.ingredient1]);
+          expect(res.body).to.not.have.property('ingredients');
+          done();
+        });
+    });
+    
+    it('creates referenced models', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.post(url)
+        .send({ name: 'Butter' })
+        .expect(200, function(err, res) {
+          expect(res.body.name).to.be.eql('Butter');
+          test.ingredient3 = res.body.id;
+          done();
+        });
+    });
+    
+    it('has created models', function(done) {
+      var url = '/api/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 },
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns the referenced models', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('filters the referenced models', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      url += '?filter[where][name]=Butter';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('includes the referenced models', function(done) {
+      var url = '/api/recipes/findOne?filter[where][id]=' + this.recipe.id;
+      url += '&filter[include]=ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.ingredientIds).to.eql([
+            test.ingredient1, test.ingredient3
+          ]);
+          expect(res.body.ingredients).to.eql([
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+
+    it('returns a referenced model by id', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient3;
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { name: 'Butter', id: test.ingredient3 }
+          );
+          done();
+        });
+    });
+    
+    it('keeps an array of ids - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id;
+      var test = this;
+      
+      var expected = [test.ingredient1, test.ingredient3];
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.ingredientIds).to.eql(expected);
+          expect(res.body).to.not.have.property('ingredients');
+          done();
+        });
+    });
+    
+    it('destroys a referenced model', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient3;
+       
+      this.del(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it('has destroyed a referenced model', function(done) {
+      var url = '/api/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns the referenced models - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 }
+          ]);
+          done();
+        });
+    });
+    
+    it('creates/links a reference by id', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      url += '/rel/' + this.ingredient2;
+      var test = this;
+      
+      this.put(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { name: 'Sugar', id: test.ingredient2 }
+          );
+          done();
+        });
+    });
+    
+    it('returns the referenced models - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('removes/unlinks a reference by id', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      url += '/rel/' + this.ingredient1;
+      var test = this;
+      
+      this.del(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it('returns the referenced models - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('has not destroyed an unlinked model', function(done) {
+      var url = '/api/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    // TODO - this.head is undefined
+    
+    // it.skip('checks if a referenced model exists - ok', function(done) {
+    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+    //   url += this.ingredient1;
+    //   
+    //   this.head(url)
+    //     .expect(200, function(err, res) {
+    //       done();
+    //     });
+    // });
+    
+    // it.skip('checks if an referenced model exists - fail', function(done) {
+    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+    //   url += this.ingredient3;
+    //   
+    //   this.head(url)
+    //     .expect(404, function(err, res) {
+    //       done();
+    //     });
+    // });
     
   });
   
