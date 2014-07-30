@@ -443,4 +443,169 @@ describe('relations - integration', function () {
         });
     });
   });
+  
+  describe('embedsMany', function() {
+    
+    before(function defineProductAndCategoryModels() {
+      var todoList = app.model(
+        'todoList',
+        { properties: { name: 'string' }, 
+          dataSource: 'db',
+          plural: 'todo-lists' 
+        }
+      );
+      var todoItem = app.model(
+        'todoItem',
+        { properties: { content: 'string' }, dataSource: 'db' }
+      );
+      todoList.embedsMany(todoItem, { as: 'items' });
+    });
+
+    before(function createTodoList(done) {
+      var test = this;
+      app.models.todoList.create({ name: 'List A' },
+        function(err, list) {
+          if (err) return done(err);
+          test.todoList = list;
+          list.items.build({ content: 'Todo 1' });
+          list.items.build({ content: 'Todo 2' });
+          list.save(done);
+        });
+    });
+
+    after(function(done) {
+      this.app.models.todoList.destroyAll(done);
+    });
+    
+    it('includes the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id;
+
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.name).to.be.equal('List A');
+          expect(res.body.todoItems).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 2', id: 2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 2', id: 2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('filters the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      url += '?filter[where][id]=2';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 2', id: 2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('creates embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      var listId = this.todoList.id;
+      
+      var expected = [ 
+        { content: 'Todo 1', id: 1 },
+        { content: 'Todo 2', id: 2 },
+        { content: 'Todo 3', id: 3 }
+      ];
+      
+      this.post(url)
+        .send({ content: 'Todo 3' })
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(expected);
+          done();
+        });
+    });
+    
+    it('returns the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 2', id: 2 },
+            { content: 'Todo 3', id: 3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns an embedded model by (internal) id', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { content: 'Todo 3', id: 3 }
+          );
+          done();
+        });
+    });
+    
+    it('removes an embedded model', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      
+      this.del(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it('returns the embedded models - verify', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 3', id: 3 }
+          ]);
+          done();
+        });
+    });
+    
+    // TODO - this.head is undefined
+    
+    it.skip('checks if an embedded model exists - ok', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
+      
+      this.head(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it.skip('checks if an embedded model exists - fail', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      
+      this.head(url)
+        .expect(404, function(err, res) {
+          done();
+        });
+    });
+    
+  });
+  
 });
