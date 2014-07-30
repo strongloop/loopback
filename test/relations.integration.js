@@ -213,6 +213,45 @@ describe('relations - integration', function () {
       });
     });
 
+    describe('HEAD /physicians/:id/patients/rel/:fk', function () {
+
+      before(function (done) {
+        var self = this;
+        setup(true, function (err, root) {
+          self.url = root.relUrl;
+          self.patient = root.patient;
+          self.physician = root.physician;
+          done();
+        });
+      });
+
+      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function () {
+        it('should succeed with statusCode 200', function () {
+          assert.equal(this.res.statusCode, 200);
+        });
+      });
+    });
+
+    describe('HEAD /physicians/:id/patients/rel/:fk that does not exist', function () {
+
+      before(function (done) {
+        var self = this;
+        setup(true, function (err, root) {
+          self.url = '/api/physicians/' + root.physician.id
+            + '/patients/rel/' + '999';
+          self.patient = root.patient;
+          self.physician = root.physician;
+          done();
+        });
+      });
+
+      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function () {
+        it('should succeed with statusCode 404', function () {
+          assert.equal(this.res.statusCode, 404);
+        });
+      });
+    });
+
     describe('DELETE /physicians/:id/patients/rel/:fk', function () {
 
       before(function (done) {
