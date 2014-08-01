@@ -651,7 +651,13 @@ describe('relations - integration', function () {
         'ingredient',
         { properties: { name: 'string' }, dataSource: 'db' }
       );
+      var photo = app.model(
+        'photo',
+        { properties: { name: 'string' }, dataSource: 'db' }
+      );
       recipe.referencesMany(ingredient);
+      // contrived example for test:
+      recipe.hasOne(photo, { as: 'picture', options: { path: 'image' } });
     });
 
     before(function createRecipe(done) {
@@ -664,7 +670,7 @@ describe('relations - integration', function () {
             name: 'Chocolate' }, 
           function(err, ing) {
             test.ingredient1 = ing.id;
-            done();
+            recipe.picture.create({ name: 'Photo 1' }, done);
           });
         });
     });
@@ -680,7 +686,9 @@ describe('relations - integration', function () {
     after(function(done) {
       var app = this.app;
       app.models.recipe.destroyAll(function() {
-        app.models.ingredient.destroyAll(done);
+        app.models.ingredient.destroyAll(function() {
+          app.models.photo.destroyAll(done);
+        });
       });
     });
     
@@ -898,6 +906,17 @@ describe('relations - integration', function () {
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 }
           ]);
+          done();
+        });
+    });
+    
+    it('uses a custom relation path', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/image';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(err).to.not.exist;
+          expect(res.body.name).to.equal('Photo 1');
           done();
         });
     });
