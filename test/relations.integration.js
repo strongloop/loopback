@@ -926,4 +926,133 @@ describe('relations - integration', function () {
     
   });
   
+  describe('nested relations', function() {
+    
+    before(function defineProductAndCategoryModels() {
+      var Book = app.model(
+        'Book',
+        { properties: { name: 'string' }, dataSource: 'db',
+        plural: 'books' }
+      );
+      var Page = app.model(
+        'Page',
+        { properties: { name: 'string' }, dataSource: 'db',
+        plural: 'pages' }
+      );
+      var Image = app.model(
+        'Image',
+        { properties: { name: 'string' }, dataSource: 'db',
+        plural: 'images' }
+      );
+      var Note = app.model(
+        'Note',
+        { properties: { text: 'string' }, dataSource: 'db',
+        plural: 'notes' }
+      );
+      Book.hasMany(Page);
+      Page.hasMany(Note);
+      Image.belongsTo(Book);
+      
+      Book.nestRemoting('pages');
+      Image.nestRemoting('book');
+      
+      expect(Book.prototype['__findById__pages__notes']).to.be.a.function;
+      expect(Image.prototype['__findById__book__pages']).to.be.a.function;
+    });
+    
+    before(function createBook(done) {
+      var test = this;
+      app.models.Book.create({ name: 'Book 1' }, 
+        function(err, book) {
+          if (err) return done(err);
+          test.book = book;
+          book.pages.create({ name: 'Page 1' }, 
+            function(err, page) {
+              if (err) return done(err);
+              test.page = page;
+              page.notes.create({ text: 'Page Note 1' }, 
+                function(err, note) {
+                test.note = note;
+                done();
+              });
+          });
+        });
+    });
+    
+    before(function createCover(done) {
+      var test = this;
+      app.models.Image.create({ name: 'Cover 1', book: test.book }, 
+        function(err, image) {
+          if (err) return done(err);
+          test.image = image;
+          done();
+        });
+    });
+    
+    it('has regular relationship routes', function(done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages')
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.an.array;
+          expect(res.body).to.have.length(1);
+          expect(res.body[0].name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('has a basic error handler', function(done) {
+      var test = this;
+      this.get('/api/books/unknown/pages')
+        .expect(404, function(err, res) {
+          expect(res.body.error).to.be.an.object;
+          var expected = 'could not find a model with id unknown';
+          expect(res.body.error.message).to.equal(expected);
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - belongsTo find', function(done) {
+      var test = this;
+      this.get('/api/images/' + test.image.id + '/book/pages')
+        .end(function(err, res) {
+          expect(res.body).to.be.an.array;
+          expect(res.body).to.have.length(1);
+          expect(res.body[0].name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - belongsTo findById', function(done) {
+      var test = this;
+      this.get('/api/images/' + test.image.id + '/book/pages/' + test.page.id)
+        .end(function(err, res) {
+          expect(res.body).to.be.an.object;
+          expect(res.body.name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - hasMany find', function(done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes')
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.an.array;
+          expect(res.body).to.have.length(1);
+          expect(res.body[0].text).to.equal('Page Note 1');
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - hasMany findById', function(done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes/' + test.note.id)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.an.object;
+          expect(res.body.text).to.equal('Page Note 1');
+        done();
+      });
+    });
+    
+  });
+  
 });
