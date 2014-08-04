@@ -1002,7 +1002,7 @@ describe('relations - integration', function () {
     
     it('has a basic error handler', function(done) {
       var test = this;
-      this.get('/api/books/unknown/pages')
+      this.get('/api/books/unknown/pages/' + test.page.id + '/notes')
         .expect(404, function(err, res) {
           expect(res.body.error).to.be.an.object;
           var expected = 'could not find a model with id unknown';
