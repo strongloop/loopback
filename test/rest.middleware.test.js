@@ -1,14 +1,52 @@
 describe('loopback.rest', function() {
+  var MyModel;
   beforeEach(function() {
-    app.dataSource('db', { connector: loopback.Memory });
+    var ds = app.dataSource('db', { connector: loopback.Memory });
+    MyModel = ds.createModel('MyModel', {name: String});
   });
 
   it('works out-of-the-box', function(done) {
-    app.model('MyModel', { dataSource: 'db' });
+    app.model(MyModel);
     app.use(loopback.rest());
     request(app).get('/mymodels')
       .expect(200)
       .end(done);
+  });
+
+  it('should report 404 for GET /:id not found', function(done) {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    request(app).get('/mymodels/1')
+      .expect(404)
+      .end(done);
+  });
+
+  it('should report 404 for HEAD /:id not found', function(done) {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    request(app).head('/mymodels/1')
+      .expect(404)
+      .end(done);
+  });
+
+  it('should report 200 for GET /:id found', function(done) {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    MyModel.create({name: 'm1'}, function(err, inst) {
+      request(app).get('/mymodels/' + inst.id)
+        .expect(200)
+        .end(done);
+    });
+  });
+
+  it('should report 200 for HEAD /:id found', function(done) {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    MyModel.create({name: 'm2'}, function(err, inst) {
+      request(app).head('/mymodels/' + inst.id)
+        .expect(200)
+        .end(done);
+    });
   });
 
   it('includes loopback.token when necessary', function(done) {
