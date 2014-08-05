@@ -958,6 +958,17 @@ describe('relations - integration', function () {
       
       expect(Book.prototype['__findById__pages__notes']).to.be.a.function;
       expect(Image.prototype['__findById__book__pages']).to.be.a.function;
+      
+      Page.beforeRemote('prototype.__findById__notes', function(ctx, result, next) {
+        ctx.res.set('x-before', 'before');
+        next();
+      });
+      
+      Page.afterRemote('prototype.__findById__notes', function(ctx, result, next) {
+        ctx.res.set('x-after', 'after');
+        next();
+      });
+      
     });
     
     before(function createBook(done) {
@@ -989,13 +1000,25 @@ describe('relations - integration', function () {
         });
     });
     
-    it('has regular relationship routes', function(done) {
+    it('has regular relationship routes - pages', function(done) {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages')
         .expect(200, function(err, res) {
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('has regular relationship routes - notes', function(done) {
+      var test = this;
+      this.get('/api/pages/' + test.page.id + '/notes/' + test.note.id)
+        .expect(200, function(err, res) {
+          expect(res.headers['x-before']).to.equal('before');
+          expect(res.headers['x-after']).to.equal('after');
+          expect(res.body).to.be.an.object;
+          expect(res.body.text).to.equal('Page Note 1');
           done();
       });
     });
@@ -1047,6 +1070,8 @@ describe('relations - integration', function () {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
+          expect(res.headers['x-before']).to.equal('before');
+          expect(res.headers['x-after']).to.equal('after');
           expect(res.body).to.be.an.object;
           expect(res.body.text).to.equal('Page Note 1');
         done();
