@@ -657,7 +657,9 @@ describe('relations - integration', function () {
       );
       recipe.referencesMany(ingredient);
       // contrived example for test:
-      recipe.hasOne(photo, { as: 'picture', options: { path: 'image' } });
+      recipe.hasOne(photo, { as: 'picture', options: { 
+        http: { path: 'image' } 
+      } });
     });
 
     before(function createRecipe(done) {
