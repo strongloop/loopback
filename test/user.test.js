@@ -454,7 +454,9 @@ describe('User', function(){
             assert(result.email);
             assert(result.email.response);
             assert(result.token);
-            assert(~result.email.response.toString('utf-8').indexOf('To: bar@bat.com'));
+            var msg = result.email.response.toString('utf-8');
+            assert(~msg.indexOf('/api/users/confirm'));
+            assert(~msg.indexOf('To: bar@bat.com'));
             done();
           });
         });

@@ -213,6 +213,45 @@ describe('relations - integration', function () {
       });
     });
 
+    describe('HEAD /physicians/:id/patients/rel/:fk', function () {
+
+      before(function (done) {
+        var self = this;
+        setup(true, function (err, root) {
+          self.url = root.relUrl;
+          self.patient = root.patient;
+          self.physician = root.physician;
+          done();
+        });
+      });
+
+      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function () {
+        it('should succeed with statusCode 200', function () {
+          assert.equal(this.res.statusCode, 200);
+        });
+      });
+    });
+
+    describe('HEAD /physicians/:id/patients/rel/:fk that does not exist', function () {
+
+      before(function (done) {
+        var self = this;
+        setup(true, function (err, root) {
+          self.url = '/api/physicians/' + root.physician.id
+            + '/patients/rel/' + '999';
+          self.patient = root.patient;
+          self.physician = root.physician;
+          done();
+        });
+      });
+
+      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function () {
+        it('should succeed with statusCode 404', function () {
+          assert.equal(this.res.statusCode, 404);
+        });
+      });
+    });
+
     describe('DELETE /physicians/:id/patients/rel/:fk', function () {
 
       before(function (done) {
@@ -443,4 +482,623 @@ describe('relations - integration', function () {
         });
     });
   });
+  
+  describe('embedsMany', function() {
+    
+    before(function defineProductAndCategoryModels() {
+      var todoList = app.model(
+        'todoList',
+        { properties: { name: 'string' }, 
+          dataSource: 'db',
+          plural: 'todo-lists' 
+        }
+      );
+      var todoItem = app.model(
+        'todoItem',
+        { properties: { content: 'string' }, dataSource: 'db' }
+      );
+      todoList.embedsMany(todoItem, { as: 'items' });
+    });
+
+    before(function createTodoList(done) {
+      var test = this;
+      app.models.todoList.create({ name: 'List A' },
+        function(err, list) {
+          if (err) return done(err);
+          test.todoList = list;
+          list.items.build({ content: 'Todo 1' });
+          list.items.build({ content: 'Todo 2' });
+          list.save(done);
+        });
+    });
+
+    after(function(done) {
+      this.app.models.todoList.destroyAll(done);
+    });
+    
+    it('includes the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id;
+
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.name).to.be.equal('List A');
+          expect(res.body.todoItems).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 2', id: 2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 2', id: 2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('filters the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      url += '?filter[where][id]=2';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 2', id: 2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('creates embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      var expected = { content: 'Todo 3', id: 3 };
+      
+      this.post(url)
+        .send({ content: 'Todo 3' })
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(expected);
+          done();
+        });
+    });
+    
+    it('returns the embedded models', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 2', id: 2 },
+            { content: 'Todo 3', id: 3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns an embedded model by (internal) id', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { content: 'Todo 3', id: 3 }
+          );
+          done();
+        });
+    });
+    
+    it('removes an embedded model', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      
+      this.del(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it('returns the embedded models - verify', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { content: 'Todo 1', id: 1 },
+            { content: 'Todo 3', id: 3 }
+          ]);
+          done();
+        });
+    });
+    
+    // TODO - this.head is undefined
+    
+    it.skip('checks if an embedded model exists - ok', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
+      
+      this.head(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it.skip('checks if an embedded model exists - fail', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      
+      this.head(url)
+        .expect(404, function(err, res) {
+          done();
+        });
+    });
+    
+  });
+  
+  describe('referencesMany', function() {
+    
+    before(function defineProductAndCategoryModels() {
+      var recipe = app.model(
+        'recipe',
+        { properties: { name: 'string' }, dataSource: 'db' }
+      );
+      var ingredient = app.model(
+        'ingredient',
+        { properties: { name: 'string' }, dataSource: 'db' }
+      );
+      var photo = app.model(
+        'photo',
+        { properties: { name: 'string' }, dataSource: 'db' }
+      );
+      recipe.referencesMany(ingredient);
+      // contrived example for test:
+      recipe.hasOne(photo, { as: 'picture', options: { 
+        http: { path: 'image' } 
+      } });
+    });
+
+    before(function createRecipe(done) {
+      var test = this;
+      app.models.recipe.create({ name: 'Recipe' },
+        function(err, recipe) {
+          if (err) return done(err);
+          test.recipe = recipe;
+          recipe.ingredients.create({ 
+            name: 'Chocolate' }, 
+          function(err, ing) {
+            test.ingredient1 = ing.id;
+            recipe.picture.create({ name: 'Photo 1' }, done);
+          });
+        });
+    });
+    
+    before(function createIngredient(done) {
+      var test = this;
+      app.models.ingredient.create({ name: 'Sugar' }, function(err, ing) {
+        test.ingredient2 = ing.id;
+        done();
+      });
+    });
+
+    after(function(done) {
+      var app = this.app;
+      app.models.recipe.destroyAll(function() {
+        app.models.ingredient.destroyAll(function() {
+          app.models.photo.destroyAll(done);
+        });
+      });
+    });
+    
+    it('keeps an array of ids', function(done) {
+      var url = '/api/recipes/' + this.recipe.id;
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.ingredientIds).to.eql([test.ingredient1]);
+          expect(res.body).to.not.have.property('ingredients');
+          done();
+        });
+    });
+    
+    it('creates referenced models', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.post(url)
+        .send({ name: 'Butter' })
+        .expect(200, function(err, res) {
+          expect(res.body.name).to.be.eql('Butter');
+          test.ingredient3 = res.body.id;
+          done();
+        });
+    });
+    
+    it('has created models', function(done) {
+      var url = '/api/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 },
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns the referenced models', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('filters the referenced models', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      url += '?filter[where][name]=Butter';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+    
+    it('includes the referenced models', function(done) {
+      var url = '/api/recipes/findOne?filter[where][id]=' + this.recipe.id;
+      url += '&filter[include]=ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.ingredientIds).to.eql([
+            test.ingredient1, test.ingredient3
+          ]);
+          expect(res.body.ingredients).to.eql([
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Butter', id: test.ingredient3 }
+          ]);
+          done();
+        });
+    });
+
+    it('returns a referenced model by id', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient3;
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { name: 'Butter', id: test.ingredient3 }
+          );
+          done();
+        });
+    });
+    
+    it('keeps an array of ids - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id;
+      var test = this;
+      
+      var expected = [test.ingredient1, test.ingredient3];
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.ingredientIds).to.eql(expected);
+          expect(res.body).to.not.have.property('ingredients');
+          done();
+        });
+    });
+    
+    it('destroys a referenced model', function(done) {
+      var expectedProduct = this.product;
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient3;
+       
+      this.del(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it('has destroyed a referenced model', function(done) {
+      var url = '/api/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('returns the referenced models - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 }
+          ]);
+          done();
+        });
+    });
+    
+    it('creates/links a reference by id', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      url += '/rel/' + this.ingredient2;
+      var test = this;
+      
+      this.put(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { name: 'Sugar', id: test.ingredient2 }
+          );
+          done();
+        });
+    });
+    
+    it('returns the referenced models - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('removes/unlinks a reference by id', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      url += '/rel/' + this.ingredient1;
+      var test = this;
+      
+      this.del(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
+    
+    it('returns the referenced models - verify', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('has not destroyed an unlinked model', function(done) {
+      var url = '/api/ingredients';
+      var test = this;
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { name: 'Chocolate', id: test.ingredient1 },
+            { name: 'Sugar', id: test.ingredient2 }
+          ]);
+          done();
+        });
+    });
+    
+    it('uses a custom relation path', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/image';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(err).to.not.exist;
+          expect(res.body.name).to.equal('Photo 1');
+          done();
+        });
+    });
+    
+    // TODO - this.head is undefined
+    
+    // it.skip('checks if a referenced model exists - ok', function(done) {
+    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+    //   url += this.ingredient1;
+    //   
+    //   this.head(url)
+    //     .expect(200, function(err, res) {
+    //       done();
+    //     });
+    // });
+    
+    // it.skip('checks if an referenced model exists - fail', function(done) {
+    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+    //   url += this.ingredient3;
+    //   
+    //   this.head(url)
+    //     .expect(404, function(err, res) {
+    //       done();
+    //     });
+    // });
+    
+  });
+  
+  describe('nested relations', function() {
+    
+    before(function defineProductAndCategoryModels() {
+      var Book = app.model(
+        'Book',
+        { properties: { name: 'string' }, dataSource: 'db',
+        plural: 'books' }
+      );
+      var Page = app.model(
+        'Page',
+        { properties: { name: 'string' }, dataSource: 'db',
+        plural: 'pages' }
+      );
+      var Image = app.model(
+        'Image',
+        { properties: { name: 'string' }, dataSource: 'db',
+        plural: 'images' }
+      );
+      var Note = app.model(
+        'Note',
+        { properties: { text: 'string' }, dataSource: 'db',
+        plural: 'notes' }
+      );
+      Book.hasMany(Page);
+      Page.hasMany(Note);
+      Image.belongsTo(Book);
+      
+      Book.nestRemoting('pages');
+      Image.nestRemoting('book');
+      
+      expect(Book.prototype['__findById__pages__notes']).to.be.a.function;
+      expect(Image.prototype['__findById__book__pages']).to.be.a.function;
+      
+      Page.beforeRemote('prototype.__findById__notes', function(ctx, result, next) {
+        ctx.res.set('x-before', 'before');
+        next();
+      });
+      
+      Page.afterRemote('prototype.__findById__notes', function(ctx, result, next) {
+        ctx.res.set('x-after', 'after');
+        next();
+      });
+      
+    });
+    
+    before(function createBook(done) {
+      var test = this;
+      app.models.Book.create({ name: 'Book 1' }, 
+        function(err, book) {
+          if (err) return done(err);
+          test.book = book;
+          book.pages.create({ name: 'Page 1' }, 
+            function(err, page) {
+              if (err) return done(err);
+              test.page = page;
+              page.notes.create({ text: 'Page Note 1' }, 
+                function(err, note) {
+                test.note = note;
+                done();
+              });
+          });
+        });
+    });
+    
+    before(function createCover(done) {
+      var test = this;
+      app.models.Image.create({ name: 'Cover 1', book: test.book }, 
+        function(err, image) {
+          if (err) return done(err);
+          test.image = image;
+          done();
+        });
+    });
+    
+    it('has regular relationship routes - pages', function(done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages')
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.an.array;
+          expect(res.body).to.have.length(1);
+          expect(res.body[0].name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('has regular relationship routes - notes', function(done) {
+      var test = this;
+      this.get('/api/pages/' + test.page.id + '/notes/' + test.note.id)
+        .expect(200, function(err, res) {
+          expect(res.headers['x-before']).to.equal('before');
+          expect(res.headers['x-after']).to.equal('after');
+          expect(res.body).to.be.an.object;
+          expect(res.body.text).to.equal('Page Note 1');
+          done();
+      });
+    });
+    
+    it('has a basic error handler', function(done) {
+      var test = this;
+      this.get('/api/books/unknown/pages/' + test.page.id + '/notes')
+        .expect(404, function(err, res) {
+          expect(res.body.error).to.be.an.object;
+          var expected = 'could not find a model with id unknown';
+          expect(res.body.error.message).to.equal(expected);
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - belongsTo find', function(done) {
+      var test = this;
+      this.get('/api/images/' + test.image.id + '/book/pages')
+        .end(function(err, res) {
+          expect(res.body).to.be.an.array;
+          expect(res.body).to.have.length(1);
+          expect(res.body[0].name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - belongsTo findById', function(done) {
+      var test = this;
+      this.get('/api/images/' + test.image.id + '/book/pages/' + test.page.id)
+        .end(function(err, res) {
+          expect(res.body).to.be.an.object;
+          expect(res.body.name).to.equal('Page 1');
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - hasMany find', function(done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes')
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.an.array;
+          expect(res.body).to.have.length(1);
+          expect(res.body[0].text).to.equal('Page Note 1');
+          done();
+      });
+    });
+    
+    it('enables nested relationship routes - hasMany findById', function(done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes/' + test.note.id)
+        .expect(200, function(err, res) {
+          expect(res.headers['x-before']).to.equal('before');
+          expect(res.headers['x-after']).to.equal('after');
+          expect(res.body).to.be.an.object;
+          expect(res.body.text).to.equal('Page Note 1');
+        done();
+      });
+    });
+    
+  });
+  
 });
