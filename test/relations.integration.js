@@ -25,6 +25,16 @@ describe('relations - integration', function () {
     this.app.models.widget.destroyAll(done);
   });
 
+  describe('/store/superStores', function() {
+    it('should invoke scoped methods remotely', function(done) {
+      this.get('/api/stores/superStores')
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.array;
+          done();
+        });
+    });
+  });
+
   describe('/store/:id/widgets', function () {
     beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets';
