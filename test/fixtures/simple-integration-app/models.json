@@ -45,6 +45,13 @@
     "public": true,
     "dataSource": "db",
     "options": {
+      "scopes": {
+        "superStores": {
+          "where": {
+            "size": "super"
+          }
+        }
+      },
       "relations": {
         "widgets": {
           "model": "widget",
