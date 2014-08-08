@@ -160,6 +160,19 @@ describe('access control - integration', function () {
   });
 
   describe('/accounts', function () {
+    var count = 0;
+    before(function() {
+      var roleModel = loopback.getModelByType(loopback.Role);
+      roleModel.registerResolver('$dummy', function (role, context, callback) {
+        process.nextTick(function () {
+          if(context.remotingContext) {
+            count++;
+          }
+          callback && callback(null, false); // Always true
+        });
+      });
+    });
+
     lt.beforeEach.givenModel('account');
 
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', '/api/accounts');
@@ -169,7 +182,6 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', urlForAccount);
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', urlForAccount);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'GET', urlForAccount);
-
 
     lt.it.shouldBeDeniedWhenCalledAnonymously('POST', '/api/accounts');
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('POST', '/api/accounts');
