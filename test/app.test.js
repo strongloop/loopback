@@ -69,6 +69,10 @@ describe('app', function() {
         request(app).get('/colors').expect(200, done);
       });
     });
+
+    it('should not require dataSource', function() {
+      app.model('MyTestModel', {});
+    });
   });
 
   describe('app.model(name, config)', function () {
