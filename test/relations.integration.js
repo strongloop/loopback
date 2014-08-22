@@ -492,6 +492,65 @@ describe('relations - integration', function () {
         });
     });
   });
+
+  describe('embedsOne', function() {
+
+    before(function defineGroupAndImageModels() {
+      var group = app.model(
+        'group',
+        { properties: { name: 'string' }, 
+          dataSource: 'db',
+          plural: 'groups' 
+        }
+      );
+      var image = app.model(
+        'image',
+        { properties: { url: 'string' }, dataSource: 'db' }
+      );
+      group.embedsOne(image, { as: 'cover' });
+    });
+
+    before(function createImage(done) {
+      var test = this;
+      app.models.group.create({ name: 'Group 1' },
+        function(err, list) {
+          if (err) return done(err);
+          test.group = group;
+          group.image.build({ url: 'http://image.url' });
+          group.save(done);
+        });
+    });
+
+    after(function(done) {
+      this.app.models.group.destroyAll(done);
+    });
+  
+    it('includes the embedded models', function(done) {
+      var url = '/api/groups/' + this.group.id;
+
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.name).to.be.equal('Group 1');
+          expect(res.body.imageItem).to.be.eql([ 
+            { url: 'http://image.url' }
+          ]);
+          done();
+        });
+    });
+
+    it('returns the embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql([ 
+            { url: 'http://image.url' },
+          ]);
+          done();
+        });
+    });
+
+  });
   
   describe('embedsMany', function() {
     
