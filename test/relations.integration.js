@@ -494,8 +494,8 @@ describe('relations - integration', function () {
   });
 
   describe('embedsOne', function() {
-
-    before(function defineGroupAndImageModels() {
+  
+    before(function defineGroupAndPosterModels() {
       var group = app.model(
         'group',
         { properties: { name: 'string' }, 
@@ -503,53 +503,53 @@ describe('relations - integration', function () {
           plural: 'groups' 
         }
       );
-      var image = app.model(
-        'image',
+      var poster = app.model(
+        'poster',
         { properties: { url: 'string' }, dataSource: 'db' }
       );
-      group.embedsOne(image, { as: 'cover' });
+      group.embedsOne(poster, { as: 'cover' });
     });
-
+  
     before(function createImage(done) {
       var test = this;
       app.models.group.create({ name: 'Group 1' },
-        function(err, list) {
+        function(err, group) {
           if (err) return done(err);
           test.group = group;
-          group.image.build({ url: 'http://image.url' });
+          group.cover.build({ url: 'http://image.url' });
           group.save(done);
         });
     });
-
+  
     after(function(done) {
       this.app.models.group.destroyAll(done);
     });
   
     it('includes the embedded models', function(done) {
       var url = '/api/groups/' + this.group.id;
-
+  
       this.get(url)
         .expect(200, function(err, res) {
           expect(res.body.name).to.be.equal('Group 1');
-          expect(res.body.imageItem).to.be.eql([ 
+          expect(res.body.poster).to.be.eql( 
             { url: 'http://image.url' }
-          ]);
+          );
           done();
         });
     });
-
+  
     it('returns the embedded model', function(done) {
       var url = '/api/groups/' + this.group.id + '/cover';
       
       this.get(url)
         .expect(200, function(err, res) {
-          expect(res.body).to.be.eql([ 
-            { url: 'http://image.url' },
-          ]);
+          expect(res.body).to.be.eql( 
+            { url: 'http://image.url' }
+          );
           done();
         });
     });
-
+  
   });
   
   describe('embedsMany', function() {
@@ -1018,7 +1018,7 @@ describe('relations - integration', function () {
   
   describe('nested relations', function() {
     
-    before(function defineProductAndCategoryModels() {
+    before(function defineModels() {
       var Book = app.model(
         'Book',
         { properties: { name: 'string' }, dataSource: 'db',
