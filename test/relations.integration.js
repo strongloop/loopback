@@ -113,6 +113,48 @@ describe('relations - integration', function () {
       });
     });
   });
+  
+  describe('/store/:id/widgets/count', function () {
+    beforeEach(function() {
+      this.url = '/api/stores/' + this.store.id + '/widgets/count';
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets/count', function() {
+      it('should succeed with statusCode 200', function() {
+        assert.equal(this.res.statusCode, 200);
+      });
+      it('should return the count', function() {
+        assert.equal(this.res.body.count, 1);
+      });
+    });
+  });
+  
+  describe('/store/:id/widgets/count - filtered (matches)', function () {
+    beforeEach(function() {
+      this.url = '/api/stores/' + this.store.id + '/widgets/count?where[name]=foo';
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets/count?where[name]=foo', function() {
+      it('should succeed with statusCode 200', function() {
+        assert.equal(this.res.statusCode, 200);
+      });
+      it('should return the count', function() {
+        assert.equal(this.res.body.count, 1);
+      });
+    });
+  });
+  
+  describe('/store/:id/widgets/count - filtered (no matches)', function () {
+    beforeEach(function() {
+      this.url = '/api/stores/' + this.store.id + '/widgets/count?where[name]=bar';
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets/count?where[name]=bar', function() {
+      it('should succeed with statusCode 200', function() {
+        assert.equal(this.res.statusCode, 200);
+      });
+      it('should return the count', function() {
+        assert.equal(this.res.body.count, 0);
+      });
+    });
+  });
 
   describe('/widgets/:id/store', function () {
     beforeEach(function (done) {
