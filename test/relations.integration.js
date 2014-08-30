@@ -114,6 +114,37 @@ describe('relations - integration', function () {
     });
   });
   
+  describe('/stores/:id/widgets/:fkId - 200', function () {
+    beforeEach(function (done) {
+      var self = this;
+      this.store.widgets.create({
+        name: this.widgetName
+      }, function(err, widget) {
+        self.widget = widget;
+        self.url = '/api/stores/' + self.store.id + '/widgets/' + widget.id;
+        done();
+      });
+    });
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fkId', function () {
+      it('should succeed with statusCode 200', function () {
+        assert.equal(this.res.statusCode, 200);
+        assert.equal(this.res.body.id, this.widget.id);
+      });
+    });
+  });
+
+  describe('/stores/:id/widgets/:fkId - 404', function () {
+    beforeEach(function () {
+      this.url = '/api/stores/' + this.store.id + '/widgets/123456';
+    });
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fkId', function () {
+      it('should fail with statusCode 404', function () {
+        assert.equal(this.res.statusCode, 404);
+        assert.equal(this.res.body.error.status, 404);
+      });
+    });
+  });
+  
   describe('/store/:id/widgets/count', function () {
     beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets/count';
@@ -729,7 +760,14 @@ describe('relations - integration', function () {
         });
     });
     
-    // TODO - this.head is undefined
+    it('returns a 404 response when embedded model is not found', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      this.get(url).expect(404, function(err, res) {
+        expect(res.body.error.status).to.be.equal(404);
+        expect(res.body.error.message).to.be.equal('Unknown "todoItem" id "2".');
+        done();
+      });
+    });
     
     it.skip('checks if an embedded model exists - ok', function(done) {
       var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
@@ -1034,27 +1072,25 @@ describe('relations - integration', function () {
         });
     });
     
-    // TODO - this.head is undefined
+    it.skip('checks if a referenced model exists - ok', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient1;
+      
+      this.head(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
     
-    // it.skip('checks if a referenced model exists - ok', function(done) {
-    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
-    //   url += this.ingredient1;
-    //   
-    //   this.head(url)
-    //     .expect(200, function(err, res) {
-    //       done();
-    //     });
-    // });
-    
-    // it.skip('checks if an referenced model exists - fail', function(done) {
-    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
-    //   url += this.ingredient3;
-    //   
-    //   this.head(url)
-    //     .expect(404, function(err, res) {
-    //       done();
-    //     });
-    // });
+    it.skip('checks if an referenced model exists - fail', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient3;
+      
+      this.head(url)
+        .expect(404, function(err, res) {
+          done();
+        });
+    });
     
   });
   
