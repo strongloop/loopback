@@ -114,7 +114,7 @@ describe('relations - integration', function () {
     });
   });
   
-  describe('/stores/:id/widgets/:fkId - 200', function () {
+  describe('/stores/:id/widgets/:fk - 200', function () {
     beforeEach(function (done) {
       var self = this;
       this.store.widgets.create({
@@ -125,7 +125,7 @@ describe('relations - integration', function () {
         done();
       });
     });
-    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fkId', function () {
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function () {
       it('should succeed with statusCode 200', function () {
         assert.equal(this.res.statusCode, 200);
         assert.equal(this.res.body.id, this.widget.id);
@@ -133,11 +133,11 @@ describe('relations - integration', function () {
     });
   });
 
-  describe('/stores/:id/widgets/:fkId - 404', function () {
+  describe('/stores/:id/widgets/:fk - 404', function () {
     beforeEach(function () {
       this.url = '/api/stores/' + this.store.id + '/widgets/123456';
     });
-    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fkId', function () {
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function () {
       it('should fail with statusCode 404', function () {
         assert.equal(this.res.statusCode, 404);
         assert.equal(this.res.body.error.status, 404);
