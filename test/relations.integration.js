@@ -265,6 +265,51 @@ describe('relations - integration', function () {
       });
     });
 
+    describe('PUT /physicians/:id/patients/rel/:fk with data', function () {
+
+      before(function (done) {
+        var self = this;
+        setup(false, function (err, root) {
+          self.url = root.relUrl;
+          self.patient = root.patient;
+          self.physician = root.physician;
+          done();
+        });
+      });
+
+      var NOW = Date.now();
+      var data = { date: new Date(NOW) };
+
+      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', data, function () {
+        it('should succeed with statusCode 200', function () {
+          assert.equal(this.res.statusCode, 200);
+          assert.equal(this.res.body.patientId, this.patient.id);
+          assert.equal(this.res.body.physicianId, this.physician.id);
+          assert.equal(new Date(this.res.body.date).getTime(), NOW);
+        });
+
+        it('should create a record in appointment', function (done) {
+          var self = this;
+          app.models.appointment.find(function (err, apps) {
+            assert.equal(apps.length, 1);
+            assert.equal(apps[0].patientId, self.patient.id);
+            assert.equal(apps[0].physicianId, self.physician.id);
+            assert.equal(apps[0].date.getTime(), NOW);
+            done();
+          });
+        });
+
+        it('should connect physician to patient', function (done) {
+          var self = this;
+          self.physician.patients(function (err, patients) {
+            assert.equal(patients.length, 1);
+            assert.equal(patients[0].id, self.patient.id);
+            done();
+          });
+        });
+      });
+    });
+
     describe('HEAD /physicians/:id/patients/rel/:fk', function () {
 
       before(function (done) {
