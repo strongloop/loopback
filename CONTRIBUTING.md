@@ -1,3 +1,4 @@
+[Sign the Contributor License Agreement](https://strongloop-cla.herokuapp.com/agreements/strongloop/loopback)
 
 ### Contributing ###
 
