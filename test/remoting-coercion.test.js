@@ -1,4 +1,4 @@
-var loopback = require('loopback');
+var loopback = require('../');
 var request = require('supertest');
 
 describe('remoting coercion', function() {
