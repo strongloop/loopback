@@ -3,6 +3,7 @@
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
+    "web",
     "restful",
     "rest",
     "api",
