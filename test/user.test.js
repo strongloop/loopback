@@ -265,6 +265,22 @@ describe('User', function(){
         });
     });
 
+    it('should handle multiple `include`', function(done) {
+      request(app)
+        .post('/users/login?include=USER&include=Post')
+        .send(validCredentials)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) return done(err);
+          var token = res.body;
+          expect(token.user, 'body.user').to.not.equal(undefined);
+          expect(token.user, 'body.user')
+            .to.have.property('email', validCredentials.email);
+          done();
+        });
+    });
+
     it('Login should only allow correct credentials', function(done) {
       User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
         User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) { 
