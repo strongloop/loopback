@@ -113,6 +113,79 @@ describe('relations - integration', function () {
       });
     });
   });
+  
+  describe('/stores/:id/widgets/:fk - 200', function () {
+    beforeEach(function (done) {
+      var self = this;
+      this.store.widgets.create({
+        name: this.widgetName
+      }, function(err, widget) {
+        self.widget = widget;
+        self.url = '/api/stores/' + self.store.id + '/widgets/' + widget.id;
+        done();
+      });
+    });
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function () {
+      it('should succeed with statusCode 200', function () {
+        assert.equal(this.res.statusCode, 200);
+        assert.equal(this.res.body.id, this.widget.id);
+      });
+    });
+  });
+
+  describe('/stores/:id/widgets/:fk - 404', function () {
+    beforeEach(function () {
+      this.url = '/api/stores/' + this.store.id + '/widgets/123456';
+    });
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function () {
+      it('should fail with statusCode 404', function () {
+        assert.equal(this.res.statusCode, 404);
+        assert.equal(this.res.body.error.status, 404);
+      });
+    });
+  });
+  
+  describe('/store/:id/widgets/count', function () {
+    beforeEach(function() {
+      this.url = '/api/stores/' + this.store.id + '/widgets/count';
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets/count', function() {
+      it('should succeed with statusCode 200', function() {
+        assert.equal(this.res.statusCode, 200);
+      });
+      it('should return the count', function() {
+        assert.equal(this.res.body.count, 1);
+      });
+    });
+  });
+  
+  describe('/store/:id/widgets/count - filtered (matches)', function () {
+    beforeEach(function() {
+      this.url = '/api/stores/' + this.store.id + '/widgets/count?where[name]=foo';
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets/count?where[name]=foo', function() {
+      it('should succeed with statusCode 200', function() {
+        assert.equal(this.res.statusCode, 200);
+      });
+      it('should return the count', function() {
+        assert.equal(this.res.body.count, 1);
+      });
+    });
+  });
+  
+  describe('/store/:id/widgets/count - filtered (no matches)', function () {
+    beforeEach(function() {
+      this.url = '/api/stores/' + this.store.id + '/widgets/count?where[name]=bar';
+    });
+    lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets/count?where[name]=bar', function() {
+      it('should succeed with statusCode 200', function() {
+        assert.equal(this.res.statusCode, 200);
+      });
+      it('should return the count', function() {
+        assert.equal(this.res.body.count, 0);
+      });
+    });
+  });
 
   describe('/widgets/:id/store', function () {
     beforeEach(function (done) {
@@ -208,6 +281,51 @@ describe('relations - integration', function () {
           app.models.appointment.find(function (err, apps) {
             assert.equal(apps.length, 1);
             assert.equal(apps[0].patientId, self.patient.id);
+            done();
+          });
+        });
+
+        it('should connect physician to patient', function (done) {
+          var self = this;
+          self.physician.patients(function (err, patients) {
+            assert.equal(patients.length, 1);
+            assert.equal(patients[0].id, self.patient.id);
+            done();
+          });
+        });
+      });
+    });
+
+    describe('PUT /physicians/:id/patients/rel/:fk with data', function () {
+
+      before(function (done) {
+        var self = this;
+        setup(false, function (err, root) {
+          self.url = root.relUrl;
+          self.patient = root.patient;
+          self.physician = root.physician;
+          done();
+        });
+      });
+
+      var NOW = Date.now();
+      var data = { date: new Date(NOW) };
+
+      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', data, function () {
+        it('should succeed with statusCode 200', function () {
+          assert.equal(this.res.statusCode, 200);
+          assert.equal(this.res.body.patientId, this.patient.id);
+          assert.equal(this.res.body.physicianId, this.physician.id);
+          assert.equal(new Date(this.res.body.date).getTime(), NOW);
+        });
+
+        it('should create a record in appointment', function (done) {
+          var self = this;
+          app.models.appointment.find(function (err, apps) {
+            assert.equal(apps.length, 1);
+            assert.equal(apps[0].patientId, self.patient.id);
+            assert.equal(apps[0].physicianId, self.physician.id);
+            assert.equal(apps[0].date.getTime(), NOW);
             done();
           });
         });
@@ -492,6 +610,65 @@ describe('relations - integration', function () {
         });
     });
   });
+
+  describe('embedsOne', function() {
+  
+    before(function defineGroupAndPosterModels() {
+      var group = app.model(
+        'group',
+        { properties: { name: 'string' }, 
+          dataSource: 'db',
+          plural: 'groups' 
+        }
+      );
+      var poster = app.model(
+        'poster',
+        { properties: { url: 'string' }, dataSource: 'db' }
+      );
+      group.embedsOne(poster, { as: 'cover' });
+    });
+  
+    before(function createImage(done) {
+      var test = this;
+      app.models.group.create({ name: 'Group 1' },
+        function(err, group) {
+          if (err) return done(err);
+          test.group = group;
+          group.cover.build({ url: 'http://image.url' });
+          group.save(done);
+        });
+    });
+  
+    after(function(done) {
+      this.app.models.group.destroyAll(done);
+    });
+  
+    it('includes the embedded models', function(done) {
+      var url = '/api/groups/' + this.group.id;
+  
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body.name).to.be.equal('Group 1');
+          expect(res.body.poster).to.be.eql( 
+            { url: 'http://image.url' }
+          );
+          done();
+        });
+    });
+  
+    it('returns the embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+      
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql( 
+            { url: 'http://image.url' }
+          );
+          done();
+        });
+    });
+  
+  });
   
   describe('embedsMany', function() {
     
@@ -628,7 +805,14 @@ describe('relations - integration', function () {
         });
     });
     
-    // TODO - this.head is undefined
+    it('returns a 404 response when embedded model is not found', function(done) {
+      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      this.get(url).expect(404, function(err, res) {
+        expect(res.body.error.status).to.be.equal(404);
+        expect(res.body.error.message).to.be.equal('Unknown "todoItem" id "2".');
+        done();
+      });
+    });
     
     it.skip('checks if an embedded model exists - ok', function(done) {
       var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
@@ -933,33 +1117,31 @@ describe('relations - integration', function () {
         });
     });
     
-    // TODO - this.head is undefined
+    it.skip('checks if a referenced model exists - ok', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient1;
+      
+      this.head(url)
+        .expect(200, function(err, res) {
+          done();
+        });
+    });
     
-    // it.skip('checks if a referenced model exists - ok', function(done) {
-    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
-    //   url += this.ingredient1;
-    //   
-    //   this.head(url)
-    //     .expect(200, function(err, res) {
-    //       done();
-    //     });
-    // });
-    
-    // it.skip('checks if an referenced model exists - fail', function(done) {
-    //   var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
-    //   url += this.ingredient3;
-    //   
-    //   this.head(url)
-    //     .expect(404, function(err, res) {
-    //       done();
-    //     });
-    // });
+    it.skip('checks if an referenced model exists - fail', function(done) {
+      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      url += this.ingredient3;
+      
+      this.head(url)
+        .expect(404, function(err, res) {
+          done();
+        });
+    });
     
   });
   
   describe('nested relations', function() {
     
-    before(function defineProductAndCategoryModels() {
+    before(function defineModels() {
       var Book = app.model(
         'Book',
         { properties: { name: 'string' }, dataSource: 'db',

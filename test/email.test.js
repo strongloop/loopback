@@ -24,6 +24,17 @@ describe('Email connector', function () {
     ]});
     assert(connector.transportForName('stub'));
   });
+
+
+  it('should set up a single transport for SMTP' , function () {
+    var connector = new MailConnector({transport:
+        {type: 'smtp', service: 'gmail'}
+    });
+
+    assert(connector.transportForName('smtp'));
+  });
+
+
 });
 
 describe('Email and SMTP', function () {
@@ -71,6 +82,8 @@ describe('Email and SMTP', function () {
         assert(mail.messageId);
         done(err);
       });
-    });      
-  }); 
+    });
+  });
 });
+
+

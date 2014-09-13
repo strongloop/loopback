@@ -482,4 +482,41 @@ describe.onServer('Remote Methods', function(){
       assert.equal(model, acl);
     });
   });
+
+  describe('PersistelModel remote methods', function() {
+    it('includes all aliases', function() {
+      var app = loopback();
+      var model = PersistedModel.extend('persistedModel');
+      app.dataSource('db', { connector: 'memory' });
+      app.model(model, { dataSource: 'db' });
+
+      // this code is used by loopback-sdk-angular codegen
+      var metadata = app.handler('rest')
+        .adapter
+        .getClasses()
+        .filter(function(c) { return c.name === 'persistedModel'; })[0];
+
+      var methodNames = [];
+      metadata.methods.forEach(function(method) {
+        methodNames.push(method.name);
+        methodNames = methodNames.concat(method.sharedMethod.aliases || []);
+      });
+
+      expect(methodNames).to.have.members([
+        'destroyAll', 'deleteAll', 'remove',
+        'create',
+        'upsert', 'updateOrCreate',
+        'exists',
+        'findById',
+        'find',
+        'findOne',
+        'updateAll', 'update',
+        'deleteById',
+        'destroyById',
+        'removeById',
+        'count',
+        'prototype.updateAttributes'
+      ]);
+    });
+  });
 });

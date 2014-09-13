@@ -185,6 +185,7 @@ describe('loopback', function() {
       var model = loopback.Model.extend(uniqueModelName);
 
       loopback.configureModel(model, {
+        dataSource: null,
         relations: {
           owner: {
             type: 'belongsTo',
@@ -207,6 +208,7 @@ describe('loopback', function() {
       });
 
       loopback.configureModel(model, {
+        dataSource: null,
         relations: {
           owner: {
             model: 'Application'
