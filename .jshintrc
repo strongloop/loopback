@@ -3,11 +3,17 @@
 "camelcase" : true,
 "eqnull" : true,
 "indent": 2,
-"undef": true,
-"quotmark": "single",
-"maxlen": 80,
-"trailing": true,
+"quotmark": false,
+"laxcomma": true,
+"laxbreak": true,
 "newcap": true,
 "nonew": true,
-"undef": false
+"undef": false,
+"asi": true,
+"expr": true,
+"unused": true,
+"sub": true,
+"shadow": true,
+"loopfunc": true,
+"maxlen": 170
 }
