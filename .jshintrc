@@ -1,24 +1,22 @@
 {
   "node": true,
-  "mocha": true,
-  "camelcase" : true,
-  "eqnull" : true,
+  "camelcase" : true,  // force all variable names to use either camelCase style or UPPER_CASE with underscores
   "indent": 2,
-  "quotmark": false,
-  "laxcomma": true,
-  "laxbreak": true,
+  "undef": true,       // prohibits the use of explicitly undeclared variables
+  "quotmark": false,   // Should be changed back to single
+  "maxlen": 170,       // Should be changed back to 80
+  "newcap": true,      // requires you to capitalize names of constructor functions
+  "nonew": true,       // prohibits the use of constructor functions for side-effects
+  "laxbreak": true,    // suppresses most of the warnings about possibly unsafe line breakings
+  "laxcomma": true,    // suppresses warnings about comma-first coding style
   "latedef" : false,   // true: Require variables to be defined before use
-  "newcap": true,
-  "nonew": true,
-  "undef": true,
-  "asi": true,
-  "expr": true,
-  "unused": "vars",
-  "sub": true,
-  "shadow": true,
-  "loopfunc": true,
-  "maxlen": 170,
-  "globals": {
-    "exports": false
-  }
+  "asi": true,         // suppresses warnings about missing semicolon
+  "expr": true,        /*
+                          suppresses warnings about the use of expressions where normally you
+                          would expect to see assignments or function call
+                       */
+  "unused": "vars",    // set to vars to only check for variables, not function parameters
+  "sub": true,         // suppresses warnings about using [] notation when it can be expressed in dot notation
+  "shadow": true,      // suppresses warnings about variable shadowing
+  "loopfunc": true     // suppresses warnings about functions inside of loops
 }
