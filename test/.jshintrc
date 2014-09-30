@@ -1,6 +1,5 @@
 {
   "node": true,
-  "mocha": true,
   "camelcase" : true,
   "eqnull" : true,
   "indent": 2,
@@ -16,6 +15,5 @@
   "unused": "vars",
   "sub": true,
   "shadow": true,
-  "loopfunc": true,
-  "maxlen": 170
+  "maxlen": 135
 }
