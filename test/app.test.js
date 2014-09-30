@@ -1,5 +1,6 @@
-var path = require('path');
-var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
+/*global describe: true, it: true*/
+
+// var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
 var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
 

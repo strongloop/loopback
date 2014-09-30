@@ -1,4 +1,3 @@
-var path = require('path');
 var loopback = require('../../');
 var models = require('../fixtures/e2e/models');
 var TestModel = models.TestModel;

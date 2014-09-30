@@ -1,0 +1,21 @@
+{
+  "node": true,
+  "mocha": true,
+  "camelcase" : true,
+  "eqnull" : true,
+  "indent": 2,
+  "quotmark": false,
+  "laxcomma": true,
+  "laxbreak": true,
+  "latedef" : false,   // true: Require variables to be defined before use
+  "newcap": true,
+  "nonew": true,
+  "undef": false,
+  "asi": true,
+  "expr": true,
+  "unused": "vars",
+  "sub": true,
+  "shadow": true,
+  "loopfunc": true,
+  "maxlen": 170
+}

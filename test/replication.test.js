@@ -1,8 +1,8 @@
 var async = require('async');
 var loopback = require('../');
-var ACL = loopback.ACL;
+//var ACL = loopback.ACL;
 var Change = loopback.Change;
-var defineModelTestsWithDataSource = require('./util/model-tests');
+//var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
 
 describe('Replication / Change APIs', function() {
@@ -15,7 +15,7 @@ describe('Replication / Change APIs', function() {
       trackChanges: true
     });
     SourceModel.attachTo(dataSource);
-    
+
     var TargetModel = this.TargetModel = PersistedModel.extend('TargetModel', {}, {
       trackChanges: true
     });
@@ -27,7 +27,7 @@ describe('Replication / Change APIs', function() {
         test.model = inst;
 
         // give loopback a chance to register the change
-        // TODO(ritch) get rid of this... 
+        // TODO(ritch) get rid of this...
         setTimeout(function() {
           SourceModel.replicate(TargetModel, cb);
         }, 100);
@@ -62,7 +62,7 @@ describe('Replication / Change APIs', function() {
       });
 
       function replicate() {
-        test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel, 
+        test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
           assert(conflicts.length === 0);
           async.parallel([
@@ -148,7 +148,7 @@ describe('Replication / Change APIs', function() {
       });
     });
     it('conflict.models()', function(done) {
-      var test = this;
+      // var test = this;
       this.conflict.models(function(err, source, target) {
         assert.deepEqual(source.toJSON(), {
           id: 1,
@@ -220,7 +220,7 @@ describe('Replication / Change APIs', function() {
       });
     });
     it('conflict.models()', function(done) {
-      var test = this;
+      // var test = this;
       this.conflict.models(function(err, source, target) {
         assert.equal(source, null);
         assert.deepEqual(target.toJSON(), {
@@ -289,7 +289,7 @@ describe('Replication / Change APIs', function() {
       });
     });
     it('conflict.models()', function(done) {
-      var test = this;
+      // var test = this;
       this.conflict.models(function(err, source, target) {
         assert.equal(target, null);
         assert.deepEqual(source.toJSON(), {

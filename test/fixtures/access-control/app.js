@@ -1,6 +1,5 @@
 var loopback = require('../../../');
 var boot = require('loopback-boot');
-var path = require('path');
 var app = module.exports = loopback();
 
 boot(app, __dirname);
