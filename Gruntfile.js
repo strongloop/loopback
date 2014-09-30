@@ -30,8 +30,14 @@ module.exports = function(grunt) {
       gruntfile: {
         src: 'Gruntfile.js'
       },
+      lib: {
+        src: ['lib/**/*.js']
+      },
+      test: {
+        src: ['test/**/*.js']
+      },
       lib_test: {
-        src: ['lib/**/*.js', 'test/**/*.js']
+        src: ['<%= jshint.lib.src %>', '<%= jshint.test.src %>']
       }
     },
     watch: {
@@ -39,9 +45,17 @@ module.exports = function(grunt) {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
       },
+      lib: {
+        files: ['<%= jshint.lib.src %>'],
+        tasks: ['jshint:lib']
+      },
+      test: {
+        files: ['<%= jshint.test.src %>'],
+        tasks: ['jshint:test']
+      },
       lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test']
+        files: ['<%= jshint.lib.src %>', '<%= jshint.test.src %>'],
+        tasks: ['jshint:lib', 'jshint:test']
       }
     },
     browserify: {
@@ -104,7 +118,7 @@ module.exports = function(grunt) {
 
           // list of files to exclude
           exclude: [
-            
+
           ],
 
           // test results reporter to use
