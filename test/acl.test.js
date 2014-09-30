@@ -195,7 +195,7 @@ describe('security ACLs', function () {
   });
 
   it("should honor static ACLs from the model", function () {
-    var Customer = ds.createModel('Customer', {
+    ds.createModel('Customer', {
       name: {
         type: String,
         acls: [
@@ -241,7 +241,7 @@ describe('security ACLs', function () {
       var userId = user.id;
 
       // Define a model with static ACLs
-      var Customer = ds.createModel('Customer', {
+      ds.createModel('Customer', {
         name: {
           type: String,
           acls: [

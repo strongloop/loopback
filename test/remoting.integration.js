@@ -1,4 +1,4 @@
-var loopback = require('../');
+//var loopback = require('../');
 var lt = require('loopback-testing');
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');

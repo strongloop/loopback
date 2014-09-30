@@ -45,7 +45,6 @@ describe('Change', function(){
   describe('Change.rectifyModelChanges(modelName, modelIds, callback)', function () {
     describe('using an existing untracked model', function () {
       beforeEach(function(done) {
-        var test = this;
         Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trackedChanges) {
           if(err) return done(err);
           done();
@@ -70,7 +69,7 @@ describe('Change', function(){
   });
 
   describe('Change.findOrCreateChange(modelName, modelId, callback)', function () {
-    
+
     describe('when a change doesnt exist', function () {
       beforeEach(function(done) {
         var test = this;
@@ -112,7 +111,7 @@ describe('Change', function(){
       });
 
       it('should find the entry', function (done) {
-        var test = this;      
+        var test = this;
         assert.equal(test.existingChange.id, test.result.id);
         done();
       });

@@ -6,10 +6,12 @@ var RoleMapping = role.RoleMapping;
 var User = loopback.User;
 var ACL = require('../lib/models/acl');
 
+/*
 function checkResult(err, result) {
   // console.log(err, result);
   assert(!err);
 }
+*/
 
 describe('role model', function () {
   var ds;

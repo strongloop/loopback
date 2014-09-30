@@ -1,10 +1,11 @@
-var async = require('async');
+/*global describe: true*/
+
 var describe = require('./describe');
 var loopback = require('../../');
-var ACL = loopback.ACL;
-var Change = loopback.Change;
+// var ACL = loopback.ACL;
+// var Change = loopback.Change;
 var PersistedModel = loopback.PersistedModel;
-var RemoteObjects = require('strong-remoting');
+// var RemoteObjects = require('strong-remoting');
 
 module.exports = function defineModelTestsWithDataSource(options) {
 
@@ -114,7 +115,7 @@ describe('Model Tests', function() {
       assert(valid === false);
       assert(user.errors.age, 'model should have age error');
     });
-    
+
     it('Asynchronously validate the model', function(done) {
       User.validatesNumericalityOf('age', {int: true});
       var user = new User({first: 'joe', age: 'flarg'});
@@ -152,7 +153,7 @@ describe('Model Tests', function() {
       User.create({first: 'joe', age: 100}, function (err, user) {
         assert(!err);
         assert.equal(user.first, 'joe');
-        
+
         user.updateAttributes({
           first: 'updatedFirst',
           last: 'updatedLast'
@@ -172,7 +173,7 @@ describe('Model Tests', function() {
       User.upsert({first: 'joe', id: 7}, function (err, user) {
         assert(!err);
         assert.equal(user.first, 'joe');
-        
+
         User.upsert({first: 'bob', id: 7}, function (err, updatedUser) {
           assert(!err);
           assert.equal(updatedUser.first, 'bob');

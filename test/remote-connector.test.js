@@ -3,7 +3,6 @@ var defineModelTestsWithDataSource = require('./util/model-tests');
 
 describe('RemoteConnector', function() {
   var remoteApp;
-  var remote;
 
   defineModelTestsWithDataSource({
     beforeEach: function(done) {
