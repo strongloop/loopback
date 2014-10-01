@@ -37,7 +37,7 @@
     "canonical-json": "0.0.4",
     "ejs": "~1.0.0",
     "express": "4.x",
-    "strong-remoting": "^2.1.0",
+    "strong-remoting": "^2.4.0",
     "bcryptjs": "~2.0.2",
     "debug": "~2.0.0",
     "inflection": "~1.4.2",
