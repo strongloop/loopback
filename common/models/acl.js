@@ -255,14 +255,17 @@ ACL.getStaticACLs = function getStaticACLs(model, property) {
   var staticACLs = [];
   if (modelClass && modelClass.settings.acls) {
     modelClass.settings.acls.forEach(function (acl) {
-      staticACLs.push(new ACL({
-        model: model,
-        property: acl.property || ACL.ALL,
-        principalType: acl.principalType,
-        principalId: acl.principalId, // TODO: Should it be a name?
-        accessType: acl.accessType || ACL.ALL,
-        permission: acl.permission
-      }));
+      if (!acl.property || acl.property === ACL.ALL
+        || property === acl.property) {
+        staticACLs.push(new ACL({
+          model: model,
+          property: acl.property || ACL.ALL,
+          principalType: acl.principalType,
+          principalId: acl.principalId, // TODO: Should it be a name?
+          accessType: acl.accessType || ACL.ALL,
+          permission: acl.permission
+        }));
+      }
     });
   }
   var prop = modelClass &&
