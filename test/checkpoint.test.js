@@ -2,7 +2,7 @@ var async = require('async');
 var loopback = require('../');
 
 // create a unique Checkpoint model
-var Checkpoint = require('../lib/models/checkpoint').extend('TestCheckpoint');
+var Checkpoint = require('../common/models/checkpoint').extend('TestCheckpoint');
 Checkpoint.attachTo(loopback.memory());
 
 describe('Checkpoint', function() {

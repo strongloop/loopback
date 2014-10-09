@@ -31,12 +31,12 @@
 
  */
 
-var loopback = require('../loopback');
+var loopback = require('../../lib/loopback');
 var async = require('async');
 var assert = require('assert');
 var debug = require('debug')('loopback:security:acl');
 
-var ctx = require('./access-context');
+var ctx = require('../../lib/access-context');
 var AccessContext = ctx.AccessContext;
 var Principal = ctx.Principal;
 var AccessRequest = ctx.AccessRequest;

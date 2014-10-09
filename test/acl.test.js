@@ -1,11 +1,9 @@
 var assert = require('assert');
 var loopback = require('../index');
-var acl = require('../lib/models/acl');
-var Scope = acl.Scope;
-var ACL = acl.ACL;
-var role = require('../lib/models/role');
-var Role = role.Role;
-var RoleMapping = role.RoleMapping;
+var Scope = loopback.Scope;
+var ACL = loopback.ACL;
+var Role = loopback.Role;
+var RoleMapping = loopback.RoleMapping;
 var User = loopback.User;
 var testModel;
 
