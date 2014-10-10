@@ -350,4 +350,34 @@ describe('app', function() {
     var app = loopback();
     expect(app.loopback).to.equal(loopback);
   });
+
+  describe('app.ready()', function() {
+    it('should call the ready hooks', function(done) {
+      var app = loopback();
+      var called = 0;
+      var TestModel = app.model('TestModel', {}, {base: 'Model', dataSource: null});
+      TestModel.beforeReady = function(app, cb) {
+        called++;
+        cb();
+      }
+      TestModel.ready = function() {
+        called++;
+      };
+
+      app.ready(function() {
+        called++;
+      });
+
+      process.nextTick(function() {
+        expect(called).to.equal(3);
+        done();
+      });
+    });
+
+    it('should call built in methods if none provided', function(done) {
+      var app = loopback();
+      var TestModel = app.model('TestModel', {}, {base: 'Model', dataSource: null});
+      app.ready(done);
+    })
+  });
 });
