@@ -1,63 +1,22 @@
-
 ### Contributing ###
 
 Thank you for your interest in `loopback`, an open source project
 administered by StrongLoop.
 
-Contributing to loopback is easy. In a few simple steps:
+Contributing to `loopback` is easy. In a few simple steps:
 
-  * Ensure that your effort is aligned with the project’s roadmap by
+  * Ensure that your effort is aligned with the project's roadmap by
     talking to the maintainers, especially if you are going to spend a
-    lot of time on it. This project is currently maintained by
-    [@ritch](https://github.com/ritch), [@raymondfeng](https://github.com/raymondfeng),
-    and [@bajtos](https://github.com/bajtos). The preferred channel of communication
-    is [LoopBack Forum](https://groups.google.com/forum/#!forum/loopbackjs) or
-    [Github Issues](https://github.com/strongloop/loopback/issues).
+    lot of time on it.
 
   * Make something better or fix a bug.
 
-  * Adhere to code style outlined in the
+  * Adhere to code style outlined in the [Google C++ Style Guide][] and
     [Google Javascript Style Guide][].
 
-  * [Sign your patches](#signing-patches) to indicate that your are
-    making your contribution available under the terms of the
-    [Contributor License Agreement](#contributor-license-agreement).
+  * Sign the [Contributor License Agreement](https://cla.strongloop.com/strongloop/loopback)
 
   * Submit a pull request through Github.
-
-
-### Signing patches ###
-
-Like many open source projects, we need a contributor license agreement
-from you before we can merge in your changes.
-
-In summary, by submitting your code, you are granting us a right to use
-that code under the terms of this Agreement, including providing it to
-others. You are also certifying that you wrote it, and that you are
-allowed to license it to us. You are not giving up your copyright in
-your work. The license does not change your rights to use your own
-contributions for any other purpose.
-
-Contributor License Agreements are important because they define the
-chain of ownership of a piece of software. Some companies won't allow
-the use of free software without clear agreements around code ownership.
-That's why many open source projects collect similar agreements from
-contributors. The CLA here is based on the Apache CLA.
-
-To signify your agreement to these terms, add the following line to the
-bottom of your commit message. Use your real name and an actual e-mail
-address.
-
-```
-Signed-off-by: Random J Developer <random@developer.example.org>
-```
-
-Alternatively you can use the git command line to automatically add this
-line, as follows:
-
-```
-$ git commit -sm "Replace rainbows by unicorns"
-```
 
 
 ### Contributor License Agreement ###
@@ -188,7 +147,5 @@ $ git commit -sm "Replace rainbows by unicorns"
      inaccurate in any respect. Email us at callback@strongloop.com.
 ```
 
-
+[Google C++ Style Guide]: https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
 [Google Javascript Style Guide]: https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
-[license]: LICENSE
-

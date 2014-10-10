@@ -84,6 +84,7 @@ describe('Change', function(){
       it('should create an entry', function (done) {
         var test = this;
         Change.findById(this.result.id, function(err, change) {
+          if (err) return done(err);
           assert.equal(change.id, test.result.id);
           done();
         });
