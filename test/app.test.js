@@ -351,4 +351,26 @@ describe('app', function() {
     var app = loopback();
     expect(app.loopback).to.equal(loopback);
   });
+
+  describe('normalizeHttpPath option', function() {
+    var app, db;
+    beforeEach(function() {
+      app = loopback();
+      db = loopback.createDataSource({ connector: loopback.Memory });
+    });
+
+    it.onServer('normalizes the http path', function(done) {
+      var UserAccount = PersistedModel.extend(
+        'UserAccount',
+        { name: String },
+        {
+          remoting: { normalizeHttpPath: true }
+        });
+      app.model(UserAccount);
+      UserAccount.attachTo(db);
+
+      app.use(loopback.rest());
+      request(app).get('/user-accounts').expect(200, done);
+    });
+  });
 });
