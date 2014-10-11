@@ -109,7 +109,7 @@ describe('AccessToken', function () {
 });
 
 describe('app.enableAuth()', function() {
-  this.timeout(0);
+  this.timeout(false);
 
   beforeEach(createTestingToken);
 
