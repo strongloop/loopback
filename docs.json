@@ -16,6 +16,7 @@
 { "title": "Built-in models", "depth": 2 },
     "common/models/access-token.js",
     "common/models/acl.js",
+    "common/models/scope.js",
     "common/models/application.js",
     "common/models/email.js",
     "common/models/role.js",
