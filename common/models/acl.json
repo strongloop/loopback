@@ -1,0 +1,17 @@
+{
+  "name": "ACL",
+  "properties": {
+    "model": {
+      "type": "string",
+      "description": "The name of the model"
+    },
+    "property": {
+      "type": "string",
+      "description": "The name of the property, method, scope, or relation"
+    },
+    "accessType": "string",
+    "permission": "string",
+    "principalType": "string",
+    "principalId": "string"
+  }
+}

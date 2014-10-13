@@ -5,9 +5,7 @@
 var loopback = require('../../lib/loopback')
   , assert = require('assert')
   , uid = require('uid2')
-  , DEFAULT_TOKEN_LEN = 64
-  , Role = require('./role').Role
-  , ACL = require('./acl').ACL;
+  , DEFAULT_TOKEN_LEN = 64;
 
 /**
  * Token based authentication and access control.
