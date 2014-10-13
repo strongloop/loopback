@@ -16,94 +16,6 @@ var RoleSchema = {
   modified: {type: Date, default: Date}
 };
 
-/*!
- * Map principals to roles
- */
-var RoleMappingSchema = {
-  id: {type: String, id: true, generated: true}, // Id
-  // roleId: String, // The role id, to be injected by the belongsTo relation
-  principalType: String, // The principal type, such as user, application, or role
-  principalId: String // The principal id
-};
-
-/**
- * The `RoleMapping` model extends from the built in `loopback.Model` type.
- *
- * @class
- * @property {String} id Generated ID.
- * @property {String} name Name of the role.
- * @property {String} Description Text description.
- * @inherits {Model}
- */
-
-var RoleMapping = loopback.createModel('RoleMapping', RoleMappingSchema, {
-  relations: {
-    role: {
-      type: 'belongsTo',
-      model: 'Role',
-      foreignKey: 'roleId'
-    }
-  }
-});
-
-// Principal types
-RoleMapping.USER = 'USER';
-RoleMapping.APP = RoleMapping.APPLICATION = 'APP';
-RoleMapping.ROLE = 'ROLE';
-
-/**
- * Get the application principal
- * @callback {Function} callback
- * @param {Error} err
- * @param {Application} application
- */
-RoleMapping.prototype.application = function (callback) {
-  if (this.principalType === RoleMapping.APPLICATION) {
-    var applicationModel = this.constructor.Application
-      || loopback.getModelByType(loopback.Application);
-    applicationModel.findById(this.principalId, callback);
-  } else {
-    process.nextTick(function () {
-      callback && callback(null, null);
-    });
-  }
-};
-
-/**
- * Get the user principal
- * @callback {Function} callback
- * @param {Error} err
- * @param {User} user
- */
-RoleMapping.prototype.user = function (callback) {
-  if (this.principalType === RoleMapping.USER) {
-    var userModel = this.constructor.User
-      || loopback.getModelByType(loopback.User);
-    userModel.findById(this.principalId, callback);
-  } else {
-    process.nextTick(function () {
-      callback && callback(null, null);
-    });
-  }
-};
-
-/**
- * Get the child role principal
- * @callback {Function} callback
- * @param {Error} err
- * @param {User} childUser
- */
-RoleMapping.prototype.childRole = function (callback) {
-  if (this.principalType === RoleMapping.ROLE) {
-    var roleModel = this.constructor.Role || loopback.getModelByType(Role);
-    roleModel.findById(this.principalId, callback);
-  } else {
-    process.nextTick(function () {
-      callback && callback(null, null);
-    });
-  }
-};
-
 /**
  * The Role Model
  * @class
@@ -117,6 +29,9 @@ var Role = loopback.createModel('Role', RoleSchema, {
     }
   }
 });
+
+var RoleMapping = loopback.RoleMapping;
+assert(RoleMapping, 'RoleMapping model must be defined before Role model');
 
 // Set up the connection to users/applications/roles once the model
 Role.once('dataSourceAttached', function () {
