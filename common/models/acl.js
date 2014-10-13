@@ -41,8 +41,8 @@ var AccessContext = ctx.AccessContext;
 var Principal = ctx.Principal;
 var AccessRequest = ctx.AccessRequest;
 
-var role = require('./role');
-var Role = role.Role;
+var Role = loopback.Role;
+assert(Role, 'Role model must be defined before ACL model');
 
 /**
  * A Model for access control meta data.
