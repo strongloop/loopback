@@ -2,8 +2,8 @@
  * Module Dependencies.
  */
 
-var PersistedModel = require('./persisted-model')
-  , loopback = require('../loopback')
+var PersistedModel = require('../../lib/loopback').PersistedModel
+  , loopback = require('../../lib/loopback')
   , crypto = require('crypto')
   , CJSON = {stringify: require('canonical-json')}
   , async = require('async')

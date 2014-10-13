@@ -2,8 +2,8 @@
  * Module Dependencies.
  */
 
-var Model = require('../loopback').Model
-  , loopback = require('../loopback');
+var Model = require('../../lib/loopback').Model
+  , loopback = require('../../lib/loopback');
 
 var properties = {
   to: {type: String, required: true},

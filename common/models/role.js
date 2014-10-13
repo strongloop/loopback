@@ -1,9 +1,9 @@
-var loopback = require('../loopback');
+var loopback = require('../../lib/loopback');
 var debug = require('debug')('loopback:security:role');
 var assert = require('assert');
 var async = require('async');
 
-var AccessContext = require('./access-context').AccessContext;
+var AccessContext = require('../../lib/access-context').AccessContext;
 
 // Role model
 var RoleSchema = {

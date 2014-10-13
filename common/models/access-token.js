@@ -2,7 +2,7 @@
  * Module Dependencies.
  */
 
-var loopback = require('../loopback')
+var loopback = require('../../lib/loopback')
   , assert = require('assert')
   , crypto = require('crypto')
   , uid = require('uid2')

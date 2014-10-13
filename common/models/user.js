@@ -2,8 +2,8 @@
  * Module Dependencies.
  */
 
-var PersistedModel = require('../loopback').PersistedModel
-  , loopback = require('../loopback')
+var PersistedModel = require('../../lib/loopback').PersistedModel
+  , loopback = require('../../lib/loopback')
   , path = require('path')
   , SALT_WORK_FACTOR = 10
   , crypto = require('crypto')
