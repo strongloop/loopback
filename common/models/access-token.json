@@ -1,0 +1,38 @@
+{
+  "name": "AccessToken",
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true
+    },
+    "ttl": {
+      "type": "number",
+      "ttl": true,
+      "default": 1209600,
+      "description": "time to live in seconds (2 weeks by default)"
+    },
+    "created": {
+      "type": "Date"
+    }
+  },
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "User",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "property": "create",
+      "permission": "ALLOW"
+    }
+  ]
+}

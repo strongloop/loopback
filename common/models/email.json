@@ -1,0 +1,11 @@
+{
+  "name": "Email",
+  "base": "Model",
+  "properties": {
+    "to": {"type": "String", "required": true},
+    "from": {"type": "String", "required": true},
+    "subject": {"type": "String", "required": true},
+    "text": {"type": "String"},
+    "html": {"type": "String"}
+  }
+}

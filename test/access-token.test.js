@@ -109,8 +109,6 @@ describe('AccessToken', function () {
 });
 
 describe('app.enableAuth()', function() {
-  this.timeout(0);
-
   beforeEach(createTestingToken);
 
   it('prevents remote call with 401 status on denied ACL', function (done) {
