@@ -15,7 +15,8 @@ var loopback = require('../../lib/loopback')
 var debug = require('debug')('loopback:user');
 
 /**
- * Extends from the built in `loopback.Model` type.
+ * Built-in User model.
+ * Extends LoopBack [PersistedModel](#persistedmodel-new-persistedmodel).
  *
  * Default `User` ACLs.
  *
@@ -204,7 +205,17 @@ User.prototype.hasPassword = function(plain, fn) {
  *    user.verify(options, next);
  * ```
  *
- * @param {Object} options
+ * @options {Object} options
+ * @property {String} type Must be 'email'.
+ * @property {String} to Email address to which verification email is sent.
+ * @property {String} from Sender email addresss, for example
+ *   `'noreply@myapp.com'`.
+ * @property {String} subject Subject line text.
+ * @property {String} text Text of email.
+ * @property {String} template Name of template that displays verification
+ *  page, for example, `'verify.ejs'.
+ * @property {String} redirect Page to which user will be redirected after
+ *  they verify their email, for example `'/'` for root URI.
  */
 
 User.prototype.verify = function(options, fn) {

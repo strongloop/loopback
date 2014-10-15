@@ -474,7 +474,7 @@ module.exports = function(Change) {
   /**
    * When two changes conflict a conflict is created.
    *
-   * **Note: call `conflict.fetch()` to get the `target` and `source` models.
+   * **Note**: call `conflict.fetch()` to get the `target` and `source` models.
    *
    * @param {*} modelId
    * @param {PersistedModel} SourceModel

@@ -151,18 +151,17 @@ module.exports = function(Application) {
   /**
    * Authenticate the application id and key.
    *
-   * `matched` parameter is one of:
+   * @param {Any} appId
+   * @param {String} key
+   * @callback {Function} callback
+   * @param {Error} err
+   * @param {String} matched The matching key; one of:
    * - clientKey
    * - javaScriptKey
    * - restApiKey
    * - windowsKey
    * - masterKey
    *
-   * @param {Any} appId
-   * @param {String} key
-   * @callback {Function} callback
-   * @param {Error} err
-   * @param {String} matched The matching key
    */
   Application.authenticate = function(appId, key, cb) {
     this.findById(appId, function(err, app) {

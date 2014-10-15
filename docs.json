@@ -3,7 +3,6 @@
   "content": [
     "lib/application.js",
     "lib/loopback.js",
-    "lib/runtime.js",
     "lib/registry.js",
 { "title": "Base models", "depth": 2 },
     "lib/model.js",
