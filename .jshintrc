@@ -8,6 +8,5 @@
 "maxlen": 80,
 "trailing": true,
 "newcap": true,
-"nonew": true,
-"undef": false
+"nonew": true
 }

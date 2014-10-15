@@ -473,7 +473,7 @@ User.setup = function() {
       if (ctx.req) {
         ctx.res.redirect(ctx.req.param('redirect'));
       } else {
-        fn(new Error('transport unsupported'));
+        next(new Error('transport unsupported'));
       }
     });
   });

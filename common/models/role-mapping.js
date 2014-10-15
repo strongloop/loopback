@@ -1,3 +1,5 @@
+var loopback = require('../../lib/loopback');
+
 /**
  * The `RoleMapping` model extends from the built in `loopback.Model` type.
  *
@@ -59,7 +61,8 @@ module.exports = function(RoleMapping) {
    */
   RoleMapping.prototype.childRole = function (callback) {
     if (this.principalType === RoleMapping.ROLE) {
-      var roleModel = this.constructor.Role || loopback.getModelByType(Role);
+      var roleModel = this.constructor.Role ||
+        loopback.getModelByType(loopback.Role);
       roleModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function () {
