@@ -1,4 +1,5 @@
 /**
+ * Email model.  Extends LoopBack base [Model](#model-new-model).
  * @property {String} to Email addressee.  Required.
  * @property {String} from Email sender address.  Required.
  * @property {String} subject Email subject string.  Required.

@@ -126,11 +126,11 @@ module.exports = function(Role) {
   }
 
   /**
-   * Check if a given userId is the owner the model instance
+   * Check if a given user ID is the owner the model instance.
    * @param {Function} modelClass The model class
-   * @param {*} modelId The model id
-   * @param {*) userId The user id
- * @param {Function} callback
+   * @param {*} modelId The model ID
+   * @param {*} userId The user ID
+   * @param {Function} callback Callback function
    */
   Role.isOwner = function isOwner(modelClass, modelId, userId, callback) {
     assert(modelClass, 'Model class is required');
