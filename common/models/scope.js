@@ -1,4 +1,5 @@
 var assert = require('assert');
+var loopback = require('../../lib/loopback');
 
 /**
  * Resource owner grants/delegates permissions to client applications
