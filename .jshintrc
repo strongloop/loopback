@@ -9,5 +9,6 @@
 "trailing": true,
 "newcap": true,
 "nonew": true,
-"laxcomma": true
+"laxcomma": true,
+"laxbreak": true
 }
