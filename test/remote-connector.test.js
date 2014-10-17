@@ -12,7 +12,7 @@ describe('RemoteConnector', function() {
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
         test.dataSource = loopback.createDataSource({
-          host: remoteApp.get('host'),
+          host: 'localhost',
           port: remoteApp.get('port'),
           connector: loopback.Remote
         });
@@ -38,7 +38,7 @@ describe('RemoteConnector', function() {
 
     remoteApp.listen(0, function() {
       test.remote = loopback.createDataSource({
-        host: remoteApp.get('host'),
+        host: 'localhost',
         port: remoteApp.get('port'),
         connector: loopback.Remote
       });
@@ -63,6 +63,7 @@ describe('RemoteConnector', function() {
 
     var m = new RemoteModel({foo: 'bar'});
     m.save(function(err, inst) {
+      if (err) return done(err);
       assert(inst instanceof RemoteModel);
       assert(calledServerCreate);
       done();
