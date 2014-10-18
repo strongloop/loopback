@@ -233,7 +233,7 @@ User.prototype.verify = function(options, fn) {
   options.protocol = options.protocol || 'http';
 
   var app = userModel.app;
-  options.host = options.host || (app && app.get('host')) || 'localhost';
+  options.host = emailOptions.host || (app && app.get('verificationHost')) || (app && app.get('host')) || 'localhost';
   options.port = options.port || (app && app.get('port')) || 3000;
   options.restApiRoot = options.restApiRoot || (app && app.get('restApiRoot')) || '/api';
   options.verifyHref = options.verifyHref ||
