@@ -213,8 +213,9 @@ describe('app', function() {
       app.set('host', undefined);
 
       app.listen(function() {
-        expect(app.get('url'), 'url')
-          .to.equal('http://127.0.0.1:' + app.get('port') + '/');
+        var host = process.platform === 'win32' ? 'localhost' : app.get('host');
+        var expectedUrl = 'http://' + host + ':' + app.get('port') + '/';
+        expect(app.get('url'), 'url').to.equal(expectedUrl);
         done();
       });
     });
