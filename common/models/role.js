@@ -78,12 +78,10 @@ module.exports = function(Role) {
   Role.EVERYONE = "$everyone"; // everyone
 
   /**
-   * Add custom handler for roles
-   * @param role
-   * @param resolver The resolver function decides if a principal is in the role
-   * dynamically
-   *
-   * function(role, context, callback)
+   * Add custom handler for roles.
+   * @param {String} role Name of role.
+   * @param {Function} resolver Function that determines if a principal is in the specified role.
+   * Signature must be `function(role, context, callback)`
    */
   Role.registerResolver = function(role, resolver) {
     if (!Role.resolvers) {
