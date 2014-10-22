@@ -29,6 +29,18 @@ describe('loopback.rest', function() {
       .end(done);
   });
 
+  it('should report 200 for GET /:id/exists not found', function(done) {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    request(app).get('/mymodels/1/exists')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body).to.eql({exists: false});
+        done();
+      });
+  });
+
   it('should report 200 for GET /:id found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
@@ -46,6 +58,20 @@ describe('loopback.rest', function() {
       request(app).head('/mymodels/' + inst.id)
         .expect(200)
         .end(done);
+    });
+  });
+
+  it('should report 200 for GET /:id/exists found', function(done) {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    MyModel.create({name: 'm2'}, function(err, inst) {
+      request(app).get('/mymodels/' + inst.id + '/exists')
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql({exists: true});
+          done();
+        });
     });
   });
 
