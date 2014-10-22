@@ -130,46 +130,103 @@ describe('loopback.rest', function() {
     });
   });
 
-  it('should pass req to remote method via context', function(done) {
-    var User = givenUserModelWithAuth();
-    User.getToken = function(cb) {
-      var context = loopback.getCurrentContext();
-      var req = context.get('http').req;
-      expect(req).to.have.property('accessToken');
+  describe('context propagation', function() {
+    var User;
 
-      var juggler = require('loopback-datasource-juggler');
-      expect(juggler.getCurrentContext().get('http').req)
-        .to.have.property('accessToken');
+    beforeEach(function() {
+      User = givenUserModelWithAuth();
+      User.getToken = function(cb) {
+        var context = loopback.getCurrentContext();
+        var req = context.get('http').req;
+        expect(req).to.have.property('accessToken');
 
-      var remoting = require('strong-remoting');
-      expect(remoting.getCurrentContext().get('http').req)
-        .to.have.property('accessToken');
+        var juggler = require('loopback-datasource-juggler');
+        expect(juggler.getCurrentContext().get('http').req)
+          .to.have.property('accessToken');
 
-      cb(null, req && req.accessToken ? req.accessToken.id : null);
-    };
-    // Set up the ACL
-    User.settings.acls.push({principalType: 'ROLE',
-      principalId: '$authenticated', permission: 'ALLOW', property: 'getToken'});
+        var remoting = require('strong-remoting');
+        expect(remoting.getCurrentContext().get('http').req)
+          .to.have.property('accessToken');
 
-    loopback.remoteMethod(User.getToken, {
-      accepts: [],
-      returns: [{ type: 'object', name: 'id' }]
+        cb(null, req && req.accessToken ? req.accessToken.id : null);
+      };
+      // Set up the ACL
+      User.settings.acls.push({principalType: 'ROLE',
+        principalId: '$authenticated', permission: 'ALLOW',
+        property: 'getToken'});
+
+      loopback.remoteMethod(User.getToken, {
+        accepts: [],
+        returns: [
+          { type: 'object', name: 'id' }
+        ]
+      });
     });
 
-    app.use(loopback.context({enableHttpContext: true}));
-    app.enableAuth();
-    app.use(loopback.rest());
+    function invokeGetToken(done) {
+      givenLoggedInUser(function(err, token) {
+        if (err) return done(err);
+        request(app).get('/users/getToken')
+          .set('Authorization', token.id)
+          .expect(200)
+          .end(function(err, res) {
+            if (err) return done(err);
+            expect(res.body.id).to.equal(token.id);
+            done();
+          });
+      });
+    }
 
-    givenLoggedInUser(function(err, token) {
-      if (err) return done(err);
-      request(app).get('/users/getToken')
-        .set('Authorization', token.id)
-        .expect(200)
-        .end(function(err, res) {
-          if (err) return done(err);
-          expect(res.body.id).to.equal(token.id);
-          done();
-        });
+    it('should enable context using loopback.context', function(done) {
+      app.use(loopback.context({enableHttpContext: true}));
+      app.enableAuth();
+      app.use(loopback.rest());
+
+      invokeGetToken(done);
+    });
+
+    it('should enable context with loopback.rest', function(done) {
+      app.enableAuth();
+      app.use(loopback.rest({context: {enableHttpContext: true}}));
+
+      invokeGetToken(done);
+    });
+
+    it('should support explicit context', function(done) {
+      app.enableAuth();
+      app.use(loopback.context());
+      app.use(loopback.token(
+        { model: loopback.getModelByType(loopback.AccessToken) }));
+      app.use(function(req, res, next) {
+        loopback.getCurrentContext().set('accessToken', req.accessToken);
+        next();
+      });
+      app.use(loopback.rest());
+
+      User.getToken = function(cb) {
+        var context = loopback.getCurrentContext();
+        var accessToken = context.get('accessToken');
+        expect(context.get('accessToken')).to.have.property('id');
+
+        var juggler = require('loopback-datasource-juggler');
+        context = juggler.getCurrentContext();
+        expect(context.get('accessToken')).to.have.property('id');
+
+        var remoting = require('strong-remoting');
+        context = remoting.getCurrentContext();
+        expect(context.get('accessToken')).to.have.property('id');
+
+        cb(null, accessToken ? accessToken.id : null);
+      };
+
+      loopback.remoteMethod(User.getToken, {
+        accepts: [],
+        returns: [
+          { type: 'object', name: 'id' }
+        ]
+      });
+
+      invokeGetToken(done);
     });
   });
 
