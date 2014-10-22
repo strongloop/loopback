@@ -354,6 +354,10 @@ module.exports = function(Role) {
       // Check against the role mappings
       var principalType = p.type || undefined;
       var principalId = p.id || undefined;
+      
+      if(typeof principalId !== 'string' && typeof principalId !== 'undefined') {
+        principalId = principalId.toString();
+      }
 
       // Add the role itself
       if (principalType === RoleMapping.ROLE && principalId) {
