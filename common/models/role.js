@@ -353,9 +353,9 @@ module.exports = function(Role) {
     context.principals.forEach(function(p) {
       // Check against the role mappings
       var principalType = p.type || undefined;
-      var principalId = p.id || undefined;
+      var principalId = p.id == null ? undefined : p.id;
       
-      if(typeof principalId !== 'string' && typeof principalId !== 'undefined') {
+      if(typeof principalId !== 'string' && principalId != null) {
         principalId = principalId.toString();
       }
 
