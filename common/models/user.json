@@ -75,7 +75,7 @@
     {
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ACL.ALLOW",
+      "permission": "ALLOW",
       "property": "confirm"
     },
     {

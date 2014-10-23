@@ -28,6 +28,7 @@ describe('User', function(){
   });
   
   beforeEach(function (done) {
+    app.enableAuth();
     app.use(loopback.token());
     app.use(loopback.rest());
     app.model(User);
