@@ -19,4 +19,4 @@ loopback.Remote = require('loopback-connector-remote');
  */
 
 loopback.GeoPoint = require('loopback-datasource-juggler/lib/geo').GeoPoint;
-loopback.ValidationError = datasourceJuggler.ValidationError;
+loopback.ValidationError = loopback.Model.ValidationError;

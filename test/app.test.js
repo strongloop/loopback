@@ -213,8 +213,9 @@ describe('app', function() {
       app.set('host', undefined);
 
       app.listen(function() {
-        expect(app.get('url'), 'url')
-          .to.equal('http://127.0.0.1:' + app.get('port') + '/');
+        var host = process.platform === 'win32' ? 'localhost' : app.get('host');
+        var expectedUrl = 'http://' + host + ':' + app.get('port') + '/';
+        expect(app.get('url'), 'url').to.equal(expectedUrl);
         done();
       });
     });
@@ -349,5 +350,27 @@ describe('app', function() {
   it('exposes loopback as a property', function() {
     var app = loopback();
     expect(app.loopback).to.equal(loopback);
+  });
+
+  describe('normalizeHttpPath option', function() {
+    var app, db;
+    beforeEach(function() {
+      app = loopback();
+      db = loopback.createDataSource({ connector: loopback.Memory });
+    });
+
+    it.onServer('normalizes the http path', function(done) {
+      var UserAccount = PersistedModel.extend(
+        'UserAccount',
+        { name: String },
+        {
+          remoting: { normalizeHttpPath: true }
+        });
+      app.model(UserAccount);
+      UserAccount.attachTo(db);
+
+      app.use(loopback.rest());
+      request(app).get('/user-accounts').expect(200, done);
+    });
   });
 });

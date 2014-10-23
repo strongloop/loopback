@@ -2,109 +2,21 @@
  * Module Dependencies.
  */
 
-var PersistedModel = require('../loopback').PersistedModel
-  , loopback = require('../loopback')
+var loopback = require('../../lib/loopback')
   , path = require('path')
   , SALT_WORK_FACTOR = 10
   , crypto = require('crypto')
   , bcrypt = require('bcryptjs')
-  , BaseAccessToken = require('./access-token')
   , DEFAULT_TTL = 1209600 // 2 weeks in seconds
   , DEFAULT_RESET_PW_TTL = 15 * 60 // 15 mins in seconds
   , DEFAULT_MAX_TTL = 31556926 // 1 year in seconds
-  , Role = require('./role').Role
-  , ACL = require('./acl').ACL
   , assert = require('assert');
 
 var debug = require('debug')('loopback:user');
 
-/*!
- * Default User properties.
- */
-
-var properties = {
-    realm: {type: String},
-    username: {type: String},
-    password: {type: String, required: true},
-    credentials: Object, // deprecated, to be removed in 2.x
-    challenges: Object, // deprecated, to be removed in 2.x
-    email: {type: String, required: true},
-    emailVerified: Boolean,
-    verificationToken: String,
-    status: String,
-    created: Date,
-    lastUpdated: Date
-};
-
-var options = {
-  hidden: ['password'],
-  acls: [
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.EVERYONE,
-      permission: ACL.DENY
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.EVERYONE,
-      permission: ACL.ALLOW,
-      property: 'create'
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.OWNER,
-      permission: ACL.ALLOW,
-      property: 'deleteById'
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.EVERYONE,
-      permission: ACL.ALLOW,
-      property: "login"
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.EVERYONE,
-      permission: ACL.ALLOW,
-      property: "logout"
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.OWNER,
-      permission: ACL.ALLOW,
-      property: "findById"
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.OWNER,
-      permission: ACL.ALLOW,
-      property: "updateAttributes"
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.EVERYONE,
-      permission: ACL.ALLOW,
-      property: "confirm"
-    },
-    {
-      principalType: ACL.ROLE,
-      principalId: Role.EVERYONE,
-      permission: ACL.ALLOW,
-      property: "resetPassword",
-      accessType: ACL.EXECUTE
-    }
-  ],
-  relations: {
-    accessTokens: {
-      type: 'hasMany',
-      model: 'AccessToken',
-      foreignKey: 'userId'
-    }
-  }
-};
-
 /**
- * Extends from the built in `loopback.Model` type.
+ * Built-in User model.
+ * Extends LoopBack [PersistedModel](#persistedmodel-new-persistedmodel).
  *
  * Default `User` ACLs.
  *
@@ -122,11 +34,11 @@ var options = {
  * @property {Boolean} emailVerified Set when a user's email has been verified via `confirm()`
  * @property {String} verificationToken Set when `verify()` is called
  *
- * @class
- * @inherits {Model}
+ * @class User
+ * @inherits {PersistedModel}
  */
 
-var User = module.exports = PersistedModel.extend('User', properties, options);
+module.exports = function(User) {
 
 /**
  * Create access token for the logged in user. This method can be overridden to
@@ -150,8 +62,8 @@ User.prototype.createAccessToken = function(ttl, cb) {
  *
  * ```js
  *    User.login({username: 'foo', password: 'bar'}, function (err, token) {
- *      console.log(token.id);
- *    });
+*      console.log(token.id);
+*    });
  * ```
  *
  * @param {Object} credentials
@@ -160,7 +72,7 @@ User.prototype.createAccessToken = function(ttl, cb) {
  * @param {AccessToken} token
  */
 
-User.login = function (credentials, include, fn) {
+User.login = function(credentials, include, fn) {
   var self = this;
   if (typeof include === 'function') {
     fn = include;
@@ -169,19 +81,18 @@ User.login = function (credentials, include, fn) {
 
   include = (include || '');
   if (Array.isArray(include)) {
-    include = include.map(function ( val ) {
+    include = include.map(function(val) {
       return val.toLowerCase();
     });
-  }else {
+  } else {
     include = include.toLowerCase();
   }
 
 
-
   var query = {};
-  if(credentials.email) {
+  if (credentials.email) {
     query.email = credentials.email;
-  } else if(credentials.username) {
+  } else if (credentials.username) {
     query.username = credentials.username;
   } else {
     var err = new Error('username or email is required');
@@ -193,10 +104,10 @@ User.login = function (credentials, include, fn) {
     var defaultError = new Error('login failed');
     defaultError.statusCode = 401;
 
-    if(err) {
+    if (err) {
       debug('An error is reported from User.findOne: %j', err);
       fn(defaultError);
-    } else if(user) {
+    } else if (user) {
       if (self.settings.emailVerificationRequired) {
         if (!user.emailVerified) {
           // Fail to log in if email verification is not done yet
@@ -207,10 +118,10 @@ User.login = function (credentials, include, fn) {
         }
       }
       user.hasPassword(credentials.password, function(err, isMatch) {
-        if(err) {
+        if (err) {
           debug('An error is reported from User.hasPassword: %j', err);
           fn(defaultError);
-        } else if(isMatch) {
+        } else if (isMatch) {
           user.createAccessToken(credentials.ttl, function(err, token) {
             if (err) return fn(err);
             if (Array.isArray(include) ? include.indexOf('user') !== -1 : include === 'user') {
@@ -241,8 +152,8 @@ User.login = function (credentials, include, fn) {
  *
  * ```js
  *    User.logout('asd0a9f8dsj9s0s3223mk', function (err) {
- *      console.log(err || 'Logged out');
- *    });
+*      console.log(err || 'Logged out');
+*    });
  * ```
  *
  * @param {String} accessTokenID
@@ -250,11 +161,11 @@ User.login = function (credentials, include, fn) {
  * @param {Error} err
  */
 
-User.logout = function (tokenId, fn) {
-  this.relations.accessTokens.modelTo.findById(tokenId, function (err, accessToken) {
-    if(err) {
+User.logout = function(tokenId, fn) {
+  this.relations.accessTokens.modelTo.findById(tokenId, function(err, accessToken) {
+    if (err) {
       fn(err);
-    } else if(accessToken) {
+    } else if (accessToken) {
       accessToken.destroy(fn);
     } else {
       fn(new Error('could not find accessToken'));
@@ -269,10 +180,10 @@ User.logout = function (tokenId, fn) {
  * @returns {Boolean}
  */
 
-User.prototype.hasPassword = function (plain, fn) {
-  if(this.password && plain) {
+User.prototype.hasPassword = function(plain, fn) {
+  if (this.password && plain) {
     bcrypt.compare(plain, this.password, function(err, isMatch) {
-      if(err) return fn(err);
+      if (err) return fn(err);
       fn(null, isMatch);
     });
   } else {
@@ -285,19 +196,29 @@ User.prototype.hasPassword = function (plain, fn) {
  *
  * ```js
  *    var options = {
- *      type: 'email',
- *      to: user.email,
- *      template: 'verify.ejs',
- *      redirect: '/'
- *    };
+*      type: 'email',
+*      to: user.email,
+*      template: 'verify.ejs',
+*      redirect: '/'
+*    };
  *
  *    user.verify(options, next);
  * ```
  *
- * @param {Object} options
+ * @options {Object} options
+ * @property {String} type Must be 'email'.
+ * @property {String} to Email address to which verification email is sent.
+ * @property {String} from Sender email addresss, for example
+ *   `'noreply@myapp.com'`.
+ * @property {String} subject Subject line text.
+ * @property {String} text Text of email.
+ * @property {String} template Name of template that displays verification
+ *  page, for example, `'verify.ejs'.
+ * @property {String} redirect Page to which user will be redirected after
+ *  they verify their email, for example `'/'` for root URI.
  */
 
-User.prototype.verify = function (options, fn) {
+User.prototype.verify = function(options, fn) {
   var user = this;
   var userModel = this.constructor;
   assert(typeof options === 'object', 'options required when calling user.verify()');
@@ -314,32 +235,32 @@ User.prototype.verify = function (options, fn) {
   var app = userModel.app;
   options.host = options.host || (app && app.get('host')) || 'localhost';
   options.port = options.port || (app && app.get('port')) || 3000;
-  options.restApiRoot = options.restApiRoot ||  (app && app.get('restApiRoot')) || '/api';
+  options.restApiRoot = options.restApiRoot || (app && app.get('restApiRoot')) || '/api';
   options.verifyHref = options.verifyHref ||
-                       options.protocol
-                       + '://'
-                       + options.host
-                       + ':'
-                       + options.port
-                       + options.restApiRoot
-                       + userModel.http.path
-                       + userModel.confirm.http.path
-                       + '?uid='
-                       + options.user.id
-                       + '&redirect='
-                       + options.redirect;
+    options.protocol
+    + '://'
+    + options.host
+    + ':'
+    + options.port
+    + options.restApiRoot
+    + userModel.http.path
+    + userModel.confirm.http.path
+    + '?uid='
+    + options.user.id
+    + '&redirect='
+    + options.redirect;
 
 
   // Email model
   var Email = options.mailer || this.constructor.email || loopback.getModelByType(loopback.Email);
 
   crypto.randomBytes(64, function(err, buf) {
-    if(err) {
+    if (err) {
       fn(err);
     } else {
       user.verificationToken = buf.toString('hex');
-      user.save(function (err) {
-        if(err) {
+      user.save(function(err) {
+        if (err) {
           fn(err);
         } else {
           sendEmail(user);
@@ -363,8 +284,8 @@ User.prototype.verify = function (options, fn) {
       subject: options.subject || 'Thanks for Registering',
       text: options.text,
       html: template(options)
-    }, function (err, email) {
-      if(err) {
+    }, function(err, email) {
+      if (err) {
         fn(err);
       } else {
         fn(null, {email: email, token: user.verificationToken, uid: user.id});
@@ -383,16 +304,16 @@ User.prototype.verify = function (options, fn) {
  * @callback {Function} callback
  * @param {Error} err
  */
-User.confirm = function (uid, token, redirect, fn) {
-  this.findById(uid, function (err, user) {
-    if(err) {
+User.confirm = function(uid, token, redirect, fn) {
+  this.findById(uid, function(err, user) {
+    if (err) {
       fn(err);
     } else {
-      if(user && user.verificationToken === token) {
+      if (user && user.verificationToken === token) {
         user.verificationToken = undefined;
         user.emailVerified = true;
-        user.save(function (err) {
-          if(err) {
+        user.save(function(err) {
+          if (err) {
             fn(err);
           } else {
             fn();
@@ -427,15 +348,15 @@ User.resetPassword = function(options, cb) {
   var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
   options = options || {};
-  if(typeof options.email === 'string') {
+  if (typeof options.email === 'string') {
     UserModel.findOne({ where: {email: options.email} }, function(err, user) {
-      if(err) {
+      if (err) {
         cb(err);
-      } else if(user) {
+      } else if (user) {
         // create a short lived access token for temp login to change password
         // TODO(ritch) - eventually this should only allow password change
         user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
-          if(err) {
+          if (err) {
             cb(err);
           } else {
             cb();
@@ -462,16 +383,16 @@ User.resetPassword = function(options, cb) {
  * Setup an extended user model.
  */
 
-User.setup = function () {
+User.setup = function() {
   // We need to call the base class's setup method
-  PersistedModel.setup.call(this);
+  User.base.setup.call(this);
   var UserModel = this;
 
   // max ttl
   this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
   this.settings.ttl = DEFAULT_TTL;
 
-  UserModel.setter.password = function (plain) {
+  UserModel.setter.password = function(plain) {
     var salt = bcrypt.genSaltSync(this.constructor.settings.saltWorkFactor || SALT_WORK_FACTOR);
     this.$password = bcrypt.hashSync(plain, salt);
   }
@@ -491,16 +412,14 @@ User.setup = function () {
       description: 'Login a user with username/email and password',
       accepts: [
         {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
-        {arg: 'include', type: 'string', http: {source: 'query' }, description:
-          'Related objects to include in the response. ' +
-            'See the description of return value for more details.'}
+        {arg: 'include', type: 'string', http: {source: 'query' }, description: 'Related objects to include in the response. ' +
+          'See the description of return value for more details.'}
       ],
       returns: {
-        arg: 'accessToken', type: 'object', root: true, description:
-          'The response body contains properties of the AccessToken created on login.\n' +
-            'Depending on the value of `include` parameter, the body may contain ' +
-            'additional properties:\n\n' +
-            '  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n'
+        arg: 'accessToken', type: 'object', root: true, description: 'The response body contains properties of the AccessToken created on login.\n' +
+          'Depending on the value of `include` parameter, the body may contain ' +
+          'additional properties:\n\n' +
+          '  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n'
       },
       http: {verb: 'post'}
     }
@@ -517,9 +436,8 @@ User.setup = function () {
           var tokenID = accessToken && accessToken.id;
 
           return tokenID;
-        }, description:
-          'Do not supply this argument, it is automatically extracted ' +
-            'from request headers.'
+        }, description: 'Do not supply this argument, it is automatically extracted ' +
+          'from request headers.'
         }
       ],
       http: {verb: 'all'}
@@ -550,26 +468,29 @@ User.setup = function () {
     }
   );
 
-  UserModel.on('attached', function () {
-    UserModel.afterRemote('confirm', function (ctx, inst, next) {
-      if(ctx.req) {
+  UserModel.on('attached', function() {
+    UserModel.afterRemote('confirm', function(ctx, inst, next) {
+      if (ctx.req) {
         ctx.res.redirect(ctx.req.param('redirect'));
       } else {
-        fn(new Error('transport unsupported'));
+        next(new Error('transport unsupported'));
       }
     });
   });
 
   // default models
-  UserModel.email = require('./email');
-  UserModel.accessToken = require('./access-token');
+  assert(loopback.Email, 'Email model must be defined before User model');
+  UserModel.email = loopback.Email;
+
+  assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
+  UserModel.accessToken = loopback.AccessToken;
 
   // email validation regex
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
   UserModel.validatesFormatOf('email', {with: re, message: 'Must provide a valid email'});
-  UserModel.validatesUniquenessOf('username',  {message: 'User already exists'});
+  UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
 
   return UserModel;
 }
@@ -579,3 +500,5 @@ User.setup = function () {
  */
 
 User.setup();
+
+};

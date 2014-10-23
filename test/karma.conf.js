@@ -16,7 +16,9 @@ module.exports = function(config) {
     files: [
       'node_modules/es5-shim/es5-shim.js',
       'test/support.js',
+      'test/loopback.test.js',
       'test/model.test.js',
+      'test/model.application.test.js',
       'test/geo-point.test.js',
       'test/app.test.js'
     ],

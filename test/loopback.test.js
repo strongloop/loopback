@@ -241,4 +241,28 @@ describe('loopback', function() {
       expect(owner._targetClass).to.equal('User');
     });
   });
+
+  describe('loopback object', function() {
+    it('exports all built-in models', function() {
+      var expectedModelNames = [
+        'Email',
+        'User',
+        'Application',
+        'AccessToken',
+        'Role',
+        'RoleMapping',
+        'ACL',
+        'Scope',
+        'Change',
+        'Checkpoint'
+      ];
+
+      expect(Object.keys(loopback)).to.include.members(expectedModelNames);
+
+      expectedModelNames.forEach(function(name) {
+        expect(loopback[name], name).to.be.a('function');
+        expect(loopback[name].modelName, name + '.modelName').to.eql(name);
+      });
+    });
+  });
 });

@@ -28,6 +28,7 @@ describe('User', function(){
   });
   
   beforeEach(function (done) {
+    app.enableAuth();
     app.use(loopback.token());
     app.use(loopback.rest());
     app.model(User);
@@ -598,6 +599,18 @@ describe('User', function(){
           });
         });
       });
+    });
+  });
+
+  describe('ctor', function() {
+    it('exports default Email model', function() {
+      expect(User.email, 'User.email').to.be.a('function');
+      expect(User.email.modelName, 'modelName').to.eql('email');
+    });
+
+    it('exports default AccessToken model', function() {
+      expect(User.accessToken, 'User.accessToken').to.be.a('function');
+      expect(User.accessToken.modelName, 'modelName').to.eql('AccessToken');
     });
   });
 });

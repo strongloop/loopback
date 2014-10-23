@@ -1,11 +1,9 @@
 var assert = require('assert');
 var loopback = require('../index');
-var acl = require('../lib/models/acl');
-var Scope = acl.Scope;
-var ACL = acl.ACL;
-var role = require('../lib/models/role');
-var Role = role.Role;
-var RoleMapping = role.RoleMapping;
+var Scope = loopback.Scope;
+var ACL = loopback.ACL;
+var Role = loopback.Role;
+var RoleMapping = loopback.RoleMapping;
 var User = loopback.User;
 var testModel;
 
@@ -227,6 +225,33 @@ describe('security ACLs', function () {
       assert(perm.permission === ACL.ALLOW);
     });
 
+  });
+
+  it("should filter static ACLs by model/property", function() {
+    var Model1 = ds.createModel('Model1', {
+      name: {
+        type: String,
+        acls: [
+          {principalType: ACL.USER, principalId: 'u001',
+            accessType: ACL.WRITE, permission: ACL.DENY},
+          {principalType: ACL.USER, principalId: 'u001',
+            accessType: ACL.ALL, permission: ACL.ALLOW}
+        ]
+      }
+    }, {
+      acls: [
+        {principalType: ACL.USER, principalId: 'u001', property: 'name',
+          accessType: ACL.ALL, permission: ACL.ALLOW},
+        {principalType: ACL.USER, principalId: 'u002', property: 'findOne',
+          accessType: ACL.ALL, permission: ACL.ALLOW}
+      ]
+    });
+
+    var staticACLs = ACL.getStaticACLs('Model1', 'name');
+    assert(staticACLs.length === 3);
+
+    staticACLs = ACL.getStaticACLs('Model1', 'findOne');
+    assert(staticACLs.length === 1);
   });
 
   it("should check access against LDL, ACL, and Role", function () {

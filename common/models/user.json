@@ -1,0 +1,96 @@
+{
+  "name": "User",
+  "properties": {
+    "realm": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string",
+      "required": true
+    },
+    "credentials": {
+      "type": "object",
+      "deprecated": true
+    },
+    "challenges": {
+      "type": "object",
+      "deprecated": true
+    },
+    "email": {
+      "type": "string",
+      "required": true
+    },
+    "emailVerified": "boolean",
+    "verificationToken": "string",
+    "status": "string",
+    "created": "date",
+    "lastUpdated": "date"
+  },
+  "hidden": ["password"],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "create"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "deleteById"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "login"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "logout"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "findById"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "updateAttributes"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "confirm"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "resetPassword",
+      "accessType": "EXECUTE"
+    }
+  ],
+  "relations": {
+    "accessTokens": {
+      "type": "hasMany",
+      "model": "AccessToken",
+      "foreignKey": "userId"
+    }
+  }
+}

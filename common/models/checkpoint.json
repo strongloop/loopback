@@ -1,0 +1,14 @@
+{
+  "name": "Checkpoint",
+  "properties": {
+    "seq": {
+      "type": "number"
+    },
+    "time": {
+      "type": "date"
+    },
+    "sourceId": {
+      "type": "string"
+    }
+  }
+}

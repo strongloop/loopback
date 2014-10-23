@@ -1,0 +1,121 @@
+{
+  "name": "Application",
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": "string",
+    "icon": {
+      "type": "string",
+      "description": "The icon image url"
+    },
+
+    "owner": {
+      "type": "string",
+      "description": "The user id of the developer who registers the application"
+    },
+    "collaborators": {
+      "type": ["string"],
+      "description": "A list of users ids who have permissions to work on this app"
+    },
+
+    "email": "string",
+    "emailVerified": "boolean",
+
+    "url": {
+      "type": "string",
+      "description": "The application URL for OAuth 2.0"
+    },
+    "callbackUrls": {
+      "type": ["string"],
+      "description": "OAuth 2.0 code/token callback URLs"
+    },
+    "permissions": {
+      "type": ["string"],
+      "description": "A list of permissions required by the application"
+    },
+
+    "clientKey": "string",
+    "javaScriptKey": "string",
+    "restApiKey": "string",
+    "windowsKey": "string",
+    "masterKey": "string",
+
+    "pushSettings": {
+      "apns": {
+        "production": {
+          "type": "boolean",
+          "description": [
+            "Production or development mode. It denotes what default APNS",
+            "servers to be used to send notifications.",
+            "See API documentation for more details."
+          ]
+        },
+
+        "certData": {
+          "type": "string",
+          "description": "The certificate data loaded from the cert.pem file"
+        },
+        "keyData": {
+          "type": "string",
+          "description": "The key data loaded from the key.pem file"
+        },
+
+        "pushOptions": {
+          "type": {
+            "gateway": "string",
+            "port": "number"
+          }
+        },
+
+        "feedbackOptions": {
+          "type": {
+            "gateway": "string",
+            "port": "number",
+            "batchFeedback": "boolean",
+            "interval": "number"
+          }
+        }
+      },
+
+      "gcm": {
+        "serverApiKey": "string"
+      }
+    },
+
+    "authenticationEnabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "anonymousAllowed": {
+      "type": "boolean",
+      "default": true
+    },
+    "authenticationSchemes": [
+      {
+        "scheme": {
+          "type": "string",
+          "description": "See the API docs for the list of supported values."
+        },
+        "credential": {
+          "type": "object",
+          "description": "Scheme-specific credentials"
+        }
+      }
+    ],
+
+    "status": {
+      "type": "string",
+      "default": "sandbox",
+      "description": "Status of the application, production/sandbox/disabled"
+    },
+
+    "created": "date",
+    "modified": "date"
+  }
+}

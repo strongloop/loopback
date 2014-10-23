@@ -5,9 +5,10 @@
 "indent": 2,
 "undef": true,
 "quotmark": "single",
-"maxlen": 80,
+"maxlen": 150,
 "trailing": true,
 "newcap": true,
 "nonew": true,
-"undef": false
+"laxcomma": true,
+"laxbreak": true
 }
