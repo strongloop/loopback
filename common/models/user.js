@@ -283,9 +283,10 @@ User.prototype.verify = function(options, fn) {
       from: options.from,
       subject: options.subject || 'Thanks for Registering',
       text: options.text,
-      html: template(options)
-    }, function(err, email) {
-      if (err) {
+      html: template(options),
+      headers: options.headers || {}
+    }, function (err, email) {
+      if(err) {
         fn(err);
       } else {
         fn(null, {email: email, token: user.verificationToken, uid: user.id});
