@@ -57,6 +57,57 @@ User.prototype.createAccessToken = function(ttl, cb) {
   }, cb);
 };
 
+function splitPrincipal(name, realmDelimiter) {
+  var parts = [null, name];
+  if(!realmDelimiter) {
+    return parts;
+  }
+  var index = name.indexOf(realmDelimiter);
+  if (index !== -1) {
+    parts[0] = name.substring(0, index);
+    parts[1] = name.substring(index + realmDelimiter.length);
+  }
+  return parts;
+}
+
+/**
+ * Normalize the credentials
+ * @param {Object} credentials The credential object
+ * @param {Boolean} realmRequired
+ * @param {String} realmDelimiter The realm delimiter, if not set, no realm is needed
+ * @returns {Object} The normalized credential object
+ */
+User.normalizeCredentials = function(credentials, realmRequired, realmDelimiter) {
+  var query = {};
+  credentials = credentials || {};
+  if(!realmRequired) {
+    if (credentials.email) {
+      query.email = credentials.email;
+    } else if (credentials.username) {
+      query.username = credentials.username;
+    }
+  } else {
+    if (credentials.realm) {
+      query.realm = credentials.realm;
+    }
+    var parts;
+    if (credentials.email) {
+      parts = splitPrincipal(credentials.email, realmDelimiter);
+      query.email = parts[1];
+      if (parts[0]) {
+        query.realm = parts[0];
+      }
+    } else if (credentials.username) {
+      parts = splitPrincipal(credentials.username, realmDelimiter);
+      query.username = parts[1];
+      if (parts[0]) {
+        query.realm = parts[0];
+      }
+    }
+  }
+  return query;
+}
+
 /**
  * Login a user by with the given `credentials`.
  *
@@ -88,16 +139,25 @@ User.login = function(credentials, include, fn) {
     include = include.toLowerCase();
   }
 
+  var realmDelimiter;
+  // Check if realm is required
+  var realmRequired = !!(self.settings.realmRequired ||
+    self.settings.realmDelimiter);
+  if (realmRequired) {
+    realmDelimiter = self.settings.realmDelimiter;
+  }
+  var query = self.normalizeCredentials(credentials, realmRequired,
+    realmDelimiter);
 
-  var query = {};
-  if (credentials.email) {
-    query.email = credentials.email;
-  } else if (credentials.username) {
-    query.username = credentials.username;
-  } else {
-    var err = new Error('username or email is required');
-    err.statusCode = 400;
-    return fn(err);
+  if(realmRequired && !query.realm) {
+    var err1 = new Error('realm is required');
+    err1.statusCode = 400;
+    return fn(err1);
+  }
+  if (!query.email && !query.username) {
+    var err2 = new Error('username or email is required');
+    err2.statusCode = 400;
+    return fn(err2);
   }
 
   self.findOne({where: query}, function(err, user) {
@@ -283,9 +343,10 @@ User.prototype.verify = function(options, fn) {
       from: options.from,
       subject: options.subject || 'Thanks for Registering',
       text: options.text,
-      html: template(options)
-    }, function(err, email) {
-      if (err) {
+      html: template(options),
+      headers: options.headers || {}
+    }, function (err, email) {
+      if(err) {
         fn(err);
       } else {
         fn(null, {email: email, token: user.verificationToken, uid: user.id});
@@ -488,9 +549,14 @@ User.setup = function() {
   // email validation regex
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
+
   UserModel.validatesFormatOf('email', {with: re, message: 'Must provide a valid email'});
-  UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
+
+  // FIXME: We need to add support for uniqueness of composite keys in juggler
+  if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
+    UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
+    UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
+  }
 
   return UserModel;
 }

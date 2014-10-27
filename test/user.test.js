@@ -293,6 +293,12 @@ describe('User', function(){
     });
   });
 
+  function assertGoodToken(accessToken) {
+    assert(accessToken.userId);
+    assert(accessToken.id);
+    assert.equal(accessToken.id.length, 64);
+  }
+
   describe('User.login requiring email verification', function() {
     beforeEach(function() {
       User.settings.emailVerificationRequired = true;
@@ -311,9 +317,7 @@ describe('User', function(){
 
     it('Login a user by with email verification', function(done) {
       User.login(validCredentialsEmailVerified, function (err, accessToken) {
-        assert(accessToken.userId);
-        assert(accessToken.id);
-        assert.equal(accessToken.id.length, 64);
+        assertGoodToken(accessToken);
         done();
       });
     });
@@ -328,9 +332,7 @@ describe('User', function(){
           if(err) return done(err);
           var accessToken = res.body;
 
-          assert(accessToken.userId);
-          assert(accessToken.id);
-          assert.equal(accessToken.id.length, 64);
+          assertGoodToken(accessToken);
           assert(accessToken.user === undefined);
 
           done();
@@ -348,6 +350,166 @@ describe('User', function(){
         });
     });
 
+  });
+
+  describe('User.login requiring realm', function() {
+    var User, AccessToken;
+
+    before(function() {
+      User = loopback.User.extend('RealmUser', {},
+        {realmRequired: true, realmDelimiter: ':'});
+      AccessToken = loopback.AccessToken.extend('RealmAccessToken');
+
+      loopback.autoAttach();
+
+      // Update the AccessToken relation to use the subclass of User
+      AccessToken.belongsTo(User);
+      User.hasMany(AccessToken);
+
+      // allow many User.afterRemote's to be called
+      User.setMaxListeners(0);
+    });
+
+    var realm1User = {
+      realm: 'realm1',
+      username: 'foo100',
+      email: 'foo100@bar.com',
+      password: 'pass100'
+    };
+
+    var realm2User = {
+      realm: 'realm2',
+      username: 'foo100',
+      email: 'foo100@bar.com',
+      password: 'pass200'
+    };
+
+    var credentialWithoutRealm = {
+      username: 'foo100',
+      email: 'foo100@bar.com',
+      password: 'pass100'
+    };
+
+    var credentialWithBadPass = {
+      realm: 'realm1',
+      username: 'foo100',
+      email: 'foo100@bar.com',
+      password: 'pass001'
+    };
+
+    var credentialWithBadRealm = {
+      realm: 'realm3',
+      username: 'foo100',
+      email: 'foo100@bar.com',
+      password: 'pass100'
+    };
+
+    var credentialWithRealm = {
+      realm: 'realm1',
+      username: 'foo100',
+      password: 'pass100'
+    };
+
+    var credentialRealmInUsername = {
+      username: 'realm1:foo100',
+      password: 'pass100'
+    };
+
+    var credentialRealmInEmail = {
+      email: 'realm1:foo100@bar.com',
+      password: 'pass100'
+    };
+
+    var user1;
+    beforeEach(function(done) {
+      User.create(realm1User, function(err, u) {
+        if (err) {
+          return done(err);
+        }
+        user1 = u;
+        User.create(realm2User, done);
+      });
+    });
+
+    afterEach(function(done) {
+      User.deleteAll({realm: 'realm1'}, function(err) {
+        if (err) {
+          return done(err);
+        }
+        User.deleteAll({realm: 'realm2'}, done);
+      });
+    });
+
+    it('rejects a user by without realm', function(done) {
+      User.login(credentialWithoutRealm, function(err, accessToken) {
+        assert(err);
+        done();
+      });
+    });
+
+    it('rejects a user by with bad realm', function(done) {
+      User.login(credentialWithBadRealm, function(err, accessToken) {
+        assert(err);
+        done();
+      });
+    });
+
+    it('rejects a user by with bad pass', function(done) {
+      User.login(credentialWithBadPass, function(err, accessToken) {
+        assert(err);
+        done();
+      });
+    });
+
+    it('logs in a user by with realm', function(done) {
+      User.login(credentialWithRealm, function(err, accessToken) {
+        assertGoodToken(accessToken);
+        assert.equal(accessToken.userId, user1.id);
+        done();
+      });
+    });
+
+    it('logs in a user by with realm in username', function(done) {
+      User.login(credentialRealmInUsername, function(err, accessToken) {
+        assertGoodToken(accessToken);
+        assert.equal(accessToken.userId, user1.id);
+        done();
+      });
+    });
+
+    it('logs in a user by with realm in email', function(done) {
+      User.login(credentialRealmInEmail, function(err, accessToken) {
+        assertGoodToken(accessToken);
+        assert.equal(accessToken.userId, user1.id);
+        done();
+      });
+    });
+
+    describe('User.login with realmRequired but no realmDelimiter', function() {
+      before(function() {
+        User.settings.realmDelimiter = undefined;
+      });
+
+      after(function() {
+        User.settings.realmDelimiter = ':';
+      });
+
+      it('logs in a user by with realm', function(done) {
+        User.login(credentialWithRealm, function(err, accessToken) {
+          assertGoodToken(accessToken);
+          assert.equal(accessToken.userId, user1.id);
+          done();
+        });
+      });
+
+      it('rejects a user by with realm in email if realmDelimiter is not set',
+        function(done) {
+          User.login(credentialRealmInEmail, function(err, accessToken) {
+            assert(err);
+            done();
+          });
+        });
+    });
   });
   
   describe('User.logout', function() {
@@ -487,6 +649,38 @@ describe('User', function(){
             if(err) return done(err);
           });
       });
+
+      it('Verify a user\'s email address with custom header', function(done) {
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(user, 'afterRemote should include result');
+          
+          var options = {
+            type: 'email',
+            to: user.email,
+            from: 'noreply@myapp.org',
+            redirect: '/',
+            protocol: ctx.req.protocol,
+            host: ctx.req.get('host'),
+            headers: {'message-id':'custom-header-value'}
+          };
+      
+          user.verify(options, function (err, result) {
+            assert(result.email);
+            assert.equal(result.email.messageId, 'custom-header-value');
+            done();
+          });
+        });
+            
+        request(app)
+          .post('/users')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .send({email: 'bar@bat.com', password: 'bar'})
+          .end(function(err, res){
+            if(err) return done(err);
+          });
+      });
+
     });
 
     describe('User.confirm(options, fn)', function () {

@@ -5,6 +5,9 @@
       "type": "string",
       "id": true
     },
+    "realm": {
+      "type": "string"
+    },
     "name": {
       "type": "string",
       "required": true
