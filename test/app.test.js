@@ -281,7 +281,7 @@ describe('app', function() {
           var elapsed = Date.now() - Number(new Date(res.body.started));
 
           // elapsed should be a positive number...
-          assert(elapsed > 0);
+          assert(elapsed >= 0);
 
           // less than 100 milliseconds
           assert(elapsed < 100);
