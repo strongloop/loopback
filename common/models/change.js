@@ -407,7 +407,6 @@ module.exports = function(Change) {
     this.find(function(err, changes) {
       if (err) return cb(err);
       changes.forEach(function(change) {
-        change = new Change(change);
         change.rectify();
       });
     });
