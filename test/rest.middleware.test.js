@@ -75,16 +75,6 @@ describe('loopback.rest', function() {
     });
   });
 
-  it('should support options', function(done) {
-    app.model(MyModel);
-    var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
-    app.use(loopback.rest({supportedTypes: supportedTypes}));
-    request(app).get('/mymodels')
-      .set('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
-      .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect(200, done);
-  });
-
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
     app.enableAuth();
