@@ -8,5 +8,10 @@
      "try",
      "catch"
   ],
-  "disallowSpacesInsideObjectBrackets": null
+  "disallowSpacesInsideObjectBrackets": null,
+  "maximumLineLength": {
+     "value": 150,
+     "allowComments": true,
+     "allowRegex": true
+  }
 }
