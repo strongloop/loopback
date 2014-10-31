@@ -7,5 +7,6 @@
      "do",
      "try",
      "catch"
-  ]
+  ],
+  "disallowSpacesInsideObjectBrackets": null
 }
