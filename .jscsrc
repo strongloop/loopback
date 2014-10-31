@@ -1,3 +1,11 @@
 {
-  "preset": "google"
+  "preset": "google",
+  "requireCurlyBraces": [
+     "else",
+     "for",
+     "while",
+     "do",
+     "try",
+     "catch"
+  ]
 }
