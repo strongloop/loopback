@@ -12,6 +12,7 @@
     "lib/middleware/status.js",
     "lib/middleware/token.js",
     "lib/middleware/urlNotFound.js",
+    "lib/middleware/static.js",
 { "title": "Built-in models", "depth": 2 },
     "common/models/access-token.js",
     "common/models/acl.js",
