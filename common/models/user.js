@@ -117,10 +117,12 @@ User.normalizeCredentials = function(credentials, realmRequired, realmDelimiter)
 *    });
  * ```
  *
- * @param {Object} credentials
- * @callback {Function} callback
- * @param {Error} err
- * @param {AccessToken} token
+ * @param {Object} credentials username/password or email/password
+ * @param {String[]|String} [include] Optionally set it to "user" to include
+ * the user info
+ * @callback {Function} callback Callback function
+ * @param {Error} err Error object
+ * @param {AccessToken} token Access token if login is successful
  */
 
 User.login = function(credentials, include, fn) {
