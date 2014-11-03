@@ -75,6 +75,22 @@ describe('loopback.rest', function() {
     });
   });
 
+  it('should honour `remoting.rest.supportedTypes`', function(done) {
+    var app = loopback();
+
+    // NOTE it is crucial to set `remoting` before creating any models
+    var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
+    app.set('remoting', { rest: { supportedTypes: supportedTypes } });
+
+    app.model(MyModel);
+    app.use(loopback.rest());
+
+    request(app).get('/mymodels')
+      .set('Accept', 'text/html,application/xml;q=0.9,*/*;q=0.8')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200, done);
+  });
+
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
     app.enableAuth();
