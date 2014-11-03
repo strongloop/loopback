@@ -1,3 +1,5 @@
+var it = require('./util/it');
+
 describe('loopback', function() {
   var nameCounter = 0;
   var uniqueModelName;
@@ -10,6 +12,13 @@ describe('loopback', function() {
     it('ValidationError', function() {
       expect(loopback.ValidationError).to.be.a('function')
         .and.have.property('name', 'ValidationError');
+    });
+
+    it.onServer('includes `faviconFile`', function() {
+      var file = loopback.faviconFile;
+      expect(file, 'faviconFile').to.not.equal(undefined);
+      expect(require('fs').existsSync(loopback.faviconFile), 'file exists')
+        .to.equal(true);
     });
   });
 
@@ -68,11 +77,11 @@ describe('loopback', function() {
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
     it("Setup a remote method.", function() {
       var Product = loopback.createModel('product', {price: Number});
-      
+
       Product.stats = function(fn) {
         // ...
       }
-      
+
       loopback.remoteMethod(
         Product.stats,
         {
@@ -80,7 +89,7 @@ describe('loopback', function() {
           http: {path: '/info', verb: 'get'}
         }
       );
-      
+
       assert.equal(Product.stats.returns.arg, 'stats');
       assert.equal(Product.stats.returns.type, 'array');
       assert.equal(Product.stats.http.path, '/info');
