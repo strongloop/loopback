@@ -37,6 +37,9 @@ module.exports = function(grunt) {
         src: ['test/**/*.js']
       }
     },
+    jscs: {
+      src: ['lib/**/*.js', 'test/**/*.js']
+    },
     watch: {
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
@@ -182,6 +185,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks("grunt-jscs");
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('e2e-server', function() {
