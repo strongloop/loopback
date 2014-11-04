@@ -5,7 +5,7 @@ var memory = loopback.createDataSource({
   connector: loopback.Memory
 });
 
-server.use(loopback.rest({context: {enableHttpContext: true}}));
+server.use(loopback.rest());
 server.model(CartItem);
 
 CartItem.attachTo(memory);
