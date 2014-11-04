@@ -33,12 +33,16 @@ module.exports = function(grunt) {
       lib: {
         src: ['lib/**/*.js']
       },
-      test: {
-        src: ['test/**/*.js']
-      }
+      // TODO(bajtos) - common/**/*.js
+      // TODO tests don't pass yet
+      // test: {
+      //  src: ['test/**/*.js']
+      // }
     },
     jscs: {
-      src: ['lib/**/*.js', 'test/**/*.js']
+      gruntfile: 'Gruntfile.js',
+      lib: ['lib/**/*.js']
+      // TODO(bajtos) - common/**/*.js
     },
     watch: {
       gruntfile: {
@@ -83,7 +87,7 @@ module.exports = function(grunt) {
     karma: {
       'unit-once': {
         configFile: 'test/karma.conf.js',
-        browsers: [ 'PhantomJS' ],
+        browsers: ['PhantomJS'],
         singleRun: true,
         reporters: ['dots', 'junit'],
 
@@ -185,7 +189,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks("grunt-jscs");
+  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('e2e-server', function() {
@@ -200,6 +204,8 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['browserify']);
 
   grunt.registerTask('test', [
+    'jscs',
+    'jshint',
     process.env.JENKINS_HOME ? 'mochaTest:unit-xml' : 'mochaTest:unit',
    'karma:unit-once']);
 
