@@ -33,7 +33,9 @@ module.exports = function(grunt) {
       lib: {
         src: ['lib/**/*.js']
       },
-      // TODO(bajtos) - common/**/*.js
+      common: {
+        src: ['common/**/*.js']
+      },
       // TODO tests don't pass yet
       // test: {
       //  src: ['test/**/*.js']
@@ -41,8 +43,9 @@ module.exports = function(grunt) {
     },
     jscs: {
       gruntfile: 'Gruntfile.js',
-      lib: ['lib/**/*.js']
-      // TODO(bajtos) - common/**/*.js
+      lib: ['lib/**/*.js'],
+      common: ['common/**/*.js']
+      // TODO(bajtos) - test/**/*.js
     },
     watch: {
       gruntfile: {
