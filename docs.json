@@ -4,6 +4,7 @@
     "lib/application.js",
     "lib/loopback.js",
     "lib/registry.js",
+    "lib/access-context.js",    
 { "title": "Base models", "depth": 2 },
     "lib/model.js",
     "lib/persisted-model.js",
