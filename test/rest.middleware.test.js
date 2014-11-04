@@ -178,7 +178,7 @@ describe('loopback.rest', function() {
     }
 
     it('should enable context using loopback.context', function(done) {
-      app.use(loopback.context({enableHttpContext: true}));
+      app.use(loopback.context({ enableHttpContext: true }));
       app.enableAuth();
       app.use(loopback.rest());
 
@@ -187,7 +187,8 @@ describe('loopback.rest', function() {
 
     it('should enable context with loopback.rest', function(done) {
       app.enableAuth();
-      app.use(loopback.rest({context: {enableHttpContext: true}}));
+      app.set('remoting', { context: { enableHttpContext: true } });
+      app.use(loopback.rest());
 
       invokeGetToken(done);
     });
