@@ -47,7 +47,7 @@ module.exports = function(Checkpoint) {
         });
       }
     });
-  }
+  };
 
   Checkpoint.beforeSave = function(next, model) {
     if (!model.getId() && model.seq === undefined) {
@@ -59,5 +59,5 @@ module.exports = function(Checkpoint) {
     } else {
       next();
     }
-  }
+  };
 };

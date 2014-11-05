@@ -141,7 +141,7 @@ module.exports = function(Application) {
   Application.resetKeys = function(appId, cb) {
     this.findById(appId, function(err, app) {
       if (err) {
-        cb && cb(err, app);
+        if (cb) cb(err, app);
         return;
       }
       app.resetKeys(cb);
@@ -166,7 +166,7 @@ module.exports = function(Application) {
   Application.authenticate = function(appId, key, cb) {
     this.findById(appId, function(err, app) {
       if (err || !app) {
-        cb && cb(err, null);
+        if (cb) cb(err, null);
         return;
       }
       var result = null;
@@ -180,7 +180,7 @@ module.exports = function(Application) {
           break;
         }
       }
-      cb && cb(null, result);
+      if (cb) cb(null, result);
     });
   };
 };

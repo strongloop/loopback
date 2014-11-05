@@ -33,7 +33,7 @@ module.exports = function(Role) {
       roleMappingModel.find({where: {roleId: this.id,
         principalType: RoleMapping.USER}}, function(err, mappings) {
         if (err) {
-          callback && callback(err);
+          if (callback) callback(err);
           return;
         }
         return mappings.map(function(m) {
@@ -46,7 +46,7 @@ module.exports = function(Role) {
       roleMappingModel.find({where: {roleId: this.id,
         principalType: RoleMapping.APPLICATION}}, function(err, mappings) {
         if (err) {
-          callback && callback(err);
+          if (callback) callback(err);
           return;
         }
         return mappings.map(function(m) {
@@ -59,7 +59,7 @@ module.exports = function(Role) {
       roleMappingModel.find({where: {roleId: this.id,
         principalType: RoleMapping.ROLE}}, function(err, mappings) {
         if (err) {
-          callback && callback(err);
+          if (callback) callback(err);
           return;
         }
         return mappings.map(function(m) {
@@ -72,10 +72,10 @@ module.exports = function(Role) {
 
 // Special roles
   Role.OWNER = '$owner'; // owner of the object
-  Role.RELATED = "$related"; // any User with a relationship to the object
-  Role.AUTHENTICATED = "$authenticated"; // authenticated user
-  Role.UNAUTHENTICATED = "$unauthenticated"; // authenticated user
-  Role.EVERYONE = "$everyone"; // everyone
+  Role.RELATED = '$related'; // any User with a relationship to the object
+  Role.AUTHENTICATED = '$authenticated'; // authenticated user
+  Role.UNAUTHENTICATED = '$unauthenticated'; // authenticated user
+  Role.EVERYONE = '$everyone'; // everyone
 
   /**
    * Add custom handler for roles.
@@ -93,7 +93,7 @@ module.exports = function(Role) {
   Role.registerResolver(Role.OWNER, function(role, context, callback) {
     if (!context || !context.model || !context.modelId) {
       process.nextTick(function() {
-        callback && callback(null, false);
+        if (callback) callback(null, false);
       });
       return;
     }
@@ -152,13 +152,13 @@ module.exports = function(Role) {
     modelClass.findById(modelId, function(err, inst) {
       if (err || !inst) {
         debug('Model not found for id %j', modelId);
-        callback && callback(err, false);
+        if (callback) callback(err, false);
         return;
       }
       debug('Model found: %j', inst);
       var ownerId = inst.userId || inst.owner;
       if (ownerId) {
-        callback && callback(null, matches(ownerId, userId));
+        if (callback) callback(null, matches(ownerId, userId));
         return;
       } else {
         // Try to follow belongsTo
@@ -166,19 +166,21 @@ module.exports = function(Role) {
           var rel = modelClass.relations[r];
           if (rel.type === 'belongsTo' && isUserClass(rel.modelTo)) {
             debug('Checking relation %s to %s: %j', r, rel.modelTo.modelName, rel);
-            inst[r](function(err, user) {
-              if (!err && user) {
-                debug('User found: %j', user.id);
-                callback && callback(null, matches(user.id, userId));
-              } else {
-                callback && callback(err, false);
-              }
-            });
+            inst[r](processRelatedUser);
             return;
           }
         }
         debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
-        callback && callback(null, false);
+        if (callback) callback(null, false);
+      }
+
+      function processRelatedUser(err, user) {
+        if (!err && user) {
+          debug('User found: %j', user.id);
+          if (callback) callback(null, matches(user.id, userId));
+        } else {
+          if (callback) callback(err, false);
+        }
       }
     });
   };
@@ -186,7 +188,7 @@ module.exports = function(Role) {
   Role.registerResolver(Role.AUTHENTICATED, function(role, context, callback) {
     if (!context) {
       process.nextTick(function() {
-        callback && callback(null, false);
+        if (callback) callback(null, false);
       });
       return;
     }
@@ -202,19 +204,19 @@ module.exports = function(Role) {
    */
   Role.isAuthenticated = function isAuthenticated(context, callback) {
     process.nextTick(function() {
-      callback && callback(null, context.isAuthenticated());
+      if (callback) callback(null, context.isAuthenticated());
     });
   };
 
   Role.registerResolver(Role.UNAUTHENTICATED, function(role, context, callback) {
     process.nextTick(function() {
-      callback && callback(null, !context || !context.isAuthenticated());
+      if (callback) callback(null, !context || !context.isAuthenticated());
     });
   });
 
   Role.registerResolver(Role.EVERYONE, function(role, context, callback) {
     process.nextTick(function() {
-      callback && callback(null, true); // Always true
+      if (callback) callback(null, true); // Always true
     });
   });
 
@@ -245,7 +247,7 @@ module.exports = function(Role) {
     if (context.principals.length === 0) {
       debug('isInRole() returns: false');
       process.nextTick(function() {
-        callback && callback(null, false);
+        if (callback) callback(null, false);
       });
       return;
     }
@@ -262,7 +264,7 @@ module.exports = function(Role) {
     if (inRole) {
       debug('isInRole() returns: %j', inRole);
       process.nextTick(function() {
-        callback && callback(null, true);
+        if (callback) callback(null, true);
       });
       return;
     }
@@ -270,11 +272,11 @@ module.exports = function(Role) {
     var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
     this.findOne({where: {name: role}}, function(err, result) {
       if (err) {
-        callback && callback(err);
+        if (callback) callback(err);
         return;
       }
       if (!result) {
-        callback && callback(null, false);
+        if (callback) callback(null, false);
         return;
       }
       debug('Role found: %j', result);
@@ -303,7 +305,7 @@ module.exports = function(Role) {
         }
       }, function(inRole) {
         debug('isInRole() returns: %j', inRole);
-        callback && callback(null, inRole);
+        if (callback) callback(null, inRole);
       });
     });
 
@@ -315,8 +317,8 @@ module.exports = function(Role) {
    * @param {Function} callback
    *
    * @callback {Function} callback
-   * @param err
-   * @param {String[]} An array of role ids
+   * @param {Error=} err
+   * @param {String[]} roles An array of role ids
    */
   Role.getRoles = function(context, callback) {
     if (!(context instanceof AccessContext)) {
@@ -354,8 +356,8 @@ module.exports = function(Role) {
       // Check against the role mappings
       var principalType = p.type || undefined;
       var principalId = p.id == null ? undefined : p.id;
-      
-      if(typeof principalId !== 'string' && principalId != null) {
+
+      if (typeof principalId !== 'string' && principalId != null) {
         principalId = principalId.toString();
       }
 
@@ -371,13 +373,13 @@ module.exports = function(Role) {
             principalId: principalId}}, function(err, mappings) {
             debug('Role mappings found: %s %j', err, mappings);
             if (err) {
-              done && done(err);
+              if (done) done(err);
               return;
             }
             mappings.forEach(function(m) {
               addRole(m.roleId);
             });
-            done && done();
+            if (done) done();
           });
         });
       }
@@ -385,7 +387,7 @@ module.exports = function(Role) {
 
     async.parallel(inRoleTasks, function(err, results) {
       debug('getRoles() returns: %j %j', err, roles);
-      callback && callback(err, roles);
+      if (callback) callback(err, roles);
     });
   };
 };

@@ -179,7 +179,7 @@ module.exports = function(ACL) {
 
   ACL.prototype.score = function(req) {
     return this.constructor.getMatchingScore(this, req);
-  }
+  };
 
   /*!
    * Resolve permission from the ACLs
@@ -199,24 +199,26 @@ module.exports = function(ACL) {
     var score = 0;
 
     for (var i = 0; i < acls.length; i++) {
-      score = ACL.getMatchingScore(acls[i], req);
+      var candidate = acls[i];
+      score = ACL.getMatchingScore(candidate, req);
       if (score < 0) {
         // the highest scored ACL did not match
         break;
       }
       if (!req.isWildcard()) {
         // We should stop from the first match for non-wildcard
-        permission = acls[i].permission;
+        permission = candidate.permission;
         break;
       } else {
-        if (req.exactlyMatches(acls[i])) {
-          permission = acls[i].permission;
+        if (req.exactlyMatches(candidate)) {
+          permission = candidate.permission;
           break;
         }
         // For wildcard match, find the strongest permission
-        if (AccessContext.permissionOrder[acls[i].permission]
-          > AccessContext.permissionOrder[permission]) {
-          permission = acls[i].permission;
+        var candidateOrder = AccessContext.permissionOrder[candidate.permission];
+        var permissionOrder = AccessContext.permissionOrder[permission];
+        if (candidateOrder > permissionOrder) {
+          permission = candidate.permission;
         }
       }
     }
@@ -246,8 +248,7 @@ module.exports = function(ACL) {
     var staticACLs = [];
     if (modelClass && modelClass.settings.acls) {
       modelClass.settings.acls.forEach(function(acl) {
-        if (!acl.property || acl.property === ACL.ALL
-          || property === acl.property) {
+        if (!acl.property || acl.property === ACL.ALL || property === acl.property) {
           staticACLs.push(new ACL({
             model: model,
             property: acl.property || ACL.ALL,
@@ -259,11 +260,15 @@ module.exports = function(ACL) {
         }
       });
     }
-    var prop = modelClass &&
-      (modelClass.definition.properties[property] // regular property
-        || (modelClass._scopeMeta && modelClass._scopeMeta[property]) // relation/scope
-        || modelClass[property] // static method
-        || modelClass.prototype[property]); // prototype method
+    var prop = modelClass && (
+      // regular property
+      modelClass.definition.properties[property] ||
+      // relation/scope
+      (modelClass._scopeMeta && modelClass._scopeMeta[property]) ||
+      // static method
+      modelClass[property] ||
+      // prototype method
+      modelClass.prototype[property]);
     if (prop && prop.acls) {
       prop.acls.forEach(function(acl) {
         staticACLs.push(new ACL({
@@ -311,7 +316,7 @@ module.exports = function(ACL) {
       debug('Permission denied by statically resolved permission');
       debug(' Resolved Permission: %j', resolved);
       process.nextTick(function() {
-        callback && callback(null, resolved);
+        if (callback) callback(null, resolved);
       });
       return;
     }
@@ -321,7 +326,7 @@ module.exports = function(ACL) {
         model: model, property: propertyQuery, accessType: accessTypeQuery}},
       function(err, dynACLs) {
         if (err) {
-          callback && callback(err);
+          if (callback) callback(err);
           return;
         }
         acls = acls.concat(dynACLs);
@@ -330,7 +335,7 @@ module.exports = function(ACL) {
           var modelClass = loopback.findModel(model);
           resolved.permission = (modelClass && modelClass.settings.defaultPermission) || ACL.ALLOW;
         }
-        callback && callback(null, resolved);
+        if (callback) callback(null, resolved);
       });
   };
 
@@ -344,7 +349,7 @@ module.exports = function(ACL) {
       debug('accessType %s', this.accessType);
       debug('permission %s', this.permission);
     }
-  }
+  };
 
   /**
    * Check if the request has the permission to access.
@@ -381,7 +386,7 @@ module.exports = function(ACL) {
     this.find({where: {model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery}}, function(err, acls) {
       if (err) {
-        callback && callback(err);
+        if (callback) callback(err);
         return;
       }
       var inRoleTasks = [];
@@ -392,8 +397,9 @@ module.exports = function(ACL) {
         // Check exact matches
         for (var i = 0; i < context.principals.length; i++) {
           var p = context.principals[i];
-          if (p.type === acl.principalType
-            && String(p.id) === String(acl.principalId)) {
+          var typeMatch = p.type === acl.principalType;
+          var idMatch = String(p.id) === String(acl.principalId);
+          if (typeMatch && idMatch) {
             effectiveACLs.push(acl);
             return;
           }
@@ -415,7 +421,7 @@ module.exports = function(ACL) {
 
       async.parallel(inRoleTasks, function(err, results) {
         if (err) {
-          callback && callback(err, null);
+          if (callback) callback(err, null);
           return;
         }
         var resolved = self.resolvePermission(effectiveACLs, req);
@@ -424,7 +430,7 @@ module.exports = function(ACL) {
         }
         debug('---Resolved---');
         resolved.debug();
-        callback && callback(null, resolved);
+        if (callback) callback(null, resolved);
       });
     });
   };
@@ -452,11 +458,10 @@ module.exports = function(ACL) {
 
     this.checkAccessForContext(context, function(err, access) {
       if (err) {
-        callback && callback(err);
+        if (callback) callback(err);
         return;
       }
-      callback && callback(null, access.permission !== ACL.DENY);
+      if (callback) callback(null, access.permission !== ACL.DENY);
     });
   };
-
-}
+};

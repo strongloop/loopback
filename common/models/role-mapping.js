@@ -23,14 +23,14 @@ module.exports = function(RoleMapping) {
    * @param {Error} err
    * @param {Application} application
    */
-  RoleMapping.prototype.application = function (callback) {
+  RoleMapping.prototype.application = function(callback) {
     if (this.principalType === RoleMapping.APPLICATION) {
-      var applicationModel = this.constructor.Application
-        || loopback.getModelByType(loopback.Application);
+      var applicationModel = this.constructor.Application ||
+        loopback.getModelByType(loopback.Application);
       applicationModel.findById(this.principalId, callback);
     } else {
-      process.nextTick(function () {
-        callback && callback(null, null);
+      process.nextTick(function() {
+        if (callback) callback(null, null);
       });
     }
   };
@@ -41,14 +41,14 @@ module.exports = function(RoleMapping) {
    * @param {Error} err
    * @param {User} user
    */
-  RoleMapping.prototype.user = function (callback) {
+  RoleMapping.prototype.user = function(callback) {
     if (this.principalType === RoleMapping.USER) {
-      var userModel = this.constructor.User
-        || loopback.getModelByType(loopback.User);
+      var userModel = this.constructor.User ||
+        loopback.getModelByType(loopback.User);
       userModel.findById(this.principalId, callback);
     } else {
-      process.nextTick(function () {
-        callback && callback(null, null);
+      process.nextTick(function() {
+        if (callback) callback(null, null);
       });
     }
   };
@@ -59,14 +59,14 @@ module.exports = function(RoleMapping) {
    * @param {Error} err
    * @param {User} childUser
    */
-  RoleMapping.prototype.childRole = function (callback) {
+  RoleMapping.prototype.childRole = function(callback) {
     if (this.principalType === RoleMapping.ROLE) {
       var roleModel = this.constructor.Role ||
         loopback.getModelByType(loopback.Role);
       roleModel.findById(this.principalId, callback);
     } else {
-      process.nextTick(function () {
-        callback && callback(null, null);
+      process.nextTick(function() {
+        if (callback) callback(null, null);
       });
     }
   };
