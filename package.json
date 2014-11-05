@@ -78,6 +78,7 @@
     "karma-script-launcher": "~0.1.0",
     "loopback-boot": "^1.1.0",
     "loopback-datasource-juggler": "^2.8.0",
+    "loopback-phase": "^1.0.0",
     "loopback-testing": "~0.2.0",
     "mocha": "~1.21.4",
     "serve-favicon": "~2.1.3",

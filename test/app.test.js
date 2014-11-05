@@ -7,6 +7,72 @@ var describe = require('./util/describe');
 var it = require('./util/it');
 
 describe('app', function() {
+  describe.onServer('router', function() {
+    var reqStub;
+    var resStub;
+    var steps;
+
+    beforeEach(function setup() {
+      reqStub = { url: '/test/url', verb: 'GET' };
+      resStub = {
+        setHeader: function() {}
+      };
+      steps = [];
+    });
+
+    function namedHandler(name) {
+      return function(req, res, next) {
+        steps.push(name);
+        next();
+      };
+    }
+
+    it('supports phases', function(done) {
+      var app = loopback();
+      app.phase('init').use(namedHandler('init'));
+      app.phase('files').use(namedHandler('files'));
+      app.use(namedHandler('main'));
+
+      app.handle(reqStub, resStub, safeDone(done, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(['init', 'main', 'files']);
+        done();
+      }));
+    });
+
+    it('injects error from previous phases into router', function(done) {
+      var app = loopback();
+      var expectedError = new Error('expected error');
+
+      app.phase('init').use(function(req, res, next) {
+        steps.push('init');
+        next(expectedError);
+      });
+
+      // legacy solution for handling errors
+      app.use(function errorHandler(err, req, res, next) {
+        steps.push('error');
+        next();
+      });
+
+        app.handle(reqStub, resStub, safeDone(done, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(['init', 'error']);
+        done();
+      }));
+    });
+
+    // Workaround for https://github.com/strongloop/expressjs.com/issues/270
+    function safeDone(realDone, fn) {
+      return function(err) {
+        try {
+          return fn(err);
+        } catch (e) {
+          return realDone(e);
+        }
+      };
+    }
+  });
 
   describe('app.model(Model)', function() {
     var app, db;
