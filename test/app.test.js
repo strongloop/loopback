@@ -1,5 +1,5 @@
 var path = require('path');
-var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-app');
+var http = require('http');
 var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
 
@@ -7,6 +7,102 @@ var describe = require('./util/describe');
 var it = require('./util/it');
 
 describe('app', function() {
+  describe.onServer('.middleware(phase, handler)', function() {
+    var app;
+    var steps;
+
+    beforeEach(function setup() {
+      app = loopback();
+      steps = [];
+    });
+
+    it('runs middleware in phases', function(done) {
+      var PHASES = [
+        'initial', 'session', 'auth', 'parse',
+        'routes', 'files', 'final'
+      ];
+
+      PHASES.forEach(function(name) {
+        app.middleware(name, namedHandler(name));
+      });
+      app.use(namedHandler('main'));
+
+      executeHandlers(function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql([
+          'initial', 'session', 'auth', 'parse',
+          'main', 'routes', 'files', 'final'
+        ]);
+        done();
+      });
+    });
+
+    it('supports "before:" and "after:" prefixes', function(done) {
+      app.middleware('routes:before', namedHandler('routes:before'));
+      app.middleware('routes:after', namedHandler('routes:after'));
+      app.use(namedHandler('main'));
+
+      executeHandlers(function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(['routes:before', 'main', 'routes:after']);
+        done();
+      });
+    });
+
+    it('injects error from previous phases into the router', function(done) {
+      var expectedError = new Error('expected error');
+
+      app.middleware('initial', function(req, res, next) {
+        steps.push('initial');
+        next(expectedError);
+      });
+
+      // legacy solution for error handling
+      app.use(function errorHandler(err, req, res, next) {
+        expect(err).to.equal(expectedError);
+        steps.push('error');
+        next();
+      });
+
+      executeHandlers(function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(['initial', 'error']);
+        done();
+      });
+    });
+
+    it('passes unhandled error to callback', function(done) {
+      var expectedError = new Error('expected error');
+
+      app.middleware('initial', function(req, res, next) {
+        next(expectedError);
+      });
+
+      executeHandlers(function(err) {
+        expect(err).to.equal(expectedError);
+        done();
+      });
+    });
+
+    function namedHandler(name) {
+      return function(req, res, next) {
+        steps.push(name);
+        next();
+      };
+    }
+
+    function executeHandlers(callback) {
+      var server = http.createServer(function(req, res) {
+        app.handle(req, res, callback);
+      });
+
+      request(server)
+        .get('/test/url')
+        .end(function(err) {
+          if (err) return callback(err);
+        });
+    }
+  });
 
   describe('app.model(Model)', function() {
     var app, db;
