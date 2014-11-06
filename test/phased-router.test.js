@@ -64,6 +64,26 @@ describe('phased-router', function() {
         done();
       });
     });
+
+    it('passes errors to the next phase', function(done) {
+      var router = new PhasedRouter();
+      var expectedError = new Error('expected error');
+
+      router.phase('routes').use(function(req, res, next) {
+        next(expectedError);
+      });
+
+      router.phase('error').use(function(err, req, res, next) {
+        expect(err).to.equal(expectedError);
+        done();
+      });
+
+      router.handle(givenRequest(), givenResponse(), function(err) {
+        if (err && err !== expectedError) return done(err);
+        done(new Error(
+          'The handler chain should have been stopped by error handler'));
+      });
+    });
   });
 
   testAsExpressRouter(PhasedRouter);
@@ -98,6 +118,26 @@ describe('middleware-phase', function() {
       if (err) return done(err);
       expect(steps).to.eql(['before', 'use', 'after']);
       done();
+    });
+  });
+
+  it('passes errors to the next router', function(done) {
+    var phase = new MiddlewarePhase();
+    var expectedError = new Error('expected error');
+
+    phase.before(function(req, res, next) {
+      next(expectedError);
+    });
+
+    phase.after(function(err, req, res, next) {
+      expect(err).to.equal(expectedError);
+      done();
+    });
+
+    phase.run(givenRouterContext(), function(err) {
+      if (err && err !== expectedError) return done(err);
+      done(new Error(
+        'The handler chain should have been stopped by error handler'));
     });
   });
 
