@@ -9,7 +9,6 @@
     "lib/model.js",
     "lib/persisted-model.js",
 { "title": "Middleware", "depth": 2 },
-    "lib/middleware/context.js",
     "lib/middleware/rest.js",
     "lib/middleware/static.js",    
     "lib/middleware/status.js",
