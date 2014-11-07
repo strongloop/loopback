@@ -144,16 +144,6 @@ describe('middleware-phase', function() {
   testAsExpressRouter(MiddlewarePhase);
 });
 
-describe('decorated-router', function() {
-  var DecoratedRouter = require('../lib/phased-router/decorated-router');
-
-  it('creates a function', function() {
-    expect(new DecoratedRouter()).to.be.a('function');
-  });
-
-  testAsExpressRouter(DecoratedRouter);
-});
-
 function givenRequest(props) {
   return extend({ url: '/test/url', method: 'GET' }, props);
 }
