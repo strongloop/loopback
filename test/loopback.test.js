@@ -249,6 +249,109 @@ describe('loopback', function() {
       expect(owner, 'model.prototype.owner').to.be.a('function');
       expect(owner._targetClass).to.equal('User');
     });
+
+    it('adds new acls', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: '$everyone',
+            permission: 'DENY'
+          }
+        ]
+      });
+
+      loopback.configureModel(model, {
+        dataSource: null,
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: 'admin',
+            permission: 'ALLOW'
+          }
+        ]
+      });
+
+      expect(model.settings.acls).eql([
+        {
+          property: 'find',
+          accessType: 'EXECUTE',
+          principalType: 'ROLE',
+          principalId: '$everyone',
+          permission: 'DENY'
+        },
+        {
+          property: 'find',
+          accessType: 'EXECUTE',
+          principalType: 'ROLE',
+          principalId: 'admin',
+          permission: 'ALLOW'
+        }
+      ]);
+    });
+
+    it('updates existing acls', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: '$everyone',
+            permission: 'DENY'
+          }
+        ]
+      });
+
+      loopback.configureModel(model, {
+        dataSource: null,
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: '$everyone',
+            permission: 'ALLOW'
+          }
+        ]
+      });
+
+      expect(model.settings.acls).eql([
+        {
+          property: 'find',
+          accessType: 'EXECUTE',
+          principalType: 'ROLE',
+          principalId: '$everyone',
+          permission: 'ALLOW'
+        }
+      ]);
+    });
+
+    it('updates existing settings', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        ttl: 10,
+        emailVerificationRequired: false
+      });
+
+      loopback.configureModel(model, {
+        dataSource: null,
+        options: {
+          ttl: 20,
+          realmRequired: true,
+          base: 'X'
+        }
+      });
+
+      expect(model.settings).to.have.property('ttl', 20);
+      expect(model.settings).to.have.property('emailVerificationRequired',
+        false);
+      expect(model.settings).to.have.property('realmRequired', true);
+      expect(model.settings).to.not.have.property('base');
+    });
   });
 
   describe('loopback object', function() {
