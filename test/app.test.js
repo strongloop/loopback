@@ -7,6 +7,32 @@ var describe = require('./util/describe');
 var it = require('./util/it');
 
 describe('app', function() {
+  describe.onServer('router', function() {
+    it('supports phases', function(done) {
+      var reqStub = { url: '/test/url', verb: 'GET' };
+      var resStub = {
+        setHeader: function() {}
+      };
+      var steps = [];
+      var handlerFn = function(name) {
+        return function(req, res, next) {
+          steps.push(name);
+          next();
+        };
+      };
+
+      var app = loopback();
+      app.phase('init').use(handlerFn('init'));
+      app.phase('error').use(handlerFn('error'));
+      app.use(handlerFn('main'));
+
+      app.handle(reqStub, resStub, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(['init', 'main', 'error']);
+        done();
+      });
+    });
+  });
 
   describe('app.model(Model)', function() {
     var app, db;
