@@ -20,6 +20,10 @@ describe('loopback', function() {
       expect(require('fs').existsSync(loopback.faviconFile), 'file exists')
         .to.equal(true);
     });
+
+    it.onServer('has `getCurrentContext` method', function() {
+      expect(loopback.getCurrentContext).to.be.a('function');
+    });
   });
 
   describe('loopback.createDataSource(options)', function() {
