@@ -146,6 +146,64 @@ describe('app', function() {
     });
   });
 
+  describe.onServer('.defineMiddlewarePhases(nameOrArray)', function() {
+    var app;
+    beforeEach(function() {
+      app = loopback();
+    });
+
+    it('adds the phase just before "routes" by default', function(done) {
+      app.defineMiddlewarePhases('custom');
+      verifyMiddlewarePhases(['custom', 'routes'], done);
+    });
+
+    it('adds an array of phases just before "routes"', function(done) {
+      app.defineMiddlewarePhases(['custom1', 'custom2']);
+      verifyMiddlewarePhases(['custom1', 'custom2', 'routes'], done);
+    });
+
+    it('merges phases preserving the order', function(done) {
+      app.defineMiddlewarePhases([
+        'initial',
+        'postinit', 'preauth', // add
+        'auth', 'routes',
+        'subapps', // add
+        'final',
+        'last' // add
+      ]);
+      verifyMiddlewarePhases([
+        'initial',
+        'postinit', 'preauth', // new
+        'auth', 'routes',
+        'subapps', // new
+        'files', 'final',
+        'last' // new
+      ], done);
+    });
+
+    it('throws helpful error on ordering conflict', function() {
+      app.defineMiddlewarePhases(['first', 'second']);
+      expect(function() { app.defineMiddlewarePhases(['second', 'first']); })
+        .to.throw(/ordering conflict.*first.*second/);
+    });
+
+    function verifyMiddlewarePhases(names, done) {
+      var steps = [];
+      names.forEach(function(it) {
+        app.middleware(it, function(req, res, next) {
+          steps.push(it);
+          next();
+        });
+      });
+
+      executeMiddlewareHandlers(app, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(names);
+        done();
+      });
+    }
+  });
+
   describe('app.model(Model)', function() {
     var app, db;
     beforeEach(function() {
