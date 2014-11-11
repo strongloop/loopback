@@ -1,4 +1,5 @@
 var path = require('path');
+
 var http = require('http');
 var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
@@ -27,7 +28,7 @@ describe('app', function() {
       });
       app.use(namedHandler('main'));
 
-      executeHandlers(function(err) {
+      executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
         expect(steps).to.eql([
           'initial', 'session', 'auth', 'parse',
@@ -42,7 +43,7 @@ describe('app', function() {
       app.middleware('routes:after', namedHandler('routes:after'));
       app.use(namedHandler('main'));
 
-      executeHandlers(function(err) {
+      executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
         expect(steps).to.eql(['routes:before', 'main', 'routes:after']);
         done();
@@ -64,7 +65,7 @@ describe('app', function() {
         next();
       });
 
-      executeHandlers(function(err) {
+      executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
         expect(steps).to.eql(['initial', 'error']);
         done();
@@ -78,7 +79,7 @@ describe('app', function() {
         next(expectedError);
       });
 
-      executeHandlers(function(err) {
+      executeMiddlewareHandlers(app, function(err) {
         expect(err).to.equal(expectedError);
         done();
       });
@@ -90,18 +91,59 @@ describe('app', function() {
         next();
       };
     }
+  });
 
-    function executeHandlers(callback) {
-      var server = http.createServer(function(req, res) {
-        app.handle(req, res, callback);
+  describe.onServer('.middlewareFromConfig', function() {
+    it('provides API for loading middleware from JSON config', function(done) {
+      var steps = [];
+      var expectedConfig = { key: 'value' };
+
+      var handlerFactory = function() {
+        var args = Array.prototype.slice.apply(arguments);
+        return function(req, res, next) {
+          steps.push(args);
+          next();
+        };
+      };
+
+      // Config as an object (single arg)
+      app.middlewareFromConfig(handlerFactory, {
+        enabled: true,
+        phase: 'session',
+        config: expectedConfig
       });
 
-      request(server)
-        .get('/test/url')
-        .end(function(err) {
-          if (err) return callback(err);
-        });
-    }
+      // Config as a value (single arg)
+      app.middlewareFromConfig(handlerFactory, {
+        enabled: true,
+        phase: 'session:before',
+        config: 'before'
+      });
+
+      // Config as a list of args
+      app.middlewareFromConfig(handlerFactory, {
+        enabled: true,
+        phase: 'session:after',
+        config: ['after', 2]
+      });
+
+      // Disabled by configuration
+      app.middlewareFromConfig(handlerFactory, {
+        enabled: false,
+        phase: 'initial',
+        config: null
+      });
+
+      executeMiddlewareHandlers(app, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql([
+          ['before'],
+          [expectedConfig],
+          ['after', 2]
+        ]);
+        done();
+      });
+    });
   });
 
   describe('app.model(Model)', function() {
@@ -470,3 +512,15 @@ describe('app', function() {
     });
   });
 });
+
+function executeMiddlewareHandlers(app, callback) {
+  var server = http.createServer(function(req, res) {
+    app.handle(req, res, callback);
+  });
+
+  request(server)
+    .get('/test/url')
+    .end(function(err) {
+      if (err) return callback(err);
+    });
+}
