@@ -359,6 +359,13 @@ describe('loopback', function() {
   });
 
   describe('loopback object', function() {
+    it('inherits properties from express', function() {
+      var express = require('express');
+      for (var i in express) {
+        expect(loopback).to.have.property(i, express[i]);
+      }
+    });
+
     it('exports all built-in models', function() {
       var expectedModelNames = [
         'Email',
