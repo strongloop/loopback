@@ -157,9 +157,14 @@ describe('app', function() {
       verifyMiddlewarePhases(['custom', 'routes'], done);
     });
 
-    it('adds an array of phases just before "routes"', function(done) {
-      app.defineMiddlewarePhases(['custom1', 'custom2']);
-      verifyMiddlewarePhases(['custom1', 'custom2', 'routes'], done);
+    it('merges phases adding to the start of the list', function(done) {
+      app.defineMiddlewarePhases(['first', 'routes', 'subapps']);
+      verifyMiddlewarePhases([
+        'first',
+        'initial', // this was the original first phase
+        'routes',
+        'subapps'
+      ], done);
     });
 
     it('merges phases preserving the order', function(done) {
