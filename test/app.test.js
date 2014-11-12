@@ -85,6 +85,30 @@ describe('app', function() {
       });
     });
 
+    it('passes errors to error handlers in the same phase', function(done) {
+      var expectedError = new Error('this should be handled by middleware');
+      var handledError;
+
+      app.middleware('initial', function(req, res, next) {
+        // continue in the next tick, this verifies that the next
+        // handler waits until the previous one is done
+        process.nextTick(function() {
+          next(expectedError);
+        });
+      });
+
+      app.middleware('initial', function(err, req, res, next) {
+        handledError = err;
+        next();
+      });
+
+      executeMiddlewareHandlers(app, function(err) {
+        if (err) return done(err);
+        expect(handledError).to.equal(expectedError);
+        done();
+      });
+    });
+
     function namedHandler(name) {
       return function(req, res, next) {
         steps.push(name);
