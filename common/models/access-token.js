@@ -88,6 +88,9 @@ module.exports = function(AccessToken) {
    */
 
   AccessToken.findForRequest = function(req, options, cb) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    cb = args.pop();
+    options = args.length ? args.shift() : {};
     var id = tokenIdForRequest(req, options);
 
     if (id) {
