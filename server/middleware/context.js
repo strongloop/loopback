@@ -1,4 +1,4 @@
-var loopback = require('../loopback');
+var loopback = require('../../lib/loopback');
 var juggler = require('loopback-datasource-juggler');
 var remoting = require('strong-remoting');
 var cls = require('continuation-local-storage');

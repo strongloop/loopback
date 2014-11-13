@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-var loopback = require('../loopback');
+var loopback = require('../../lib/loopback');
 var assert = require('assert');
 
 /*!
