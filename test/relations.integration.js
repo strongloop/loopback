@@ -1293,6 +1293,18 @@ describe('relations - integration', function() {
         });
     });
 
+    it('should have proper http.path for remoting', function() {
+      [app.models.Book, app.models.Image].forEach(function(Model) {
+        Model.sharedClass.methods().forEach(function(method) {
+          var http = Array.isArray(method.http) ? method.http : [method.http];
+          http.forEach(function(opt) {
+            // destroyAll has been shared but missing http property
+            if (opt.path === undefined) return;
+            expect(opt.path, method.stringName).to.match(/^\/.*/);
+          });
+        });
+      });
+    });
   });
 
 });
