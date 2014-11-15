@@ -1290,7 +1290,19 @@ describe('relations - integration', function () {
         done();
       });
     });
-    
+
+    it('should have proper http.path for remoting', function () {
+      [app.models.Book, app.models.Image].forEach(function (Model) {
+        Model.sharedClass.methods().forEach(function (method) {
+          var opts = Array.isArray(method.http) ? method.http : [method.http];
+          opts.forEach(function (opt) {
+            // destroyAll has been shared but missing accepts, return and http properties
+            if (opt.path === undefined && method.name === 'destroyAll') return;
+            expect(opt.path).to.match(/^\/.*/);
+          });
+        });
+      });
+    });
   });
   
 });
