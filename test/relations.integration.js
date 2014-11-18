@@ -411,8 +411,8 @@ describe('relations - integration', function () {
       });
 
       lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/rel/:fk', function () {
-        it('should succeed with statusCode 200', function () {
-          assert.equal(this.res.statusCode, 200);
+        it('should succeed with statusCode 204', function () {
+          assert.equal(this.res.statusCode, 204);
         });
 
         it('should remove the record in appointment', function (done) {
@@ -469,8 +469,8 @@ describe('relations - integration', function () {
       });
 
       lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/:fk', function () {
-        it('should succeed with statusCode 200', function () {
-          assert.equal(this.res.statusCode, 200);
+        it('should succeed with statusCode 204', function () {
+          assert.equal(this.res.statusCode, 204);
         });
 
         it('should remove the record in appointment', function (done) {
