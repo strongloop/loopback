@@ -325,6 +325,41 @@ describe('app', function() {
     });
   });
 
+  describe('app.utilities', function() {
+    it('is unique per app instance', function() {
+      app.utilities.foo = function() {};
+      var anotherApp = loopback();
+      expect(anotherApp.utilities.foo).to.equal(undefined);
+    });
+  });
+
+  describe('app.utility', function() {
+    // any utility will do
+    it('adds the utility to the registry', function() {
+      var fn = function() {};
+      app.utility('foo-bar', fn);
+      expect(app.utilities['foo-bar']).to.equal(fn);
+    });
+
+    it('asserts name to be string', function() {
+      var fn = function() {};
+      try {
+        app.utility(12, fn);
+      } catch(e) {
+        expect(e).to.be.instanceOf(Error);
+      }
+    });
+
+    it('asserts utility to be function', function() {
+      try {
+        app.utility('x', 'y');
+      } catch(e) {
+        expect(e).to.be.instanceOf(Error);
+      }
+    });
+
+  });
+
   describe('app.settings', function() {
     it('can be altered via `app.set(key, value)`', function() {
       app.set('write-key', 'write-value');
