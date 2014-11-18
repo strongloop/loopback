@@ -134,28 +134,28 @@ describe('app', function() {
       app.middlewareFromConfig(handlerFactory, {
         enabled: true,
         phase: 'session',
-        config: expectedConfig
+        params: expectedConfig
       });
 
       // Config as a value (single arg)
       app.middlewareFromConfig(handlerFactory, {
         enabled: true,
         phase: 'session:before',
-        config: 'before'
+        params: 'before'
       });
 
       // Config as a list of args
       app.middlewareFromConfig(handlerFactory, {
         enabled: true,
         phase: 'session:after',
-        config: ['after', 2]
+        params: ['after', 2]
       });
 
       // Disabled by configuration
       app.middlewareFromConfig(handlerFactory, {
         enabled: false,
         phase: 'initial',
-        config: null
+        params: null
       });
 
       executeMiddlewareHandlers(app, function(err) {
