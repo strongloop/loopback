@@ -45,6 +45,7 @@
     "loopback-phase": "^1.0.1",
     "nodemailer": "~1.3.0",
     "nodemailer-stub-transport": "~0.1.4",
+    "path-to-regexp": "^1.0.1",
     "strong-remoting": "^2.4.0",
     "uid2": "0.0.3",
     "underscore": "~1.7.0",

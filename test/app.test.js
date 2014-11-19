@@ -1,3 +1,4 @@
+var async = require('async');
 var path = require('path');
 
 var http = require('http');
@@ -109,9 +110,55 @@ describe('app', function() {
       });
     });
 
+    it('scopes middleware to a string path', function(done) {
+      app.middleware('initial', '/scope', pathSavingHandler());
+
+      async.eachSeries(
+        ['/', '/scope', '/scope/item', '/other'],
+        function(url, next) { executeMiddlewareHandlers(app, url, next); },
+        function(err) {
+          if (err) return done(err);
+          expect(steps).to.eql(['/scope', '/scope/item']);
+          done();
+        });
+    });
+
+    it('scopes middleware to a regex path', function(done) {
+      app.middleware('initial', /^\/(a|b)/, pathSavingHandler());
+
+      async.eachSeries(
+        ['/', '/a', '/b', '/c'],
+        function(url, next) { executeMiddlewareHandlers(app, url, next); },
+        function(err) {
+          if (err) return done(err);
+          expect(steps).to.eql(['/a', '/b']);
+          done();
+        });
+    });
+
+    it('scopes middleware to a list of scopes', function(done) {
+      app.middleware('initial', ['/scope', /^\/(a|b)/], pathSavingHandler());
+
+      async.eachSeries(
+        ['/', '/a', '/b', '/c', '/scope', '/other'],
+        function(url, next) { executeMiddlewareHandlers(app, url, next); },
+        function(err) {
+          if (err) return done(err);
+          expect(steps).to.eql(['/a', '/b', '/scope']);
+          done();
+        });
+    });
+
     function namedHandler(name) {
       return function(req, res, next) {
         steps.push(name);
+        next();
+      };
+    }
+
+    function pathSavingHandler() {
+      return function(req, res, next) {
+        steps.push(req.url);
         next();
       };
     }
@@ -167,6 +214,30 @@ describe('app', function() {
         ]);
         done();
       });
+    });
+
+    it('scopes middleware to a list of scopes', function(done) {
+      var steps = [];
+      app.middlewareFromConfig(
+        function factory() {
+          return function(req, res, next) {
+            steps.push(req.url);
+            next();
+          };
+        },
+        {
+          phase: 'initial',
+          paths: ['/scope', /^\/(a|b)/]
+        });
+
+      async.eachSeries(
+        ['/', '/a', '/b', '/c', '/scope', '/other'],
+        function(url, next) { executeMiddlewareHandlers(app, url, next); },
+        function(err) {
+          if (err) return done(err);
+          expect(steps).to.eql(['/a', '/b', '/scope']);
+          done();
+        });
     });
   });
 
@@ -600,13 +671,18 @@ describe('app', function() {
   });
 });
 
-function executeMiddlewareHandlers(app, callback) {
+function executeMiddlewareHandlers(app, urlPath, callback) {
   var server = http.createServer(function(req, res) {
     app.handle(req, res, callback);
   });
 
+  if (callback === undefined && typeof urlPath === 'function') {
+    callback = urlPath;
+    urlPath = '/test/url';
+  }
+
   request(server)
-    .get('/test/url')
+    .get(urlPath)
     .end(function(err) {
       if (err) return callback(err);
     });
