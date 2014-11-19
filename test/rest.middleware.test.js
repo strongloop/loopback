@@ -75,6 +75,22 @@ describe('loopback.rest', function() {
     });
   });
 
+  it('should honour `remoting.rest.supportedTypes`', function(done) {
+    var app = loopback();
+
+    // NOTE it is crucial to set `remoting` before creating any models
+    var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
+    app.set('remoting', { rest: { supportedTypes: supportedTypes } });
+
+    app.model(MyModel);
+    app.use(loopback.rest());
+
+    request(app).get('/mymodels')
+      .set('Accept', 'text/html,application/xml;q=0.9,*/*;q=0.8')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200, done);
+  });
+
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
     app.enableAuth();
@@ -111,6 +127,107 @@ describe('loopback.rest', function() {
           expect(res.body.id).to.equal(null);
           done();
         });
+    });
+  });
+
+  describe('context propagation', function() {
+    var User;
+
+    beforeEach(function() {
+      User = givenUserModelWithAuth();
+      User.getToken = function(cb) {
+        var context = loopback.getCurrentContext();
+        var req = context.get('http').req;
+        expect(req).to.have.property('accessToken');
+
+        var juggler = require('loopback-datasource-juggler');
+        expect(juggler.getCurrentContext().get('http').req)
+          .to.have.property('accessToken');
+
+        var remoting = require('strong-remoting');
+        expect(remoting.getCurrentContext().get('http').req)
+          .to.have.property('accessToken');
+
+        cb(null, req && req.accessToken ? req.accessToken.id : null);
+      };
+      // Set up the ACL
+      User.settings.acls.push({principalType: 'ROLE',
+        principalId: '$authenticated', permission: 'ALLOW',
+        property: 'getToken'});
+
+      loopback.remoteMethod(User.getToken, {
+        accepts: [],
+        returns: [
+          { type: 'object', name: 'id' }
+        ]
+      });
+    });
+
+    function invokeGetToken(done) {
+      givenLoggedInUser(function(err, token) {
+        if (err) return done(err);
+        request(app).get('/users/getToken')
+          .set('Authorization', token.id)
+          .expect(200)
+          .end(function(err, res) {
+            if (err) return done(err);
+            expect(res.body.id).to.equal(token.id);
+            done();
+          });
+      });
+    }
+
+    it('should enable context using loopback.context', function(done) {
+      app.use(loopback.context({ enableHttpContext: true }));
+      app.enableAuth();
+      app.use(loopback.rest());
+
+      invokeGetToken(done);
+    });
+
+    it('should enable context with loopback.rest', function(done) {
+      app.enableAuth();
+      app.set('remoting', { context: { enableHttpContext: true } });
+      app.use(loopback.rest());
+
+      invokeGetToken(done);
+    });
+
+    it('should support explicit context', function(done) {
+      app.enableAuth();
+      app.use(loopback.context());
+      app.use(loopback.token(
+        { model: loopback.getModelByType(loopback.AccessToken) }));
+      app.use(function(req, res, next) {
+        loopback.getCurrentContext().set('accessToken', req.accessToken);
+        next();
+      });
+      app.use(loopback.rest());
+
+      User.getToken = function(cb) {
+        var context = loopback.getCurrentContext();
+        var accessToken = context.get('accessToken');
+        expect(context.get('accessToken')).to.have.property('id');
+
+        var juggler = require('loopback-datasource-juggler');
+        context = juggler.getCurrentContext();
+        expect(context.get('accessToken')).to.have.property('id');
+
+        var remoting = require('strong-remoting');
+        context = remoting.getCurrentContext();
+        expect(context.get('accessToken')).to.have.property('id');
+
+        cb(null, accessToken ? accessToken.id : null);
+      };
+
+      loopback.remoteMethod(User.getToken, {
+        accepts: [],
+        returns: [
+          { type: 'object', name: 'id' }
+        ]
+      });
+
+      invokeGetToken(done);
     });
   });
 

@@ -9,9 +9,7 @@ var schema = {
 
 var Color = app.model('color', schema);
 
-app.dataSource('db', {adapter: 'memory'});
-
-Color.dataSource('db');
+app.dataSource('db', {adapter: 'memory'}).attach(Color);
 
 Color.create({name: 'red'});
 Color.create({name: 'green'});

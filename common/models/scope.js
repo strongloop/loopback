@@ -23,14 +23,14 @@ module.exports = function(Scope) {
    * @param {String|Error} err The error object
    * @param {AccessRequest} result The access permission
    */
-  Scope.checkPermission = function (scope, model, property, accessType, callback) {
+  Scope.checkPermission = function(scope, model, property, accessType, callback) {
     var ACL = loopback.ACL;
     assert(ACL,
       'ACL model must be defined before Scope.checkPermission is called');
 
-    this.findOne({where: {name: scope}}, function (err, scope) {
+    this.findOne({where: {name: scope}}, function(err, scope) {
       if (err) {
-        callback && callback(err);
+        if (callback) callback(err);
       } else {
         var aclModel = loopback.getModelByType(ACL);
         aclModel.checkPermission(ACL.SCOPE, scope.id, model, property, accessType, callback);

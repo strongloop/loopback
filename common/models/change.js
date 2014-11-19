@@ -2,14 +2,13 @@
  * Module Dependencies.
  */
 
-var PersistedModel = require('../../lib/loopback').PersistedModel
-  , loopback = require('../../lib/loopback')
-  , crypto = require('crypto')
-  , CJSON = {stringify: require('canonical-json')}
-  , async = require('async')
-  , assert = require('assert')
-  , debug = require('debug')('loopback:change');
-
+var PersistedModel = require('../../lib/loopback').PersistedModel;
+var loopback = require('../../lib/loopback');
+var crypto = require('crypto');
+var CJSON = {stringify: require('canonical-json')};
+var async = require('async');
+var assert = require('assert');
+var debug = require('debug')('loopback:change');
 
 /**
  * Change list entry.
@@ -55,8 +54,8 @@ module.exports = function(Change) {
       if (!hasModel) return null;
 
       return Change.idForModel(this.modelName, this.modelId);
-    }
-  }
+    };
+  };
   Change.setup();
 
   /**
@@ -82,7 +81,7 @@ module.exports = function(Change) {
       });
     });
     async.parallel(tasks, callback);
-  }
+  };
 
   /**
    * Get an identifier for a given model.
@@ -94,7 +93,7 @@ module.exports = function(Change) {
 
   Change.idForModel = function(modelName, modelId) {
     return this.hash([modelName, modelId].join('-'));
-  }
+  };
 
   /**
    * Find or create a change for the given model.
@@ -126,7 +125,7 @@ module.exports = function(Change) {
         ch.save(callback);
       }
     });
-  }
+  };
 
   /**
    * Update (or create) the change with the current revision.
@@ -148,7 +147,7 @@ module.exports = function(Change) {
 
     cb = cb || function(err) {
       if (err) throw new Error(err);
-    }
+    };
 
     async.parallel(tasks, function(err) {
       if (err) return cb(err);
@@ -194,7 +193,7 @@ module.exports = function(Change) {
         cb();
       });
     }
-  }
+  };
 
   /**
    * Get a change's current revision based on current data.
@@ -214,7 +213,7 @@ module.exports = function(Change) {
         cb(null, null);
       }
     });
-  }
+  };
 
   /**
    * Create a hash of the given `string` with the `options.hashAlgorithm`.
@@ -229,7 +228,7 @@ module.exports = function(Change) {
       .createHash(Change.settings.hashAlgorithm || 'sha1')
       .update(str)
       .digest('hex');
-  }
+  };
 
   /**
    * Get the revision string for the given object
@@ -239,7 +238,7 @@ module.exports = function(Change) {
 
   Change.revisionForInst = function(inst) {
     return this.hash(CJSON.stringify(inst));
-  }
+  };
 
   /**
    * Get a change's type. Returns one of:
@@ -263,7 +262,7 @@ module.exports = function(Change) {
       return Change.DELETE;
     }
     return Change.UNKNOWN;
-  }
+  };
 
   /**
    * Compare two changes.
@@ -276,7 +275,7 @@ module.exports = function(Change) {
     var thisRev = this.rev || null;
     var thatRev = change.rev || null;
     return thisRev === thatRev;
-  }
+  };
 
   /**
    * Does this change conflict with the given change.
@@ -290,7 +289,7 @@ module.exports = function(Change) {
     if (Change.bothDeleted(this, change)) return false;
     if (this.isBasedOn(change)) return false;
     return true;
-  }
+  };
 
   /**
    * Are both changes deletes?
@@ -300,9 +299,9 @@ module.exports = function(Change) {
    */
 
   Change.bothDeleted = function(a, b) {
-    return a.type() === Change.DELETE
-      && b.type() === Change.DELETE;
-  }
+    return a.type() === Change.DELETE &&
+      b.type() === Change.DELETE;
+  };
 
   /**
    * Determine if the change is based on the given change.
@@ -312,7 +311,7 @@ module.exports = function(Change) {
 
   Change.prototype.isBasedOn = function(change) {
     return this.prev === change.rev;
-  }
+  };
 
   /**
    * Determine the differences for a given model since a given checkpoint.
@@ -393,11 +392,11 @@ module.exports = function(Change) {
         conflicts: conflicts
       });
     });
-  }
+  };
 
   /**
    * Correct all change list entries.
-   * @param  {Function} callback
+   * @param {Function} cb
    */
 
   Change.rectifyAll = function(cb) {
@@ -407,11 +406,10 @@ module.exports = function(Change) {
     this.find(function(err, changes) {
       if (err) return cb(err);
       changes.forEach(function(change) {
-        change = new Change(change);
         change.rectify();
       });
     });
-  }
+  };
 
   /**
    * Get the checkpoint model.
@@ -426,13 +424,13 @@ module.exports = function(Change) {
       + ' is not attached to a dataSource');
     checkpointModel.attachTo(this.dataSource);
     return checkpointModel;
-  }
+  };
 
   Change.handleError = function(err) {
     if (!this.settings.ignoreErrors) {
       throw err;
     }
-  }
+  };
 
   Change.prototype.debug = function() {
     if (debug.enabled) {
@@ -445,7 +443,7 @@ module.exports = function(Change) {
       debug('\tmodelId', this.modelId);
       debug('\ttype', this.type());
     }
-  }
+  };
 
   /**
    * Get the `Model` class for `change.modelName`.
@@ -454,7 +452,7 @@ module.exports = function(Change) {
 
   Change.prototype.getModelCtor = function() {
     return this.constructor.settings.trackModel;
-  }
+  };
 
   Change.prototype.getModelId = function() {
     // TODO(ritch) get rid of the need to create an instance
@@ -463,13 +461,13 @@ module.exports = function(Change) {
     var m = new Model();
     m.setId(id);
     return m.getId();
-  }
+  };
 
   Change.prototype.getModel = function(callback) {
     var Model = this.constructor.settings.trackModel;
     var id = this.getModelId();
     Model.findById(id, callback);
-  }
+  };
 
   /**
    * When two changes conflict a conflict is created.
@@ -533,7 +531,7 @@ module.exports = function(Change) {
       if (err) return cb(err);
       cb(null, source, target);
     }
-  }
+  };
 
   /**
    * Get the conflicting changes.
@@ -578,7 +576,7 @@ module.exports = function(Change) {
       if (err) return cb(err);
       cb(null, sourceChange, targetChange);
     }
-  }
+  };
 
   /**
    * Resolve the conflict.
@@ -594,7 +592,7 @@ module.exports = function(Change) {
       sourceChange.prev = targetChange.rev;
       sourceChange.save(cb);
     });
-  }
+  };
 
   /**
    * Determine the conflict type.
@@ -624,5 +622,5 @@ module.exports = function(Change) {
       }
       return cb(null, Change.UNKNOWN);
     });
-  }
+  };
 };

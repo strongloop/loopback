@@ -2,10 +2,10 @@
  * Module Dependencies.
  */
 
-var loopback = require('../../lib/loopback')
-  , assert = require('assert')
-  , uid = require('uid2')
-  , DEFAULT_TOKEN_LEN = 64;
+var loopback = require('../../lib/loopback');
+var assert = require('assert');
+var uid = require('uid2');
+var DEFAULT_TOKEN_LEN = 64;
 
 /**
  * Token based authentication and access control.
@@ -57,7 +57,7 @@ module.exports = function(AccessToken) {
         fn(null, guid);
       }
     });
-  }
+  };
 
   /*!
    * Hook to create accessToken id.
@@ -75,7 +75,7 @@ module.exports = function(AccessToken) {
         next();
       }
     });
-  }
+  };
 
   /**
    * Find a token for the given `ServerRequest`.
@@ -88,6 +88,11 @@ module.exports = function(AccessToken) {
    */
 
   AccessToken.findForRequest = function(req, options, cb) {
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = {};
+    }
+
     var id = tokenIdForRequest(req, options);
 
     if (id) {
@@ -115,7 +120,7 @@ module.exports = function(AccessToken) {
         cb();
       });
     }
-  }
+  };
 
   /**
    * Validate the token.
@@ -151,7 +156,7 @@ module.exports = function(AccessToken) {
     } catch (e) {
       cb(e);
     }
-  }
+  };
 
   function tokenIdForRequest(req, options) {
     var params = options.params || [];

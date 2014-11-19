@@ -1,4 +1,5 @@
 var loopback = require('../');
+var extend = require('util')._extend;
 var Token = loopback.AccessToken.extend('MyToken');
 var ACL = loopback.ACL;
 
@@ -106,6 +107,38 @@ describe('AccessToken', function () {
       done();
     });
   });
+
+  describe('.findForRequest()', function() {
+    beforeEach(createTestingToken);
+
+    it('supports two-arg variant with no options', function(done) {
+      var expectedTokenId = this.token.id;
+      var req = mockRequest({
+        headers: { 'authorization': expectedTokenId }
+      });
+
+      Token.findForRequest(req, function(err, token) {
+        if (err) return done(err);
+        expect(token.id).to.eql(expectedTokenId);
+        done();
+      });
+    });
+
+    function mockRequest(opts) {
+      return extend(
+        {
+          method: 'GET',
+          url: '/a-test-path',
+          headers: {},
+          _params: {},
+
+          // express helpers
+          param: function(name) { return this._params[name]; },
+          header: function(name) { return this.headers[name]; }
+        },
+        opts);
+    }
+  });
 });
 
 describe('app.enableAuth()', function() {
@@ -143,6 +176,36 @@ describe('app.enableAuth()', function() {
       .end(done);
   });
 
+  it('stores token in the context', function(done) {
+    var TestModel = loopback.createModel('TestModel', { base: 'Model' });
+    TestModel.getToken = function(cb) {
+      cb(null, loopback.getCurrentContext().get('accessToken') || null);
+    };
+    TestModel.remoteMethod('getToken', {
+      returns: { arg: 'token', type: 'object' },
+      http: { verb: 'GET', path: '/token' }
+    });
+
+    var app = loopback();
+    app.model(TestModel, { dataSource: null });
+
+    app.enableAuth();
+    app.use(loopback.context());
+    app.use(loopback.token({ model: Token }));
+    app.use(loopback.rest());
+
+    var token = this.token;
+    request(app)
+      .get('/TestModels/token?_format=json')
+      .set('authorization', token.id)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body.token.id).to.eql(token.id);
+        done();
+      });
+  });
 });
 
 function createTestingToken(done) {

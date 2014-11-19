@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-var loopback = require('../loopback');
+var loopback = require('../../lib/loopback');
 var assert = require('assert');
 
 /*!
@@ -48,12 +48,13 @@ function token(options) {
   var TokenModel = options.model || loopback.AccessToken;
   assert(TokenModel, 'loopback.token() middleware requires a AccessToken model');
 
-  return function (req, res, next) {
+  return function(req, res, next) {
     if (req.accessToken !== undefined) return next();
     TokenModel.findForRequest(req, options, function(err, token) {
       req.accessToken = token || null;
+      var ctx = loopback.getCurrentContext();
+      if (ctx) ctx.set('accessToken', token);
       next(err);
     });
   };
 }
-

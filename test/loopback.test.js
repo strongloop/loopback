@@ -1,3 +1,5 @@
+var it = require('./util/it');
+
 describe('loopback', function() {
   var nameCounter = 0;
   var uniqueModelName;
@@ -10,6 +12,17 @@ describe('loopback', function() {
     it('ValidationError', function() {
       expect(loopback.ValidationError).to.be.a('function')
         .and.have.property('name', 'ValidationError');
+    });
+
+    it.onServer('includes `faviconFile`', function() {
+      var file = loopback.faviconFile;
+      expect(file, 'faviconFile').to.not.equal(undefined);
+      expect(require('fs').existsSync(loopback.faviconFile), 'file exists')
+        .to.equal(true);
+    });
+
+    it.onServer('has `getCurrentContext` method', function() {
+      expect(loopback.getCurrentContext).to.be.a('function');
     });
   });
 
@@ -68,11 +81,11 @@ describe('loopback', function() {
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
     it("Setup a remote method.", function() {
       var Product = loopback.createModel('product', {price: Number});
-      
+
       Product.stats = function(fn) {
         // ...
       }
-      
+
       loopback.remoteMethod(
         Product.stats,
         {
@@ -80,7 +93,7 @@ describe('loopback', function() {
           http: {path: '/info', verb: 'get'}
         }
       );
-      
+
       assert.equal(Product.stats.returns.arg, 'stats');
       assert.equal(Product.stats.returns.type, 'array');
       assert.equal(Product.stats.http.path, '/info');
@@ -240,9 +253,119 @@ describe('loopback', function() {
       expect(owner, 'model.prototype.owner').to.be.a('function');
       expect(owner._targetClass).to.equal('User');
     });
+
+    it('adds new acls', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: '$everyone',
+            permission: 'DENY'
+          }
+        ]
+      });
+
+      loopback.configureModel(model, {
+        dataSource: null,
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: 'admin',
+            permission: 'ALLOW'
+          }
+        ]
+      });
+
+      expect(model.settings.acls).eql([
+        {
+          property: 'find',
+          accessType: 'EXECUTE',
+          principalType: 'ROLE',
+          principalId: '$everyone',
+          permission: 'DENY'
+        },
+        {
+          property: 'find',
+          accessType: 'EXECUTE',
+          principalType: 'ROLE',
+          principalId: 'admin',
+          permission: 'ALLOW'
+        }
+      ]);
+    });
+
+    it('updates existing acls', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: '$everyone',
+            permission: 'DENY'
+          }
+        ]
+      });
+
+      loopback.configureModel(model, {
+        dataSource: null,
+        acls: [
+          {
+            property: 'find',
+            accessType: 'EXECUTE',
+            principalType: 'ROLE',
+            principalId: '$everyone',
+            permission: 'ALLOW'
+          }
+        ]
+      });
+
+      expect(model.settings.acls).eql([
+        {
+          property: 'find',
+          accessType: 'EXECUTE',
+          principalType: 'ROLE',
+          principalId: '$everyone',
+          permission: 'ALLOW'
+        }
+      ]);
+    });
+
+    it('updates existing settings', function() {
+      var model = loopback.Model.extend(uniqueModelName, {}, {
+        ttl: 10,
+        emailVerificationRequired: false
+      });
+
+      loopback.configureModel(model, {
+        dataSource: null,
+        options: {
+          ttl: 20,
+          realmRequired: true,
+          base: 'X'
+        }
+      });
+
+      expect(model.settings).to.have.property('ttl', 20);
+      expect(model.settings).to.have.property('emailVerificationRequired',
+        false);
+      expect(model.settings).to.have.property('realmRequired', true);
+      expect(model.settings).to.not.have.property('base');
+    });
   });
 
   describe('loopback object', function() {
+    it('inherits properties from express', function() {
+      var express = require('express');
+      for (var i in express) {
+        expect(loopback).to.have.property(i, express[i]);
+      }
+    });
+
     it('exports all built-in models', function() {
       var expectedModelNames = [
         'Email',
