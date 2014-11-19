@@ -88,6 +88,11 @@ module.exports = function(AccessToken) {
    */
 
   AccessToken.findForRequest = function(req, options, cb) {
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = {};
+    }
+
     var id = tokenIdForRequest(req, options);
 
     if (id) {

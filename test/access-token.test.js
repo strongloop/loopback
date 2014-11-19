@@ -1,4 +1,5 @@
 var loopback = require('../');
+var extend = require('util')._extend;
 var Token = loopback.AccessToken.extend('MyToken');
 var ACL = loopback.ACL;
 
@@ -105,6 +106,38 @@ describe('AccessToken', function () {
       assert(isValid);
       done();
     });
+  });
+
+  describe('.findForRequest()', function() {
+    beforeEach(createTestingToken);
+
+    it('supports two-arg variant with no options', function(done) {
+      var expectedTokenId = this.token.id;
+      var req = mockRequest({
+        headers: { 'authorization': expectedTokenId }
+      });
+
+      Token.findForRequest(req, function(err, token) {
+        if (err) return done(err);
+        expect(token.id).to.eql(expectedTokenId);
+        done();
+      });
+    });
+
+    function mockRequest(opts) {
+      return extend(
+        {
+          method: 'GET',
+          url: '/a-test-path',
+          headers: {},
+          _params: {},
+
+          // express helpers
+          param: function(name) { return this._params[name]; },
+          header: function(name) { return this.headers[name]; }
+        },
+        opts);
+    }
   });
 });
 
