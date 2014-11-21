@@ -46,7 +46,7 @@ describe('RemoteConnector', function() {
     });
   });
 
-  it('should support the save method', function (done) {
+  it('should support the save method', function(done) {
     var calledServerCreate = false;
     var RemoteModel = loopback.PersistedModel.extend('TestModel');
     RemoteModel.attachTo(this.remote);

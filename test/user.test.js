@@ -6,7 +6,7 @@ var userMemory = loopback.createDataSource({
   connector: 'memory'
 });
 
-describe('User', function(){
+describe('User', function() {
   var validCredentials = {email: 'foo@bar.com', password: 'bar'};
   var validCredentialsEmailVerified = {email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
   var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
@@ -27,7 +27,7 @@ describe('User', function(){
 
   });
 
-  beforeEach(function (done) {
+  beforeEach(function(done) {
     app.enableAuth();
     app.use(loopback.token());
     app.use(loopback.rest());
@@ -38,15 +38,15 @@ describe('User', function(){
     });
   });
 
-  afterEach(function (done) {
-    User.destroyAll(function (err) {
+  afterEach(function(done) {
+    User.destroyAll(function(err) {
       User.accessToken.destroyAll(done);
     });
   });
 
-  describe('User.create', function(){
+  describe('User.create', function() {
     it('Create a new user', function(done) {
-      User.create({email: 'f@b.com', password: 'bar'}, function (err, user) {
+      User.create({email: 'f@b.com', password: 'bar'}, function(err, user) {
         assert(!err);
         assert(user.id);
         assert(user.email);
@@ -54,13 +54,13 @@ describe('User', function(){
       });
     });
 
-    it('credentials/challenges are object types', function (done) {
+    it('credentials/challenges are object types', function(done) {
       User.create({email: 'f1@b.com', password: 'bar1',
         credentials: {cert: 'xxxxx', key: '111'},
         challenges: {x: 'X', a: 1}
-      }, function (err, user) {
+      }, function(err, user) {
         assert(!err);
-        User.findById(user.id, function (err, user) {
+        User.findById(user.id, function(err, user) {
           assert(user.id);
           assert(user.email);
           assert.deepEqual(user.credentials, {cert: 'xxxxx', key: '111'});
@@ -70,8 +70,8 @@ describe('User', function(){
       });
     });
 
-    it('Email is required', function (done) {
-      User.create({password: '123'}, function (err) {
+    it('Email is required', function(done) {
+      User.create({password: '123'}, function(err) {
         assert(err);
         assert.equal(err.name, 'ValidationError');
         assert.equal(err.statusCode, 422);
@@ -89,22 +89,22 @@ describe('User', function(){
     it('Password is required', function(done) {
       var u = new User({email: '123@456.com'});
 
-      User.create({email: 'c@d.com'}, function (err) {
+      User.create({email: 'c@d.com'}, function(err) {
         assert(err);
         done();
       });
     });
 
     it('Requires a valid email', function(done) {
-      User.create({email: 'foo@', password: '123'}, function (err) {
+      User.create({email: 'foo@', password: '123'}, function(err) {
         assert(err);
         done();
       });
     });
 
     it('Requires a unique email', function(done) {
-      User.create({email: 'a@b.com', password: 'foobar'}, function () {
-        User.create({email: 'a@b.com', password: 'batbaz'}, function (err) {
+      User.create({email: 'a@b.com', password: 'foobar'}, function() {
+        User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
           assert(err, 'should error because the email is not unique!');
           done();
         });
@@ -112,8 +112,8 @@ describe('User', function(){
     });
 
     it('Requires a unique username', function(done) {
-      User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function () {
-        User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function (err) {
+      User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function() {
+        User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function(err) {
           assert(err, 'should error because the username is not unique!');
           done();
         });
@@ -121,8 +121,8 @@ describe('User', function(){
     });
 
     it('Requires a password to login with basic auth', function(done) {
-      User.create({email: 'b@c.com'}, function (err) {
-        User.login({email: 'b@c.com'}, function (err, accessToken) {
+      User.create({email: 'b@c.com'}, function(err) {
+        User.login({email: 'b@c.com'}, function(err, accessToken) {
           assert(!accessToken, 'should not create a accessToken without a valid password');
           assert(err, 'should not login without a password');
           done();
@@ -141,7 +141,7 @@ describe('User', function(){
         .expect('Content-Type', /json/)
         .expect(200)
         .send(validCredentialsEmailVerifiedOverREST)
-        .end(function(err, res){
+        .end(function(err, res) {
           assert(!res.body.emailVerified);
           done();
         });
@@ -150,7 +150,7 @@ describe('User', function(){
 
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
-      User.login(validCredentials, function (err, accessToken) {
+      User.login(validCredentials, function(err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
@@ -160,7 +160,7 @@ describe('User', function(){
     });
 
     it('Login a user by providing credentials with TTL', function(done) {
-      User.login(validCredentialsWithTTL, function (err, accessToken) {
+      User.login(validCredentialsWithTTL, function(err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.ttl, validCredentialsWithTTL.ttl);
@@ -175,16 +175,16 @@ describe('User', function(){
       // Override createAccessToken
       User.prototype.createAccessToken = function(ttl, cb) {
         // Reduce the ttl by half for testing purpose
-        this.accessTokens.create({ttl: ttl /2 }, cb);
+        this.accessTokens.create({ttl: ttl / 2 }, cb);
       };
-      User.login(validCredentialsWithTTL, function (err, accessToken) {
+      User.login(validCredentialsWithTTL, function(err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.ttl, 1800);
         assert.equal(accessToken.id.length, 64);
 
         User.findById(accessToken.userId, function(err, user) {
-          user.createAccessToken(120, function (err, accessToken) {
+          user.createAccessToken(120, function(err, accessToken) {
             assert(accessToken.userId);
             assert(accessToken.id);
             assert.equal(accessToken.ttl, 60);
@@ -203,8 +203,8 @@ describe('User', function(){
         .expect('Content-Type', /json/)
         .expect(200)
         .send(validCredentials)
-        .end(function(err, res){
-          if(err) return done(err);
+        .end(function(err, res) {
+          if (err) return done(err);
           var accessToken = res.body;
 
           assert(accessToken.userId);
@@ -222,7 +222,7 @@ describe('User', function(){
         .expect('Content-Type', /json/)
         .expect(401)
         .send(invalidCredentials)
-        .end(function(err, res){
+        .end(function(err, res) {
           done();
         });
     });
@@ -233,7 +233,7 @@ describe('User', function(){
         .expect('Content-Type', /json/)
         .expect(400)
         .send(incompleteCredentials)
-        .end(function(err, res){
+        .end(function(err, res) {
           done();
         });
     });
@@ -245,7 +245,7 @@ describe('User', function(){
         .expect('Content-Type', /json/)
         .expect(400)
         .send(validCredentials)
-        .end(function(err, res){
+        .end(function(err, res) {
           done();
         });
     });
@@ -309,14 +309,14 @@ describe('User', function(){
     });
 
     it('Login a user by without email verification', function(done) {
-      User.login(validCredentials, function (err, accessToken) {
+      User.login(validCredentials, function(err, accessToken) {
         assert(err);
         done();
       });
     });
 
     it('Login a user by with email verification', function(done) {
-      User.login(validCredentialsEmailVerified, function (err, accessToken) {
+      User.login(validCredentialsEmailVerified, function(err, accessToken) {
         assertGoodToken(accessToken);
         done();
       });
@@ -328,8 +328,8 @@ describe('User', function(){
         .expect('Content-Type', /json/)
         .expect(200)
         .send(validCredentialsEmailVerified)
-        .end(function(err, res){
-          if(err) return done(err);
+        .end(function(err, res) {
+          if (err) return done(err);
           var accessToken = res.body;
 
           assertGoodToken(accessToken);
@@ -353,7 +353,8 @@ describe('User', function(){
   });
 
   describe('User.login requiring realm', function() {
-    var User, AccessToken;
+    var User;
+    var AccessToken;
 
     before(function() {
       User = loopback.User.extend('RealmUser', {},
@@ -533,8 +534,8 @@ describe('User', function(){
           .expect('Content-Type', /json/)
           .expect(200)
           .send({email: 'foo@bar.com', password: 'bar'})
-          .end(function(err, res){
-            if(err) return done(err);
+          .end(function(err, res) {
+            if (err) return done(err);
             var accessToken = res.body;
 
             assert(accessToken.userId);
@@ -556,10 +557,10 @@ describe('User', function(){
     function verify(token, done) {
       assert(token);
 
-      return function (err) {
-        if(err) return done(err);
+      return function(err) {
+        if (err) return done(err);
 
-        AccessToken.findById(token, function (err, accessToken) {
+        AccessToken.findById(token, function(err, accessToken) {
           assert(!accessToken, 'accessToken should not exist after logging out');
           done(err);
         });
@@ -567,10 +568,10 @@ describe('User', function(){
     }
   });
 
-  describe('user.hasPassword(plain, fn)', function(){
+  describe('user.hasPassword(plain, fn)', function() {
     it('Determine if the password matches the stored password', function(done) {
       var u = new User({username: 'foo', password: 'bar'});
-      u.hasPassword('bar', function (err, isMatch) {
+      u.hasPassword('bar', function(err, isMatch) {
         assert(isMatch, 'password doesnt match');
         done();
       });
@@ -579,9 +580,9 @@ describe('User', function(){
     it('should match a password when saved', function(done) {
       var u = new User({username: 'a', password: 'b', email: 'z@z.net'});
 
-      u.save(function (err, user) {
-        User.findById(user.id, function (err, uu) {
-          uu.hasPassword('b', function (err, isMatch) {
+      u.save(function(err, user) {
+        User.findById(user.id, function(err, uu) {
+          uu.hasPassword('b', function(err, isMatch) {
             assert(isMatch);
             done();
           });
@@ -590,32 +591,32 @@ describe('User', function(){
     });
 
     it('should match a password after it is changed', function(done) {
-       User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function (err, user) {
-         User.findById(user.id, function (err, foundUser) {
-           assert(foundUser);
-           foundUser.hasPassword('baz', function (err, isMatch) {
-             assert(isMatch);
-             foundUser.password = 'baz2';
-             foundUser.save(function (err, updatedUser) {
-               updatedUser.hasPassword('baz2', function (err, isMatch) {
-                 assert(isMatch);
-                 User.findById(user.id, function (err, uu) {
-                   uu.hasPassword('baz2', function (err, isMatch) {
-                     assert(isMatch);
-                     done();
-                   });
-                 });
-               });
-             });
-           });
-         });
-       });
+      User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function(err, user) {
+        User.findById(user.id, function(err, foundUser) {
+          assert(foundUser);
+          foundUser.hasPassword('baz', function(err, isMatch) {
+            assert(isMatch);
+            foundUser.password = 'baz2';
+            foundUser.save(function(err, updatedUser) {
+              updatedUser.hasPassword('baz2', function(err, isMatch) {
+                assert(isMatch);
+                User.findById(user.id, function(err, uu) {
+                  uu.hasPassword('baz2', function(err, isMatch) {
+                    assert(isMatch);
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
     });
   });
 
-  describe('Verification', function(){
+  describe('Verification', function() {
 
-    describe('user.verify(options, fn)', function(){
+    describe('user.verify(options, fn)', function() {
       it('Verify a user\'s email address', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
@@ -629,7 +630,7 @@ describe('User', function(){
             host: ctx.req.get('host')
           };
 
-          user.verify(options, function (err, result) {
+          user.verify(options, function(err, result) {
             assert(result.email);
             assert(result.email.response);
             assert(result.token);
@@ -645,8 +646,8 @@ describe('User', function(){
           .expect('Content-Type', /json/)
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
-          .end(function(err, res){
-            if(err) return done(err);
+          .end(function(err, res) {
+            if (err) return done(err);
           });
       });
 
@@ -664,7 +665,7 @@ describe('User', function(){
             headers: {'message-id':'custom-header-value'}
           };
 
-          user.verify(options, function (err, result) {
+          user.verify(options, function(err, result) {
             assert(result.email);
             assert.equal(result.email.messageId, 'custom-header-value');
             done();
@@ -676,18 +677,18 @@ describe('User', function(){
           .expect('Content-Type', /json/)
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
-          .end(function(err, res){
-            if(err) return done(err);
+          .end(function(err, res) {
+            if (err) return done(err);
           });
       });
 
     });
 
-    describe('User.confirm(options, fn)', function () {
+    describe('User.confirm(options, fn)', function() {
       var options;
 
       function testConfirm(testFunc, done) {
-        User.afterRemote('create', function (ctx, user, next) {
+        User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
           options = {
@@ -699,7 +700,7 @@ describe('User', function(){
             host: ctx.req.get('host')
           };
 
-          user.verify(options, function (err, result) {
+          user.verify(options, function(err, result) {
             if (err) {
               return done(err);
             }
@@ -712,21 +713,21 @@ describe('User', function(){
           .expect('Content-Type', /json/)
           .expect(302)
           .send({email: 'bar@bat.com', password: 'bar'})
-          .end(function (err, res) {
+          .end(function(err, res) {
             if (err) {
               return done(err);
             }
           });
       }
 
-      it('Confirm a user verification', function (done) {
-        testConfirm(function (result, done) {
+      it('Confirm a user verification', function(done) {
+        testConfirm(function(result, done) {
           request(app)
-            .get('/users/confirm?uid=' + (result.uid )
+            .get('/users/confirm?uid=' + (result.uid)
               + '&token=' + encodeURIComponent(result.token)
               + '&redirect=' + encodeURIComponent(options.redirect))
             .expect(302)
-            .end(function (err, res) {
+            .end(function(err, res) {
               if (err) {
                 return done(err);
               }
@@ -735,14 +736,14 @@ describe('User', function(){
         }, done);
       });
 
-      it('Report error for invalid user id during verification', function (done) {
-        testConfirm(function (result, done) {
+      it('Report error for invalid user id during verification', function(done) {
+        testConfirm(function(result, done) {
           request(app)
             .get('/users/confirm?uid=' + (result.uid + '_invalid')
               + '&token=' + encodeURIComponent(result.token)
               + '&redirect=' + encodeURIComponent(options.redirect))
             .expect(404)
-            .end(function (err, res) {
+            .end(function(err, res) {
               if (err) {
                 return done(err);
               }
@@ -752,14 +753,14 @@ describe('User', function(){
         }, done);
       });
 
-      it('Report error for invalid token during verification', function (done) {
-        testConfirm(function (result, done) {
+      it('Report error for invalid token during verification', function(done) {
+        testConfirm(function(result, done) {
           request(app)
             .get('/users/confirm?uid=' + result.uid
               + '&token=' + encodeURIComponent(result.token) + '_invalid'
               + '&redirect=' + encodeURIComponent(options.redirect))
             .expect(400)
-            .end(function (err, res) {
+            .end(function(err, res) {
               if (err) return done(err);
               assert(res.body.error);
               done();
@@ -769,25 +770,25 @@ describe('User', function(){
     });
   });
 
-  describe('Password Reset', function () {
-    describe('User.resetPassword(options, cb)', function () {
-      it('Creates a temp accessToken to allow a user to change password', function (done) {
+  describe('Password Reset', function() {
+    describe('User.resetPassword(options, cb)', function() {
+      it('Creates a temp accessToken to allow a user to change password', function(done) {
         var calledBack = false;
         var email = 'foo@bar.com';
 
         User.resetPassword({
           email: email
-        }, function () {
+        }, function() {
           calledBack = true;
         });
 
-        User.once('resetPasswordRequest', function (info) {
+        User.once('resetPasswordRequest', function(info) {
           assert(info.email);
           assert(info.accessToken);
           assert(info.accessToken.id);
           assert.equal(info.accessToken.ttl / 60, 15);
           assert(calledBack);
-          info.accessToken.user(function (err, user) {
+          info.accessToken.user(function(err, user) {
             assert.equal(user.email, email);
             done();
           });

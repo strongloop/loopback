@@ -37,8 +37,8 @@ describe('Model / PersistedModel', function() {
       var joe = new User({email: 'joe@joe.com'});
       var joe2 = new User({email: 'joe@joe.com'});
 
-      joe.save(function () {
-        joe2.save(function (err) {
+      joe.save(function() {
+        joe2.save(function(err) {
           assert(err, 'should get a validation error');
           assert(joe2.errors.email, 'model should have email error');
 
@@ -64,13 +64,13 @@ describe('Model / PersistedModel', function() {
   });
 });
 
-describe.onServer('Remote Methods', function(){
+describe.onServer('Remote Methods', function() {
 
   var User;
   var dataSource;
   var app;
 
-  beforeEach(function () {
+  beforeEach(function() {
     User = PersistedModel.extend('user', {
       'first': String,
       'last': String,
@@ -89,8 +89,8 @@ describe.onServer('Remote Methods', function(){
 
     User.attachTo(dataSource);
 
-    User.login = function (username, password, fn) {
-      if(username === 'foo' && password === 'bar') {
+    User.login = function(username, password, fn) {
+      if (username === 'foo' && password === 'bar') {
         fn(null, 123);
       } else {
         throw new Error('bad username and password!');
@@ -122,10 +122,10 @@ describe.onServer('Remote Methods', function(){
         .task(User, 'create', {first: 'jan'})
         .task(User, 'create', {first: 'sam'})
         .task(User, 'create', {first: 'suzy'})
-        .on('done', function () {
-          User.count(function (err, count) {
-            User.destroyAll(function () {
-              User.count(function (err, count) {
+        .on('done', function() {
+          User.count(function(err, count) {
+            User.destroyAll(function() {
+              User.count(function(err, count) {
                 assert.equal(count, 0);
                 done();
               });
@@ -135,14 +135,14 @@ describe.onServer('Remote Methods', function(){
     });
   });
 
-  describe('Example Remote Method', function () {
+  describe('Example Remote Method', function() {
     it('Call the method using HTTP / REST', function(done) {
       request(app)
         .get('/users/sign-in?username=foo&password=bar')
         .expect('Content-Type', /json/)
         .expect(200)
-        .end(function(err, res){
-          if(err) return done(err);
+        .end(function(err, res) {
+          if (err) return done(err);
           assert.equal(res.body, 123);
           done();
         });
@@ -156,7 +156,7 @@ describe.onServer('Remote Methods', function(){
     });
   });
 
-  describe('Model.beforeRemote(name, fn)', function(){
+  describe('Model.beforeRemote(name, fn)', function() {
     it('Run a function before a remote method is called by a client', function(done) {
       var hookCalled = false;
 
@@ -172,14 +172,14 @@ describe.onServer('Remote Methods', function(){
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
-          if(err) return done(err);
+          if (err) return done(err);
           assert(hookCalled, 'hook wasnt called');
           done();
         });
     });
   });
 
-  describe('Model.afterRemote(name, fn)', function(){
+  describe('Model.afterRemote(name, fn)', function() {
     it('Run a function after a remote method is called by a client', function(done) {
       var beforeCalled = false;
       var afterCalled = false;
@@ -202,7 +202,7 @@ describe.onServer('Remote Methods', function(){
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
-          if(err) return done(err);
+          if (err) return done(err);
           assert(beforeCalled, 'before hook was not called');
           assert(afterCalled, 'after hook was not called');
           done();
@@ -210,7 +210,7 @@ describe.onServer('Remote Methods', function(){
     });
   });
 
-  describe('Remote Method invoking context', function () {
+  describe('Remote Method invoking context', function() {
     describe('ctx.req', function() {
       it('The express ServerRequest object', function(done) {
         var hookCalled = false;
@@ -233,7 +233,7 @@ describe.onServer('Remote Methods', function(){
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
-            if(err) return done(err);
+            if (err) return done(err);
             assert(hookCalled);
             done();
           });
@@ -262,7 +262,7 @@ describe.onServer('Remote Methods', function(){
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
-            if(err) return done(err);
+            if (err) return done(err);
             assert(hookCalled);
             done();
           });
@@ -281,9 +281,9 @@ describe.onServer('Remote Methods', function(){
       Book.create({title: 'Into the Wild', author: 'Jon Krakauer'}, function(err, book) {
         // using 'chapters' scope for build:
         var c = book.chapters.build({title: 'Chapter 1'});
-        book.chapters.create({title: 'Chapter 2'}, function () {
-          c.save(function () {
-            Chapter.count({bookId: book.id}, function (err, count) {
+        book.chapters.create({title: 'Chapter 2'}, function() {
+          c.save(function() {
+            Chapter.count({bookId: book.id}, function(err, count) {
               assert.equal(count, 2);
               book.chapters({where: {title: 'Chapter 1'}}, function(err, chapters) {
                 assert.equal(chapters.length, 1);
@@ -297,7 +297,7 @@ describe.onServer('Remote Methods', function(){
     });
   });
 
-  describe('Model.properties', function(){
+  describe('Model.properties', function() {
     it('Normalized properties passed in originally by loopback.createModel()', function() {
       var props = {
         s: String,
@@ -309,19 +309,18 @@ describe.onServer('Remote Methods', function(){
 
       var MyModel = loopback.createModel('foo', props);
 
-      Object.keys(MyModel.definition.properties).forEach(function (key) {
+      Object.keys(MyModel.definition.properties).forEach(function(key) {
         var p = MyModel.definition.properties[key];
         var o = MyModel.definition.properties[key];
         assert(p);
         assert(o);
         assert(typeof p.type === 'function');
 
-        if(typeof o === 'function') {
+        if (typeof o === 'function') {
           // the normalized property
           // should match the given property
           assert(
-            p.type.name === o.name
-            ||
+            p.type.name === o.name ||
             p.type.name === o
           );
         }
@@ -329,17 +328,17 @@ describe.onServer('Remote Methods', function(){
     });
   });
 
-  describe('Model.extend()', function(){
+  describe('Model.extend()', function() {
     it('Create a new model by extending an existing model', function() {
       var User = loopback.PersistedModel.extend('test-user', {
         email: String
       });
 
-      User.foo = function () {
+      User.foo = function() {
         return 'bar';
       };
 
-      User.prototype.bar = function () {
+      User.prototype.bar = function() {
         return 'foo';
       };
 
@@ -379,7 +378,6 @@ describe.onServer('Remote Methods', function(){
         user1Triggered = true;
       });
 
-
       var user2Triggered = false;
       User2.once('x', function(event) {
         user2Triggered = true;
@@ -396,7 +394,7 @@ describe.onServer('Remote Methods', function(){
 
   });
 
-  describe('Model.checkAccessTypeForMethod(remoteMethod)', function () {
+  describe('Model.checkAccessTypeForMethod(remoteMethod)', function() {
     shouldReturn('create', ACL.WRITE);
     shouldReturn('updateOrCreate', ACL.WRITE);
     shouldReturn('upsert', ACL.WRITE);
@@ -411,7 +409,7 @@ describe.onServer('Remote Methods', function(){
     shouldReturn('unkown-model-method', ACL.EXECUTE);
 
     function shouldReturn(methodName, expectedAccessType) {
-      describe(methodName, function () {
+      describe(methodName, function() {
         it('should return ' + expectedAccessType, function() {
           var remoteMethod = {name: methodName};
           assert.equal(
@@ -424,7 +422,7 @@ describe.onServer('Remote Methods', function(){
   });
 
   describe('Model.getChangeModel()', function() {
-    it('Get the Change Model', function () {
+    it('Get the Change Model', function() {
       var UserChange = User.getChangeModel();
       var change = new UserChange();
       assert(change instanceof Change);
@@ -432,7 +430,7 @@ describe.onServer('Remote Methods', function(){
   });
 
   describe('Model.getSourceId(callback)', function() {
-    it('Get the Source Id', function (done) {
+    it('Get the Source Id', function(done) {
       User.getSourceId(function(err, id) {
         assert.equal('memory-user', id);
         done();
@@ -441,7 +439,7 @@ describe.onServer('Remote Methods', function(){
   });
 
   describe('Model.checkpoint(callback)', function() {
-    it('Create a checkpoint', function (done) {
+    it('Create a checkpoint', function(done) {
       var Checkpoint = User.getChangeModel().getCheckpointModel();
       var tasks = [
         getCurrentCheckpoint,
@@ -451,7 +449,7 @@ describe.onServer('Remote Methods', function(){
       var current;
 
       async.series(tasks, function(err) {
-        if(err) return done(err);
+        if (err) return done(err);
 
         assert.equal(result, current + 1);
         done();

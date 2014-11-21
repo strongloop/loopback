@@ -19,7 +19,7 @@ describe('GeoPoint', function() {
     });
   });
 
-  describe('GeoPoint()', function(){
+  describe('GeoPoint()', function() {
     it('Create from string', function() {
       var point = new GeoPoint('1.234,5.678');
       assert.equal(point.lng, 1.234);

@@ -10,7 +10,7 @@ var expect = require('chai').expect;
 var debug = require('debug')('loopback:test:relations.integration');
 var async = require('async');
 
-describe('relations - integration', function () {
+describe('relations - integration', function() {
 
   lt.beforeEach.withApp(app);
 
@@ -37,7 +37,7 @@ describe('relations - integration', function () {
     });
   });
 
-  describe('/store/:id/widgets', function () {
+  describe('/store/:id/widgets', function() {
     beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets';
     });
@@ -81,7 +81,7 @@ describe('relations - integration', function () {
         this.http = this.post(this.url, this.newWidget);
         this.http.send(this.newWidget);
         this.http.end(function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
           this.req = this.http.req;
           this.res = this.http.res;
           done();
@@ -104,11 +104,11 @@ describe('relations - integration', function () {
           assert.equal(this.widget.name, this.newWidgetName);
         });
       });
-      it('should have a single widget with storeId', function (done) {
+      it('should have a single widget with storeId', function(done) {
         this.app.models.widget.count({
           storeId: this.store.id
         }, function(err, count) {
-          if(err) return done(err);
+          if (err) return done(err);
           assert.equal(count, 2);
           done();
         });
@@ -116,8 +116,8 @@ describe('relations - integration', function () {
     });
   });
 
-  describe('/stores/:id/widgets/:fk - 200', function () {
-    beforeEach(function (done) {
+  describe('/stores/:id/widgets/:fk - 200', function() {
+    beforeEach(function(done) {
       var self = this;
       this.store.widgets.create({
         name: this.widgetName
@@ -127,27 +127,27 @@ describe('relations - integration', function () {
         done();
       });
     });
-    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function () {
-      it('should succeed with statusCode 200', function () {
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function() {
+      it('should succeed with statusCode 200', function() {
         assert.equal(this.res.statusCode, 200);
         assert.equal(this.res.body.id, this.widget.id);
       });
     });
   });
 
-  describe('/stores/:id/widgets/:fk - 404', function () {
-    beforeEach(function () {
+  describe('/stores/:id/widgets/:fk - 404', function() {
+    beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets/123456';
     });
-    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function () {
-      it('should fail with statusCode 404', function () {
+    lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function() {
+      it('should fail with statusCode 404', function() {
         assert.equal(this.res.statusCode, 404);
         assert.equal(this.res.body.error.status, 404);
       });
     });
   });
 
-  describe('/store/:id/widgets/count', function () {
+  describe('/store/:id/widgets/count', function() {
     beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets/count';
     });
@@ -161,7 +161,7 @@ describe('relations - integration', function () {
     });
   });
 
-  describe('/store/:id/widgets/count - filtered (matches)', function () {
+  describe('/store/:id/widgets/count - filtered (matches)', function() {
     beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets/count?where[name]=foo';
     });
@@ -175,7 +175,7 @@ describe('relations - integration', function () {
     });
   });
 
-  describe('/store/:id/widgets/count - filtered (no matches)', function () {
+  describe('/store/:id/widgets/count - filtered (no matches)', function() {
     beforeEach(function() {
       this.url = '/api/stores/' + this.store.id + '/widgets/count?where[name]=bar';
     });
@@ -189,8 +189,8 @@ describe('relations - integration', function () {
     });
   });
 
-  describe('/widgets/:id/store', function () {
-    beforeEach(function (done) {
+  describe('/widgets/:id/store', function() {
+    beforeEach(function(done) {
       var self = this;
       this.store.widgets.create({
         name: this.widgetName
@@ -200,8 +200,8 @@ describe('relations - integration', function () {
         done();
       });
     });
-    lt.describe.whenCalledRemotely('GET', '/api/widgets/:id/store', function () {
-      it('should succeed with statusCode 200', function () {
+    lt.describe.whenCalledRemotely('GET', '/api/widgets/:id/store', function() {
+      it('should succeed with statusCode 200', function() {
         assert.equal(this.res.statusCode, 200);
         assert.equal(this.res.body.id, this.store.id);
       });
@@ -215,10 +215,10 @@ describe('relations - integration', function () {
 
       async.series([
         // Clean up models
-        function (done) {
-          app.models.physician.destroyAll(function (err) {
-            app.models.patient.destroyAll(function (err) {
-              app.models.appointment.destroyAll(function (err) {
+        function(done) {
+          app.models.physician.destroyAll(function(err) {
+            app.models.patient.destroyAll(function(err) {
+              app.models.appointment.destroyAll(function(err) {
                 done();
               });
             });
@@ -226,44 +226,44 @@ describe('relations - integration', function () {
         },
 
         // Create a physician
-        function (done) {
+        function(done) {
           app.models.physician.create({
             name: 'ph1'
-          }, function (err, physician) {
+          }, function(err, physician) {
             root.physician = physician;
             done();
           });
         },
 
         // Create a patient
-        connecting ? function (done) {
+        connecting ? function(done) {
           root.physician.patients.create({
             name: 'pa1'
-          }, function (err, patient) {
+          }, function(err, patient) {
             root.patient = patient;
             root.relUrl = '/api/physicians/' + root.physician.id
               + '/patients/rel/' + root.patient.id;
             done();
           });
-        } : function (done) {
+        } : function(done) {
           app.models.patient.create({
             name: 'pa1'
-          }, function (err, patient) {
+          }, function(err, patient) {
             root.patient = patient;
             root.relUrl = '/api/physicians/' + root.physician.id
               + '/patients/rel/' + root.patient.id;
             done();
           });
-        }], function (err, done) {
+        }], function(err, done) {
         cb(err, root);
       });
     }
 
-    describe('PUT /physicians/:id/patients/rel/:fk', function () {
+    describe('PUT /physicians/:id/patients/rel/:fk', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(false, function (err, root) {
+        setup(false, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
@@ -271,25 +271,25 @@ describe('relations - integration', function () {
         });
       });
 
-      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', function () {
-        it('should succeed with statusCode 200', function () {
+      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', function() {
+        it('should succeed with statusCode 200', function() {
           assert.equal(this.res.statusCode, 200);
           assert.equal(this.res.body.patientId, this.patient.id);
           assert.equal(this.res.body.physicianId, this.physician.id);
         });
 
-        it('should create a record in appointment', function (done) {
+        it('should create a record in appointment', function(done) {
           var self = this;
-          app.models.appointment.find(function (err, apps) {
+          app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 1);
             assert.equal(apps[0].patientId, self.patient.id);
             done();
           });
         });
 
-        it('should connect physician to patient', function (done) {
+        it('should connect physician to patient', function(done) {
           var self = this;
-          self.physician.patients(function (err, patients) {
+          self.physician.patients(function(err, patients) {
             assert.equal(patients.length, 1);
             assert.equal(patients[0].id, self.patient.id);
             done();
@@ -298,11 +298,11 @@ describe('relations - integration', function () {
       });
     });
 
-    describe('PUT /physicians/:id/patients/rel/:fk with data', function () {
+    describe('PUT /physicians/:id/patients/rel/:fk with data', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(false, function (err, root) {
+        setup(false, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
@@ -313,17 +313,17 @@ describe('relations - integration', function () {
       var NOW = Date.now();
       var data = { date: new Date(NOW) };
 
-      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', data, function () {
-        it('should succeed with statusCode 200', function () {
+      lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', data, function() {
+        it('should succeed with statusCode 200', function() {
           assert.equal(this.res.statusCode, 200);
           assert.equal(this.res.body.patientId, this.patient.id);
           assert.equal(this.res.body.physicianId, this.physician.id);
           assert.equal(new Date(this.res.body.date).getTime(), NOW);
         });
 
-        it('should create a record in appointment', function (done) {
+        it('should create a record in appointment', function(done) {
           var self = this;
-          app.models.appointment.find(function (err, apps) {
+          app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 1);
             assert.equal(apps[0].patientId, self.patient.id);
             assert.equal(apps[0].physicianId, self.physician.id);
@@ -332,9 +332,9 @@ describe('relations - integration', function () {
           });
         });
 
-        it('should connect physician to patient', function (done) {
+        it('should connect physician to patient', function(done) {
           var self = this;
-          self.physician.patients(function (err, patients) {
+          self.physician.patients(function(err, patients) {
             assert.equal(patients.length, 1);
             assert.equal(patients[0].id, self.patient.id);
             done();
@@ -343,11 +343,11 @@ describe('relations - integration', function () {
       });
     });
 
-    describe('HEAD /physicians/:id/patients/rel/:fk', function () {
+    describe('HEAD /physicians/:id/patients/rel/:fk', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(true, function (err, root) {
+        setup(true, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
@@ -355,18 +355,18 @@ describe('relations - integration', function () {
         });
       });
 
-      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function () {
-        it('should succeed with statusCode 200', function () {
+      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function() {
+        it('should succeed with statusCode 200', function() {
           assert.equal(this.res.statusCode, 200);
         });
       });
     });
 
-    describe('HEAD /physicians/:id/patients/rel/:fk that does not exist', function () {
+    describe('HEAD /physicians/:id/patients/rel/:fk that does not exist', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(true, function (err, root) {
+        setup(true, function(err, root) {
           self.url = '/api/physicians/' + root.physician.id
             + '/patients/rel/' + '999';
           self.patient = root.patient;
@@ -375,18 +375,18 @@ describe('relations - integration', function () {
         });
       });
 
-      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function () {
-        it('should succeed with statusCode 404', function () {
+      lt.describe.whenCalledRemotely('HEAD', '/api/physicians/:id/patients/rel/:fk', function() {
+        it('should succeed with statusCode 404', function() {
           assert.equal(this.res.statusCode, 404);
         });
       });
     });
 
-    describe('DELETE /physicians/:id/patients/rel/:fk', function () {
+    describe('DELETE /physicians/:id/patients/rel/:fk', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(true, function (err, root) {
+        setup(true, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
@@ -394,41 +394,41 @@ describe('relations - integration', function () {
         });
       });
 
-      it('should create a record in appointment', function (done) {
+      it('should create a record in appointment', function(done) {
         var self = this;
-        app.models.appointment.find(function (err, apps) {
+        app.models.appointment.find(function(err, apps) {
           assert.equal(apps.length, 1);
           assert.equal(apps[0].patientId, self.patient.id);
           done();
         });
       });
 
-      it('should connect physician to patient', function (done) {
+      it('should connect physician to patient', function(done) {
         var self = this;
-        self.physician.patients(function (err, patients) {
+        self.physician.patients(function(err, patients) {
           assert.equal(patients.length, 1);
           assert.equal(patients[0].id, self.patient.id);
           done();
         });
       });
 
-      lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/rel/:fk', function () {
-        it('should succeed with statusCode 204', function () {
+      lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/rel/:fk', function() {
+        it('should succeed with statusCode 204', function() {
           assert.equal(this.res.statusCode, 204);
         });
 
-        it('should remove the record in appointment', function (done) {
+        it('should remove the record in appointment', function(done) {
           var self = this;
-          app.models.appointment.find(function (err, apps) {
+          app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 0);
             done();
           });
         });
 
-        it('should remove the connection between physician and patient', function (done) {
+        it('should remove the connection between physician and patient', function(done) {
           var self = this;
           // Need to refresh the cache
-          self.physician.patients(true, function (err, patients) {
+          self.physician.patients(true, function(err, patients) {
             assert.equal(patients.length, 0);
             done();
           });
@@ -436,11 +436,11 @@ describe('relations - integration', function () {
       });
     });
 
-    describe('GET /physicians/:id/patients/:fk', function () {
+    describe('GET /physicians/:id/patients/:fk', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(true, function (err, root) {
+        setup(true, function(err, root) {
           self.url = '/api/physicians/' + root.physician.id
             + '/patients/' + root.patient.id;
           self.patient = root.patient;
@@ -449,19 +449,19 @@ describe('relations - integration', function () {
         });
       });
 
-      lt.describe.whenCalledRemotely('GET', '/api/physicians/:id/patients/:fk', function () {
-        it('should succeed with statusCode 200', function () {
+      lt.describe.whenCalledRemotely('GET', '/api/physicians/:id/patients/:fk', function() {
+        it('should succeed with statusCode 200', function() {
           assert.equal(this.res.statusCode, 200);
           assert.equal(this.res.body.id, this.physician.id);
         });
       });
     });
 
-    describe('DELETE /physicians/:id/patients/:fk', function () {
+    describe('DELETE /physicians/:id/patients/:fk', function() {
 
-      before(function (done) {
+      before(function(done) {
         var self = this;
-        setup(true, function (err, root) {
+        setup(true, function(err, root) {
           self.url = '/api/physicians/' + root.physician.id
             + '/patients/' + root.patient.id;
           self.patient = root.patient;
@@ -470,31 +470,31 @@ describe('relations - integration', function () {
         });
       });
 
-      lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/:fk', function () {
-        it('should succeed with statusCode 204', function () {
+      lt.describe.whenCalledRemotely('DELETE', '/api/physicians/:id/patients/:fk', function() {
+        it('should succeed with statusCode 204', function() {
           assert.equal(this.res.statusCode, 204);
         });
 
-        it('should remove the record in appointment', function (done) {
+        it('should remove the record in appointment', function(done) {
           var self = this;
-          app.models.appointment.find(function (err, apps) {
+          app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 0);
             done();
           });
         });
 
-        it('should remove the connection between physician and patient', function (done) {
+        it('should remove the connection between physician and patient', function(done) {
           var self = this;
           // Need to refresh the cache
-          self.physician.patients(true, function (err, patients) {
+          self.physician.patients(true, function(err, patients) {
             assert.equal(patients.length, 0);
             done();
           });
         });
 
-        it('should remove the record in patient', function (done) {
+        it('should remove the record in patient', function(done) {
           var self = this;
-          app.models.patient.find(function (err, patients) {
+          app.models.patient.find(function(err, patients) {
             assert.equal(patients.length, 0);
             done();
           });
@@ -1193,14 +1193,14 @@ describe('relations - integration', function () {
           if (err) return done(err);
           test.book = book;
           book.pages.create({ name: 'Page 1' },
-            function(err, page) {
-              if (err) return done(err);
-              test.page = page;
-              page.notes.create({ text: 'Page Note 1' },
-                function(err, note) {
-                test.note = note;
-                done();
-              });
+          function(err, page) {
+            if (err) return done(err);
+            test.page = page;
+            page.notes.create({ text: 'Page Note 1' },
+            function(err, note) {
+              test.note = note;
+              done();
+            });
           });
         });
     });
@@ -1223,7 +1223,7 @@ describe('relations - integration', function () {
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
           done();
-      });
+        });
     });
 
     it('has regular relationship routes - notes', function(done) {
@@ -1235,7 +1235,7 @@ describe('relations - integration', function () {
           expect(res.body).to.be.an.object;
           expect(res.body.text).to.equal('Page Note 1');
           done();
-      });
+        });
     });
 
     it('has a basic error handler', function(done) {
@@ -1246,7 +1246,7 @@ describe('relations - integration', function () {
           var expected = 'could not find a model with id unknown';
           expect(res.body.error.message).to.equal(expected);
           done();
-      });
+        });
     });
 
     it('enables nested relationship routes - belongsTo find', function(done) {
@@ -1257,7 +1257,7 @@ describe('relations - integration', function () {
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
           done();
-      });
+        });
     });
 
     it('enables nested relationship routes - belongsTo findById', function(done) {
@@ -1267,7 +1267,7 @@ describe('relations - integration', function () {
           expect(res.body).to.be.an.object;
           expect(res.body.name).to.equal('Page 1');
           done();
-      });
+        });
     });
 
     it('enables nested relationship routes - hasMany find', function(done) {
@@ -1278,7 +1278,7 @@ describe('relations - integration', function () {
           expect(res.body).to.have.length(1);
           expect(res.body[0].text).to.equal('Page Note 1');
           done();
-      });
+        });
     });
 
     it('enables nested relationship routes - hasMany findById', function(done) {
@@ -1289,8 +1289,8 @@ describe('relations - integration', function () {
           expect(res.headers['x-after']).to.equal('after');
           expect(res.body).to.be.an.object;
           expect(res.body.text).to.equal('Page Note 1');
-        done();
-      });
+          done();
+        });
     });
 
   });

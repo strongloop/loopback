@@ -1,4 +1,4 @@
-describe('Memory Connector', function(){
+describe('Memory Connector', function() {
   it('Create a model using the memory connector', function(done) {
     // use the built in memory function
     // to create a memory data source
@@ -26,7 +26,7 @@ describe('Memory Connector', function(){
     ], count);
 
     function count() {
-      Product.count(function (err, count) {
+      Product.count(function(err, count) {
         assert.equal(count, 3);
         done();
       });

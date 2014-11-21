@@ -26,7 +26,7 @@ describe('remoting coercion', function() {
         foo: 'bar'
       })
       .end(function(err) {
-        if(err) return done(err);
+        if (err) return done(err);
         assert(called);
         done();
       });

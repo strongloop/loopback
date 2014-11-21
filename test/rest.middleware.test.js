@@ -86,7 +86,7 @@ describe('loopback.rest', function() {
     app.use(loopback.rest());
 
     request(app).get('/mymodels')
-      .set('Accept', 'text/html,application/xml;q=0.9,*/*;q=0.8')
+      .set('Accept', 'text/html,application/xml;q= 0.9,*/*;q= 0.8')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
   });

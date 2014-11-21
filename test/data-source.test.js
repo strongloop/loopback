@@ -1,7 +1,7 @@
 describe('DataSource', function() {
   var memory;
 
-  beforeEach(function(){
+  beforeEach(function() {
     memory = loopback.createDataSource({
       connector: loopback.Memory
     });

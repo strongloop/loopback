@@ -307,7 +307,8 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app, db;
+    var app;
+    var db;
     beforeEach(function() {
       app = loopback();
       db = loopback.createDataSource({connector: loopback.Memory});
@@ -378,7 +379,7 @@ describe('app', function() {
 
   });
 
-  describe('app.model(name, config)', function () {
+  describe('app.model(name, config)', function() {
     var app;
 
     beforeEach(function() {
@@ -388,7 +389,7 @@ describe('app', function() {
       });
     });
 
-    it('Sugar for defining a fully built model', function () {
+    it('Sugar for defining a fully built model', function() {
       app.model('foo', {
         dataSource: 'db'
       });
@@ -561,15 +562,15 @@ describe('app', function() {
     });
   });
 
-  describe.onServer('app.get('/', loopback.status())', function () {
-    it('should return the status of the application', function (done) {
+  describe.onServer('app.get(\'/\', loopback.status())', function() {
+    it('should return the status of the application', function(done) {
       var app = loopback();
       app.get('/', loopback.status());
       request(app)
         .get('/')
         .expect(200)
         .end(function(err, res) {
-          if(err) return done(err);
+          if (err) return done(err);
 
           assert.equal(typeof res.body, 'object');
           assert(res.body.started);
@@ -651,7 +652,8 @@ describe('app', function() {
   });
 
   describe('normalizeHttpPath option', function() {
-    var app, db;
+    var app;
+    var db;
     beforeEach(function() {
       app = loopback();
       db = loopback.createDataSource({ connector: loopback.Memory });
