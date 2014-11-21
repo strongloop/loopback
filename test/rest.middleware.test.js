@@ -103,7 +103,7 @@ describe('loopback.rest', function() {
         .set('Authorization', token.id)
         .expect(200)
         .end(done);
-    });
+    }, done);
   });
 
   it('does not include loopback.token when auth not enabled', function(done) {
@@ -127,7 +127,7 @@ describe('loopback.rest', function() {
           expect(res.body.id).to.equal(null);
           done();
         });
-    });
+    }, done);
   });
 
   describe('context propagation', function() {
@@ -255,7 +255,7 @@ describe('loopback.rest', function() {
       dataSource: 'db'
     });
   }
-  function givenLoggedInUser(cb) {
+  function givenLoggedInUser(cb, done) {
     var credentials = { email: 'user@example.com', password: 'pwd' };
     var User = app.models.user;
     User.create(credentials,
