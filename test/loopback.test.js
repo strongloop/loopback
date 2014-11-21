@@ -79,12 +79,12 @@ describe('loopback', function() {
   });
 
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
-    it("Setup a remote method.", function() {
+    it('Setup a remote method.', function() {
       var Product = loopback.createModel('product', {price: Number});
 
       Product.stats = function(fn) {
         // ...
-      }
+      };
 
       loopback.remoteMethod(
         Product.stats,

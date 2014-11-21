@@ -13,7 +13,7 @@ describe('remoting coercion', function() {
       assert(inst instanceof TestModel);
       assert(inst.foo === 'bar');
       cb();
-    }
+    };
     TestModel.remoteMethod('test', {
       accepts: {arg: 'inst', type: 'TestModel', http: {source: 'body'}},
       http: {path: '/test', verb: 'post'}
@@ -31,4 +31,4 @@ describe('remoting coercion', function() {
         done();
       });
   });
-})
+});

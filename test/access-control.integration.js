@@ -1,3 +1,5 @@
+/*jshint -W030 */
+
 var loopback = require('../');
 var lt = require('loopback-testing');
 var path = require('path');
@@ -20,7 +22,7 @@ describe('access control - integration', function () {
 
     it('should have a validate method', function () {
       var token = new app.models.accessToken;
-      assert.equal(typeof token.validate, 'function');  
+      assert.equal(typeof token.validate, 'function');
     });
   });
 
@@ -65,7 +67,7 @@ describe('access control - integration', function () {
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', '/api/users');
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', '/api/users');
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'GET', '/api/users');
-    
+
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', urlForUser);
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', urlForUser);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER,'GET', urlForUser);
@@ -224,5 +226,5 @@ describe('access control - integration', function () {
       return '/api/accounts/' + this.account.id;
     }
   });
-  
+
 });

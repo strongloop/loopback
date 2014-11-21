@@ -33,7 +33,7 @@ describe('Model Tests', function() {
       }
 
       return extendedModel;
-    }
+    };
 
     User = PersistedModel.extend('user', {
       'first': String,
@@ -53,7 +53,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.validatesPresenceOf(properties...)', function() {
-    it("Require a model to include a property to be considered valid", function() {
+    it('Require a model to include a property to be considered valid', function() {
       User.validatesPresenceOf('first', 'last', 'age');
       var joe = new User({first: 'joe'});
       assert(joe.isValid() === false, 'model should not validate');
@@ -63,7 +63,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.validatesLengthOf(property, options)', function() {
-    it("Require a property length to be within a specified range", function() {
+    it('Require a property length to be within a specified range', function() {
       User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
       var joe = new User({password: '1234'});
       assert(joe.isValid() === false, 'model should not be valid');
@@ -72,7 +72,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.validatesInclusionOf(property, options)', function() {
-    it("Require a value for `property` to be in the specified array", function() {
+    it('Require a value for `property` to be in the specified array', function() {
       User.validatesInclusionOf('gender', {in: ['male', 'female']});
       var foo = new User({gender: 'bar'});
       assert(foo.isValid() === false, 'model should not be valid');
@@ -81,7 +81,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.validatesExclusionOf(property, options)', function() {
-    it("Require a value for `property` to not exist in the specified array", function() {
+    it('Require a value for `property` to not exist in the specified array', function() {
       User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
       var foo = new User({domain: 'www'});
       var bar = new User({domain: 'billing'});
@@ -96,7 +96,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.validatesNumericalityOf(property, options)', function() {
-    it("Require a value for `property` to be a specific type of `Number`", function() {
+    it('Require a value for `property` to be a specific type of `Number`', function() {
       User.validatesNumericalityOf('age', {int: true});
       var joe = new User({age: 10.2});
       assert(joe.isValid() === false);
@@ -107,14 +107,14 @@ describe('Model Tests', function() {
   });
 
   describe('myModel.isValid()', function() {
-    it("Validate the model instance", function() {
+    it('Validate the model instance', function() {
       User.validatesNumericalityOf('age', {int: true});
-      var user = new User({first: 'joe', age: 'flarg'})
+      var user = new User({first: 'joe', age: 'flarg'});
       var valid = user.isValid();
       assert(valid === false);
       assert(user.errors.age, 'model should have age error');
     });
-    
+
     it('Asynchronously validate the model', function(done) {
       User.validatesNumericalityOf('age', {int: true});
       var user = new User({first: 'joe', age: 'flarg'});
@@ -127,7 +127,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.create([data], [callback])', function() {
-    it("Create an instance of Model with given data and save to the attached data source", function(done) {
+    it('Create an instance of Model with given data and save to the attached data source', function(done) {
       User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
         assert(user instanceof User);
         done();
@@ -136,7 +136,7 @@ describe('Model Tests', function() {
   });
 
   describe('model.save([options], [callback])', function() {
-    it("Save an instance of a Model to the attached data source", function(done) {
+    it('Save an instance of a Model to the attached data source', function(done) {
       var joe = new User({first: 'Joe', last: 'Bob'});
       joe.save(function(err, user) {
         assert(user.id);
@@ -148,11 +148,11 @@ describe('Model Tests', function() {
   });
 
   describe('model.updateAttributes(data, [callback])', function() {
-    it("Save specified attributes to the attached data source", function(done) {
+    it('Save specified attributes to the attached data source', function(done) {
       User.create({first: 'joe', age: 100}, function (err, user) {
         assert(!err);
         assert.equal(user.first, 'joe');
-        
+
         user.updateAttributes({
           first: 'updatedFirst',
           last: 'updatedLast'
@@ -168,11 +168,11 @@ describe('Model Tests', function() {
   });
 
   describe('Model.upsert(data, callback)', function() {
-    it("Update when record with id=data.id found, insert otherwise", function(done) {
+    it('Update when record with id=data.id found, insert otherwise', function(done) {
       User.upsert({first: 'joe', id: 7}, function (err, user) {
         assert(!err);
         assert.equal(user.first, 'joe');
-        
+
         User.upsert({first: 'bob', id: 7}, function (err, updatedUser) {
           assert(!err);
           assert.equal(updatedUser.first, 'bob');
@@ -183,7 +183,7 @@ describe('Model Tests', function() {
   });
 
   describe('model.destroy([callback])', function() {
-    it("Remove a model from the attached data source", function(done) {
+    it('Remove a model from the attached data source', function(done) {
       User.create({first: 'joe', last: 'bob'}, function (err, user) {
         User.findById(user.id, function (err, foundUser) {
           assert.equal(user.id, foundUser.id);
@@ -199,7 +199,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.deleteById(id, [callback])', function () {
-      it("Delete a model instance from the attached data source", function (done) {
+      it('Delete a model instance from the attached data source', function (done) {
           User.create({first: 'joe', last: 'bob'}, function (err, user) {
               User.deleteById(user.id, function (err) {
                   User.findById(user.id, function (err, notFound) {
@@ -212,7 +212,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.findById(id, callback)', function() {
-    it("Find an instance by id", function(done) {
+    it('Find an instance by id', function(done) {
       User.create({first: 'michael', last: 'jordan', id: 23}, function () {
         User.findById(23, function (err, user) {
           assert.equal(user.id, 23);
@@ -225,7 +225,7 @@ describe('Model Tests', function() {
   });
 
   describe('Model.count([query], callback)', function() {
-    it("Query count of Model instances in data source", function(done) {
+    it('Query count of Model instances in data source', function(done) {
       (new TaskEmitter())
         .task(User, 'create', {first: 'jill', age: 100})
         .task(User, 'create', {first: 'bob', age: 200})
@@ -243,5 +243,4 @@ describe('Model Tests', function() {
 
 });
 
-
-}
+};

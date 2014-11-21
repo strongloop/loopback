@@ -8,15 +8,15 @@ describe('hidden properties', function () {
       {hidden: ['secret']}
     );
     Product.attachTo(loopback.memory());
-    
+
     var Category = this.Category = loopback.PersistedModel.extend('category');
     Category.attachTo(loopback.memory());
     Category.hasMany(Product);
-    
+
     app.model(Product);
     app.model(Category);
     app.use(loopback.rest());
-    
+
     Category.create({
       name: 'my category'
     }, function(err, category) {
@@ -32,7 +32,7 @@ describe('hidden properties', function () {
     this.Category.destroyAll(function() {
       Product.destroyAll(done);
     });
-  })
+  });
 
   it('should hide a property remotely', function (done) {
      request(this.app)

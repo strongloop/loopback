@@ -22,7 +22,7 @@ describe('role model', function () {
     RoleMapping.attachTo(ds);
   });
 
-  it("should define role/role relations", function () {
+  it('should define role/role relations', function () {
     Role.create({name: 'user'}, function (err, userRole) {
       Role.create({name: 'admin'}, function (err, adminRole) {
         userRole.principals.create({principalType: RoleMapping.ROLE, principalId: adminRole.id}, function (err, mapping) {
@@ -46,7 +46,7 @@ describe('role model', function () {
 
   });
 
-  it("should define role/user relations", function () {
+  it('should define role/user relations', function () {
 
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
@@ -77,7 +77,7 @@ describe('role model', function () {
   });
 
 
-  it("should automatically generate role id", function () {
+  it('should automatically generate role id', function () {
 
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
@@ -110,7 +110,7 @@ describe('role model', function () {
 
   });
 
-  it("should support getRoles() and isInRole()", function () {
+  it('should support getRoles() and isInRole()', function () {
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function (err, user) {
       // console.log('User: ', user.id);
       Role.create({name: 'userRole'}, function (err, role) {
@@ -156,7 +156,7 @@ describe('role model', function () {
 
   });
 
-  it("should support owner role resolver", function () {
+  it('should support owner role resolver', function () {
 
     var Album = ds.createModel('Album', {
       name: String,

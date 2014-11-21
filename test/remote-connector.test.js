@@ -57,7 +57,7 @@ describe('RemoteConnector', function() {
       calledServerCreate = true;
       data.id = 1;
       cb(null, data);
-    }
+    };
 
     ServerModel.setupRemoting();
 

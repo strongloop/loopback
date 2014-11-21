@@ -15,7 +15,7 @@ describe('Model / PersistedModel', function() {
   });
 
   describe('Model.validatesUniquenessOf(property, options)', function() {
-    it("Ensure the value for `property` is unique", function(done) {
+    it('Ensure the value for `property` is unique', function(done) {
       var User = PersistedModel.extend('user', {
         'first': String,
         'last': String,
@@ -31,9 +31,9 @@ describe('Model / PersistedModel', function() {
       });
 
       User.attachTo(dataSource);
-      
+
       User.validatesUniquenessOf('email', {message: 'email is not unique'});
-      
+
       var joe = new User({email: 'joe@joe.com'});
       var joe2 = new User({email: 'joe@joe.com'});
 
@@ -41,7 +41,7 @@ describe('Model / PersistedModel', function() {
         joe2.save(function (err) {
           assert(err, 'should get a validation error');
           assert(joe2.errors.email, 'model should have email error');
-          
+
           done();
         });
       });
@@ -49,14 +49,14 @@ describe('Model / PersistedModel', function() {
   });
 
   describe('Model.attachTo(dataSource)', function() {
-    it("Attach a model to a [DataSource](#data-source)", function() {
+    it('Attach a model to a [DataSource](#data-source)', function() {
       var MyModel = loopback.createModel('my-model', {name: String});
       var dataSource = loopback.createDataSource({
         connector: loopback.Memory
       });
-      
+
       MyModel.attachTo(dataSource);
-      
+
       MyModel.find(function(err, results) {
         assert(results.length === 0, 'should have data access methods after attaching to a data source');
       });
@@ -95,7 +95,7 @@ describe.onServer('Remote Methods', function(){
       } else {
         throw new Error('bad username and password!');
       }
-    }
+    };
 
     loopback.remoteMethod(
       User.login,
@@ -113,9 +113,9 @@ describe.onServer('Remote Methods', function(){
     app.use(loopback.rest());
     app.model(User);
   });
-  
+
   describe('Model.destroyAll(callback)', function() {
-    it("Delete all Model instances from data source", function(done) {
+    it('Delete all Model instances from data source', function(done) {
       (new TaskEmitter())
         .task(User, 'create', {first: 'jill'})
         .task(User, 'create', {first: 'bob'})
@@ -159,12 +159,12 @@ describe.onServer('Remote Methods', function(){
   describe('Model.beforeRemote(name, fn)', function(){
     it('Run a function before a remote method is called by a client', function(done) {
       var hookCalled = false;
-      
+
       User.beforeRemote('create', function(ctx, user, next) {
         hookCalled = true;
         next();
       });
-      
+
       // invoke save
       request(app)
         .post('/users')
@@ -183,7 +183,7 @@ describe.onServer('Remote Methods', function(){
     it('Run a function after a remote method is called by a client', function(done) {
       var beforeCalled = false;
       var afterCalled = false;
-      
+
       User.beforeRemote('create', function(ctx, user, next) {
         assert(!afterCalled);
         beforeCalled = true;
@@ -194,7 +194,7 @@ describe.onServer('Remote Methods', function(){
         afterCalled = true;
         next();
       });
-      
+
       // invoke save
       request(app)
         .post('/users')
@@ -212,9 +212,9 @@ describe.onServer('Remote Methods', function(){
 
   describe('Remote Method invoking context', function () {
     describe('ctx.req', function() {
-      it("The express ServerRequest object", function(done) {
+      it('The express ServerRequest object', function(done) {
         var hookCalled = false;
-        
+
         User.beforeRemote('create', function(ctx, user, next) {
           hookCalled = true;
           assert(ctx.req);
@@ -225,7 +225,7 @@ describe.onServer('Remote Methods', function(){
           assert(ctx.res.end);
           next();
         });
-      
+
         // invoke save
         request(app)
           .post('/users')
@@ -241,9 +241,9 @@ describe.onServer('Remote Methods', function(){
     });
 
     describe('ctx.res', function() {
-      it("The express ServerResponse object", function(done) {
+      it('The express ServerResponse object', function(done) {
         var hookCalled = false;
-        
+
         User.beforeRemote('create', function(ctx, user, next) {
           hookCalled = true;
           assert(ctx.req);
@@ -254,7 +254,7 @@ describe.onServer('Remote Methods', function(){
           assert(ctx.res.end);
           next();
         });
-      
+
         // invoke save
         request(app)
           .post('/users')
@@ -268,16 +268,16 @@ describe.onServer('Remote Methods', function(){
           });
       });
     });
-  })
+  });
 
   describe('Model.hasMany(Model)', function() {
-    it("Define a one to many relationship", function(done) {
+    it('Define a one to many relationship', function(done) {
       var Book = dataSource.createModel('book', {title: String, author: String});
       var Chapter = dataSource.createModel('chapter', {title: String});
-      
+
       // by referencing model
       Book.hasMany(Chapter);
-      
+
       Book.create({title: 'Into the Wild', author: 'Jon Krakauer'}, function(err, book) {
         // using 'chapters' scope for build:
         var c = book.chapters.build({title: 'Chapter 1'});
@@ -296,7 +296,7 @@ describe.onServer('Remote Methods', function(){
       });
     });
   });
-  
+
   describe('Model.properties', function(){
     it('Normalized properties passed in originally by loopback.createModel()', function() {
       var props = {
@@ -306,16 +306,16 @@ describe.onServer('Remote Methods', function(){
         d: Date,
         g: loopback.GeoPoint
       };
-      
+
       var MyModel = loopback.createModel('foo', props);
-      
+
       Object.keys(MyModel.definition.properties).forEach(function (key) {
         var p = MyModel.definition.properties[key];
         var o = MyModel.definition.properties[key];
         assert(p);
         assert(o);
         assert(typeof p.type === 'function');
-        
+
         if(typeof o === 'function') {
           // the normalized property
           // should match the given property
@@ -323,40 +323,40 @@ describe.onServer('Remote Methods', function(){
             p.type.name === o.name
             ||
             p.type.name === o
-          )
+          );
         }
       });
     });
   });
-    
+
   describe('Model.extend()', function(){
     it('Create a new model by extending an existing model', function() {
       var User = loopback.PersistedModel.extend('test-user', {
         email: String
       });
-      
+
       User.foo = function () {
         return 'bar';
-      }
-      
+      };
+
       User.prototype.bar = function () {
         return 'foo';
-      }
-      
+      };
+
       var MyUser = User.extend('my-user', {
         a: String,
         b: String
       });
-      
+
       assert.equal(MyUser.prototype.bar, User.prototype.bar);
       assert.equal(MyUser.foo, User.foo);
-      
+
       var user = new MyUser({
         email: 'foo@bar.com',
         a: 'foo',
         b: 'bar'
       });
-      
+
       assert.equal(user.email, 'foo@bar.com');
       assert.equal(user.a, 'foo');
       assert.equal(user.b, 'bar');

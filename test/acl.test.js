@@ -29,7 +29,7 @@ describe('security scopes', function () {
     testModel.attachTo(ds);
   });
 
-  it("should allow access to models for the given scope by wildcard", function () {
+  it('should allow access to models for the given scope by wildcard', function () {
     Scope.create({name: 'userScope', description: 'access user information'}, function (err, scope) {
       ACL.create({principalType: ACL.SCOPE, principalId: scope.id, model: 'User', property: ACL.ALL,
           accessType: ACL.ALL, permission: ACL.ALLOW},
@@ -42,7 +42,7 @@ describe('security scopes', function () {
 
   });
 
-  it("should allow access to models for the given scope", function () {
+  it('should allow access to models for the given scope', function () {
     Scope.create({name: 'testModelScope', description: 'access testModel information'}, function (err, scope) {
       ACL.create({principalType: ACL.SCOPE, principalId: scope.id,
           model: 'testModel', property: 'name', accessType: ACL.READ, permission: ACL.ALLOW},
@@ -75,25 +75,25 @@ describe('security ACLs', function () {
   it('should order ACL entries based on the matching score', function() {
     var acls = [
       {
-        "model": "account",
-        "accessType": "*",
-        "permission": "DENY",
-        "principalType": "ROLE",
-        "principalId": "$everyone"
+        'model': 'account',
+        'accessType': '*',
+        'permission': 'DENY',
+        'principalType': 'ROLE',
+        'principalId': '$everyone'
       },
       {
-        "model": "account",
-        "accessType": "*",
-        "permission": "ALLOW",
-        "principalType": "ROLE",
-        "principalId": "$owner"
+        'model': 'account',
+        'accessType': '*',
+        'permission': 'ALLOW',
+        'principalType': 'ROLE',
+        'principalId': '$owner'
       },
       {
-        "model": "account",
-        "accessType": "READ",
-        "permission": "ALLOW",
-        "principalType": "ROLE",
-        "principalId": "$everyone"
+        'model': 'account',
+        'accessType': 'READ',
+        'permission': 'ALLOW',
+        'principalType': 'ROLE',
+        'principalId': '$everyone'
       }];
     var req = {
       model: 'account',
@@ -101,7 +101,7 @@ describe('security ACLs', function () {
       accessType: 'WRITE'
     };
 
-    acls = acls.map(function(a) { return new ACL(a)});
+    acls = acls.map(function(a) { return new ACL(a); });
 
     var perm = ACL.resolvePermission(acls, req);
     assert.deepEqual(perm, { model: 'account',
@@ -111,7 +111,7 @@ describe('security ACLs', function () {
       methodNames: []});
   });
 
-  it("should allow access to models for the given principal by wildcard", function () {
+  it('should allow access to models for the given principal by wildcard', function () {
     ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.ALLOW}, function (err, acl) {
 
@@ -132,7 +132,7 @@ describe('security ACLs', function () {
 
   });
 
-  it("should allow access to models by exception", function () {
+  it('should allow access to models by exception', function () {
     ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'testModel', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.DENY}, function (err, acl) {
 
@@ -161,7 +161,7 @@ describe('security ACLs', function () {
 
   });
 
-  it("should honor defaultPermission from the model", function () {
+  it('should honor defaultPermission from the model', function () {
     var Customer = ds.createModel('Customer', {
       name: {
         type: String,
@@ -192,7 +192,7 @@ describe('security ACLs', function () {
 
   });
 
-  it("should honor static ACLs from the model", function () {
+  it('should honor static ACLs from the model', function () {
     var Customer = ds.createModel('Customer', {
       name: {
         type: String,
@@ -227,7 +227,7 @@ describe('security ACLs', function () {
 
   });
 
-  it("should filter static ACLs by model/property", function() {
+  it('should filter static ACLs by model/property', function() {
     var Model1 = ds.createModel('Model1', {
       name: {
         type: String,
@@ -254,7 +254,7 @@ describe('security ACLs', function () {
     assert(staticACLs.length === 1);
   });
 
-  it("should check access against LDL, ACL, and Role", function () {
+  it('should check access against LDL, ACL, and Role', function () {
     // var log = console.log;
     var log = function() {};
 
@@ -327,6 +327,3 @@ describe('security ACLs', function () {
     });
   });
 });
-
-
-

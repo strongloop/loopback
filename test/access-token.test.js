@@ -257,8 +257,8 @@ function createTestApp(testToken, settings, done) {
   var modelOptions = {
     acls: [
       {
-        principalType: "ROLE",
-        principalId: "$everyone",
+        principalType: 'ROLE',
+        principalId: '$everyone',
         accessType: ACL.ALL,
         permission: ACL.DENY,
         property: 'deleteById'

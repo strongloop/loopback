@@ -21,29 +21,29 @@ describe('User', function(){
 
     // Update the AccessToken relation to use the subclass of User
     AccessToken.belongsTo(User);
-  
+
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
 
   });
-  
+
   beforeEach(function (done) {
     app.enableAuth();
     app.use(loopback.token());
     app.use(loopback.rest());
     app.model(User);
-    
+
     User.create(validCredentials, function(err, user) {
       User.create(validCredentialsEmailVerified, done);
     });
   });
-  
+
   afterEach(function (done) {
     User.destroyAll(function (err) {
       User.accessToken.destroyAll(done);
     });
   });
-  
+
   describe('User.create', function(){
     it('Create a new user', function(done) {
       User.create({email: 'f@b.com', password: 'bar'}, function (err, user) {
@@ -73,9 +73,9 @@ describe('User', function(){
     it('Email is required', function (done) {
       User.create({password: '123'}, function (err) {
         assert(err);
-        assert.equal(err.name, "ValidationError");
+        assert.equal(err.name, 'ValidationError');
         assert.equal(err.statusCode, 422);
-        assert.equal(err.details.context, "user");
+        assert.equal(err.details.context, 'user');
         assert.deepEqual(err.details.codes.email, [
           'presence',
           'format.blank'
@@ -84,24 +84,24 @@ describe('User', function(){
         done();
       });
     });
-    
+
     // will change in future versions where password will be optional by default
     it('Password is required', function(done) {
-      var u = new User({email: "123@456.com"});
-      
+      var u = new User({email: '123@456.com'});
+
       User.create({email: 'c@d.com'}, function (err) {
         assert(err);
         done();
       });
     });
-    
+
     it('Requires a valid email', function(done) {
       User.create({email: 'foo@', password: '123'}, function (err) {
         assert(err);
         done();
       });
     });
-    
+
     it('Requires a unique email', function(done) {
       User.create({email: 'a@b.com', password: 'foobar'}, function () {
         User.create({email: 'a@b.com', password: 'batbaz'}, function (err) {
@@ -118,8 +118,8 @@ describe('User', function(){
           done();
         });
       });
-    }); 
-    
+    });
+
     it('Requires a password to login with basic auth', function(done) {
       User.create({email: 'b@c.com'}, function (err) {
         User.login({email: 'b@c.com'}, function (err, accessToken) {
@@ -129,7 +129,7 @@ describe('User', function(){
         });
       });
     });
-    
+
     it('Hashes the given password', function() {
       var u = new User({username: 'foo', password: 'bar'});
       assert(u.password !== 'bar');
@@ -147,14 +147,14 @@ describe('User', function(){
         });
     });
   });
-  
+
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
       User.login(validCredentials, function (err, accessToken) {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
-        
+
         done();
       });
     });
@@ -206,12 +206,12 @@ describe('User', function(){
         .end(function(err, res){
           if(err) return done(err);
           var accessToken = res.body;
-          
+
           assert(accessToken.userId);
           assert(accessToken.id);
           assert.equal(accessToken.id.length, 64);
           assert(accessToken.user === undefined);
-          
+
           done();
         });
     });
@@ -284,7 +284,7 @@ describe('User', function(){
 
     it('Login should only allow correct credentials', function(done) {
       User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
-        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) { 
+        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) {
           assert(err);
           assert(!accessToken);
           done();
@@ -511,20 +511,20 @@ describe('User', function(){
         });
     });
   });
-  
+
   describe('User.logout', function() {
     it('Logout a user by providing the current accessToken id (using node)', function(done) {
       login(logout);
-      
+
       function login(fn) {
         User.login({email: 'foo@bar.com', password: 'bar'}, fn);
       }
-      
+
       function logout(err, accessToken) {
         User.logout(accessToken.id, verify(accessToken.id, done));
       }
     });
-    
+
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
       function login(fn) {
@@ -536,14 +536,14 @@ describe('User', function(){
           .end(function(err, res){
             if(err) return done(err);
             var accessToken = res.body;
-          
+
             assert(accessToken.userId);
             assert(accessToken.id);
-            
+
             fn(null, accessToken.id);
           });
       }
-      
+
       function logout(err, token) {
         request(app)
           .post('/users/logout')
@@ -552,33 +552,33 @@ describe('User', function(){
           .end(verify(token, done));
       }
     });
-    
+
     function verify(token, done) {
       assert(token);
-      
+
       return function (err) {
         if(err) return done(err);
-        
+
         AccessToken.findById(token, function (err, accessToken) {
           assert(!accessToken, 'accessToken should not exist after logging out');
           done(err);
         });
-      }
+      };
     }
   });
-  
+
   describe('user.hasPassword(plain, fn)', function(){
     it('Determine if the password matches the stored password', function(done) {
       var u = new User({username: 'foo', password: 'bar'});
       u.hasPassword('bar', function (err, isMatch) {
         assert(isMatch, 'password doesnt match');
         done();
-      });  
+      });
     });
-    
+
     it('should match a password when saved', function(done) {
       var u = new User({username: 'a', password: 'b', email: 'z@z.net'});
-      
+
       u.save(function (err, user) {
         User.findById(user.id, function (err, uu) {
           uu.hasPassword('b', function (err, isMatch) {
@@ -588,7 +588,7 @@ describe('User', function(){
         });
       });
     });
-    
+
     it('should match a password after it is changed', function(done) {
        User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function (err, user) {
          User.findById(user.id, function (err, foundUser) {
@@ -612,14 +612,14 @@ describe('User', function(){
        });
     });
   });
-  
+
   describe('Verification', function(){
 
     describe('user.verify(options, fn)', function(){
       it('Verify a user\'s email address', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
-          
+
           var options = {
             type: 'email',
             to: user.email,
@@ -628,7 +628,7 @@ describe('User', function(){
             protocol: ctx.req.protocol,
             host: ctx.req.get('host')
           };
-      
+
           user.verify(options, function (err, result) {
             assert(result.email);
             assert(result.email.response);
@@ -639,7 +639,7 @@ describe('User', function(){
             done();
           });
         });
-            
+
         request(app)
           .post('/users')
           .expect('Content-Type', /json/)
@@ -653,7 +653,7 @@ describe('User', function(){
       it('Verify a user\'s email address with custom header', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
-          
+
           var options = {
             type: 'email',
             to: user.email,
@@ -663,14 +663,14 @@ describe('User', function(){
             host: ctx.req.get('host'),
             headers: {'message-id':'custom-header-value'}
           };
-      
+
           user.verify(options, function (err, result) {
             assert(result.email);
             assert.equal(result.email.messageId, 'custom-header-value');
             done();
           });
         });
-            
+
         request(app)
           .post('/users')
           .expect('Content-Type', /json/)

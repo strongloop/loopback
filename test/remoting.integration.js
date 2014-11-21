@@ -15,26 +15,26 @@ describe('remoting - integration', function () {
   });
 
   describe('app.remotes.options', function () {
-    it("should load remoting options", function () {
+    it('should load remoting options', function () {
       var remotes = app.remotes();
-      assert.deepEqual(remotes.options, {"json": {"limit": "1kb", "strict": false},
-        "urlencoded": {"limit": "8kb", "extended": true}});
+      assert.deepEqual(remotes.options, {'json': {'limit': '1kb', 'strict': false},
+        'urlencoded': {'limit': '8kb', 'extended': true}});
     });
 
-    it("rest handler", function () {
+    it('rest handler', function () {
       var handler = app.handler('rest');
       assert(handler);
     });
 
     it('should accept request that has entity below 1kb', function (done) {
       // Build an object that is smaller than 1kb
-      var name = "";
+      var name = '';
       for (var i = 0; i < 256; i++) {
-        name += "11";
+        name += '11';
       }
       this.http = this.post('/api/stores');
       this.http.send({
-        "name": name
+        'name': name
       });
       this.http.end(function (err) {
         if (err) return done(err);
@@ -47,13 +47,13 @@ describe('remoting - integration', function () {
 
     it('should reject request that has entity beyond 1kb', function (done) {
       // Build an object that is larger than 1kb
-      var name = "";
+      var name = '';
       for (var i = 0; i < 2048; i++) {
-        name += "11111111111";
+        name += '11111111111';
       }
       this.http = this.post('/api/stores');
       this.http.send({
-        "name": name
+        'name': name
       });
       this.http.end(function (err) {
         if (err) return done(err);
@@ -81,7 +81,7 @@ describe('remoting - integration', function () {
         m.name,
         '(',
         m.accepts.map(function(a) {
-          return a.arg + ':' + a.type
+          return a.arg + ':' + a.type;
         }).join(','),
         ')',
         formatReturns(m),

@@ -1,7 +1,7 @@
 /**
  * loopback test setup and support.
  */
- 
+
 assert = require('assert');
 expect = require('chai').expect;
 loopback = require('../');
@@ -44,9 +44,9 @@ assertValidDataSource = function (dataSource) {
   assert.isFunc(dataSource, 'disableRemote');
   assert.isFunc(dataSource, 'defineOperation');
   assert.isFunc(dataSource, 'operations');
-}
+};
 
 assert.isFunc = function (obj, name) {
   assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');
   assert(typeof obj[name] === 'function', name + ' is not a function');
-}
+};
