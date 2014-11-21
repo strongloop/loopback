@@ -38,11 +38,10 @@ module.exports = function(grunt) {
       },
       server: {
         src: ['server/**/*.js']
+      },
+      test: {
+        src: ['test/**/*.js']
       }
-      // TODO tests don't pass yet
-      // test: {
-      //  src: ['test/**/*.js']
-      // }
     },
     jscs: {
       gruntfile: 'Gruntfile.js',
