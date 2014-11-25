@@ -1,3 +1,11 @@
+2014-11-25, Version 2.8.1
+=========================
+
+ * Update docs.json (Rand McKinney)
+
+ * Update favicon.js (Rand McKinney)
+
+
 2014-11-19, Version 2.8.0
 =========================
 
@@ -597,10 +605,6 @@
 
  * Enhance the error message (Raymond Feng)
 
-
-2014-07-16, Version 2.0.0-beta7
-===============================
-
  * Bump version (Raymond Feng)
 
  * 2.0.0-beta6 (Miroslav Bajtoš)
@@ -740,6 +744,13 @@
 
 2014-07-16, Version 1.10.0
 ==========================
+
+
+
+2014-07-16, Version 2.0.0-beta7
+===============================
+
+ * Bump version (Raymond Feng)
 
  * Remove unused dep (Raymond Feng)
 
@@ -1187,6 +1198,14 @@
 
  * 2.0.0-beta1 (Ritchie Martori)
 
+ * Bump version (Raymond Feng)
+
+ * Add postgresql to the keywords (Raymond Feng)
+
+ * updated package.json with SOAP and framework keywords (altsang)
+
+ * updated package.json with keywords and updated description (Raymond Feng)
+
  * Make app.datasources unique per app instance (Miroslav Bajtoš)
 
  * Add RC version (Ritchie Martori)
@@ -1252,6 +1271,11 @@
  * Add Change model (Ritchie Martori)
 
 
+2014-05-27, Version 1.8.4
+=========================
+
+
+
 2014-05-27, Version 1.8.5
 =========================
 
@@ -1263,13 +1287,7 @@
 
  * updated package.json with keywords and updated description (Raymond Feng)
 
-
-2014-05-27, Version 1.8.4
-=========================
-
  * Add more keywords (Raymond Feng)
-
- * Bump version (Raymond Feng)
 
  * app: flatten model config (Miroslav Bajtoš)
 
@@ -1591,15 +1609,6 @@
 
  * Improve jsdox documentation of app object (Miroslav Bajtoš)
 
- * Make sure methods are called in the context of the calling class (Raymond Feng)
-
- * Start to move md to jsdoc (Ritchie Martori)
-
-
-2014-01-14, Version 1.5.0
-=========================
-
-
 
 2014-01-14, Version 1.5.1
 =========================
@@ -1609,6 +1618,10 @@
  * Make sure methods are called in the context of the calling class (Raymond Feng)
 
  * Start to move md to jsdoc (Ritchie Martori)
+
+
+2014-01-14, Version 1.5.0
+=========================
 
  * Replace `on` with `once` in middleware examples (Miroslav Bajtoš)
 
@@ -1722,17 +1735,18 @@
 
  * Add Model.requireToken, default swagger to false (Ritchie Martori)
 
- * Add password reset (Ritchie Martori)
-
-
-2013-12-06, Version 1.3.3
-=========================
-
  * Bump version (Raymond Feng)
+
+ * Add password reset (Ritchie Martori)
 
 
 2013-12-06, Version show
 ========================
+
+
+
+2013-12-06, Version 1.3.3
+=========================
 
  * Bump version (Raymond Feng)
 
