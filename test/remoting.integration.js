@@ -5,38 +5,38 @@ var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'app.js'));
 var assert = require('assert');
 
-describe('remoting - integration', function () {
+describe('remoting - integration', function() {
 
   lt.beforeEach.withApp(app);
   lt.beforeEach.givenModel('store');
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     this.app.models.store.destroyAll(done);
   });
 
-  describe('app.remotes.options', function () {
-    it("should load remoting options", function () {
+  describe('app.remotes.options', function() {
+    it('should load remoting options', function() {
       var remotes = app.remotes();
-      assert.deepEqual(remotes.options, {"json": {"limit": "1kb", "strict": false},
-        "urlencoded": {"limit": "8kb", "extended": true}});
+      assert.deepEqual(remotes.options, {'json': {'limit': '1kb', 'strict': false},
+        'urlencoded': {'limit': '8kb', 'extended': true}});
     });
 
-    it("rest handler", function () {
+    it('rest handler', function() {
       var handler = app.handler('rest');
       assert(handler);
     });
 
-    it('should accept request that has entity below 1kb', function (done) {
+    it('should accept request that has entity below 1kb', function(done) {
       // Build an object that is smaller than 1kb
-      var name = "";
+      var name = '';
       for (var i = 0; i < 256; i++) {
-        name += "11";
+        name += '11';
       }
       this.http = this.post('/api/stores');
       this.http.send({
-        "name": name
+        'name': name
       });
-      this.http.end(function (err) {
+      this.http.end(function(err) {
         if (err) return done(err);
         this.req = this.http.req;
         this.res = this.http.res;
@@ -45,17 +45,17 @@ describe('remoting - integration', function () {
       }.bind(this));
     });
 
-    it('should reject request that has entity beyond 1kb', function (done) {
+    it('should reject request that has entity beyond 1kb', function(done) {
       // Build an object that is larger than 1kb
-      var name = "";
+      var name = '';
       for (var i = 0; i < 2048; i++) {
-        name += "11111111111";
+        name += '11111111111';
       }
       this.http = this.post('/api/stores');
       this.http.send({
-        "name": name
+        'name': name
       });
-      this.http.end(function (err) {
+      this.http.end(function(err) {
         if (err) return done(err);
         this.req = this.http.req;
         this.res = this.http.res;
@@ -81,7 +81,7 @@ describe('remoting - integration', function () {
         m.name,
         '(',
         m.accepts.map(function(a) {
-          return a.arg + ':' + a.type
+          return a.arg + ':' + a.type;
         }).join(','),
         ')',
         formatReturns(m),
@@ -148,7 +148,6 @@ describe('remoting - integration', function () {
       expect(methods).to.include.members(expectedMethods);
     });
 
-
     it('should have correct signatures for belongsTo methods',
       function() {
 
@@ -167,7 +166,6 @@ describe('remoting - integration', function () {
         ];
         expect(methods).to.include.members(expectedMethods);
       });
-
 
     it('should have correct signatures for hasMany methods',
       function() {

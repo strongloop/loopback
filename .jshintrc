@@ -9,5 +9,25 @@
 "nonew": true,
 "sub": true,
 "laxcomma": true,
-"laxbreak": true
+"laxbreak": true,
+"globals": {
+
+  "after": true,
+  "afterEach": true,
+  "assert": true,
+  "before": true,
+  "beforeEach": true,
+  "describe": true,
+  "expect": true,
+  "it": true,
+
+  /* loopback */
+  "app": true,
+  "assertValidDataSource": true,
+  "GeoPoint": true,
+  "loopback": true,
+  "memoryConnector": true,
+  "request": true,
+  "TaskEmitter": true
+ }
 }

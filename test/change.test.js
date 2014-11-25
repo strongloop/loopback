@@ -1,7 +1,7 @@
 var Change;
 var TestModel;
 
-describe('Change', function(){
+describe('Change', function() {
   beforeEach(function() {
     var memory = loopback.createDataSource({
       connector: loopback.Memory
@@ -20,7 +20,7 @@ describe('Change', function(){
       foo: 'bar'
     };
     TestModel.create(test.data, function(err, model) {
-      if(err) return done(err);
+      if (err) return done(err);
       test.model = model;
       test.modelId = model.id;
       test.revisionForModel = Change.revisionForInst(model);
@@ -28,8 +28,8 @@ describe('Change', function(){
     });
   });
 
-  describe('change.id', function () {
-    it('should be a hash of the modelName and modelId', function () {
+  describe('change.id', function() {
+    it('should be a hash of the modelName and modelId', function() {
       var change = new Change({
         rev: 'abc',
         modelName: 'foo',
@@ -42,17 +42,17 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.rectifyModelChanges(modelName, modelIds, callback)', function () {
-    describe('using an existing untracked model', function () {
+  describe('Change.rectifyModelChanges(modelName, modelIds, callback)', function() {
+    describe('using an existing untracked model', function() {
       beforeEach(function(done) {
         var test = this;
         Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trackedChanges) {
-          if(err) return done(err);
+          if (err) return done(err);
           done();
         });
       });
 
-      it('should create an entry', function (done) {
+      it('should create an entry', function(done) {
         var test = this;
         Change.find(function(err, trackedChanges) {
           assert.equal(trackedChanges[0].modelId, test.modelId.toString());
@@ -60,7 +60,7 @@ describe('Change', function(){
         });
       });
 
-      it('should only create one change', function (done) {
+      it('should only create one change', function(done) {
         Change.count(function(err, count) {
           assert.equal(count, 1);
           done();
@@ -69,19 +69,19 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.findOrCreateChange(modelName, modelId, callback)', function () {
-    
-    describe('when a change doesnt exist', function () {
+  describe('Change.findOrCreateChange(modelName, modelId, callback)', function() {
+
+    describe('when a change doesnt exist', function() {
       beforeEach(function(done) {
         var test = this;
         Change.findOrCreateChange(this.modelName, this.modelId, function(err, result) {
-          if(err) return done(err);
+          if (err) return done(err);
           test.result = result;
           done();
         });
       });
 
-      it('should create an entry', function (done) {
+      it('should create an entry', function(done) {
         var test = this;
         Change.findById(this.result.id, function(err, change) {
           if (err) return done(err);
@@ -91,7 +91,7 @@ describe('Change', function(){
       });
     });
 
-    describe('when a change does exist', function () {
+    describe('when a change does exist', function() {
       beforeEach(function(done) {
         var test = this;
         Change.create({
@@ -106,22 +106,22 @@ describe('Change', function(){
       beforeEach(function(done) {
         var test = this;
         Change.findOrCreateChange(this.modelName, this.modelId, function(err, result) {
-          if(err) return done(err);
+          if (err) return done(err);
           test.result = result;
           done();
         });
       });
 
-      it('should find the entry', function (done) {
-        var test = this;      
+      it('should find the entry', function(done) {
+        var test = this;
         assert.equal(test.existingChange.id, test.result.id);
         done();
       });
     });
   });
 
-  describe('change.rectify(callback)', function () {
-    it('should create a new change with the correct revision', function (done) {
+  describe('change.rectify(callback)', function() {
+    it('should create a new change with the correct revision', function(done) {
       var test = this;
       var change = new Change({
         modelName: this.modelName,
@@ -135,8 +135,8 @@ describe('Change', function(){
     });
   });
 
-  describe('change.currentRevision(callback)', function () {
-    it('should get the correct revision', function (done) {
+  describe('change.currentRevision(callback)', function() {
+    it('should get the correct revision', function(done) {
       var test = this;
       var change = new Change({
         modelName: this.modelName,
@@ -150,9 +150,9 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.hash(str)', function () {
+  describe('Change.hash(str)', function() {
     // todo(ritch) test other hashing algorithms
-    it('should hash the given string', function () {
+    it('should hash the given string', function() {
       var str = 'foo';
       var hash = Change.hash(str);
       assert(hash !== str);
@@ -160,8 +160,8 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.revisionForInst(inst)', function () {
-    it('should return the same revision for the same data', function () {
+  describe('Change.revisionForInst(inst)', function() {
+    it('should return the same revision for the same data', function() {
       var a = {
         b: {
           b: ['c', 'd'],
@@ -181,34 +181,34 @@ describe('Change', function(){
     });
   });
 
-  describe('change.type()', function () {
-    it('CREATE', function () {
+  describe('change.type()', function() {
+    it('CREATE', function() {
       var change = new Change({
         rev: this.revisionForModel
       });
       assert.equal(Change.CREATE, change.type());
     });
-    it('UPDATE', function () {
+    it('UPDATE', function() {
       var change = new Change({
         rev: this.revisionForModel,
         prev: this.revisionForModel
       });
       assert.equal(Change.UPDATE, change.type());
     });
-    it('DELETE', function () {
+    it('DELETE', function() {
       var change = new Change({
         prev: this.revisionForModel
       });
       assert.equal(Change.DELETE, change.type());
     });
-    it('UNKNOWN', function () {
+    it('UNKNOWN', function() {
       var change = new Change();
       assert.equal(Change.UNKNOWN, change.type());
     });
   });
 
-  describe('change.getModelCtor()', function () {
-    it('should get the correct model class', function () {
+  describe('change.getModelCtor()', function() {
+    it('should get the correct model class', function() {
       var change = new Change({
         modelName: this.modelName
       });
@@ -217,8 +217,8 @@ describe('Change', function(){
     });
   });
 
-  describe('change.equals(otherChange)', function () {
-    it('should return true when the change is equal', function () {
+  describe('change.equals(otherChange)', function() {
+    it('should return true when the change is equal', function() {
       var change = new Change({
         rev: this.revisionForModel
       });
@@ -230,7 +230,7 @@ describe('Change', function(){
       assert.equal(change.equals(otherChange), true);
     });
 
-    it('should return true when both changes are deletes', function () {
+    it('should return true when both changes are deletes', function() {
       var REV = 'foo';
       var change = new Change({
         rev: null,
@@ -249,8 +249,8 @@ describe('Change', function(){
     });
   });
 
-  describe('change.isBasedOn(otherChange)', function () {
-    it('should return true when the change is based on the other', function () {
+  describe('change.isBasedOn(otherChange)', function() {
+    it('should return true when the change is based on the other', function() {
       var change = new Change({
         prev: this.revisionForModel
       });
@@ -263,7 +263,7 @@ describe('Change', function(){
     });
   });
 
-  describe('Change.diff(modelName, since, remoteChanges, callback)', function () {
+  describe('Change.diff(modelName, since, remoteChanges, callback)', function() {
     beforeEach(function(done) {
       Change.create([
         {rev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
@@ -272,7 +272,7 @@ describe('Change', function(){
       ], done);
     });
 
-    it('should return delta and conflict lists', function (done) {
+    it('should return delta and conflict lists', function(done) {
       var remoteChanges = [
         // an update => should result in a delta
         {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},

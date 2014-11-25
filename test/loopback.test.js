@@ -36,7 +36,7 @@ describe('loopback', function() {
   });
 
   describe('data source created by loopback', function() {
-    it('should create model extending Model by default', function () {
+    it('should create model extending Model by default', function() {
       var dataSource = loopback.createDataSource({
         connector: loopback.Memory
       });
@@ -52,8 +52,8 @@ describe('loopback', function() {
     });
   });
 
-  describe('loopback.autoAttach', function () {
-    it('doesn\'t overwrite model with datasource configured', function () {
+  describe('loopback.autoAttach', function() {
+    it('doesn\'t overwrite model with datasource configured', function() {
       var ds1 = loopback.createDataSource('db1', {
         connector: loopback.Memory
       });
@@ -79,12 +79,12 @@ describe('loopback', function() {
   });
 
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
-    it("Setup a remote method.", function() {
+    it('Setup a remote method.', function() {
       var Product = loopback.createModel('product', {price: Number});
 
       Product.stats = function(fn) {
         // ...
-      }
+      };
 
       loopback.remoteMethod(
         Product.stats,
@@ -102,9 +102,9 @@ describe('loopback', function() {
     });
   });
 
-  describe('loopback.createModel(name, properties, options)', function () {
-    describe('options.base', function () {
-      it('should extend from options.base', function () {
+  describe('loopback.createModel(name, properties, options)', function() {
+    describe('options.base', function() {
+      it('should extend from options.base', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
           foo: {
             bar: 'bat'
@@ -122,8 +122,8 @@ describe('loopback', function() {
       });
     });
 
-    describe('loopback.getModel and getModelByType', function () {
-      it('should be able to get model by name', function () {
+    describe('loopback.getModel and getModelByType', function() {
+      it('should be able to get model by name', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
           foo: {
             bar: 'bat'
@@ -139,7 +139,7 @@ describe('loopback', function() {
         assert(loopback.getModel('MyCustomModel') === MyCustomModel);
         assert(loopback.findModel('Invalid') === undefined);
       });
-      it('should be able to get model by type', function () {
+      it('should be able to get model by type', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
           foo: {
             bar: 'bat'

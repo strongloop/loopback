@@ -1,3 +1,5 @@
+/*jshint -W030 */
+
 var loopback = require('../');
 var lt = require('loopback-testing');
 var path = require('path');
@@ -8,19 +10,19 @@ var USER = {email: 'test@test.test', password: 'test'};
 var CURRENT_USER = {email: 'current@test.test', password: 'test'};
 var debug = require('debug')('loopback:test:access-control.integration');
 
-describe('access control - integration', function () {
+describe('access control - integration', function() {
 
   lt.beforeEach.withApp(app);
 
   /*
   describe('accessToken', function() {
-    // it('should be a sublcass of AccessToken', function () {
+    // it('should be a sublcass of AccessToken', function() {
     //   assert(app.models.accessToken.prototype instanceof loopback.AccessToken);
     // });
 
-    it('should have a validate method', function () {
+    it('should have a validate method', function() {
       var token = new app.models.accessToken;
-      assert.equal(typeof token.validate, 'function');  
+      assert.equal(typeof token.validate, 'function');
     });
   });
 
@@ -58,17 +60,17 @@ describe('access control - integration', function () {
   });
   */
 
-  describe('/users', function () {
+  describe('/users', function() {
 
     lt.beforeEach.givenModel('user', USER, 'randomUser');
 
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', '/api/users');
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', '/api/users');
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'GET', '/api/users');
-    
+
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', urlForUser);
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('GET', urlForUser);
-    lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER,'GET', urlForUser);
+    lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'GET', urlForUser);
 
     lt.it.shouldBeAllowedWhenCalledAnonymously(
       'POST', '/api/users', newUserData());
@@ -131,7 +133,7 @@ describe('access control - integration', function () {
     }
   });
 
-  describe('/banks', function () {
+  describe('/banks', function() {
     lt.beforeEach.givenModel('bank');
 
     lt.it.shouldBeAllowedWhenCalledAnonymously('GET', '/api/banks');
@@ -159,13 +161,13 @@ describe('access control - integration', function () {
     }
   });
 
-  describe('/accounts', function () {
+  describe('/accounts', function() {
     var count = 0;
     before(function() {
       var roleModel = loopback.getModelByType(loopback.Role);
-      roleModel.registerResolver('$dummy', function (role, context, callback) {
-        process.nextTick(function () {
-          if(context.remotingContext) {
+      roleModel.registerResolver('$dummy', function(role, context, callback) {
+        process.nextTick(function() {
+          if (context.remotingContext) {
             count++;
           }
           callback && callback(null, false); // Always true
@@ -224,5 +226,5 @@ describe('access control - integration', function () {
       return '/api/accounts/' + this.account.id;
     }
   });
-  
+
 });
