@@ -1,3 +1,21 @@
+2014-11-27, Version 2.8.2
+=========================
+
+ * Prepend slash for nested remoting paths (Clark Wang)
+
+ * fix jscs errors (Rob Halff)
+
+ * enable jshint for tests (Rob Halff)
+
+ * permit some globals (Rob Halff)
+
+ * 'done' is not defined (Rob Halff)
+
+ * 'memory' is already defined (Rob Halff)
+
+ * singlequote, semicolon & /*jshint -W030 */ (Rob Halff)
+
+
 2014-11-25, Version 2.8.1
 =========================
 
