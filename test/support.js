@@ -1,7 +1,7 @@
 /**
  * loopback test setup and support.
  */
- 
+
 assert = require('assert');
 expect = require('chai').expect;
 loopback = require('../');
@@ -16,7 +16,7 @@ var RemoteObjects = require('strong-remoting');
 // for tests using the built-in User model
 loopback.User.settings.saltWorkFactor = 4;
 
-beforeEach(function () {
+beforeEach(function() {
   this.app = app = loopback();
 
   // setup default data sources
@@ -35,7 +35,7 @@ beforeEach(function () {
   loopback.autoAttach();
 });
 
-assertValidDataSource = function (dataSource) {
+assertValidDataSource = function(dataSource) {
   // has methods
   assert.isFunc(dataSource, 'createModel');
   assert.isFunc(dataSource, 'discoverModelDefinitions');
@@ -44,9 +44,9 @@ assertValidDataSource = function (dataSource) {
   assert.isFunc(dataSource, 'disableRemote');
   assert.isFunc(dataSource, 'defineOperation');
   assert.isFunc(dataSource, 'operations');
-}
+};
 
-assert.isFunc = function (obj, name) {
+assert.isFunc = function(obj, name) {
   assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');
   assert(typeof obj[name] === 'function', name + ' is not a function');
-}
+};

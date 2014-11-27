@@ -1,6 +1,6 @@
 describe('GeoPoint', function() {
   describe('geoPoint.distanceTo(geoPoint, options)', function() {
-    it("Get the distance to another `GeoPoint`", function() {
+    it('Get the distance to another `GeoPoint`', function() {
       var here = new GeoPoint({lat: 10, lng: 10});
       var there = new GeoPoint({lat: 5, lng: 5});
       var distance = here.distanceTo(there, {type: 'meters'});
@@ -10,16 +10,16 @@ describe('GeoPoint', function() {
   });
 
   describe('GeoPoint.distanceBetween(a, b, options)', function() {
-    it("Get the distance between two points", function() {
+    it('Get the distance between two points', function() {
       var here = new GeoPoint({lat: 10, lng: 10});
       var there = new GeoPoint({lat: 5, lng: 5});
       var distance = GeoPoint.distanceBetween(here, there, {type: 'feet'});
-      
+
       assert.equal(Math.floor(distance), 2568169);
     });
   });
-  
-  describe('GeoPoint()', function(){
+
+  describe('GeoPoint()', function() {
     it('Create from string', function() {
       var point = new GeoPoint('1.234,5.678');
       assert.equal(point.lng, 1.234);
@@ -45,11 +45,11 @@ describe('GeoPoint', function() {
       var Model = loopback.createModel('geo-model', {
         geo: {type: 'GeoPoint'}
       });
-      
+
       var m = new Model({
         geo: '1.222,3.444'
       });
-      
+
       assert(m.geo instanceof GeoPoint);
       assert.equal(m.geo.lng, 1.222);
       assert.equal(m.geo.lat, 3.444);

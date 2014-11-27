@@ -86,7 +86,7 @@ describe('loopback.rest', function() {
     app.use(loopback.rest());
 
     request(app).get('/mymodels')
-      .set('Accept', 'text/html,application/xml;q=0.9,*/*;q=0.8')
+      .set('Accept', 'text/html,application/xml;q= 0.9,*/*;q= 0.8')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
   });
@@ -103,7 +103,7 @@ describe('loopback.rest', function() {
         .set('Authorization', token.id)
         .expect(200)
         .end(done);
-    });
+    }, done);
   });
 
   it('does not include loopback.token when auth not enabled', function(done) {
@@ -127,7 +127,7 @@ describe('loopback.rest', function() {
           expect(res.body.id).to.equal(null);
           done();
         });
-    });
+    }, done);
   });
 
   describe('context propagation', function() {
@@ -255,7 +255,7 @@ describe('loopback.rest', function() {
       dataSource: 'db'
     });
   }
-  function givenLoggedInUser(cb) {
+  function givenLoggedInUser(cb, done) {
     var credentials = { email: 'user@example.com', password: 'pwd' };
     var User = app.models.user;
     User.create(credentials,

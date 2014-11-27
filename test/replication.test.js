@@ -15,7 +15,7 @@ describe('Replication / Change APIs', function() {
       trackChanges: true
     });
     SourceModel.attachTo(dataSource);
-    
+
     var TargetModel = this.TargetModel = PersistedModel.extend('TargetModel', {}, {
       trackChanges: true
     });
@@ -23,11 +23,11 @@ describe('Replication / Change APIs', function() {
 
     this.createInitalData = function(cb) {
       SourceModel.create({name: 'foo'}, function(err, inst) {
-        if(err) return cb(err);
+        if (err) return cb(err);
         test.model = inst;
 
         // give loopback a chance to register the change
-        // TODO(ritch) get rid of this... 
+        // TODO(ritch) get rid of this...
         setTimeout(function() {
           SourceModel.replicate(TargetModel, cb);
         }, 100);
@@ -36,10 +36,10 @@ describe('Replication / Change APIs', function() {
   });
 
   describe('Model.changes(since, filter, callback)', function() {
-    it('Get changes since the given checkpoint', function (done) {
+    it('Get changes since the given checkpoint', function(done) {
       var test = this;
       this.SourceModel.create({name: 'foo'}, function(err) {
-        if(err) return done(err);
+        if (err) return done(err);
         setTimeout(function() {
           test.SourceModel.changes(test.startingCheckpoint, {}, function(err, changes) {
             assert.equal(changes.length, 1);
@@ -51,7 +51,7 @@ describe('Replication / Change APIs', function() {
   });
 
   describe('Model.replicate(since, targetModel, options, callback)', function() {
-    it('Replicate data using the target model', function (done) {
+    it('Replicate data using the target model', function(done) {
       var test = this;
       var options = {};
       var sourceData;
@@ -62,26 +62,26 @@ describe('Replication / Change APIs', function() {
       });
 
       function replicate() {
-        test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel, 
+        test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
           assert(conflicts.length === 0);
           async.parallel([
             function(cb) {
               test.SourceModel.find(function(err, result) {
-                if(err) return cb(err);
+                if (err) return cb(err);
                 sourceData = result;
                 cb();
               });
             },
             function(cb) {
               test.TargetModel.find(function(err, result) {
-                if(err) return cb(err);
+                if (err) return cb(err);
                 targetData = result;
                 cb();
               });
             }
           ], function(err) {
-            if(err) return done(err);
+            if (err) return done(err);
 
             assert.deepEqual(sourceData, targetData);
             done();
@@ -103,22 +103,22 @@ describe('Replication / Change APIs', function() {
         async.parallel([
           function(cb) {
             SourceModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               inst.name = 'source update';
               inst.save(cb);
             });
           },
           function(cb) {
             TargetModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               inst.name = 'target update';
               inst.save(cb);
             });
           }
         ], function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
-            if(err) return done(err);
+            if (err) return done(err);
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
             done();
@@ -175,22 +175,22 @@ describe('Replication / Change APIs', function() {
         async.parallel([
           function(cb) {
             SourceModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               test.model = inst;
               inst.remove(cb);
             });
           },
           function(cb) {
             TargetModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               inst.name = 'target update';
               inst.save(cb);
             });
           }
         ], function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
-            if(err) return done(err);
+            if (err) return done(err);
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
             done();
@@ -244,7 +244,7 @@ describe('Replication / Change APIs', function() {
         async.parallel([
           function(cb) {
             SourceModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               test.model = inst;
               inst.name = 'source update';
               inst.save(cb);
@@ -252,14 +252,14 @@ describe('Replication / Change APIs', function() {
           },
           function(cb) {
             TargetModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               inst.remove(cb);
             });
           }
         ], function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
-            if(err) return done(err);
+            if (err) return done(err);
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
             done();
@@ -313,21 +313,21 @@ describe('Replication / Change APIs', function() {
         async.parallel([
           function(cb) {
             SourceModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               test.model = inst;
               inst.remove(cb);
             });
           },
           function(cb) {
             TargetModel.findOne(function(err, inst) {
-              if(err) return cb(err);
+              if (err) return cb(err);
               inst.remove(cb);
             });
           }
         ], function(err) {
-          if(err) return done(err);
+          if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
-            if(err) return done(err);
+            if (err) return done(err);
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
             done();

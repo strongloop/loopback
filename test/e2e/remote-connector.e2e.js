@@ -14,22 +14,22 @@ describe('RemoteConnector', function() {
     TestModel.attachTo(ds);
   });
 
-  it('should be able to call create', function (done) {
+  it('should be able to call create', function(done) {
     TestModel.create({
       foo: 'bar'
     }, function(err, inst) {
-      if(err) return done(err);
+      if (err) return done(err);
       assert(inst.id);
       done();
     });
   });
 
-  it('should be able to call save', function (done) {
+  it('should be able to call save', function(done) {
     var m = new TestModel({
       foo: 'bar'
     });
     m.save(function(err, data) {
-      if(err) return done(err);
+      if (err) return done(err);
       assert(data.foo === 'bar');
       done();
     });

@@ -38,18 +38,17 @@ module.exports = function(grunt) {
       },
       server: {
         src: ['server/**/*.js']
+      },
+      test: {
+        src: ['test/**/*.js']
       }
-      // TODO tests don't pass yet
-      // test: {
-      //  src: ['test/**/*.js']
-      // }
     },
     jscs: {
       gruntfile: 'Gruntfile.js',
       lib: ['lib/**/*.js'],
       common: ['common/**/*.js'],
-      server: ['server/**/*.js']
-      // TODO(bajtos) - test/**/*.js
+      server: ['server/**/*.js'],
+      test: ['test/**/*.js']
     },
     watch: {
       gruntfile: {

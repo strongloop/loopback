@@ -19,14 +19,14 @@ describe('Replication', function() {
     LocalTestModel.attachTo(memory);
   });
 
-  it('should replicate local data to the remote', function (done) {
+  it('should replicate local data to the remote', function(done) {
     var RANDOM = Math.random();
 
     LocalTestModel.create({
       n: RANDOM
     }, function(err, created) {
       LocalTestModel.replicate(0, TestModel, function() {
-        if(err) return done(err);
+        if (err) return done(err);
         TestModel.findOne({n: RANDOM}, function(err, found) {
           assert.equal(created.id, found.id);
           done();

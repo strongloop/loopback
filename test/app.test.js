@@ -1,3 +1,5 @@
+/*jshint -W030 */
+
 var async = require('async');
 var path = require('path');
 
@@ -39,7 +41,7 @@ describe('app', function() {
       });
     });
 
-    it('supports "before:" and "after:" prefixes', function(done) {
+    it('supports `before:` and `after:` prefixes', function(done) {
       app.middleware('routes:before', namedHandler('routes:before'));
       app.middleware('routes:after', namedHandler('routes:after'));
       app.use(namedHandler('main'));
@@ -247,7 +249,7 @@ describe('app', function() {
       app = loopback();
     });
 
-    it('adds the phase just before "routes" by default', function(done) {
+    it('adds the phase just before `routes` by default', function(done) {
       app.defineMiddlewarePhases('custom');
       verifyMiddlewarePhases(['custom', 'routes'], done);
     });
@@ -305,13 +307,14 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app, db;
+    var app;
+    var db;
     beforeEach(function() {
       app = loopback();
       db = loopback.createDataSource({connector: loopback.Memory});
     });
 
-    it("Expose a `Model` to remote clients", function() {
+    it('Expose a `Model` to remote clients', function() {
       var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
@@ -330,7 +333,7 @@ describe('app', function() {
       var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
-      var classes = app.remotes().classes().map(function(c) {return c.name});
+      var classes = app.remotes().classes().map(function(c) {return c.name;});
       expect(classes).to.contain('color');
     });
 
@@ -343,7 +346,7 @@ describe('app', function() {
       expect(app.models.Color).to.equal(Color);
     });
 
-    it("emits a `modelRemoted` event", function() {
+    it('emits a `modelRemoted` event', function() {
       var Color = PersistedModel.extend('color', {name: String});
       Color.shared = true;
       var remotedClass;
@@ -376,7 +379,7 @@ describe('app', function() {
 
   });
 
-  describe('app.model(name, config)', function () {
+  describe('app.model(name, config)', function() {
     var app;
 
     beforeEach(function() {
@@ -386,7 +389,7 @@ describe('app', function() {
       });
     });
 
-    it('Sugar for defining a fully built model', function () {
+    it('Sugar for defining a fully built model', function() {
       app.model('foo', {
         dataSource: 'db'
       });
@@ -493,7 +496,7 @@ describe('app', function() {
         .expect(200, done);
     });
 
-    it('updates port on "listening" event', function(done) {
+    it('updates port on `listening` event', function(done) {
       var app = loopback();
       app.set('port', 0);
 
@@ -503,7 +506,7 @@ describe('app', function() {
       });
     });
 
-    it('updates "url" on "listening" event', function(done) {
+    it('updates `url` on `listening` event', function(done) {
       var app = loopback();
       app.set('port', 0);
       app.set('host', undefined);
@@ -559,15 +562,15 @@ describe('app', function() {
     });
   });
 
-  describe.onServer('app.get("/", loopback.status())', function () {
-    it('should return the status of the application', function (done) {
+  describe.onServer('app.get(\'/\', loopback.status())', function() {
+    it('should return the status of the application', function(done) {
       var app = loopback();
       app.get('/', loopback.status());
       request(app)
         .get('/')
         .expect(200)
         .end(function(err, res) {
-          if(err) return done(err);
+          if (err) return done(err);
 
           assert.equal(typeof res.body, 'object');
           assert(res.body.started);
@@ -649,7 +652,8 @@ describe('app', function() {
   });
 
   describe('normalizeHttpPath option', function() {
-    var app, db;
+    var app;
+    var db;
     beforeEach(function() {
       app = loopback();
       db = loopback.createDataSource({ connector: loopback.Memory });

@@ -2,13 +2,13 @@ var loopback = require(('../'));
 var assert = require('assert');
 var Application = loopback.Application;
 
-describe('Application', function () {
+describe('Application', function() {
   var registeredApp = null;
 
-  it('Create a new application', function (done) {
+  it('Create a new application', function(done) {
     Application.create({owner: 'rfeng',
       name: 'MyApp1',
-      description: 'My first mobile application'}, function (err, result) {
+      description: 'My first mobile application'}, function(err, result) {
       var app = result;
       assert.equal(app.owner, 'rfeng');
       assert.equal(app.name, 'MyApp1');
@@ -25,7 +25,7 @@ describe('Application', function () {
     });
   });
 
-  it('Create a new application with push settings', function (done) {
+  it('Create a new application with push settings', function(done) {
     Application.create({owner: 'rfeng',
         name: 'MyAppWithPush',
         description: 'My push mobile application',
@@ -49,7 +49,7 @@ describe('Application', function () {
             serverApiKey: 'serverKey'
           }
         }},
-      function (err, result) {
+      function(err, result) {
         var app = result;
         assert.deepEqual(app.pushSettings.toObject(), {
           apns: {
@@ -75,9 +75,9 @@ describe('Application', function () {
       });
   });
 
-  beforeEach(function (done) {
+  beforeEach(function(done) {
     Application.register('rfeng', 'MyApp2',
-      {description: 'My second mobile application'}, function (err, result) {
+      {description: 'My second mobile application'}, function(err, result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp2');
@@ -94,8 +94,8 @@ describe('Application', function () {
       });
   });
 
-  it('Reset keys', function (done) {
-    Application.resetKeys(registeredApp.id, function (err, result) {
+  it('Reset keys', function(done) {
+    Application.resetKeys(registeredApp.id, function(err, result) {
       var app = result;
       assert.equal(app.owner, 'rfeng');
       assert.equal(app.name, 'MyApp2');
@@ -119,67 +119,67 @@ describe('Application', function () {
     });
   });
 
-  it('Authenticate with application id & clientKey', function (done) {
+  it('Authenticate with application id & clientKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.clientKey,
-      function (err, result) {
+      function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'clientKey');
         done(err, result);
       });
   });
 
-  it('Authenticate with application id & javaScriptKey', function (done) {
+  it('Authenticate with application id & javaScriptKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.javaScriptKey,
-      function (err, result) {
+      function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'javaScriptKey');
         done(err, result);
       });
   });
 
-  it('Authenticate with application id & restApiKey', function (done) {
+  it('Authenticate with application id & restApiKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.restApiKey,
-      function (err, result) {
+      function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'restApiKey');
         done(err, result);
       });
   });
 
-  it('Authenticate with application id & masterKey', function (done) {
+  it('Authenticate with application id & masterKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.masterKey,
-      function (err, result) {
+      function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'masterKey');
         done(err, result);
       });
   });
 
-  it('Authenticate with application id & windowsKey', function (done) {
+  it('Authenticate with application id & windowsKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.windowsKey,
-      function (err, result) {
+      function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'windowsKey');
         done(err, result);
       });
   });
 
-  it('Fail to authenticate with application id & invalid key', function (done) {
+  it('Fail to authenticate with application id & invalid key', function(done) {
     Application.authenticate(registeredApp.id, 'invalid-key',
-      function (err, result) {
+      function(err, result) {
         assert(!result);
         done(err, result);
       });
   });
 });
 
-describe('Application subclass', function () {
-  it('should use subclass model name', function (done) {
+describe('Application subclass', function() {
+  it('should use subclass model name', function(done) {
     var MyApp = Application.extend('MyApp');
     var ds = loopback.createDataSource({connector: loopback.Memory});
     MyApp.attachTo(ds);
     MyApp.register('rfeng', 'MyApp123',
-      {description: 'My 123 mobile application'}, function (err, result) {
+      {description: 'My 123 mobile application'}, function(err, result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp123');
@@ -192,12 +192,12 @@ describe('Application subclass', function () {
         assert(app.created);
         assert(app.modified);
         // Remove all instances from Application model to avoid left-over data
-        Application.destroyAll(function () {
-          MyApp.findById(app.id, function (err, myApp) {
+        Application.destroyAll(function() {
+          MyApp.findById(app.id, function(err, myApp) {
             assert(!err);
             assert(myApp);
 
-            Application.findById(app.id, function (err, myApp) {
+            Application.findById(app.id, function(err, myApp) {
               assert(!err);
               assert(myApp === null);
               done(err, myApp);
@@ -207,4 +207,3 @@ describe('Application subclass', function () {
       });
   });
 });
-
