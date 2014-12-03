@@ -6,7 +6,16 @@ var loopback = require('../../lib/loopback');
 var path = require('path');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
-var bcrypt = require('bcryptjs');
+
+var bcrypt;
+try {
+  // Try the native module first
+  bcrypt = require('bcrypt');
+} catch (err) {
+  // Fall back to pure JS impl
+  bcrypt = require('bcryptjs');
+}
+
 var DEFAULT_TTL = 1209600; // 2 weeks in seconds
 var DEFAULT_RESET_PW_TTL = 15 * 60; // 15 mins in seconds
 var DEFAULT_MAX_TTL = 31556926; // 1 year in seconds
