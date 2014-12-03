@@ -49,7 +49,6 @@
     "serve-favicon": "^2.1.6",
     "strong-remoting": "^2.4.0",
     "uid2": "0.0.3",
-    "underscore": "~1.7.0",
     "underscore.string": "~2.3.3"
   },
   "peerDependencies": {
