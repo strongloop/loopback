@@ -1,3 +1,9 @@
+2014-12-08, Version 2.8.3
+=========================
+
+ * Remove unused underscore dependency (Ryan Graham)
+
+
 2014-11-27, Version 2.8.2
 =========================
 
@@ -623,6 +629,10 @@
 
  * Enhance the error message (Raymond Feng)
 
+
+2014-07-16, Version 2.0.0-beta7
+===============================
+
  * Bump version (Raymond Feng)
 
  * 2.0.0-beta6 (Miroslav Bajtoš)
@@ -762,13 +772,6 @@
 
 2014-07-16, Version 1.10.0
 ==========================
-
-
-
-2014-07-16, Version 2.0.0-beta7
-===============================
-
- * Bump version (Raymond Feng)
 
  * Remove unused dep (Raymond Feng)
 
@@ -1627,6 +1630,15 @@
 
  * Improve jsdox documentation of app object (Miroslav Bajtoš)
 
+ * Make sure methods are called in the context of the calling class (Raymond Feng)
+
+ * Start to move md to jsdoc (Ritchie Martori)
+
+
+2014-01-14, Version 1.5.0
+=========================
+
+
 
 2014-01-14, Version 1.5.1
 =========================
@@ -1636,10 +1648,6 @@
  * Make sure methods are called in the context of the calling class (Raymond Feng)
 
  * Start to move md to jsdoc (Ritchie Martori)
-
-
-2014-01-14, Version 1.5.0
-=========================
 
  * Replace `on` with `once` in middleware examples (Miroslav Bajtoš)
 
