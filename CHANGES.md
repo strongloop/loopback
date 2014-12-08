@@ -1,3 +1,9 @@
+2014-12-08, Version 2.8.4
+=========================
+
+ * Allow native bcrypt for performance (Raymond Feng)
+
+
 2014-12-08, Version 2.8.3
 =========================
 
@@ -629,10 +635,6 @@
 
  * Enhance the error message (Raymond Feng)
 
-
-2014-07-16, Version 2.0.0-beta7
-===============================
-
  * Bump version (Raymond Feng)
 
  * 2.0.0-beta6 (Miroslav Bajtoš)
@@ -772,6 +774,13 @@
 
 2014-07-16, Version 1.10.0
 ==========================
+
+
+
+2014-07-16, Version 2.0.0-beta7
+===============================
+
+ * Bump version (Raymond Feng)
 
  * Remove unused dep (Raymond Feng)
 
