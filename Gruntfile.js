@@ -70,7 +70,7 @@ module.exports = function(grunt) {
           'dist/loopback.js': ['index.js'],
         },
         options: {
-          ignore: ['nodemailer', 'passport'],
+          ignore: ['nodemailer', 'passport', 'bcrypt'],
           standalone: 'loopback'
         }
       }
@@ -174,7 +174,8 @@ module.exports = function(grunt) {
               'passport',
               'passport-local',
               'superagent',
-              'supertest'
+              'supertest',
+              'bcrypt'
             ],
             // transform: ['coffeeify'],
             // debug: true,

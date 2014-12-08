@@ -94,7 +94,8 @@
     "express": "./lib/browser-express.js",
     "./lib/server-app.js": "./lib/browser-express.js",
     "connect": false,
-    "nodemailer": false
+    "nodemailer": false,
+    "bcrypt": false
   },
   "license": {
     "name": "Dual MIT/StrongLoop",
