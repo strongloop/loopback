@@ -1169,7 +1169,7 @@ describe('relations - integration', function() {
       Image.belongsTo(Book);
 
       // fake a remote method that match the filter in Model.nestRemoting()
-      Page.prototype.__throw__errors = function () {
+      Page.prototype['__throw__errors'] = function() {
         throw new Error('This should not crash the app');
       };
 
@@ -1313,7 +1313,7 @@ describe('relations - integration', function() {
       });
     });
 
-    it('should catch error if nested function throws', function (done) {
+    it('should catch error if nested function throws', function(done) {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + this.page.id + '/throws')
         .end(function(err, res) {
