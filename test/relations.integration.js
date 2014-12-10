@@ -1168,6 +1168,13 @@ describe('relations - integration', function() {
       Page.hasMany(Note);
       Image.belongsTo(Book);
 
+      // fake a remote method that match the filter in Model.nestRemoting()
+      Page.prototype.__throw__errors = function () {
+        throw new Error('This should not crash the app');
+      };
+
+      Page.remoteMethod('__throw__errors', { isStatic: false, http: { path: '/throws', verb: 'get' } });
+
       Book.nestRemoting('pages');
       Image.nestRemoting('book');
 
@@ -1304,6 +1311,19 @@ describe('relations - integration', function() {
           });
         });
       });
+    });
+
+    it('should catch error if nested function throws', function (done) {
+      var test = this;
+      this.get('/api/books/' + test.book.id + '/pages/' + this.page.id + '/throws')
+        .end(function(err, res) {
+          expect(res.body).to.be.an('object');
+          expect(res.body.error).to.be.an('object');
+          expect(res.body.error.name).to.equal('Error');
+          expect(res.body.error.status).to.equal(500);
+          expect(res.body.error.message).to.equal('This should not crash the app');
+          done();
+        });
     });
   });
 
