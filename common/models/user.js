@@ -11,6 +11,10 @@ var bcrypt;
 try {
   // Try the native module first
   bcrypt = require('bcrypt');
+  // Browserify returns an empty object
+  if (bcrypt && typeof bcrypt.compare !== 'function') {
+    bcrypt = require('bcryptjs');
+  }
 } catch (err) {
   // Fall back to pure JS impl
   bcrypt = require('bcryptjs');
