@@ -1,3 +1,15 @@
+2014-12-12, Version 2.8.5
+=========================
+
+ * fix jshint errors (Clark Wang)
+
+ * test if cb exists (Clark Wang)
+
+ * fix nested remoting function throwing error will crash app (Clark Wang)
+
+ * Fix bcrypt issues for browserify (Raymond Feng)
+
+
 2014-12-08, Version 2.8.4
 =========================
 
@@ -1228,14 +1240,6 @@
 
  * 2.0.0-beta1 (Ritchie Martori)
 
- * Bump version (Raymond Feng)
-
- * Add postgresql to the keywords (Raymond Feng)
-
- * updated package.json with SOAP and framework keywords (altsang)
-
- * updated package.json with keywords and updated description (Raymond Feng)
-
  * Make app.datasources unique per app instance (Miroslav Bajtoš)
 
  * Add RC version (Ritchie Martori)
@@ -1301,11 +1305,6 @@
  * Add Change model (Ritchie Martori)
 
 
-2014-05-27, Version 1.8.4
-=========================
-
-
-
 2014-05-27, Version 1.8.5
 =========================
 
@@ -1317,7 +1316,13 @@
 
  * updated package.json with keywords and updated description (Raymond Feng)
 
+
+2014-05-27, Version 1.8.4
+=========================
+
  * Add more keywords (Raymond Feng)
+
+ * Bump version (Raymond Feng)
 
  * app: flatten model config (Miroslav Bajtoš)
 
