@@ -297,6 +297,19 @@ describe('app', function() {
       });
     });
 
+    it('keep orders of middleware added by app.use()', function(done) {
+      var expectedSteps = [];
+      for (var i = 0; i < 10; i++) {
+        app.use(namedHandler('m' + i));
+        expectedSteps.push('m' + i);
+      }
+      executeMiddlewareHandlers(app, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(expectedSteps);
+        done();
+      });
+    });
+
     function namedHandler(name) {
       return function(req, res, next) {
         steps.push(name);
