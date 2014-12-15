@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "version": "2.8.5",
+  "version": "2.8.6",
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
@@ -42,11 +42,11 @@
     "express": "^4.10.2",
     "inflection": "~1.4.2",
     "loopback-connector-remote": "^1.0.1",
-    "loopback-phase": "^1.0.1",
+    "loopback-phase": "^1.2.0",
     "nodemailer": "~1.3.0",
     "nodemailer-stub-transport": "~0.1.4",
-    "path-to-regexp": "^1.0.1",
     "serve-favicon": "^2.1.6",
+    "stable": "^0.1.5",
     "strong-remoting": "^2.4.0",
     "uid2": "0.0.3",
     "underscore.string": "~2.3.3"
