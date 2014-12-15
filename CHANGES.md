@@ -1,3 +1,11 @@
+2014-12-15, Version 2.8.6
+=========================
+
+ * server-app: make _sortLayersByPhase stable (Miroslav Bajtoš)
+
+ * Rework phased middleware, fix several bugs (Miroslav Bajtoš)
+
+
 2014-12-12, Version 2.8.5
 =========================
 
@@ -9,15 +17,18 @@
 
  * Fix bcrypt issues for browserify (Raymond Feng)
 
-
-2014-12-08, Version 2.8.4
-=========================
-
  * Allow native bcrypt for performance (Raymond Feng)
 
 
 2014-12-08, Version 2.8.3
 =========================
+
+
+
+2014-12-08, Version 2.8.4
+=========================
+
+ * Allow native bcrypt for performance (Raymond Feng)
 
  * Remove unused underscore dependency (Ryan Graham)
 
