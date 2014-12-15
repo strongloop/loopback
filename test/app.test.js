@@ -239,6 +239,26 @@ describe('app', function() {
       });
     });
 
+    it('preserves order of middleware in the same phase', function(done) {
+      // while we are discouraging developers from depending on
+      // the registration order of middleware in the same phase,
+      // we must preserve the order for compatibility with `app.use`
+      // and `app.route`.
+
+      // we need at least 9 elements to expose non-stability
+      // of the built-in sort function
+      var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      numbers.forEach(function(n) {
+        app.middleware('routes', namedHandler(n));
+      });
+
+      executeMiddlewareHandlers(app, function(err) {
+        if (err) return done;
+        expect(steps).to.eql(numbers);
+        done();
+      });
+    });
+
     it('correctly mounts express apps', function(done) {
       var data;
       var mountWasEmitted;
