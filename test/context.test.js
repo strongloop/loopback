@@ -13,15 +13,6 @@ describe('check loopback.getCurrentContext', function() {
     var called = false;
     app.use(loopback.rest());
     app.dataSource('db', { connector: 'memory' });
-    app.dataSource('mongox', {
-        "host": "localhost",
-        "port": 27017,
-        "database": "api",
-        "username": "root",
-        "password": "123456",
-        "name": "mongodb",
-        "connector": "mongodb"
-      });
 
     var TestModel = loopback.createModel({name: 'TestModel', properties: {name: String}, options: { base: 'Model'}});
     app.model(TestModel, {dataSource: "db", public: true});
