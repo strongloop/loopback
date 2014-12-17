@@ -42,6 +42,10 @@ The LoopBack framework is a set of Node.js modules that you can use independentl
 * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap)
 * [loopback-connector-atg](https://github.com/strongloop/loopback-connector-atg) 
 
+### Community Connectors
+
+The LoopBack community has created and supports a number of additional connectors.  See [Community connectors](http://docs.strongloop.com/display/LB/Community+connectors) for details.
+
 ### Components
 * [loopback-component-push](https://github.com/strongloop/loopback-component-push)
 * [loopback-component-storage](https://github.com/strongloop/loopback-component-storage)
