@@ -18,7 +18,15 @@ describe('loopback.rest', function() {
     app.use(loopback.rest());
     request(app).get('/mymodels/1')
       .expect(404)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+        done();
+      });
   });
 
   it('should report 404 for HEAD /:id not found', function(done) {

@@ -108,6 +108,7 @@ module.exports = function(AccessToken) {
             } else {
               var e = new Error('Invalid Access Token');
               e.status = e.statusCode = 401;
+              e.code = 'INVALID_TOKEN';
               cb(e);
             }
           });

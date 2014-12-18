@@ -191,7 +191,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(401)
       .set('authorization', this.token.id)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'AUTHORIZATION_REQUIRED');
+        done();
+      });
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
@@ -199,7 +207,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(403)
       .set('authorization', this.token.id)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'ACCESS_DENIED');
+        done();
+      });
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
@@ -207,7 +223,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(404)
       .set('authorization', this.token.id)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+        done();
+      });
   });
 
   it('prevent remote call if the accessToken is missing and required', function(done) {
@@ -215,7 +239,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(401)
       .set('authorization', null)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'AUTHORIZATION_REQUIRED');
+        done();
+      });
   });
 
   it('stores token in the context', function(done) {
