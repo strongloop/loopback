@@ -167,17 +167,20 @@ module.exports = function(User) {
     if (realmRequired && !query.realm) {
       var err1 = new Error('realm is required');
       err1.statusCode = 400;
+      err1.code = 'REALM_REQUIRED';
       return fn(err1);
     }
     if (!query.email && !query.username) {
       var err2 = new Error('username or email is required');
       err2.statusCode = 400;
+      err2.code = 'USERNAME_EMAIL_REQUIRED';
       return fn(err2);
     }
 
     self.findOne({where: query}, function(err, user) {
       var defaultError = new Error('login failed');
       defaultError.statusCode = 401;
+      defaultError.code = 'LOGIN_FAILED';
 
       if (err) {
         debug('An error is reported from User.findOne: %j', err);
@@ -193,6 +196,7 @@ module.exports = function(User) {
               debug('User email has not been verified');
               err = new Error('login failed as the email has not been verified');
               err.statusCode = 401;
+              err.code = 'LOGIN_FAILED_EMAIL_NOT_VERIFIED';
               return fn(err);
             } else {
               user.createAccessToken(credentials.ttl, function(err, token) {
@@ -396,9 +400,11 @@ module.exports = function(User) {
           if (user) {
             err = new Error('Invalid token: ' + token);
             err.statusCode = 400;
+            err.code = 'INVALID_TOKEN';
           } else {
             err = new Error('User not found: ' + uid);
             err.statusCode = 404;
+            err.code = 'USER_NOT_FOUND';
           }
           fn(err);
         }
@@ -447,7 +453,7 @@ module.exports = function(User) {
     } else {
       var err = new Error('email is required');
       err.statusCode = 400;
-
+      err.code = 'EMAIL_REQUIRED';
       cb(err);
     }
   };
