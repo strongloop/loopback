@@ -135,6 +135,45 @@ describe('User', function() {
       assert(u.password !== 'bar');
     });
 
+    describe('custom password hash', function() {
+      var defaultHashPassword;
+      var defaultValidatePassword;
+
+      beforeEach(function() {
+        defaultHashPassword = User.hashPassword;
+        defaultValidatePassword = User.defaultValidatePassword;
+
+        User.hashPassword = function(plain) {
+          return plain.toUpperCase();
+        };
+
+        User.validatePassword = function(plain) {
+          if (!plain || plain.length < 3) {
+            throw new Error('Password must have at least 3 chars');
+          }
+          return true;
+        };
+      });
+
+      afterEach(function() {
+        User.hashPassword = defaultHashPassword;
+      });
+
+      it('Reports invalid password', function() {
+        try {
+          var u = new User({username: 'foo', password: 'aa'});
+          assert(false, 'Error should have been thrown');
+        } catch (e) {
+          // Ignore
+        }
+      });
+
+      it('Hashes the given password', function() {
+        var u = new User({username: 'foo', password: 'bar'});
+        assert(u.password === 'BAR');
+      });
+    });
+
     it('Create a user over REST should remove emailVerified property', function(done) {
       request(app)
         .post('/users')
