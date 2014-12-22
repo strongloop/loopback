@@ -142,6 +142,9 @@ describe('User', function() {
         .expect(200)
         .send(validCredentialsEmailVerifiedOverREST)
         .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
           assert(!res.body.emailVerified);
           done();
         });
@@ -204,7 +207,9 @@ describe('User', function() {
         .expect(200)
         .send(validCredentials)
         .end(function(err, res) {
-          if (err) return done(err);
+          if (err) {
+            return done(err);
+          }
           var accessToken = res.body;
 
           assert(accessToken.userId);
@@ -237,6 +242,9 @@ describe('User', function() {
         .expect(400)
         .send(incompleteCredentials)
         .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
           done();
         });
     });
@@ -249,6 +257,9 @@ describe('User', function() {
         .expect(400)
         .send(validCredentials)
         .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
           done();
         });
     });
@@ -260,7 +271,9 @@ describe('User', function() {
         .expect(200)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
-          if (err) return done(err);
+          if (err) {
+            return done(err);
+          }
           var token = res.body;
           expect(token.user, 'body.user').to.not.equal(undefined);
           expect(token.user, 'body.user')
@@ -276,7 +289,9 @@ describe('User', function() {
         .expect(200)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
-          if (err) return done(err);
+          if (err) {
+            return done(err);
+          }
           var token = res.body;
           expect(token.user, 'body.user').to.not.equal(undefined);
           expect(token.user, 'body.user')
@@ -332,7 +347,9 @@ describe('User', function() {
         .expect(200)
         .send(validCredentialsEmailVerified)
         .end(function(err, res) {
-          if (err) return done(err);
+          if (err) {
+            return done(err);
+          }
           var accessToken = res.body;
 
           assertGoodToken(accessToken);
@@ -349,6 +366,9 @@ describe('User', function() {
         .expect(401)
         .send(validCredentials)
         .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
           done();
         });
     });
@@ -538,7 +558,9 @@ describe('User', function() {
           .expect(200)
           .send({email: 'foo@bar.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) return done(err);
+            if (err) {
+              return done(err);
+            }
             var accessToken = res.body;
 
             assert(accessToken.userId);
@@ -650,7 +672,9 @@ describe('User', function() {
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) return done(err);
+            if (err) {
+              return done(err);
+            }
           });
       });
 
@@ -681,7 +705,9 @@ describe('User', function() {
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) return done(err);
+            if (err) {
+              return done(err);
+            }
           });
       });
 
@@ -764,7 +790,9 @@ describe('User', function() {
               + '&redirect=' + encodeURIComponent(options.redirect))
             .expect(400)
             .end(function(err, res) {
-              if (err) return done(err);
+              if (err) {
+                return done(err);
+              }
               assert(res.body.error);
               done();
             });
