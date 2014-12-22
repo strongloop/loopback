@@ -200,6 +200,14 @@ describe('User', function() {
       });
     });
 
+    it('Login should only allow correct credentials', function(done) {
+      User.login(invalidCredentials, function(err, accessToken) {
+        assert(err);
+        assert(!accessToken);
+        done();
+      });
+    });
+
     it('Login a user over REST by providing credentials', function(done) {
       request(app)
         .post('/users/login')
@@ -300,15 +308,6 @@ describe('User', function() {
         });
     });
 
-    it('Login should only allow correct credentials', function(done) {
-      User.create({email: 'foo22@bar.com', password: 'bar'}, function(user, err) {
-        User.login({email: 'foo44@bar.com', password: 'bar'}, function(err, accessToken) {
-          assert(err);
-          assert(!accessToken);
-          done();
-        });
-      });
-    });
   });
 
   function assertGoodToken(accessToken) {
