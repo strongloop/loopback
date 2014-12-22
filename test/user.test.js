@@ -255,7 +255,7 @@ describe('User', function() {
         .set('Content-Type', null)
         .expect('Content-Type', /json/)
         .expect(400)
-        .send(validCredentials)
+        .send(JSON.stringify(validCredentials))
         .end(function(err, res) {
           if (err) {
             return done(err);
