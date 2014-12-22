@@ -582,7 +582,9 @@ describe('User', function() {
       assert(token);
 
       return function(err) {
-        if (err) return done(err);
+        if (err) {
+          return done(err);
+        }
 
         AccessToken.findById(token, function(err, accessToken) {
           assert(!accessToken, 'accessToken should not exist after logging out');
