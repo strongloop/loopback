@@ -11,7 +11,7 @@ describe('User', function() {
   var validCredentialsEmailVerified = {email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
   var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
   var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
-  var invalidCredentials = {email: 'foo1@bar.com', password: 'bar1'};
+  var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
   var incompleteCredentials = {password: 'bar1'};
 
   beforeEach(function() {
