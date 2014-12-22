@@ -319,7 +319,7 @@ module.exports = function(User) {
       options.port +
       options.restApiRoot +
       userModel.http.path +
-      userModel.confirm.http.path +
+      userModel.sharedClass.find('confirm', true).http.path +
       '?uid=' +
       options.user.id +
       '&redirect=' +
@@ -480,8 +480,8 @@ module.exports = function(User) {
       next();
     });
 
-    loopback.remoteMethod(
-      UserModel.login,
+    UserModel.remoteMethod(
+      'login',
       {
         description: 'Login a user with username/email and password',
         accepts: [
@@ -502,8 +502,8 @@ module.exports = function(User) {
       }
     );
 
-    loopback.remoteMethod(
-      UserModel.logout,
+    UserModel.remoteMethod(
+      'logout',
       {
         description: 'Logout a user with access token',
         accepts: [
@@ -521,8 +521,8 @@ module.exports = function(User) {
       }
     );
 
-    loopback.remoteMethod(
-      UserModel.confirm,
+    UserModel.remoteMethod(
+      'confirm',
       {
         description: 'Confirm a user registration with email verification token',
         accepts: [
@@ -534,8 +534,8 @@ module.exports = function(User) {
       }
     );
 
-    loopback.remoteMethod(
-      UserModel.resetPassword,
+    UserModel.remoteMethod(
+      'resetPassword',
       {
         description: 'Reset password for a user with email',
         accepts: [
