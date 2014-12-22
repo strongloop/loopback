@@ -223,6 +223,9 @@ describe('User', function() {
         .expect(401)
         .send(invalidCredentials)
         .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
           done();
         });
     });
