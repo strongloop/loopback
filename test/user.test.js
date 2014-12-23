@@ -804,9 +804,17 @@ describe('User', function() {
 
   describe('Password Reset', function() {
     describe('User.resetPassword(options, cb)', function() {
+      var email = 'foo@bar.com';
+
+      it('Requires email address to reset password', function(done) {
+        User.resetPassword({ }, function(err) {
+          assert(err);
+          done();
+        });
+      });
+
       it('Creates a temp accessToken to allow a user to change password', function(done) {
         var calledBack = false;
-        var email = 'foo@bar.com';
 
         User.resetPassword({
           email: email
@@ -825,6 +833,35 @@ describe('User', function() {
             done();
           });
         });
+      });
+
+      it('Password reset over REST rejected without email address', function(done) {
+        request(app)
+          .post('/users/reset')
+          .expect('Content-Type', /json/)
+          .expect(400)
+          .send({ })
+          .end(function(err, res) {
+            if (err) {
+              return done(err);
+            }
+            done();
+          });
+      });
+
+      it('Password reset over REST requires email address', function(done) {
+        request(app)
+          .post('/users/reset')
+          .expect('Content-Type', /json/)
+          .expect(204)
+          .send({ email: email })
+          .end(function(err, res) {
+            if (err) {
+              return done(err);
+            }
+            assert.deepEqual(res.body, { });
+            done();
+          });
       });
     });
   });
