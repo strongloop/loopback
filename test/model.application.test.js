@@ -51,7 +51,7 @@ describe('Application', function() {
         }},
       function(err, result) {
         var app = result;
-        assert.deepEqual(app.pushSettings.toObject(), {
+        assert.deepEqual(app.pushSettings.toString(), {
           apns: {
             production: false,
             certData: 'cert',
@@ -70,7 +70,7 @@ describe('Application', function() {
           gcm: {
             serverApiKey: 'serverKey'
           }
-        });
+        }.toString());
         done(err, result);
       });
   });
