@@ -1221,8 +1221,8 @@ describe('relations - integration', function() {
     });
 
     before(function createChapters(done) {
-      var test = this, book = test.book;
-      book.chapters.create({ name: 'Chapter 1' },
+      var test = this;
+      test.book.chapters.create({ name: 'Chapter 1' },
         function(err, chapter) {
           if (err) return done(err);
           test.chapter = chapter;
