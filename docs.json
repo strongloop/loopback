@@ -2,6 +2,7 @@
   "title": "LoopBack Documentation",
   "content": [
     "lib/application.js",
+    "lib/server-app.js",
     "lib/loopback.js",
     "lib/registry.js",
     "lib/access-context.js",
