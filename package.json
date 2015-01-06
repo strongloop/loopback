@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "version": "2.8.6",
+  "version": "2.8.7",
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
@@ -102,6 +102,6 @@
     "url": "https://github.com/strongloop/loopback/blob/master/LICENSE"
   },
   "optionalDependencies": {
-    "sl-blip": "http://blip.strongloop.com/loopback@2.8.6"
+    "sl-blip": "http://blip.strongloop.com/loopback@2.8.7"
   }
 }
