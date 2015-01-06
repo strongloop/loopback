@@ -464,7 +464,7 @@ module.exports = function(User) {
 
     // max ttl
     this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
-    this.settings.ttl = DEFAULT_TTL;
+    this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
     UserModel.setter.password = function(plain) {
       var salt = bcrypt.genSaltSync(this.constructor.settings.saltWorkFactor || SALT_WORK_FACTOR);

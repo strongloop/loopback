@@ -808,4 +808,14 @@ describe('User', function() {
       expect(User.accessToken.modelName, 'modelName').to.eql('AccessToken');
     });
   });
+
+  describe('ttl', function() {
+    var User2;
+    beforeEach(function() {
+      User2 = loopback.User.extend('User2', {}, { ttl: 10 });
+    });
+    it('should override ttl setting in based User model', function() {
+      expect(User2.settings.ttl).to.equal(10);
+    });
+  });
 });

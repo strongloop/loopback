@@ -28,6 +28,12 @@ describe('Change', function() {
     });
   });
 
+  describe('Change.getCheckpointModel()', function() {
+    it('Shouldnt create two models if called twice', function() {
+      assert.equal(Change.getCheckpointModel(), Change.getCheckpointModel());
+    });
+  });
+
   describe('change.id', function() {
     it('should be a hash of the modelName and modelId', function() {
       var change = new Change({

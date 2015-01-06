@@ -12,6 +12,10 @@ LoopBack consists of:
   * A library of Node.js modules.
   * [Yeoman](http://yeoman.io/) generators for scaffolding applications.
   * Client SDKs for iOS, Android, and web clients.
+  
+LoopBack tools include:
+  * Command-line tool `slc loopback` to create applications, models, data sources, and so on.
+  * StrongLoop Arc, a graphical tool for editing LoopBack applications; and for deploying and monitoring applications.
 
 For more details, see http://loopback.io/.
 
@@ -37,6 +41,10 @@ The LoopBack framework is a set of Node.js modules that you can use independentl
 * [loopback-connector-mssql](https://github.com/strongloop/loopback-connector-mssql)
 * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap)
 * [loopback-connector-atg](https://github.com/strongloop/loopback-connector-atg) 
+
+### Community Connectors
+
+The LoopBack community has created and supports a number of additional connectors.  See [Community connectors](http://docs.strongloop.com/display/LB/Community+connectors) for details.
 
 ### Components
 * [loopback-component-push](https://github.com/strongloop/loopback-component-push)
