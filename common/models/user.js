@@ -549,6 +549,7 @@ module.exports = function(User) {
       UserModel.afterRemote('confirm', function(ctx, inst, next) {
         if (ctx.req) {
           ctx.res.redirect(ctx.req.param('redirect'));
+          next();
         } else {
           next(new Error('transport unsupported'));
         }
