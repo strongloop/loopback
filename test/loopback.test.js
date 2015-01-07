@@ -1,4 +1,7 @@
 var it = require('./util/it');
+var describe = require('./util/describe');
+var Domain = require('domain');
+var EventEmitter = require('events').EventEmitter;
 
 describe('loopback', function() {
   var nameCounter = 0;
@@ -386,6 +389,73 @@ describe('loopback', function() {
         expect(loopback[name], name).to.be.a('function');
         expect(loopback[name].modelName, name + '.modelName').to.eql(name);
       });
+    });
+  });
+
+  describe.onServer('loopback.getCurrentContext', function() {
+    var app = loopback();
+    var runInOtherDomain;
+    var runnerInterval;
+
+    before(function() {
+
+      app.use(loopback.rest());
+      app.dataSource('db', { connector: 'memory' });
+
+      var TestModel = loopback.createModel({ name: 'TestModel' });
+      app.model(TestModel, {dataSource: 'db', public: true});
+
+      var emitterInOtherDomain = new EventEmitter();
+      Domain.create().add(emitterInOtherDomain);
+
+      runInOtherDomain = function(fn) {
+        emitterInOtherDomain.once('run', fn);
+      };
+
+      runnerInterval = setInterval(
+          function() {
+            emitterInOtherDomain.emit('run');
+          }, 10);
+
+      // function for remote method
+      TestModel.test = function(inst, cb) {
+        var tmpCtx = loopback.getCurrentContext();
+        if (tmpCtx) tmpCtx.set('data', 'test');
+        if (process.domain) cb = process.domain.bind(cb);  // IMPORTANT
+        runInOtherDomain(cb);
+      };
+
+      // remote method
+      TestModel.remoteMethod('test', {
+        accepts: {arg: 'inst', type: uniqueModelName},
+        returns: {root: true},
+        http: {path: '/test', verb: 'get'}
+      });
+
+      // after remote hook
+      TestModel.afterRemote('**', function(ctxx, inst, next) {
+        var tmpCtx = loopback.getCurrentContext();
+        if (tmpCtx) {
+          ctxx.result.data = tmpCtx.get('data');
+        }else {
+          ctxx.result.data = '';
+        }
+        next();
+      });
+    });
+
+    after(function tearDownRunInOtherDomain() {
+      clearInterval(runnerInterval);
+    });
+
+    it('passed if the patch is applied, otherwise failed', function(done) {
+      request(app)
+        .get('/TestModels/test')
+        .end(function(err, res) {
+          if (err) return done(err);
+          assert.equal(res.body.data, 'test');
+          done();
+        });
     });
   });
 });
