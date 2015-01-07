@@ -1,5 +1,7 @@
 var it = require('./util/it');
 var describe = require('./util/describe');
+var Domain = require('domain');
+var EventEmitter = require('events').EventEmitter;
 
 describe('loopback', function() {
   var nameCounter = 0;
@@ -401,20 +403,23 @@ describe('loopback', function() {
       app.dataSource('db', { connector: 'memory' });
 
       var TestModel = loopback.createModel({ name: 'TestModel' });
-      app.model(TestModel, {dataSource: "db", public: true});
+      app.model(TestModel, {dataSource: 'db', public: true});
 
       var emitterInOtherDomain = new EventEmitter();
       Domain.create().add(emitterInOtherDomain);
 
       runInOtherDomain = function(fn) {
         emitterInOtherDomain.once('run', fn);
-      }
+      };
 
-      runnerInterval = setInterval(function() { emitterInOtherDomain.emit('run'); }, 10);
+      runnerInterval = setInterval(
+          function() {
+            emitterInOtherDomain.emit('run');
+          }, 10);
 
       // function for remote method
       TestModel.test = function(inst, cb) {
-        tmpCtx = loopback.getCurrentContext();
+        var tmpCtx = loopback.getCurrentContext();
         if (tmpCtx) tmpCtx.set('data', 'test');
         if (process.domain) cb = process.domain.bind(cb);  // IMPORTANT
         runInOtherDomain(cb);
@@ -429,11 +434,11 @@ describe('loopback', function() {
 
       // after remote hook
       TestModel.afterRemote('**', function(ctxx, inst, next) {
-        tmpCtx = loopback.getCurrentContext();
+        var tmpCtx = loopback.getCurrentContext();
         if (tmpCtx) {
           ctxx.result.data = tmpCtx.get('data');
         }else {
-          ctxx.result.data = "";
+          ctxx.result.data = '';
         }
         next();
       });
@@ -443,7 +448,7 @@ describe('loopback', function() {
       clearInterval(runnerInterval);
     });
 
-    it('should fail without the patch and it should pass once the patch is applied', function(done) {
+    it('passed if the patch is applied, otherwise failed', function(done) {
       request(app)
         .get('/TestModels/test')
         .end(function(err, res) {
