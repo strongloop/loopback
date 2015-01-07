@@ -454,6 +454,24 @@ module.exports = function(User) {
   };
 
   /*!
+   * Hash the plain password
+   */
+  User.hashPassword = function(plain) {
+    this.validatePassword(plain);
+    var salt = bcrypt.genSaltSync(this.settings.saltWorkFactor || SALT_WORK_FACTOR);
+    return bcrypt.hashSync(plain, salt);
+  };
+
+  User.validatePassword = function(plain) {
+    if (typeof plain === 'string' && plain) {
+      return true;
+    }
+    var err =  new Error('Invalid password: ' + plain);
+    err.statusCode = 422;
+    throw err;
+  };
+
+  /*!
    * Setup an extended user model.
    */
 
@@ -467,8 +485,7 @@ module.exports = function(User) {
     this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
     UserModel.setter.password = function(plain) {
-      var salt = bcrypt.genSaltSync(this.constructor.settings.saltWorkFactor || SALT_WORK_FACTOR);
-      this.$password = bcrypt.hashSync(plain, salt);
+      this.$password = this.constructor.hashPassword(plain);
     };
 
     // Make sure emailVerified is not set by creation

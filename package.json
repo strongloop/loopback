@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "version": "2.8.8",
+  "version": "2.9.0",
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
@@ -52,7 +52,7 @@
     "underscore.string": "~2.3.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "^2.8.0"
+    "loopback-datasource-juggler": "^2.13.0"
   },
   "devDependencies": {
     "browserify": "~4.2.3",
@@ -102,6 +102,6 @@
     "url": "https://github.com/strongloop/loopback/blob/master/LICENSE"
   },
   "optionalDependencies": {
-    "sl-blip": "http://blip.strongloop.com/loopback@2.8.8"
+    "sl-blip": "http://blip.strongloop.com/loopback@2.9.0"
   }
 }
