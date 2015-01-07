@@ -47,7 +47,7 @@
     "nodemailer-stub-transport": "~0.1.4",
     "serve-favicon": "^2.1.6",
     "stable": "^0.1.5",
-    "strong-remoting": "^2.4.0",
+    "strong-remoting": "^2.11.0",
     "uid2": "0.0.3",
     "underscore.string": "~2.3.3"
   },
