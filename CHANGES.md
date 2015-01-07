@@ -1,3 +1,13 @@
+2015-01-07, Version 2.9.0
+=========================
+
+ * Update juggler dep (Raymond Feng)
+
+ * Fix Geo test cases (Raymond Feng)
+
+ * Allow User.hashPassword/validatePassword to be overridden (Raymond Feng)
+
+
 2015-01-07, Version 2.8.8
 =========================
 
@@ -695,10 +705,6 @@
 
  * Enhance the error message (Raymond Feng)
 
-
-2014-07-16, Version 2.0.0-beta7
-===============================
-
  * Bump version (Raymond Feng)
 
  * 2.0.0-beta6 (Miroslav Bajtoš)
@@ -838,6 +844,13 @@
 
 2014-07-16, Version 1.10.0
 ==========================
+
+
+
+2014-07-16, Version 2.0.0-beta7
+===============================
+
+ * Bump version (Raymond Feng)
 
  * Remove unused dep (Raymond Feng)
 
@@ -1285,6 +1298,14 @@
 
  * 2.0.0-beta1 (Ritchie Martori)
 
+ * Bump version (Raymond Feng)
+
+ * Add postgresql to the keywords (Raymond Feng)
+
+ * updated package.json with SOAP and framework keywords (altsang)
+
+ * updated package.json with keywords and updated description (Raymond Feng)
+
  * Make app.datasources unique per app instance (Miroslav Bajtoš)
 
  * Add RC version (Ritchie Martori)
@@ -1350,6 +1371,11 @@
  * Add Change model (Ritchie Martori)
 
 
+2014-05-27, Version 1.8.4
+=========================
+
+
+
 2014-05-27, Version 1.8.5
 =========================
 
@@ -1361,13 +1387,7 @@
 
  * updated package.json with keywords and updated description (Raymond Feng)
 
-
-2014-05-27, Version 1.8.4
-=========================
-
  * Add more keywords (Raymond Feng)
-
- * Bump version (Raymond Feng)
 
  * app: flatten model config (Miroslav Bajtoš)
 
