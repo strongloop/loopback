@@ -1,3 +1,17 @@
+2015-01-08, Version 2.10.0
+==========================
+
+ * Revert the peer dep change to avoid npm complaints (Raymond Feng)
+
+ * Update strong-remoting dep (Raymond Feng)
+
+ * Allow accessType per remote method (Raymond Feng)
+
+ * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
+
+ * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
+
+
 2015-01-07, Version 2.9.0
 =========================
 
