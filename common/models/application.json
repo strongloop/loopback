@@ -50,6 +50,7 @@
     "masterKey": "string",
 
     "pushSettings": {
+      "type": "object",
       "apns": {
         "production": {
           "type": "boolean",
