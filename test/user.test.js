@@ -126,6 +126,7 @@ describe('User', function() {
         User.login({email: 'b@c.com'}, function(err, accessToken) {
           assert(!accessToken, 'should not create a accessToken without a valid password');
           assert(err, 'should not login without a password');
+          assert.equal(err.code, 'LOGIN_FAILED');
           done();
         });
       });
@@ -243,7 +244,16 @@ describe('User', function() {
     it('Login should only allow correct credentials', function(done) {
       User.login(invalidCredentials, function(err, accessToken) {
         assert(err);
+        assert.equal(err.code, 'LOGIN_FAILED');
         assert(!accessToken);
+        done();
+      });
+    });
+
+    it('Login a user providing incomplete credentials', function(done) {
+      User.login(incompleteCredentials, function(err, accessToken) {
+        assert(err);
+        assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
         done();
       });
     });
@@ -279,6 +289,8 @@ describe('User', function() {
           if (err) {
             return done(err);
           }
+          var errorResponse = res.body.error;
+          assert.equal(errorResponse.code, 'LOGIN_FAILED');
           done();
         });
     });
@@ -293,6 +305,8 @@ describe('User', function() {
           if (err) {
             return done(err);
           }
+          var errorResponse = res.body.error;
+          assert.equal(errorResponse.code, 'USERNAME_EMAIL_REQUIRED');
           done();
         });
     });
@@ -308,6 +322,8 @@ describe('User', function() {
           if (err) {
             return done(err);
           }
+          var errorResponse = res.body.error;
+          assert.equal(errorResponse.code, 'USERNAME_EMAIL_REQUIRED');
           done();
         });
     });
@@ -370,6 +386,7 @@ describe('User', function() {
         // strongloop/loopback#931
         // error message should be "login failed" and not "login failed as the email has not been verified"
         assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
+        assert.equal(err.code, 'LOGIN_FAILED');
         done();
       });
     });
@@ -377,6 +394,7 @@ describe('User', function() {
     it('Login a user by without email verification', function(done) {
       User.login(validCredentials, function(err, accessToken) {
         assert(err);
+        assert.equal(err.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
         done();
       });
     });
@@ -414,10 +432,14 @@ describe('User', function() {
         .expect(401)
         .send({ email: validCredentialsEmail })
         .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
           // strongloop/loopback#931
           // error message should be "login failed" and not "login failed as the email has not been verified"
           var errorResponse = res.body.error;
           assert(errorResponse && !/verified/.test(errorResponse.message), ('expecting "login failed" error message, received: "' + errorResponse.message + '"'));
+          assert.equal(errorResponse.code, 'LOGIN_FAILED');
           done();
         });
     });
@@ -432,6 +454,8 @@ describe('User', function() {
           if (err) {
             return done(err);
           }
+          var errorResponse = res.body.error;
+          assert.equal(errorResponse.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
           done();
         });
     });
@@ -530,6 +554,7 @@ describe('User', function() {
     it('rejects a user by without realm', function(done) {
       User.login(credentialWithoutRealm, function(err, accessToken) {
         assert(err);
+        assert.equal(err.code, 'REALM_REQUIRED');
         done();
       });
     });
@@ -537,6 +562,7 @@ describe('User', function() {
     it('rejects a user by with bad realm', function(done) {
       User.login(credentialWithBadRealm, function(err, accessToken) {
         assert(err);
+        assert.equal(err.code, 'LOGIN_FAILED');
         done();
       });
     });
@@ -544,6 +570,7 @@ describe('User', function() {
     it('rejects a user by with bad pass', function(done) {
       User.login(credentialWithBadPass, function(err, accessToken) {
         assert(err);
+        assert.equal(err.code, 'LOGIN_FAILED');
         done();
       });
     });
@@ -593,6 +620,7 @@ describe('User', function() {
         function(done) {
           User.login(credentialRealmInEmail, function(err, accessToken) {
             assert(err);
+            assert.equal(err.code, 'REALM_REQUIRED');
             done();
           });
         });
@@ -841,7 +869,9 @@ describe('User', function() {
               if (err) {
                 return done(err);
               }
-              assert(res.body.error);
+              var errorResponse = res.body.error;
+              assert(errorResponse);
+              assert.equal(errorResponse.code, 'USER_NOT_FOUND');
               done();
             });
         }, done);
@@ -858,7 +888,9 @@ describe('User', function() {
               if (err) {
                 return done(err);
               }
-              assert(res.body.error);
+              var errorResponse = res.body.error;
+              assert(errorResponse);
+              assert.equal(errorResponse.code, 'INVALID_TOKEN');
               done();
             });
         }, done);
@@ -873,6 +905,7 @@ describe('User', function() {
       it('Requires email address to reset password', function(done) {
         User.resetPassword({ }, function(err) {
           assert(err);
+          assert.equal(err.code, 'EMAIL_REQUIRED');
           done();
         });
       });
@@ -909,6 +942,9 @@ describe('User', function() {
             if (err) {
               return done(err);
             }
+            var errorResponse = res.body.error;
+            assert(errorResponse);
+            assert.equal(errorResponse.code, 'EMAIL_REQUIRED');
             done();
           });
       });
