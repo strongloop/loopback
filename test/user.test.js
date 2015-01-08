@@ -7,7 +7,8 @@ var userMemory = loopback.createDataSource({
 });
 
 describe('User', function() {
-  var validCredentials = {email: 'foo@bar.com', password: 'bar'};
+  var validCredentialsEmail = 'foo@bar.com';
+  var validCredentials = {email: validCredentialsEmail, password: 'bar'};
   var validCredentialsEmailVerified = {email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
   var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
   var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
@@ -364,6 +365,15 @@ describe('User', function() {
       User.settings.emailVerificationRequired = false;
     });
 
+    it('Require valid and complete credentials for email verification error', function(done) {
+      User.login({ email: validCredentialsEmail }, function(err, accessToken) {
+        // strongloop/loopback#931
+        // error message should be "login failed" and not "login failed as the email has not been verified"
+        assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
+        done();
+      });
+    });
+
     it('Login a user by without email verification', function(done) {
       User.login(validCredentials, function(err, accessToken) {
         assert(err);
@@ -393,6 +403,21 @@ describe('User', function() {
           assertGoodToken(accessToken);
           assert(accessToken.user === undefined);
 
+          done();
+        });
+    });
+
+    it('Login a user over REST require complete and valid credentials for email verification error message', function(done) {
+      request(app)
+        .post('/users/login')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .send({ email: validCredentialsEmail })
+        .end(function(err, res) {
+          // strongloop/loopback#931
+          // error message should be "login failed" and not "login failed as the email has not been verified"
+          var errorResponse = res.body.error;
+          assert(errorResponse && !/verified/.test(errorResponse.message), ('expecting "login failed" error message, received: "' + errorResponse.message + '"'));
           done();
         });
     });
