@@ -763,6 +763,23 @@ describe('app', function() {
           done();
         });
     });
+
+    it('should respond only to `GET /` when configured', function(done) {
+      // see https://github.com/strongloop/generator-loopback/issues/80
+      var app = loopback();
+      app.use('/', loopback.status({ scopeToGetRoot: true }));
+      request(app)
+        .get('/url-does-not-exist')
+        .expect(404, done);
+    });
+
+    it('should respond to `GET /` when scopeToGetRoot is set', function(done) {
+      var app = loopback();
+      app.use('/', loopback.status({ scopeToGetRoot: true }));
+      request(app)
+        .get('/')
+        .expect(200, done);
+    });
   });
 
   describe('app.connectors', function() {
