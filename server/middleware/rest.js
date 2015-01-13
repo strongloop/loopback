@@ -23,6 +23,8 @@ module.exports = rest;
  */
 
 function rest() {
+  var preHandlers;
+
   return function restApiHandler(req, res, next) {
     var app = req.app;
     var restHandler = app.handler('rest');
@@ -32,8 +34,6 @@ function rest() {
     } else if (req.url === '/models') {
       return res.send(app.remotes().toJSON());
     }
-
-    var preHandlers;
 
     if (!preHandlers) {
       preHandlers = [];
@@ -58,8 +58,14 @@ function rest() {
       }
     }
 
-    async.eachSeries(preHandlers.concat(restHandler), function(handler, done) {
-      handler(req, res, done);
-    }, next);
+    async.eachSeries(
+      preHandlers,
+      function(handler, done) {
+        handler(req, res, done);
+      },
+      function(err) {
+        if (err) return next(err);
+        restHandler(req, res, next);
+      });
   };
 }
