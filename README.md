@@ -21,6 +21,8 @@ For more details, see http://loopback.io/.
 
 ## LoopBack modules
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/strongloop/loopback?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The LoopBack framework is a set of Node.js modules that you can use independently or together.
 
 ![LoopBack modules](https://github.com/strongloop/loopback/raw/master/docs/assets/lb-modules.png "LoopBack modules")
