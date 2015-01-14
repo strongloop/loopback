@@ -34,7 +34,7 @@ describe('loopback.token(options)', function() {
     token = 'Bearer ' + new Buffer(token).toString('base64');
     createTestAppAndRequest(this.token, done)
       .get('/')
-      .set('authorization', this.token.id)
+      .set('authorization', token)
       .expect(200)
       .end(done);
   });
