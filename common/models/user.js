@@ -441,7 +441,9 @@ module.exports = function(User) {
             }
           });
         } else {
-          cb();
+          err = new Error('The `User` email doesn\'t exists');
+          err.statusCode = 400;
+          cb(err);
         }
       });
     } else {
