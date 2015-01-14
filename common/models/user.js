@@ -564,7 +564,11 @@ module.exports = function(User) {
     UserModel.on('attached', function() {
       UserModel.afterRemote('confirm', function(ctx, inst, next) {
         if (ctx.req) {
-          ctx.res.redirect(ctx.req.param('redirect'));
+          // Find redirect parameter as param or query. Not in body.
+          var redirectTo = (ctx.req.params && ctx.req.params.redirect) ||
+            (ctx.req.query && ctx.req.query.redirect);
+
+          ctx.res.redirect(redirectTo);
         } else {
           next(new Error('transport unsupported'));
         }

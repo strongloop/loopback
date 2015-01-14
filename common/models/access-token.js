@@ -165,13 +165,15 @@ module.exports = function(AccessToken) {
     var i = 0;
     var length;
     var id;
+    var param;
 
     params = params.concat(['access_token']);
     headers = headers.concat(['X-Access-Token', 'authorization']);
     cookies = cookies.concat(['access_token', 'authorization']);
 
     for (length = params.length; i < length; i++) {
-      id = req.param(params[i]);
+      param = params[i];
+      id = req.params[param] || req.query[param];
 
       if (typeof id === 'string') {
         return id;
