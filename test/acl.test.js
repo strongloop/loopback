@@ -139,22 +139,34 @@ describe('security ACLs', function() {
       ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'testModel', property: ACL.ALL,
         accessType: ACL.READ, permission: ACL.ALLOW}, function(err, acl) {
 
-        ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.READ, function(err, perm) {
-          assert(perm.permission === ACL.ALLOW);
-        });
+        ACL.create({principalType: ACL.USER, principalId: 'u002', model: 'testModel', property: ACL.ALL,
+          accessType: ACL.EXECUTE, permission: ACL.ALLOW}, function(err, acl) {
 
-        ACL.checkPermission(ACL.USER, 'u001', 'testModel', ACL.ALL, ACL.READ, function(err, perm) {
-          assert(perm.permission === ACL.ALLOW);
-        });
+          ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.READ, function(err, perm) {
+            assert(perm.permission === ACL.ALLOW);
+          });
 
-        ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.WRITE, function(err, perm) {
-          assert(perm.permission === ACL.DENY);
-        });
+          ACL.checkPermission(ACL.USER, 'u001', 'testModel', ACL.ALL, ACL.READ, function(err, perm) {
+            assert(perm.permission === ACL.ALLOW);
+          });
 
-        ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.ALL, function(err, perm) {
-          assert(perm.permission === ACL.DENY);
-        });
+          ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.WRITE, function(err, perm) {
+            assert(perm.permission === ACL.DENY);
+          });
 
+          ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.ALL, function(err, perm) {
+            assert(perm.permission === ACL.DENY);
+          });
+
+          ACL.checkPermission(ACL.USER, 'u002', 'testModel', 'name', ACL.WRITE, function(err, perm) {
+            assert(perm.permission === ACL.ALLOW);
+          });
+
+          ACL.checkPermission(ACL.USER, 'u002', 'testModel', 'name', ACL.READ, function(err, perm) {
+            assert(perm.permission === ACL.ALLOW);
+          });
+
+        });
       });
 
     });
@@ -203,7 +215,9 @@ describe('security ACLs', function() {
       }
     }, {
       acls: [
-        {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW}
+        {principalType: ACL.USER, principalId: 'u001', accessType: ACL.ALL, permission: ACL.ALLOW},
+        {principalType: ACL.USER, principalId: 'u002', accessType: ACL.EXECUTE, permission: ACL.ALLOW},
+        {principalType: ACL.USER, principalId: 'u003', accessType: ACL.EXECUTE, permission: ACL.DENY}
       ]
     });
 
@@ -223,6 +237,14 @@ describe('security ACLs', function() {
 
     ACL.checkPermission(ACL.USER, 'u001', 'Customer', 'name', ACL.ALL, function(err, perm) {
       assert(perm.permission === ACL.ALLOW);
+    });
+
+    ACL.checkPermission(ACL.USER, 'u002', 'Customer', 'name', ACL.READ, function(err, perm) {
+      assert(perm.permission === ACL.ALLOW);
+    });
+
+    ACL.checkPermission(ACL.USER, 'u003', 'Customer', 'name', ACL.WRITE, function(err, perm) {
+      assert(perm.permission === ACL.DENY);
     });
 
   });
