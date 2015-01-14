@@ -432,19 +432,16 @@ module.exports = function(User) {
             if (err) {
               cb(err);
             } else {
-              var resetPassword = {
+              cb();
+              UserModel.emit('resetPasswordRequest', {
                 email: options.email,
                 accessToken: accessToken,
                 user: user
-              };
-              cb(null, resetPassword);
-              UserModel.emit('resetPasswordRequest', resetPassword);
+              });
             }
           });
         } else {
-          err = new Error('The `User` email doesn\'t exists');
-          err.statusCode = 400;
-          cb(err);
+          cb();
         }
       });
     } else {
@@ -560,9 +557,6 @@ module.exports = function(User) {
         accepts: [
           {arg: 'options', type: 'object', required: true, http: {source: 'body'}}
         ],
-        returns: {
-          arg: 'resetPassword', type: 'object', root: true
-        },
         http: {verb: 'post', path: '/reset'}
       }
     );
