@@ -183,33 +183,32 @@ module.exports = function(User) {
         debug('An error is reported from User.findOne: %j', err);
         fn(defaultError);
       } else if (user) {
-        if (self.settings.emailVerificationRequired) {
-          if (!user.emailVerified) {
-            // Fail to log in if email verification is not done yet
-            debug('User email has not been verified');
-            err = new Error('login failed as the email has not been verified');
-            err.statusCode = 401;
-            return fn(err);
-          }
-        }
         user.hasPassword(credentials.password, function(err, isMatch) {
           if (err) {
             debug('An error is reported from User.hasPassword: %j', err);
             fn(defaultError);
           } else if (isMatch) {
-            user.createAccessToken(credentials.ttl, function(err, token) {
-              if (err) return fn(err);
-              if (Array.isArray(include) ? include.indexOf('user') !== -1 : include === 'user') {
-                // NOTE(bajtos) We can't set token.user here:
-                //  1. token.user already exists, it's a function injected by
-                //     "AccessToken belongsTo User" relation
-                //  2. ModelBaseClass.toJSON() ignores own properties, thus
-                //     the value won't be included in the HTTP response
-                // See also loopback#161 and loopback#162
-                token.__data.user = user;
-              }
-              fn(err, token);
-            });
+            if (self.settings.emailVerificationRequired && !user.emailVerified) {
+              // Fail to log in if email verification is not done yet
+              debug('User email has not been verified');
+              err = new Error('login failed as the email has not been verified');
+              err.statusCode = 401;
+              return fn(err);
+            } else {
+              user.createAccessToken(credentials.ttl, function(err, token) {
+                if (err) return fn(err);
+                if (Array.isArray(include) ? include.indexOf('user') !== -1 : include === 'user') {
+                  // NOTE(bajtos) We can't set token.user here:
+                  //  1. token.user already exists, it's a function injected by
+                  //     "AccessToken belongsTo User" relation
+                  //  2. ModelBaseClass.toJSON() ignores own properties, thus
+                  //     the value won't be included in the HTTP response
+                  // See also loopback#161 and loopback#162
+                  token.__data.user = user;
+                }
+                fn(err, token);
+              });
+            }
           } else {
             debug('The password is invalid for user %s', query.email || query.username);
             fn(defaultError);
@@ -319,7 +318,7 @@ module.exports = function(User) {
       options.port +
       options.restApiRoot +
       userModel.http.path +
-      userModel.confirm.http.path +
+      userModel.sharedClass.find('confirm', true).http.path +
       '?uid=' +
       options.user.id +
       '&redirect=' +
@@ -454,6 +453,24 @@ module.exports = function(User) {
   };
 
   /*!
+   * Hash the plain password
+   */
+  User.hashPassword = function(plain) {
+    this.validatePassword(plain);
+    var salt = bcrypt.genSaltSync(this.settings.saltWorkFactor || SALT_WORK_FACTOR);
+    return bcrypt.hashSync(plain, salt);
+  };
+
+  User.validatePassword = function(plain) {
+    if (typeof plain === 'string' && plain) {
+      return true;
+    }
+    var err =  new Error('Invalid password: ' + plain);
+    err.statusCode = 422;
+    throw err;
+  };
+
+  /*!
    * Setup an extended user model.
    */
 
@@ -464,11 +481,10 @@ module.exports = function(User) {
 
     // max ttl
     this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
-    this.settings.ttl = DEFAULT_TTL;
+    this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
     UserModel.setter.password = function(plain) {
-      var salt = bcrypt.genSaltSync(this.constructor.settings.saltWorkFactor || SALT_WORK_FACTOR);
-      this.$password = bcrypt.hashSync(plain, salt);
+      this.$password = this.constructor.hashPassword(plain);
     };
 
     // Make sure emailVerified is not set by creation
@@ -480,8 +496,8 @@ module.exports = function(User) {
       next();
     });
 
-    loopback.remoteMethod(
-      UserModel.login,
+    UserModel.remoteMethod(
+      'login',
       {
         description: 'Login a user with username/email and password',
         accepts: [
@@ -502,8 +518,8 @@ module.exports = function(User) {
       }
     );
 
-    loopback.remoteMethod(
-      UserModel.logout,
+    UserModel.remoteMethod(
+      'logout',
       {
         description: 'Logout a user with access token',
         accepts: [
@@ -521,8 +537,8 @@ module.exports = function(User) {
       }
     );
 
-    loopback.remoteMethod(
-      UserModel.confirm,
+    UserModel.remoteMethod(
+      'confirm',
       {
         description: 'Confirm a user registration with email verification token',
         accepts: [
@@ -534,8 +550,8 @@ module.exports = function(User) {
       }
     );
 
-    loopback.remoteMethod(
-      UserModel.resetPassword,
+    UserModel.remoteMethod(
+      'resetPassword',
       {
         description: 'Reset password for a user with email',
         accepts: [

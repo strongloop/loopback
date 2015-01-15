@@ -2,6 +2,7 @@ var loopback = require('../../lib/loopback');
 var juggler = require('loopback-datasource-juggler');
 var remoting = require('strong-remoting');
 var cls = require('continuation-local-storage');
+var domain = require('domain');
 
 module.exports = context;
 
@@ -44,6 +45,13 @@ function context(options) {
   var scope = options.name || name;
   var enableHttpContext = options.enableHttpContext || false;
   var ns = createContext(scope);
+
+  var currentDomain = process.domain = domain.create();
+  currentDomain.oldBind = currentDomain.bind;
+  currentDomain.bind = function(callback, context) {
+    return currentDomain.oldBind(ns.bind(callback, context), context);
+  };
+
   // Return the middleware
   return function contextHandler(req, res, next) {
     if (req.loopbackContext) {
@@ -53,13 +61,19 @@ function context(options) {
     // Bind req/res event emitters to the given namespace
     ns.bindEmitter(req);
     ns.bindEmitter(res);
+
+    currentDomain.add(req);
+    currentDomain.add(res);
+
     // Create namespace for the request context
-    ns.run(function processRequestInContext(context) {
-      // Run the code in the context of the namespace
-      if (enableHttpContext) {
-        ns.set('http', {req: req, res: res}); // Set up the transport context
-      }
-      next();
+    currentDomain.run(function() {
+      ns.run(function processRequestInContext(context) {
+        // Run the code in the context of the namespace
+        if (enableHttpContext) {
+          ns.set('http', {req: req, res: res}); // Set up the transport context
+        }
+        next();
+      });
     });
   };
 }

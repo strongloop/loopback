@@ -1,3 +1,67 @@
+2015-01-08, Version 2.10.0
+==========================
+
+ * Revert the peer dep change to avoid npm complaints (Raymond Feng)
+
+ * Update strong-remoting dep (Raymond Feng)
+
+ * Allow accessType per remote method (Raymond Feng)
+
+ * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
+
+ * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
+
+
+2015-01-07, Version 2.9.0
+=========================
+
+ * Update juggler dep (Raymond Feng)
+
+ * Fix Geo test cases (Raymond Feng)
+
+ * Allow User.hashPassword/validatePassword to be overridden (Raymond Feng)
+
+
+2015-01-07, Version 2.8.8
+=========================
+
+ * Fix context middleware to preserve domains (Pham Anh Tuan)
+
+ * Additional password reset unit tests for API and REST  - strongloop/loopback#944 (Ron Edgecomb)
+
+ * Small formatting update to have consistency with identical logic in other areas.   - strongloop/loopback#944 (Ron Edgecomb)
+
+ * Simplify the API test for invalidCredentials (removed create), move above REST calls for better grouping of tests   - strongloop/loopback#944 (Ron Edgecomb)
+
+ * Force request to send body as string, this ensures headers aren't automatically set to application/json  - strongloop/loopback#944 (Ron Edgecomb)
+
+ * Ensure error checking logic is in place for all REST calls, expand formatting for consistency with existing instances.  - strongloop/loopback#944 (Ron Edgecomb)
+
+ * Correct invalidCredentials so that it differs from validCredentialsEmailVerified, unit test now passes as desired.  - strongloop/loopback#944 (Ron Edgecomb)
+
+ * Update to demonstrate unit test is actually failing due to incorrect values of invalidCredentials  - strongloop/loopback#944 (Ron Edgecomb)
+
+ * fix jscs warning (Clark Wang)
+
+ * fix nestRemoting is nesting hooks from other relations (Clark Wang)
+
+
+2015-01-06, Version 2.8.7
+=========================
+
+ * Change urlNotFound.js to url-not-found.js (Rand McKinney)
+
+ * Add lib/server-app.js (Rand McKinney)
+
+ * package: add versioned sl-blip dependency (Ryan Graham)
+
+ * fix User.settings.ttl can't be overridden in sub model (Clark Wang)
+
+ * Fix Change.getCheckpointModel() giving new models each call (Farid Neshat)
+
+ * Update README.md (Rand McKinney)
+
+
 2014-12-15, Version 2.8.6
 =========================
 
@@ -17,18 +81,15 @@
 
  * Fix bcrypt issues for browserify (Raymond Feng)
 
- * Allow native bcrypt for performance (Raymond Feng)
-
-
-2014-12-08, Version 2.8.3
-=========================
-
-
 
 2014-12-08, Version 2.8.4
 =========================
 
  * Allow native bcrypt for performance (Raymond Feng)
+
+
+2014-12-08, Version 2.8.3
+=========================
 
  * Remove unused underscore dependency (Ryan Graham)
 
@@ -1251,6 +1312,14 @@
 
  * 2.0.0-beta1 (Ritchie Martori)
 
+ * Bump version (Raymond Feng)
+
+ * Add postgresql to the keywords (Raymond Feng)
+
+ * updated package.json with SOAP and framework keywords (altsang)
+
+ * updated package.json with keywords and updated description (Raymond Feng)
+
  * Make app.datasources unique per app instance (Miroslav Bajtoš)
 
  * Add RC version (Ritchie Martori)
@@ -1316,6 +1385,11 @@
  * Add Change model (Ritchie Martori)
 
 
+2014-05-27, Version 1.8.4
+=========================
+
+
+
 2014-05-27, Version 1.8.5
 =========================
 
@@ -1327,13 +1401,7 @@
 
  * updated package.json with keywords and updated description (Raymond Feng)
 
-
-2014-05-27, Version 1.8.4
-=========================
-
  * Add more keywords (Raymond Feng)
-
- * Bump version (Raymond Feng)
 
  * app: flatten model config (Miroslav Bajtoš)
 
@@ -1655,15 +1723,6 @@
 
  * Improve jsdox documentation of app object (Miroslav Bajtoš)
 
- * Make sure methods are called in the context of the calling class (Raymond Feng)
-
- * Start to move md to jsdoc (Ritchie Martori)
-
-
-2014-01-14, Version 1.5.0
-=========================
-
-
 
 2014-01-14, Version 1.5.1
 =========================
@@ -1673,6 +1732,10 @@
  * Make sure methods are called in the context of the calling class (Raymond Feng)
 
  * Start to move md to jsdoc (Ritchie Martori)
+
+
+2014-01-14, Version 1.5.0
+=========================
 
  * Replace `on` with `once` in middleware examples (Miroslav Bajtoš)
 

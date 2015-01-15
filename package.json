@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "version": "2.8.6",
+  "version": "2.10.0",
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
@@ -47,7 +47,7 @@
     "nodemailer-stub-transport": "~0.1.4",
     "serve-favicon": "^2.1.6",
     "stable": "^0.1.5",
-    "strong-remoting": "^2.4.0",
+    "strong-remoting": "^2.11.0",
     "uid2": "0.0.3",
     "underscore.string": "~2.3.3"
   },
@@ -100,5 +100,8 @@
   "license": {
     "name": "Dual MIT/StrongLoop",
     "url": "https://github.com/strongloop/loopback/blob/master/LICENSE"
+  },
+  "optionalDependencies": {
+    "sl-blip": "http://blip.strongloop.com/loopback@2.10.0"
   }
 }
