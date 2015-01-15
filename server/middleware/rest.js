@@ -23,27 +23,27 @@ module.exports = rest;
  */
 
 function rest() {
+  var handlers; // Cached handlers
+
   return function restApiHandler(req, res, next) {
     var app = req.app;
-    var restHandler = app.handler('rest');
 
     if (req.url === '/routes') {
-      return res.send(restHandler.adapter.allRoutes());
+      return res.send(app.handler('rest').adapter.allRoutes());
     } else if (req.url === '/models') {
       return res.send(app.remotes().toJSON());
     }
 
-    var preHandlers;
-
-    if (!preHandlers) {
-      preHandlers = [];
+    if (!handlers) {
+      handlers = [];
       var remotingOptions = app.get('remoting') || {};
 
       var contextOptions = remotingOptions.context;
       if (contextOptions !== false) {
-        if (typeof contextOptions !== 'object')
+        if (typeof contextOptions !== 'object') {
           contextOptions = {};
-        preHandlers.push(loopback.context(contextOptions));
+        }
+        handlers.push(loopback.context(contextOptions));
       }
 
       if (app.isAuthEnabled) {
@@ -54,11 +54,18 @@ function rest() {
         // https://github.com/strongloop/loopback/pull/167
         // https://github.com/strongloop/loopback/commit/f07446a
         var AccessToken = loopback.getModelByType(loopback.AccessToken);
-        preHandlers.push(loopback.token({ model: AccessToken }));
+        handlers.push(loopback.token({ model: AccessToken }));
       }
-    }
 
-    async.eachSeries(preHandlers.concat(restHandler), function(handler, done) {
+      handlers.push(function(req, res, next) {
+        // Need to get an instance of the REST handler per request
+        return app.handler('rest')(req, res, next);
+      });
+    }
+    if (handlers.length === 1) {
+      return handlers[0](req, res, next);
+    }
+    async.eachSeries(handlers, function(handler, done) {
       handler(req, res, done);
     }, next);
   };
