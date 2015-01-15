@@ -82,6 +82,7 @@ The LoopBack community has created and supports a number of additional connector
   * [API documentation](http://apidocs.strongloop.com/loopback).
   * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
   * [GitHub issues](https://github.com/strongloop/loopback/issues).
+  * [Gitter chat](https://gitter.im/strongloop/loopback).
 
 ## Contributing
 

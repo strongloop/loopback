@@ -1,15 +1,13 @@
-2015-01-08, Version 2.10.0
+2015-01-15, Version 2.10.1
 ==========================
 
- * Revert the peer dep change to avoid npm complaints (Raymond Feng)
+ * Optimize the creation of handlers for rest (Raymond Feng)
 
- * Update strong-remoting dep (Raymond Feng)
+ * Add a link to gitter chat (Raymond Feng)
 
- * Allow accessType per remote method (Raymond Feng)
+ * Added context middleware (Rand McKinney)
 
- * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
-
- * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
+ * Use User.remoteMethod instead of loopbacks method This is needed for loopback-connector-remote authorization. Addresses https://github.com/strongloop/loopback/issues/622. (Berkeley Martinez)
 
 
 2015-01-07, Version 2.9.0
@@ -25,7 +23,24 @@
 2015-01-07, Version 2.8.8
 =========================
 
+
+
+2015-01-07, Version 2.10.0
+==========================
+
+ * Revert the peer dep change to avoid npm complaints (Raymond Feng)
+
+ * Update strong-remoting dep (Raymond Feng)
+
+ * Allow accessType per remote method (Raymond Feng)
+
+ * Update juggler dep (Raymond Feng)
+
  * Fix context middleware to preserve domains (Pham Anh Tuan)
+
+ * Fix Geo test cases (Raymond Feng)
+
+ * Allow User.hashPassword/validatePassword to be overridden (Raymond Feng)
 
  * Additional password reset unit tests for API and REST  - strongloop/loopback#944 (Ron Edgecomb)
 
@@ -40,6 +55,10 @@
  * Correct invalidCredentials so that it differs from validCredentialsEmailVerified, unit test now passes as desired.  - strongloop/loopback#944 (Ron Edgecomb)
 
  * Update to demonstrate unit test is actually failing due to incorrect values of invalidCredentials  - strongloop/loopback#944 (Ron Edgecomb)
+
+ * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
+
+ * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
 
  * fix jscs warning (Clark Wang)
 
@@ -81,15 +100,18 @@
 
  * Fix bcrypt issues for browserify (Raymond Feng)
 
-
-2014-12-08, Version 2.8.4
-=========================
-
  * Allow native bcrypt for performance (Raymond Feng)
 
 
 2014-12-08, Version 2.8.3
 =========================
+
+
+
+2014-12-08, Version 2.8.4
+=========================
+
+ * Allow native bcrypt for performance (Raymond Feng)
 
  * Remove unused underscore dependency (Ryan Graham)
 
@@ -1723,6 +1745,15 @@
 
  * Improve jsdox documentation of app object (Miroslav Bajtoš)
 
+ * Make sure methods are called in the context of the calling class (Raymond Feng)
+
+ * Start to move md to jsdoc (Ritchie Martori)
+
+
+2014-01-14, Version 1.5.0
+=========================
+
+
 
 2014-01-14, Version 1.5.1
 =========================
@@ -1732,10 +1763,6 @@
  * Make sure methods are called in the context of the calling class (Raymond Feng)
 
  * Start to move md to jsdoc (Ritchie Martori)
-
-
-2014-01-14, Version 1.5.0
-=========================
 
  * Replace `on` with `once` in middleware examples (Miroslav Bajtoš)
 
@@ -1849,18 +1876,17 @@
 
  * Add Model.requireToken, default swagger to false (Ritchie Martori)
 
- * Bump version (Raymond Feng)
-
  * Add password reset (Ritchie Martori)
-
-
-2013-12-06, Version show
-========================
-
 
 
 2013-12-06, Version 1.3.3
 =========================
+
+ * Bump version (Raymond Feng)
+
+
+2013-12-06, Version show
+========================
 
  * Bump version (Raymond Feng)
 
