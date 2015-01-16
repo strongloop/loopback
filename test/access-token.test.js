@@ -34,9 +34,51 @@ describe('loopback.token(options)', function() {
     token = 'Bearer ' + new Buffer(token).toString('base64');
     createTestAppAndRequest(this.token, done)
       .get('/')
-      .set('authorization', this.token.id)
+      .set('authorization', token)
       .expect(200)
       .end(done);
+  });
+
+  describe('populating req.toen from HTTP Basic Auth formatted authorization header', function() {
+    it('parses "standalone-token"', function(done) {
+      var token = this.token.id;
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
+
+    it('parses "token-and-empty-password:"', function(done) {
+      var token = this.token.id + ':';
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
+
+    it('parses "ignored-user:token-is-password"', function(done) {
+      var token = 'username:' + this.token.id;
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
+
+    it('parses "token-is-username:ignored-password"', function(done) {
+      var token = this.token.id + ':password';
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
   });
 
   it('should populate req.token from a secure cookie', function(done) {

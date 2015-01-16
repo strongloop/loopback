@@ -11,7 +11,7 @@ describe('Replication', function() {
   before(function() {
     // setup the remote connector
     var ds = loopback.createDataSource({
-      url: 'http://localhost:3000/api',
+      url: 'http://127.0.0.1:3000/api',
       connector: loopback.Remote
     });
     TestModel.attachTo(ds);
