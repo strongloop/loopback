@@ -109,16 +109,20 @@ module.exports = function(ACL) {
       var val2 = req[props[i]] || ACL.ALL;
       var isMatchingMethodName = props[i] === 'property' && req.methodNames.indexOf(val1) !== -1;
 
-      if (val1 === val2 || isMatchingMethodName) {
+      // accessType: EXECUTE should match READ or WRITE
+      var isMatchingAccessType = props[i] === 'accessType' &&
+        val1 === ACL.EXECUTE;
+
+      if (val1 === val2 || isMatchingMethodName || isMatchingAccessType) {
         // Exact match
         score += 3;
       } else if (val1 === ACL.ALL) {
         // Wildcard match
         score += 2;
       } else if (val2 === ACL.ALL) {
-        // Doesn't match at all
         score += 1;
       } else {
+        // Doesn't match at all
         return -1;
       }
     }
@@ -304,7 +308,7 @@ module.exports = function(ACL) {
     property = property || ACL.ALL;
     var propertyQuery = (property === ACL.ALL) ? undefined : {inq: [property, ACL.ALL]};
     accessType = accessType || ACL.ALL;
-    var accessTypeQuery = (accessType === ACL.ALL) ? undefined : {inq: [accessType, ACL.ALL]};
+    var accessTypeQuery = (accessType === ACL.ALL) ? undefined : {inq: [accessType, ACL.ALL, ACL.EXECUTE]};
 
     var req = new AccessRequest(model, property, accessType);
 
