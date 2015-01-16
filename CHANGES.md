@@ -1,3 +1,9 @@
+2015-01-16, Version 2.10.2
+==========================
+
+ * Make sure EXECUTE access type matches READ or WRITE (Raymond Feng)
+
+
 2015-01-15, Version 2.10.1
 ==========================
 
@@ -7,11 +13,11 @@
 
  * Added context middleware (Rand McKinney)
 
- * Use User.remoteMethod instead of loopbacks method This is needed for loopback-connector-remote authorization. Addresses https://github.com/strongloop/loopback/issues/622. (Berkeley Martinez)
+ * Revert the peer dep change to avoid npm complaints (Raymond Feng)
 
+ * Update strong-remoting dep (Raymond Feng)
 
-2015-01-07, Version 2.9.0
-=========================
+ * Allow accessType per remote method (Raymond Feng)
 
  * Update juggler dep (Raymond Feng)
 
@@ -19,8 +25,19 @@
 
  * Allow User.hashPassword/validatePassword to be overridden (Raymond Feng)
 
+ * Use User.remoteMethod instead of loopbacks method This is needed for loopback-connector-remote authorization. Addresses https://github.com/strongloop/loopback/issues/622. (Berkeley Martinez)
+
+ * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
+
+ * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
+
 
 2015-01-07, Version 2.8.8
+=========================
+
+
+
+2015-01-07, Version 2.9.0
 =========================
 
 
@@ -100,18 +117,15 @@
 
  * Fix bcrypt issues for browserify (Raymond Feng)
 
- * Allow native bcrypt for performance (Raymond Feng)
-
-
-2014-12-08, Version 2.8.3
-=========================
-
-
 
 2014-12-08, Version 2.8.4
 =========================
 
  * Allow native bcrypt for performance (Raymond Feng)
+
+
+2014-12-08, Version 2.8.3
+=========================
 
  * Remove unused underscore dependency (Ryan Graham)
 
