@@ -30,6 +30,10 @@
     "email": "string",
     "emailVerified": "boolean",
 
+    "grantType": {
+      "type": "string",
+      "description": "Grant type permitted to the application for OAuth 2.0"
+    },
     "url": {
       "type": "string",
       "description": "The application URL for OAuth 2.0"
