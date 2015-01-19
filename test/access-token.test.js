@@ -174,6 +174,10 @@ describe('AccessToken', function() {
           headers: {},
           _params: {},
 
+          // These should always exist
+          params: {},
+          query: {},
+
           // express helpers
           param: function(name) { return this._params[name]; },
           header: function(name) { return this.headers[name]; }

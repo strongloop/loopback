@@ -2,6 +2,7 @@
 .project
 .DS_Store
 *.sublime*
+*.vim*
 *.seed
 *.log
 *.csv
