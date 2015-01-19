@@ -344,6 +344,9 @@ module.exports = function(Change) {
    */
 
   Change.diff = function(modelName, since, remoteChanges, callback) {
+    if (!Array.isArray(remoteChanges) || remoteChanges.length === 0) {
+      return callback(null, {deltas: [], conflicts: []});
+    }
     var remoteChangeIndex = {};
     var modelIds = [];
     remoteChanges.forEach(function(ch) {
