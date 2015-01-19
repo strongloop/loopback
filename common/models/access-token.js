@@ -171,7 +171,7 @@ module.exports = function(AccessToken) {
     cookies = cookies.concat(['access_token', 'authorization']);
 
     for (length = params.length; i < length; i++) {
-      id = req.param(params[i]);
+      id = req.params[params[i]];
 
       if (typeof id === 'string') {
         return id;
