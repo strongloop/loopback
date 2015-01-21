@@ -172,7 +172,12 @@ module.exports = function(AccessToken) {
     cookies = cookies.concat(['access_token', 'authorization']);
 
     for (length = params.length; i < length; i++) {
-      id = req.param(params[i]);
+      var param = params[i];
+      // replacement for deprecated req.param()
+      id = req.params && req.params[param] !== undefined ? req.params[param] :
+        req.body && req.body[param] !== undefined ? req.body[param] :
+        req.query && req.query[param] !== undefined ? req.query[param] :
+        undefined;
 
       if (typeof id === 'string') {
         return id;
