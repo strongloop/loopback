@@ -32,7 +32,7 @@
 
     "grantType": {
       "type": ["string"],
-      "description": "Grant type permitted to the application for OAuth 2.0"
+      "description": "Grant types permitted to the application for OAuth 2.0"
     },
     "url": {
       "type": "string",
