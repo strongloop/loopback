@@ -812,6 +812,7 @@ describe('relations - integration', function() {
       this.get(url).expect(404, function(err, res) {
         expect(res.body.error.status).to.be.equal(404);
         expect(res.body.error.message).to.be.equal('Unknown "todoItem" id "2".');
+        expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
         done();
       });
     });
@@ -1273,6 +1274,7 @@ describe('relations - integration', function() {
           expect(res.body.error).to.be.an.object;
           var expected = 'could not find a model with id unknown';
           expect(res.body.error.message).to.equal(expected);
+          expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
           done();
         });
     });
