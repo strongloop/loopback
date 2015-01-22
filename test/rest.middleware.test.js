@@ -99,6 +99,18 @@ describe('loopback.rest', function() {
       .expect(200, done);
   });
 
+  it('allows models to provide a custom HTTP path', function(done) {
+    var ds = app.dataSource('db', { connector: loopback.Memory });
+    var CustomModel = ds.createModel('CustomModel',
+      {name: String},
+      {'http': { 'path': 'domain1/CustomModelPath' }
+    });
+
+    app.model(CustomModel);
+    app.use(loopback.rest());
+    request(app).get('/domain1/CustomModelPath').expect(200).end(done);
+  });
+
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
     app.enableAuth();
