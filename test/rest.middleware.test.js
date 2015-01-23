@@ -112,6 +112,19 @@ describe('loopback.rest', function() {
     request(app).get('/domain1/CustomModelPath').expect(200).end(done);
   });
 
+  it('should report 200 for url-encoded HTTP path', function(done) {
+    var ds = app.dataSource('db', { connector: loopback.Memory });
+    var CustomModel = ds.createModel('CustomModel',
+      { name: String },
+      { http: { path: 'domain%20one/CustomModelPath' }
+    });
+
+    app.model(CustomModel);
+    app.use(loopback.rest());
+
+    request(app).get('/domain%20one/CustomModelPath').expect(200).end(done);
+  });
+
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
     app.enableAuth();
