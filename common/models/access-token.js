@@ -108,6 +108,7 @@ module.exports = function(AccessToken) {
             } else {
               var e = new Error('Invalid Access Token');
               e.status = e.statusCode = 401;
+              e.code = 'INVALID_TOKEN';
               cb(e);
             }
           });
@@ -171,7 +172,12 @@ module.exports = function(AccessToken) {
     cookies = cookies.concat(['access_token', 'authorization']);
 
     for (length = params.length; i < length; i++) {
-      id = req.param(params[i]);
+      var param = params[i];
+      // replacement for deprecated req.param()
+      id = req.params && req.params[param] !== undefined ? req.params[param] :
+        req.body && req.body[param] !== undefined ? req.body[param] :
+        req.query && req.query[param] !== undefined ? req.query[param] :
+        undefined;
 
       if (typeof id === 'string') {
         return id;
@@ -189,6 +195,20 @@ module.exports = function(AccessToken) {
           // Decode from base64
           var buf = new Buffer(id, 'base64');
           id = buf.toString('utf8');
+        } else if (/^Basic /i.test(id)) {
+          id = id.substring(6);
+          id = (new Buffer(id, 'base64')).toString('utf8');
+          // The spec says the string is user:pass, so if we see both parts
+          // we will assume the longer of the two is the token, so we will
+          // extract "a2b2c3" from:
+          //   "a2b2c3"
+          //   "a2b2c3:"   (curl http://a2b2c3@localhost:3000/)
+          //   "token:a2b2c3" (curl http://token:a2b2c3@localhost:3000/)
+          //   ":a2b2c3"
+          var parts = /^([^:]*):(.*)$/.exec(id);
+          if (parts) {
+            id = parts[2].length > parts[1].length ? parts[2] : parts[1];
+          }
         }
         return id;
       }

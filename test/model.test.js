@@ -152,7 +152,15 @@ describe.onServer('Remote Methods', function() {
       request(app)
         .get('/users/not-found')
         .expect(404)
-        .end(done);
+        .end(function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          var errorResponse = res.body.error;
+          assert(errorResponse);
+          assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+          done();
+        });
     });
   });
 

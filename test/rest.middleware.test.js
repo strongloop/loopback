@@ -18,7 +18,15 @@ describe('loopback.rest', function() {
     app.use(loopback.rest());
     request(app).get('/mymodels/1')
       .expect(404)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+        done();
+      });
   });
 
   it('should report 404 for HEAD /:id not found', function(done) {
@@ -89,6 +97,32 @@ describe('loopback.rest', function() {
       .set('Accept', 'text/html,application/xml;q= 0.9,*/*;q= 0.8')
       .expect('Content-Type', 'application/json; charset=utf-8')
       .expect(200, done);
+  });
+
+  it('allows models to provide a custom HTTP path', function(done) {
+    var ds = app.dataSource('db', { connector: loopback.Memory });
+    var CustomModel = ds.createModel('CustomModel',
+      { name: String },
+      { http: { 'path': 'domain1/CustomModelPath' }
+    });
+
+    app.model(CustomModel);
+    app.use(loopback.rest());
+
+    request(app).get('/domain1/CustomModelPath').expect(200).end(done);
+  });
+
+  it('should report 200 for url-encoded HTTP path', function(done) {
+    var ds = app.dataSource('db', { connector: loopback.Memory });
+    var CustomModel = ds.createModel('CustomModel',
+      { name: String },
+      { http: { path: 'domain%20one/CustomModelPath' }
+    });
+
+    app.model(CustomModel);
+    app.use(loopback.rest());
+
+    request(app).get('/domain%20one/CustomModelPath').expect(200).end(done);
   });
 
   it('includes loopback.token when necessary', function(done) {

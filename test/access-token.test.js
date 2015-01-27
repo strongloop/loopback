@@ -34,9 +34,51 @@ describe('loopback.token(options)', function() {
     token = 'Bearer ' + new Buffer(token).toString('base64');
     createTestAppAndRequest(this.token, done)
       .get('/')
-      .set('authorization', this.token.id)
+      .set('authorization', token)
       .expect(200)
       .end(done);
+  });
+
+  describe('populating req.toen from HTTP Basic Auth formatted authorization header', function() {
+    it('parses "standalone-token"', function(done) {
+      var token = this.token.id;
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
+
+    it('parses "token-and-empty-password:"', function(done) {
+      var token = this.token.id + ':';
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
+
+    it('parses "ignored-user:token-is-password"', function(done) {
+      var token = 'username:' + this.token.id;
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
+
+    it('parses "token-is-username:ignored-password"', function(done) {
+      var token = this.token.id + ':password';
+      token = 'Basic ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', this.token.id)
+        .expect(200)
+        .end(done);
+    });
   });
 
   it('should populate req.token from a secure cookie', function(done) {
@@ -149,7 +191,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(401)
       .set('authorization', this.token.id)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'AUTHORIZATION_REQUIRED');
+        done();
+      });
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
@@ -157,7 +207,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(403)
       .set('authorization', this.token.id)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'ACCESS_DENIED');
+        done();
+      });
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
@@ -165,7 +223,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(404)
       .set('authorization', this.token.id)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+        done();
+      });
   });
 
   it('prevent remote call if the accessToken is missing and required', function(done) {
@@ -173,7 +239,15 @@ describe('app.enableAuth()', function() {
       .del('/tests/123')
       .expect(401)
       .set('authorization', null)
-      .end(done);
+      .end(function(err, res) {
+        if (err) {
+          return done(err);
+        }
+        var errorResponse = res.body.error;
+        assert(errorResponse);
+        assert.equal(errorResponse.code, 'AUTHORIZATION_REQUIRED');
+        done();
+      });
   });
 
   it('stores token in the context', function(done) {
