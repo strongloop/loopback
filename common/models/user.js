@@ -570,7 +570,17 @@ module.exports = function(User) {
     UserModel.on('attached', function() {
       UserModel.afterRemote('confirm', function(ctx, inst, next) {
         if (ctx.req) {
-          ctx.res.redirect(ctx.req.param('redirect'));
+          // replacement for deprecated req.param()
+          var params = ctx.req.params;
+          var body = ctx.req.body;
+          var query = ctx.req.query;
+          var redirectUrl =
+            params && params.redirect !== undefined ? params.redirect :
+            body && body.redirect !== undefined ? body.redirect :
+            query && query.redirect !== undefined ? query.redirect :
+            undefined;
+
+          ctx.res.redirect(redirectUrl);
         } else {
           next(new Error('transport unsupported'));
         }
