@@ -1,3 +1,27 @@
+2015-01-27, Version 2.11.0
+==========================
+
+ * Document options for persistedmodel.save() (Rand McKinney)
+
+ * Add test case to demonstrate url-encoded http path (Pradnya Baviskar)
+
+ * Fix JSdocs per #888 (crandmck)
+
+ * Add test case for loopback issue #698 (Pradnya Baviskar)
+
+ * Remove usages of deprecated `req.param()` (Miroslav Bajtoš)
+
+ * Add error code property to known error responses. (Ron Edgecomb)
+
+ * test: use 127.0.0.1 instead of localhost (Ryan Graham)
+
+ * Extend AccessToken to parse Basic auth headers (Ryan Graham)
+
+ * tests: fix Bearer token test (Ryan Graham)
+
+ * don't send queries to the DB when no changes are detected (bitmage)
+
+
 2015-01-16, Version 2.10.2
 ==========================
 
@@ -755,6 +779,10 @@
 
  * Enhance the error message (Raymond Feng)
 
+
+2014-07-16, Version 2.0.0-beta7
+===============================
+
  * Bump version (Raymond Feng)
 
  * 2.0.0-beta6 (Miroslav Bajtoš)
@@ -894,13 +922,6 @@
 
 2014-07-16, Version 1.10.0
 ==========================
-
-
-
-2014-07-16, Version 2.0.0-beta7
-===============================
-
- * Bump version (Raymond Feng)
 
  * Remove unused dep (Raymond Feng)
 
@@ -1890,17 +1911,18 @@
 
  * Add Model.requireToken, default swagger to false (Ritchie Martori)
 
- * Add password reset (Ritchie Martori)
-
-
-2013-12-06, Version 1.3.3
-=========================
-
  * Bump version (Raymond Feng)
+
+ * Add password reset (Ritchie Martori)
 
 
 2013-12-06, Version show
 ========================
+
+
+
+2013-12-06, Version 1.3.3
+=========================
 
  * Bump version (Raymond Feng)
 
@@ -2189,12 +2211,12 @@
  * Update docs for api->project rename. (Michael Schoonmaker)
 
 
-2013-09-12, Version strongloopsuite-1.0.0-5
+2013-09-12, Version strongloopsuite-1.0.0-4
 ===========================================
 
 
 
-2013-09-12, Version strongloopsuite-1.0.0-4
+2013-09-12, Version strongloopsuite-1.0.0-5
 ===========================================
 
  * Update docs for api->project rename. (Michael Schoonmaker)
