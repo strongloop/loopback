@@ -1360,4 +1360,96 @@ describe('relations - integration', function() {
     });
   });
 
+  describe('hasOne', function() {
+    var cust;
+
+    before(function createCustomer(done) {
+      var test = this;
+      app.models.customer.create({ name: 'John' }, function(err, c) {
+        if (err) {
+          return done(err);
+        }
+        cust = c;
+        done();
+      });
+    });
+
+    after(function(done) {
+      var self = this;
+      this.app.models.customer.destroyAll(function(err) {
+        if (err) {
+          return done(err);
+        }
+        self.app.models.profile.destroyAll(done);
+      });
+    });
+
+    it('should create the referenced model', function(done) {
+      var url = '/api/customers/' + cust.id + '/profile';
+
+      this.post(url)
+        .send({points: 10})
+        .expect(200, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          expect(res.body.points).to.be.eql(10);
+          expect(res.body.customerId).to.be.eql(cust.id);
+          done();
+        });
+    });
+
+    it('should find the referenced model', function(done) {
+      var url = '/api/customers/' + cust.id + '/profile';
+      this.get(url)
+        .expect(200, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          expect(res.body.points).to.be.eql(10);
+          expect(res.body.customerId).to.be.eql(cust.id);
+          done();
+        });
+    });
+
+    it('should not create the referenced model twice', function(done) {
+      var url = '/api/customers/' + cust.id + '/profile';
+      this.post(url)
+        .send({points: 20})
+        .expect(500, function(err, res) {
+          done(err);
+        });
+    });
+
+    it('should update the referenced model', function(done) {
+      var url = '/api/customers/' + cust.id + '/profile';
+      this.put(url)
+        .send({points: 100})
+        .expect(200, function(err, res) {
+          if (err) {
+            return done(err);
+          }
+          expect(res.body.points).to.be.eql(100);
+          expect(res.body.customerId).to.be.eql(cust.id);
+          done();
+        });
+    });
+
+    it('should delete the referenced model', function(done) {
+      var url = '/api/customers/' + cust.id + '/profile';
+      this.del(url)
+        .expect(204, function(err, res) {
+          done(err);
+        });
+    });
+
+    it('should not find the referenced model', function(done) {
+      var url = '/api/customers/' + cust.id + '/profile';
+      this.get(url)
+        .expect(404, function(err, res) {
+          done(err);
+        });
+    });
+  });
+
 });

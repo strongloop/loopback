@@ -79,7 +79,7 @@ describe('User', function() {
         assert.equal(err.details.context, 'user');
         assert.deepEqual(err.details.codes.email, [
           'presence',
-          'format.blank'
+          'format.null'
         ]);
 
         done();

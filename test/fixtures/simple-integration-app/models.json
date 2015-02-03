@@ -114,5 +114,32 @@
         }
       }
     }
+  },
+  "customer": {
+    "base": "PersistedModel",
+    "dataSource": "db",
+    "public": true,
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true
+      }
+    },
+    "relations": {
+      "profile": {
+        "type": "hasOne",
+        "model": "profile"
+      }
+    }
+  },
+  "profile": {
+    "base": "PersistedModel",
+    "dataSource": "db",
+    "public": true,
+    "properties": {
+      "points": {
+        "type": "number"
+      }
+    }
   }
 }
