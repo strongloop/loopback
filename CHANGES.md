@@ -1,3 +1,9 @@
+2015-02-03, Version 2.12.1
+==========================
+
+ * Map not found to 404 for hasOne (Raymond Feng)
+
+
 2015-02-03, Version 2.12.0
 ==========================
 
@@ -1372,14 +1378,6 @@
 
  * 2.0.0-beta1 (Ritchie Martori)
 
- * Bump version (Raymond Feng)
-
- * Add postgresql to the keywords (Raymond Feng)
-
- * updated package.json with SOAP and framework keywords (altsang)
-
- * updated package.json with keywords and updated description (Raymond Feng)
-
  * Make app.datasources unique per app instance (Miroslav Bajtoš)
 
  * Add RC version (Ritchie Martori)
@@ -1445,11 +1443,6 @@
  * Add Change model (Ritchie Martori)
 
 
-2014-05-27, Version 1.8.4
-=========================
-
-
-
 2014-05-27, Version 1.8.5
 =========================
 
@@ -1461,7 +1454,13 @@
 
  * updated package.json with keywords and updated description (Raymond Feng)
 
+
+2014-05-27, Version 1.8.4
+=========================
+
  * Add more keywords (Raymond Feng)
+
+ * Bump version (Raymond Feng)
 
  * app: flatten model config (Miroslav Bajtoš)
 
