@@ -580,7 +580,11 @@ module.exports = function(User) {
             query && query.redirect !== undefined ? query.redirect :
             undefined;
 
-          ctx.res.redirect(redirectUrl);
+          if (redirectUrl !== undefined) {
+            ctx.res.redirect(redirectUrl);
+          } else {
+            ctx.res.sendStatus(204)
+          }
         } else {
           next(new Error('transport unsupported'));
         }
