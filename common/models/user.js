@@ -550,7 +550,7 @@ module.exports = function(User) {
         accepts: [
           {arg: 'uid', type: 'string', required: true},
           {arg: 'token', type: 'string', required: true},
-          {arg: 'redirect', type: 'string', required: true}
+          {arg: 'redirect', type: 'string'}
         ],
         http: {verb: 'get', path: '/confirm'}
       }
