@@ -582,6 +582,7 @@ module.exports = function(User) {
 
           if (redirectUrl !== undefined) {
             ctx.res.location(redirectUrl);
+            ctx.res.status(302);
           }
           next()
         } else {
