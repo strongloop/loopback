@@ -581,10 +581,9 @@ module.exports = function(User) {
             undefined;
 
           if (redirectUrl !== undefined) {
-            ctx.res.redirect(redirectUrl);
-          } else {
-            ctx.res.sendStatus(204);
+            ctx.res.location(redirectUrl);
           }
+          next()
         } else {
           next(new Error('transport unsupported'));
         }
