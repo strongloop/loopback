@@ -90,8 +90,10 @@ The LoopBack community has created and supports a number of additional connector
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute.
+See https://github.com/strongloop/loopback/wiki/Contributing
 
-A brief guide for [contributing to LoopBack projects](https://github.com/strongloop/loopback/wiki/How-To-Contribute).
+## Issues
+
+See https://github.com/strongloop/loopback/wiki/Issues
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
