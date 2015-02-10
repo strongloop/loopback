@@ -46,12 +46,6 @@ function context(options) {
   var enableHttpContext = options.enableHttpContext || false;
   var ns = createContext(scope);
 
-  var currentDomain = process.domain = domain.create();
-  currentDomain.oldBind = currentDomain.bind;
-  currentDomain.bind = function(callback, context) {
-    return currentDomain.oldBind(ns.bind(callback, context), context);
-  };
-
   // Return the middleware
   return function contextHandler(req, res, next) {
     if (req.loopbackContext) {
@@ -61,6 +55,12 @@ function context(options) {
     // Bind req/res event emitters to the given namespace
     ns.bindEmitter(req);
     ns.bindEmitter(res);
+
+    var currentDomain = domain.create();
+    currentDomain.oldBind = currentDomain.bind;
+    currentDomain.bind = function(callback, context) {
+      return currentDomain.oldBind(ns.bind(callback, context), context);
+    };
 
     currentDomain.add(req);
     currentDomain.add(res);
