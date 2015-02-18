@@ -104,8 +104,11 @@ module.exports = function(Role) {
   });
 
   function isUserClass(modelClass) {
-    return modelClass === loopback.User ||
-      modelClass.prototype instanceof loopback.User;
+    if (modelClass) {
+      return modelClass === loopback.User ||
+        modelClass.prototype instanceof loopback.User;
+    }
+    else return false;
   }
 
   /*!
