@@ -107,8 +107,9 @@ module.exports = function(Role) {
     if (modelClass) {
       return modelClass === loopback.User ||
         modelClass.prototype instanceof loopback.User;
+    } else {
+      return false;
     }
-    else return false;
   }
 
   /*!
