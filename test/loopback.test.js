@@ -357,7 +357,7 @@ describe('loopback', function() {
       expect(model.settings).to.have.property('emailVerificationRequired',
         false);
       expect(model.settings).to.have.property('realmRequired', true);
-      expect(model.settings).to.not.have.property('base');
+      expect(model.settings).to.not.have.property('base', 'X');
     });
   });
 

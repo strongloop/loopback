@@ -548,10 +548,6 @@ describe('app', function() {
       app.model('MyTestModel', { dataSource: null });
     });
 
-    it('should not require dataSource', function() {
-      app.model('MyTestModel', {});
-    });
-
   });
 
   describe('app.model(name, config)', function() {
