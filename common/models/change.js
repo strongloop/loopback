@@ -423,8 +423,8 @@ module.exports = function(Change) {
     var checkpointModel = this.Checkpoint;
     if (checkpointModel) return checkpointModel;
     this.Checkpoint = checkpointModel = loopback.Checkpoint.extend('checkpoint');
-    assert(this.dataSource, 'Cannot getCheckpointModel(): ' + this.modelName
-      + ' is not attached to a dataSource');
+    assert(this.dataSource, 'Cannot getCheckpointModel(): ' + this.modelName +
+      ' is not attached to a dataSource');
     checkpointModel.attachTo(this.dataSource);
     return checkpointModel;
   };
