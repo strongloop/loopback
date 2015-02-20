@@ -241,8 +241,8 @@ describe('relations - integration', function() {
             name: 'pa1'
           }, function(err, patient) {
             root.patient = patient;
-            root.relUrl = '/api/physicians/' + root.physician.id
-              + '/patients/rel/' + root.patient.id;
+            root.relUrl = '/api/physicians/' + root.physician.id +
+              '/patients/rel/' + root.patient.id;
             done();
           });
         } : function(done) {
@@ -250,8 +250,8 @@ describe('relations - integration', function() {
             name: 'pa1'
           }, function(err, patient) {
             root.patient = patient;
-            root.relUrl = '/api/physicians/' + root.physician.id
-              + '/patients/rel/' + root.patient.id;
+            root.relUrl = '/api/physicians/' + root.physician.id +
+              '/patients/rel/' + root.patient.id;
             done();
           });
         }], function(err, done) {
@@ -367,8 +367,8 @@ describe('relations - integration', function() {
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
-          self.url = '/api/physicians/' + root.physician.id
-            + '/patients/rel/' + '999';
+          self.url = '/api/physicians/' + root.physician.id +
+            '/patients/rel/' + '999';
           self.patient = root.patient;
           self.physician = root.physician;
           done();
@@ -441,8 +441,8 @@ describe('relations - integration', function() {
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
-          self.url = '/api/physicians/' + root.physician.id
-            + '/patients/' + root.patient.id;
+          self.url = '/api/physicians/' + root.physician.id +
+            '/patients/' + root.patient.id;
           self.patient = root.patient;
           self.physician = root.physician;
           done();
@@ -462,8 +462,8 @@ describe('relations - integration', function() {
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
-          self.url = '/api/physicians/' + root.physician.id
-            + '/patients/' + root.patient.id;
+          self.url = '/api/physicians/' + root.physician.id +
+            '/patients/' + root.patient.id;
           self.patient = root.patient;
           self.physician = root.physician;
           done();

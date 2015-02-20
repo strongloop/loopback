@@ -845,9 +845,9 @@ describe('User', function() {
       it('Confirm a user verification', function(done) {
         testConfirm(function(result, done) {
           request(app)
-            .get('/users/confirm?uid=' + (result.uid)
-              + '&token=' + encodeURIComponent(result.token)
-              + '&redirect=' + encodeURIComponent(options.redirect))
+            .get('/users/confirm?uid=' + (result.uid) +
+              '&token=' + encodeURIComponent(result.token) +
+              '&redirect=' + encodeURIComponent(options.redirect))
             .expect(302)
             .end(function(err, res) {
               if (err) {
@@ -861,9 +861,9 @@ describe('User', function() {
       it('Report error for invalid user id during verification', function(done) {
         testConfirm(function(result, done) {
           request(app)
-            .get('/users/confirm?uid=' + (result.uid + '_invalid')
-              + '&token=' + encodeURIComponent(result.token)
-              + '&redirect=' + encodeURIComponent(options.redirect))
+            .get('/users/confirm?uid=' + (result.uid + '_invalid') +
+               '&token=' + encodeURIComponent(result.token) +
+               '&redirect=' + encodeURIComponent(options.redirect))
             .expect(404)
             .end(function(err, res) {
               if (err) {
@@ -880,9 +880,9 @@ describe('User', function() {
       it('Report error for invalid token during verification', function(done) {
         testConfirm(function(result, done) {
           request(app)
-            .get('/users/confirm?uid=' + result.uid
-              + '&token=' + encodeURIComponent(result.token) + '_invalid'
-              + '&redirect=' + encodeURIComponent(options.redirect))
+            .get('/users/confirm?uid=' + result.uid +
+              '&token=' + encodeURIComponent(result.token) + '_invalid' +
+              '&redirect=' + encodeURIComponent(options.redirect))
             .expect(400)
             .end(function(err, res) {
               if (err) {

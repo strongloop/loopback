@@ -199,7 +199,7 @@ describe('remoting - integration', function() {
       });
 
     it('should have correct signatures for hasMany-through methods',
-      function() {
+      function() { // jscs:disable validateIndentation
 
       var physicianClass = findClass('physician');
       var methods = physicianClass.methods

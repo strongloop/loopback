@@ -112,6 +112,7 @@ describe('security ACLs', function() {
   });
 
   it('should allow access to models for the given principal by wildcard', function() {
+    // jscs:disable validateIndentation
     ACL.create({principalType: ACL.USER, principalId: 'u001', model: 'User', property: ACL.ALL,
       accessType: ACL.ALL, permission: ACL.ALLOW}, function(err, acl) {
 

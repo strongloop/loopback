@@ -119,8 +119,8 @@ module.exports = function(Role) {
    * @returns {boolean}
    */
   function matches(id1, id2) {
-    if (id1 === undefined || id1 === null || id1 === ''
-      || id2 === undefined || id2 === null || id2 === '') {
+    if (id1 === undefined || id1 === null || id1 === '' ||
+      id2 === undefined || id2 === null || id2 === '') {
       return false;
     }
     // The id can be a MongoDB ObjectID
