@@ -344,6 +344,8 @@ describe('loopback', function() {
         emailVerificationRequired: false
       });
 
+      var baseName = model.settings.base.name;
+
       loopback.configureModel(model, {
         dataSource: null,
         options: {
@@ -357,7 +359,9 @@ describe('loopback', function() {
       expect(model.settings).to.have.property('emailVerificationRequired',
         false);
       expect(model.settings).to.have.property('realmRequired', true);
-      expect(model.settings).to.not.have.property('base');
+
+      // configureModel MUST NOT change Model's base class
+      expect(model.settings.base.name).to.equal(baseName);
     });
   });
 
