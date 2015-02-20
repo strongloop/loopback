@@ -4,22 +4,27 @@ var ACL = loopback.ACL;
 var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
+var expect = require('chai').expect;
 
 describe('Replication / Change APIs', function() {
+  var dataSource, SourceModel, TargetModel;
+
   beforeEach(function() {
     var test = this;
-    var dataSource = this.dataSource = loopback.createDataSource({
+    dataSource = this.dataSource = loopback.createDataSource({
       connector: loopback.Memory
     });
-    var SourceModel = this.SourceModel = PersistedModel.extend('SourceModel', {}, {
+    SourceModel = this.SourceModel = PersistedModel.extend('SourceModel', {}, {
       trackChanges: true
     });
     SourceModel.attachTo(dataSource);
 
-    var TargetModel = this.TargetModel = PersistedModel.extend('TargetModel', {}, {
+    TargetModel = this.TargetModel = PersistedModel.extend('TargetModel', {}, {
       trackChanges: true
     });
     TargetModel.attachTo(dataSource);
+
+    test.startingCheckpoint = -1;
 
     this.createInitalData = function(cb) {
       SourceModel.create({name: 'foo'}, function(err, inst) {
@@ -46,6 +51,19 @@ describe('Replication / Change APIs', function() {
             done();
           });
         }, 1);
+      });
+    });
+
+    it('excludes changes from older checkpoints', function(done) {
+      var FUTURE_CHECKPOINT = 999;
+
+      SourceModel.create({ name: 'foo' }, function(err) {
+        if (err) return done(err);
+        SourceModel.changes(FUTURE_CHECKPOINT, {}, function(err, changes) {
+          if (err) return done(err);
+          expect(changes).to.be.empty();
+          done();
+        });
       });
     });
   });
@@ -339,5 +357,138 @@ describe('Replication / Change APIs', function() {
       assert.equal(this.conflicts.length, 0);
       assert(!this.conflict);
     });
+  });
+
+  describe('change detection', function() {
+    it('detects "create"', function(done) {
+      SourceModel.create({}, function(err, inst) {
+        if (err) return done(err);
+        assertChangeRecordedForId(inst.id, done);
+      });
+    });
+
+    it('detects "updateOrCreate"', function(done) {
+      givenReplicatedInstance(function(err, created) {
+        if (err) return done(err);
+        var data = created.toObject();
+        created.name = 'updated';
+        SourceModel.updateOrCreate(created, function(err, inst) {
+          if (err) return done(err);
+          assertChangeRecordedForId(inst.id, done);
+        });
+      });
+    });
+
+    it('detects "findOrCreate"', function(done) {
+      // make sure we bypass find+create and call the connector directly
+      SourceModel.dataSource.connector.findOrCreate =
+        function(model, query, data, callback) {
+          this.all(model, query, function(err, list) {
+            if (err || (list && list[0]))
+              return callback(err, list && list[0], false);
+            this.create(model, data, function(err) {
+              callback(err, data, true);
+            });
+          }.bind(this));
+        };
+
+      SourceModel.findOrCreate(
+        { where: { name: 'does-not-exist' } },
+        { name: 'created' },
+        function(err, inst) {
+          if (err) return done(err);
+          assertChangeRecordedForId(inst.id, done);
+        });
+    });
+
+    it('detects "deleteById"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        SourceModel.deleteById(inst.id, function(err) {
+          assertChangeRecordedForId(inst.id, done);
+        });
+      });
+    });
+
+    it('detects "deleteAll"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        SourceModel.deleteAll({ name: inst.name }, function(err) {
+          if (err) return done(err);
+          assertChangeRecordedForId(inst.id, done);
+        });
+      });
+    });
+
+    it('detects "updateAll"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        SourceModel.updateAll(
+          { name: inst.name },
+          { name: 'updated' },
+          function(err) {
+            if (err) return done(err);
+            assertChangeRecordedForId(inst.id, done);
+          });
+      });
+    });
+
+    it('detects "prototype.save"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        inst.name = 'updated';
+        inst.save(function(err) {
+          if (err) return done(err);
+          assertChangeRecordedForId(inst.id, done);
+        });
+      });
+    });
+
+    it('detects "prototype.updateAttributes"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        inst.updateAttributes({ name: 'updated' }, function(err) {
+          if (err) return done(err);
+          assertChangeRecordedForId(inst.id, done);
+        });
+      });
+    });
+
+    it('detects "prototype.delete"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        inst.delete(function(err) {
+          assertChangeRecordedForId(inst.id, done);
+        });
+      });
+    });
+
+    function givenReplicatedInstance(cb) {
+      SourceModel.create({ name: 'a-name' }, function(err, inst) {
+        if (err) return cb(err);
+        SourceModel.checkpoint(function(err) {
+          if (err) return cb(err);
+          cb(null, inst);
+        });
+      });
+    }
+
+    function assertChangeRecordedForId(id, cb) {
+      SourceModel.getChangeModel().getCheckpointModel()
+        .current(function(err, cp) {
+          if (err) return cb(err);
+          SourceModel.changes(cp - 1, {}, function(err, pendingChanges) {
+            if (err) return cb(err);
+            expect(pendingChanges, 'list of changes').to.have.length(1);
+            var change = pendingChanges[0].toObject();
+            expect(change).to.have.property('checkpoint', cp); // sanity check
+            expect(change).to.have.property('modelName', SourceModel.modelName);
+            // NOTE(bajtos) Change.modelId is always String
+            // regardless of the type of the changed model's id property
+            expect(change).to.have.property('modelId', '' + id);
+            cb();
+          });
+        });
+    }
   });
 });
