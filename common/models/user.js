@@ -53,9 +53,9 @@ var debug = require('debug')('loopback:user');
  * Default is `1209600` (2 weeks)
  * @property {Number} settings.maxTTL The max value a user can request a token to be alive / valid for.
  * Default is `31556926` (1 year)
- * @property {Boolean} settings.realmRequired Require a realm when logging in a user
- * @property {String} settings.realmDelimiter When set a realm is required
- * @property {Number} settings.resetPasswordTokenTTL Time to live for password reset `AccessToken`. Default is `900` (15 minutes)
+ * @property {Boolean} settings.realmRequired Require a realm when logging in a user.
+ * @property {String} settings.realmDelimiter When set a realm is required.
+ * @property {Number} settings.resetPasswordTokenTTL Time to live for password reset `AccessToken`. Default is `900` (15 minutes).
  * @property {Number} settings.saltWorkFactor The `bcrypt` salt work factor. Default is `10`.
  *
  * @class User

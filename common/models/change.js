@@ -13,13 +13,17 @@ var debug = require('debug')('loopback:change');
 /**
  * Change list entry.
  *
- * @property {String} id Hash of the modelName and id
- * @property {String} rev The current model revision
- * @property {String} prev The previous model revision
- * @property {Number} checkpoint The current checkpoint at time of the change
- * @property {String} modelName Model name
- * @property {String} modelId Model ID
- *
+ * @property {String} id Hash of the modelName and ID.
+ * @property {String} rev The current model revision.
+ * @property {String} prev The previous model revision.
+ * @property {Number} checkpoint The current checkpoint at time of the change.
+ * @property {String} modelName Model name.
+ * @property {String} modelId Model ID.
+ * @property {Object} settings Extends the `Model.settings` object.
+ * @property {String} settings.hashAlgorithm Algorithm used to create cryptographic hash, used as argument
+ * to [crypto.createHash](http://nodejs.org/api/crypto.html#crypto_crypto_createhash_algorithm).  Default is sha1.
+ * @property {Boolean} settings.ignoreErrors By default, when changes are rectified, an error will throw an exception.
+ * However, if this setting is true, then errors will not throw exceptions.
  * @class Change
  * @inherits {PersistedModel}
  */
