@@ -2,8 +2,10 @@
  * loopback test setup and support.
  */
 
-assert = require('assert');
+assert = require('chai').assert;
 expect = require('chai').expect;
+should = require('chai').should;
+
 loopback = require('../');
 memoryConnector = loopback.Memory;
 GeoPoint = loopback.GeoPoint;

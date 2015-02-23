@@ -424,7 +424,7 @@ module.exports = function(User) {
   };
 
   /**
-   * Create a short lived acess token for temporary login. Allows users
+   * Create a short lived access token for temporary login. Allows users
    * to change passwords if forgotten.
    *
    * @options {Object} options
@@ -445,7 +445,8 @@ module.exports = function(User) {
         } else if (user) {
           // create a short lived access token for temp login to change password
           // TODO(ritch) - eventually this should only allow password change
-          user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
+          user.accessTokens.create({ttl: ttl, scopes: ['resetPassword']},
+            function(err, accessToken) {
             if (err) {
               cb(err);
             } else {

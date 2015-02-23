@@ -11,6 +11,9 @@
       "default": 1209600,
       "description": "time to live in seconds (2 weeks by default)"
     },
+    "scopes": {
+      "type": ["string"]
+    },
     "created": {
       "type": "Date"
     }
@@ -20,6 +23,11 @@
       "type": "belongsTo",
       "model": "User",
       "foreignKey": "userId"
+    },
+    "application": {
+      "type": "belongsTo",
+      "model": "Application",
+      "foreignKey": "appId"
     }
   },
   "acls": [

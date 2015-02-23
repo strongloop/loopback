@@ -923,6 +923,8 @@ describe('User', function() {
           assert(info.email);
           assert(info.accessToken);
           assert(info.accessToken.id);
+          assert.equal(info.accessToken.scopes.length, 0);
+          assert.equal(info.accessToken.scopes[0], 'resetPassword');
           assert.equal(info.accessToken.ttl / 60, 15);
           assert(calledBack);
           info.accessToken.user(function(err, user) {
