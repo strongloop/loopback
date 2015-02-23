@@ -858,6 +858,28 @@ describe('User', function() {
         }, done);
       });
 
+      it('Should report 302 when redirect url is set', function(done) {
+        testConfirm(function(result, done) {
+          request(app)
+            .get('/users/confirm?uid=' + (result.uid) +
+              '&token=' + encodeURIComponent(result.token) +
+              '&redirect=http://foo.com/bar')
+            .expect(302)
+            .expect('Location', 'http://foo.com/bar')
+            .end(done);
+        }, done);
+      });
+
+      it('Should report 204 when redirect url is not set', function(done) {
+        testConfirm(function(result, done) {
+          request(app)
+            .get('/users/confirm?uid=' + (result.uid) +
+              '&token=' + encodeURIComponent(result.token))
+            .expect(204)
+            .end(done);
+        }, done);
+      });
+
       it('Report error for invalid user id during verification', function(done) {
         testConfirm(function(result, done) {
           request(app)
