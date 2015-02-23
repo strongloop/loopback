@@ -561,7 +561,7 @@ module.exports = function(User) {
         accepts: [
           {arg: 'uid', type: 'string', required: true},
           {arg: 'token', type: 'string', required: true},
-          {arg: 'redirect', type: 'string', required: true}
+          {arg: 'redirect', type: 'string'}
         ],
         http: {verb: 'get', path: '/confirm'}
       }
@@ -591,7 +591,11 @@ module.exports = function(User) {
             query && query.redirect !== undefined ? query.redirect :
             undefined;
 
-          ctx.res.redirect(redirectUrl);
+          if (redirectUrl !== undefined) {
+            ctx.res.location(redirectUrl);
+            ctx.res.status(302);
+          }
+          next()
         } else {
           next(new Error('transport unsupported'));
         }
