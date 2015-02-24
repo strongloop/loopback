@@ -193,6 +193,7 @@ module.exports = function(Change) {
     function updateCheckpoint(cb) {
       change.constructor.getCheckpointModel().current(function(err, checkpoint) {
         if (err) return Change.handleError(err);
+        debug('updated checkpoint to', checkpoint);
         change.checkpoint = checkpoint;
         cb();
       });
@@ -412,9 +413,10 @@ module.exports = function(Change) {
     // this should be optimized
     this.find(function(err, changes) {
       if (err) return cb(err);
-      changes.forEach(function(change) {
-        change.rectify();
-      });
+      async.each(
+        changes,
+        function(c, next) { c.rectify(next); },
+        cb);
     });
   };
 
