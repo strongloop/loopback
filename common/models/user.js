@@ -567,7 +567,7 @@ module.exports = function(User) {
         accepts: [
           {arg: 'uid', type: 'string', required: true},
           {arg: 'token', type: 'string', required: true},
-          {arg: 'redirect', type: 'string', required: true}
+          {arg: 'redirect', type: 'string'}
         ],
         http: {verb: 'get', path: '/confirm'}
       }
@@ -586,21 +586,14 @@ module.exports = function(User) {
 
     UserModel.on('attached', function() {
       UserModel.afterRemote('confirm', function(ctx, inst, next) {
-        if (ctx.req) {
-          // replacement for deprecated req.param()
-          var params = ctx.req.params;
-          var body = ctx.req.body;
-          var query = ctx.req.query;
-          var redirectUrl =
-            params && params.redirect !== undefined ? params.redirect :
-            body && body.redirect !== undefined ? body.redirect :
-            query && query.redirect !== undefined ? query.redirect :
-            undefined;
-
-          ctx.res.redirect(redirectUrl);
-        } else {
-          next(new Error('transport unsupported'));
+        if (ctx.args.redirect !== undefined) {
+          if (!ctx.res) {
+            return next(new Error('The transport does not support HTTP redirects.'));
+          }
+          ctx.res.location(ctx.args.redirect);
+          ctx.res.status(302);
         }
+        next();
       });
     });
 
