@@ -1,3 +1,43 @@
+2015-02-25, Version 2.13.0
+==========================
+
+ * Add a workaround to avoid conflicts with NewRelic (Raymond Feng)
+
+ * Fix "User.confirm" to always call afterRemote hook (Pradnya Baviskar)
+
+ * Skip hashing password if it's already hashed (Raymond Feng)
+
+ * travis.yml: drop 0.11, add 0.12 and iojs (Miroslav Bajtoš)
+
+ * Add docs for settings per #1069 (crandmck)
+
+ * Fix change detection & tracking (Miroslav Bajtoš)
+
+ * Minor doc fix (Ritchie Martori)
+
+ * Upgrade jscs to ~1.11 via grunt-jscs ^1.5 (Miroslav Bajtoš)
+
+ * Remove redundant dev-dep serve-favicon (Miroslav Bajtoš)
+
+ * Fix test broken by recent juggler changes (Miroslav Bajtoš)
+
+ * Fix coding style issue (Raymond Feng)
+
+ * Remove trailing spaces (Raymond Feng)
+
+ * Fix for issue 1099. (zane)
+
+ * Fix API docs per #1041 (crandmck)
+
+ * Fix API docs to add proper callback doc per #1041 (crandmck)
+
+ * Fix #1080 - domain memory leak. (Samuel Reed)
+
+ * Document user settings (Ritchie Martori)
+
+ * Add wiki references to readme (Simon Ho)
+
+
 2015-02-03, Version 2.12.1
 ==========================
 
@@ -53,22 +93,7 @@
 
  * Added context middleware (Rand McKinney)
 
- * Revert the peer dep change to avoid npm complaints (Raymond Feng)
-
- * Update strong-remoting dep (Raymond Feng)
-
- * Allow accessType per remote method (Raymond Feng)
-
  * Use User.remoteMethod instead of loopbacks method This is needed for loopback-connector-remote authorization. Addresses https://github.com/strongloop/loopback/issues/622. (Berkeley Martinez)
-
- * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
-
- * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
-
-
-2015-01-07, Version 2.9.0
-=========================
-
 
 
 2015-01-07, Version 2.10.0
@@ -80,15 +105,19 @@
 
  * Allow accessType per remote method (Raymond Feng)
 
+ * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
+
+ * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
+
+
+2015-01-07, Version 2.9.0
+=========================
+
  * Update juggler dep (Raymond Feng)
 
  * Fix Geo test cases (Raymond Feng)
 
  * Allow User.hashPassword/validatePassword to be overridden (Raymond Feng)
-
- * API and REST tests added to ensure complete and valid credentials are supplied for verified error message to be returned  - tests added as suggested and fail under previous version of User model  - strongloop/loopback#931 (Ron Edgecomb)
-
- * Require valid login credentials before verified email check.  - strongloop/loopback#931. (Ron Edgecomb)
 
 
 2015-01-07, Version 2.8.8
@@ -454,228 +483,6 @@
 
  * Fix accessToken property docs (Ritchie Martori)
 
- * Make sure scoped methods are remoted (Raymond Feng)
-
- * Pass in remotingContext for ACL (Raymond Feng)
-
- * Fix reference to app (Raymond Feng)
-
- * Fix doc for the EXECUTE (Raymond Feng)
-
- * Don't assume relation.modelTo in case of polymorphic belongsTo (Fabien Franzen)
-
- * Fix "callbacl" by "callback" in doc (Steve Grosbois)
-
- * Inherit hooks when nesting (Fabien Franzen)
-
- * Changed options.path to options.http.path (Fabien Franzen)
-
- * filterMethod can also be a direct callback (Fabien Franzen)
-
- * filterMethod option (fn) to filter nested remote methods (Fabien Franzen)
-
- * Fix test to be more specific (Fabien Franzen)
-
- * Implement Model.nestRemoting (Fabien Franzen)
-
- * Allow custom relation path (http) - enable hasOne remoting access (Fabien Franzen)
-
- * Expose Model.exists over HTTP HEAD (Raymond Feng)
-
- * Return data source for app.dataSource() (Raymond Feng)
-
- * Fix typo in README (Ritchie Martori)
-
- * Integration test: referencesMany (Fabien Franzen)
-
- * Integration test: embedsMany (Fabien Franzen)
-
- * Fix jsdoc for remoteMethod() (Rand McKinney)
-
- * Map exists to HEAD for REST (Raymond Feng)
-
- * Fix https://github.com/strongloop/loopback/issues/413 (Raymond Feng)
-
- * Build the email verification url from app context (Raymond Feng)
-
- * Update test case to remove usage of deprecated express apis (Raymond Feng)
-
- * updated LB module diagram (altsang)
-
- * Update package.json (Al Tsang)
-
- * Updates for 2.0 (crandmck)
-
- * Update module diagram again (crandmck)
-
- * Update module diagram (crandmck)
-
- * Emit a 'modelRemoted' event by app.model() (Raymond Feng)
-
- * Fix remoting types for related models (Raymond Feng)
-
- * Fix for email transports (Raymond Feng)
-
- * Remove the link to obsolete wiki page to favor loopback.io (Raymond Feng)
-
- * Enhance the base model assertions (Raymond Feng)
-
- * Set up the base model based on the connector types (Raymond Feng)
-
- * express-middleware: improve error message (Miroslav Bajtoš)
-
- * Remove `app.docs()` (Miroslav Bajtoš)
-
- * Remove `loopback.compat.usePluralNamesForRemoting` (Miroslav Bajtoš)
-
- * Validate username uniqueness (Jaka Hudoklin)
-
- * Add descriptions for custom methods on user model (Raymond Feng)
-
- * Move remoting metadata from juggler to loopback (Raymond Feng)
-
- * Upgrade to nodemailer 1.0.1 (Raymond Feng)
-
- * 2.0.0-beta6 (Miroslav Bajtoš)
-
- * lib/application: publish Change models to REST API (Miroslav Bajtoš)
-
- * models/change: fix typo (Miroslav Bajtoš)
-
- * checkpoint: fix `current()` (Miroslav Bajtoš)
-
- * 2.0.0-beta5 (Miroslav Bajtoš)
-
- * 2.0.0-beta4 (Miroslav Bajtoš)
-
- * package: upgrade juggler to 2.0.0-beta2 (Miroslav Bajtoš)
-
- * Fix loopback in PhantomJS, fix karma tests (Miroslav Bajtoš)
-
- * Allow peer to use beta2 of datasource-juggler (and future) (Laurent)
-
- * Remove `app.boot` (Miroslav Bajtoš)
-
- * Fix remote method definition in client-server example (Ritchie Martori)
-
- * lib/registry: `getModel` throws, add `findModel` (Miroslav Bajtoš)
-
- * Remove loopback-explorer from dev deps (Miroslav Bajtoš)
-
- * Add loopback.version back (Miroslav Bajtoš)
-
- * registry: export DataSource class (Miroslav Bajtoš)
-
- * registry: fix non-unique default dataSources (Miroslav Bajtoš)
-
- * lib/registry fix jsdoc comments (Miroslav Bajtoš)
-
- * test: add debug logs (Miroslav Bajtoš)
-
- * refactor: extract runtime and registry (Miroslav Bajtoš)
-
- * Remove assertIsModel and isDataSource (Miroslav Bajtoš)
-
- * lib/loopback: fix jsdoc comments (Miroslav Bajtoš)
-
- * Add createModelFromConfig and configureModel() (Miroslav Bajtoš)
-
- * Rename DataModel to PersistedModel (Miroslav Bajtoš)
-
- * Make app.get/app.set available in browser (Miroslav Bajtoš)
-
- * Exclude express-middleware from browser bundle (Miroslav Bajtoš)
-
- * test: Remove forgotten call of `console.log()` (Miroslav Bajtoš)
-
- * Clean up express middleware dependencies (Raymond Feng)
-
- * Update strong-remoting dep (Raymond Feng)
-
- * Rename express-wrapper to express-middleware (Raymond Feng)
-
- * Clean up the tests (Raymond Feng)
-
- * Upgrade to Express 4.x (Raymond Feng)
-
- * Deprecate app.boot, remove app.installMiddleware (Miroslav Bajtoš)
-
- * 2.0.0-beta3 (Miroslav Bajtoš)
-
- * package.json: fix malformed json (Miroslav Bajtoš)
-
- * 2.0.0-beta2 (Ritchie Martori)
-
- * 2.0.0-beta1 (Ritchie Martori)
-
- * Add RC version (Ritchie Martori)
-
- * Depend on juggler@1.6.0 (Ritchie Martori)
-
- * !fixup Mark DAO methods as delegate (Ritchie Martori)
-
- * Ensure changes are created in sync (Ritchie Martori)
-
- * Remove un-rectify-able changes (Ritchie Martori)
-
- * Rework change conflict detection (Ritchie Martori)
-
- * - Use the RemoteObjects class to find remote objects instead of creating a cache  - Use the SharedClass class to build the remote connector  - Change default base model from Model to DataModel  - Fix DataModel errors not logging correct method names  - Use the strong-remoting 1.4 resolver API to resolve dynamic remote methods (relation api)  - Remove use of fn object for storing remoting meta data (Ritchie Martori)
-
- * In progress: rework remoting meta-data (Ritchie Martori)
-
- * Add test for conflicts where both deleted (Ritchie Martori)
-
- * Rework replication test (Ritchie Martori)
-
- * bump juggler version (Ritchie Martori)
-
- * Change#getModel(), Doc cleanup, Conflict event (Ritchie Martori)
-
- * Add error logging for missing data (Ritchie Martori)
-
- * Fix issues when using MongoDB for replication (Ritchie Martori)
-
- * !fixup Test cleanup (Ritchie Martori)
-
- * Move replication implementation to DataModel (Ritchie Martori)
-
- * All tests passing (Ritchie Martori)
-
- * !fixup use DataModel instead of Model for all data based models (Ritchie Martori)
-
- * fixup! unskip failing tests (Ritchie Martori)
-
- * !fixup RemoteConnector tests (Ritchie Martori)
-
- * Add missing test/model file (Ritchie Martori)
-
- * Refactor DataModel remoting (Ritchie Martori)
-
- * !fixup .replicate() argument handling (Ritchie Martori)
-
- * Fixes for e2e replication / remote connector tests (Ritchie Martori)
-
- * Add replication e2e tests (Ritchie Martori)
-
- * fixup! Assert model exists (Ritchie Martori)
-
- * fixup! rename Change.track => rectifyModelChanges (Ritchie Martori)
-
- * Add model tests (Ritchie Martori)
-
- * Add replication example (Ritchie Martori)
-
- * Add Checkpoint model and Model replication methods (Ritchie Martori)
-
- * Add Change model (Ritchie Martori)
-
-
-2014-08-12, Version 1.10.1
-==========================
-
- * Remove `req.resume` from `app.enableAuth` (Miroslav Bajtoš)
-
 
 2014-08-08, Version 2.1.1
 =========================
@@ -794,6 +601,50 @@
 
  * Bump version (Raymond Feng)
 
+ * Remove unused dep (Raymond Feng)
+
+ * Bump version and update deps (Raymond Feng)
+
+ * Upgrade to loopback-datasource-juggler@1.7.0 (Raymond Feng)
+
+ * Refactor modelBuilder to registry and set up default model (Raymond Feng)
+
+ * Add a test case for credentials/challenges (Raymond Feng)
+
+ * Fix credentials/challenges types (Raymond Feng)
+
+ * Update modules for examples (Raymond Feng)
+
+ * Split out aliases for deleteById and destroyAll functions for jsdoc. (crandmck)
+
+ * Remove unused deps (Raymond Feng)
+
+ * Refactor email verification tests into a new group (Raymond Feng)
+
+ * Fix the typo (Raymond Feng)
+
+ * Add an option to honor emailVerified (Raymond Feng)
+
+ * Update module list in README (Raymond Feng)
+
+ * Refine the test cases for relation REST APIs (Raymond Feng)
+
+ * test: add check of Model remote methods (Miroslav Bajtoš)
+
+ * Adjust the REST mapping for add/remove (Raymond Feng)
+
+ * Add a test case for hasMany through add/remove remoting (Raymond Feng)
+
+ * Fix the typo and add Bearer token support (Raymond Feng)
+
+ * Update README (Raymond Feng)
+
+ * Fix misleading token middleware documentation (Aleksandr Tsertkov)
+
+
+2014-07-15, Version 2.0.0-beta6
+===============================
+
  * 2.0.0-beta6 (Miroslav Bajtoš)
 
  * lib/application: publish Change models to REST API (Miroslav Bajtoš)
@@ -802,7 +653,29 @@
 
  * checkpoint: fix `current()` (Miroslav Bajtoš)
 
+
+2014-07-03, Version 2.0.0-beta5
+===============================
+
  * 2.0.0-beta5 (Miroslav Bajtoš)
+
+ * app: update `url` on `listening` event (Miroslav Bajtoš)
+
+ * Fix "ReferenceError: loopback is not defined" in registry.memory(). (Guilherme Cirne)
+
+ * Invalid Access Token return 401 (Karl Mikkelsen)
+
+ * Bump version and update deps (Raymond Feng)
+
+ * Update debug setting (Raymond Feng)
+
+ * Mark `app.boot` as deprecated. (Miroslav Bajtoš)
+
+ * Update link to doc (Rand McKinney)
+
+
+2014-06-26, Version 2.0.0-beta4
+===============================
 
  * 2.0.0-beta4 (Miroslav Bajtoš)
 
@@ -814,13 +687,25 @@
 
  * Remove `app.boot` (Miroslav Bajtoš)
 
+ * Update juggler dep (Raymond Feng)
+
+ * Remove relationNameFor (Raymond Feng)
+
+ * Fix a slowdown caused by mutation of an incoming accessToken option. (Samuel Reed)
+
  * Fix remote method definition in client-server example (Ritchie Martori)
+
+ * package: the next version will be a minor version (Miroslav Bajtoš)
 
  * lib/registry: `getModel` throws, add `findModel` (Miroslav Bajtoš)
 
- * Remove loopback-explorer from dev deps (Miroslav Bajtoš)
+ * lib/application: Remove forgotten `loopback` ref (Miroslav Bajtoš)
 
- * Add loopback.version back (Miroslav Bajtoš)
+ * Allow customization of ACL http status (Karl Mikkelsen)
+
+ * Expose loopback as `app.loopback` (Miroslav Bajtoš)
+
+ * Remove loopback-explorer from dev deps (Miroslav Bajtoš)
 
  * registry: export DataSource class (Miroslav Bajtoš)
 
@@ -834,17 +719,75 @@
 
  * Remove assertIsModel and isDataSource (Miroslav Bajtoš)
 
- * lib/loopback: fix jsdoc comments (Miroslav Bajtoš)
-
  * Add createModelFromConfig and configureModel() (Miroslav Bajtoš)
-
- * Rename DataModel to PersistedModel (Miroslav Bajtoš)
 
  * Make app.get/app.set available in browser (Miroslav Bajtoš)
 
+ * package: upgrade Mocha to 1.20 (Miroslav Bajtoš)
+
+ * test: fix ACL integration tests (Miroslav Bajtoš)
+
+ * JSDoc fixes (crandmck)
+
+ * Add a test case (Raymond Feng)
+
+ * Set the role id to be generated (Raymond Feng)
+
+ * Add loopback.version back (Miroslav Bajtoš)
+
+ * Tidy up app.model() to remove duplicate & recusrive call (Raymond Feng)
+
+ * Register existing model to app.models during app.model() (Raymond Feng)
+
+ * JSDoc cleanup (crandmck)
+
+ * Bump version so that we can republish (Raymond Feng)
+
+ * Bump version (Raymond Feng)
+
+ * Use constructor to reference the model class (Raymond Feng)
+
+ * Allow the creation of access token to be overriden (Raymond Feng)
+
+ * Fixup JSDocs; note: updateOrCreate function alias pulled out on separate line for docs (crandmck)
+
+ * lib/loopback: fix jsdoc comments (Miroslav Bajtoš)
+
+ * Rename DataModel to PersistedModel (Miroslav Bajtoš)
+
+ * Added middleware and API doc headings (crandmck)
+
+ * Update JSDoc (crandmck)
+
+ * Update docs.json (Rand McKinney)
+
+ * Removed old .md files from API docs (Rand McKinney)
+
+ * Delete api-model.md (Rand McKinney)
+
+ * Delete api-datasource.md (Rand McKinney)
+
+ * Delete api-geopoint.md (Rand McKinney)
+
+ * Remove duplicate doc content (Rand McKinney)
+
+ * Add note about unavailable args to remote hooks. (Rand McKinney)
+
+ * Undo incorrect changes I made -- per Ritchie (Rand McKinney)
+
+ * Update strong-remoting to 1.5 (Ritchie Martori)
+
+ * Remove "user" as arg to beforeRemote(..) (Rand McKinney)
+
  * Exclude express-middleware from browser bundle (Miroslav Bajtoš)
 
+ * !fixup only set ctx.accessType when sharedMethod is available (Ritchie Martori)
+
+ * Refactor ACL to allow for `methodNames` / aliases (Ritchie Martori)
+
  * test: Remove forgotten call of `console.log()` (Miroslav Bajtoš)
+
+ * Update README and the module diagram (Raymond Feng)
 
  * Clean up express middleware dependencies (Raymond Feng)
 
@@ -857,6 +800,10 @@
  * Upgrade to Express 4.x (Raymond Feng)
 
  * Deprecate app.boot, remove app.installMiddleware (Miroslav Bajtoš)
+
+
+2014-05-28, Version 2.0.0-beta3
+===============================
 
  * 2.0.0-beta3 (Miroslav Bajtoš)
 
@@ -972,149 +919,7 @@
 
  * Fix misleading token middleware documentation (Aleksandr Tsertkov)
 
-
-2014-07-15, Version 2.0.0-beta6
-===============================
-
- * 2.0.0-beta6 (Miroslav Bajtoš)
-
- * lib/application: publish Change models to REST API (Miroslav Bajtoš)
-
- * models/change: fix typo (Miroslav Bajtoš)
-
- * checkpoint: fix `current()` (Miroslav Bajtoš)
-
-
-2014-07-03, Version 2.0.0-beta5
-===============================
-
- * 2.0.0-beta5 (Miroslav Bajtoš)
-
  * app: update `url` on `listening` event (Miroslav Bajtoš)
-
- * 2.0.0-beta4 (Miroslav Bajtoš)
-
- * package: upgrade juggler to 2.0.0-beta2 (Miroslav Bajtoš)
-
- * Fix loopback in PhantomJS, fix karma tests (Miroslav Bajtoš)
-
- * Allow peer to use beta2 of datasource-juggler (and future) (Laurent)
-
- * Remove `app.boot` (Miroslav Bajtoš)
-
- * Fix remote method definition in client-server example (Ritchie Martori)
-
- * lib/registry: `getModel` throws, add `findModel` (Miroslav Bajtoš)
-
- * Remove loopback-explorer from dev deps (Miroslav Bajtoš)
-
- * Add loopback.version back (Miroslav Bajtoš)
-
- * registry: export DataSource class (Miroslav Bajtoš)
-
- * registry: fix non-unique default dataSources (Miroslav Bajtoš)
-
- * lib/registry fix jsdoc comments (Miroslav Bajtoš)
-
- * test: add debug logs (Miroslav Bajtoš)
-
- * refactor: extract runtime and registry (Miroslav Bajtoš)
-
- * Remove assertIsModel and isDataSource (Miroslav Bajtoš)
-
- * lib/loopback: fix jsdoc comments (Miroslav Bajtoš)
-
- * Add createModelFromConfig and configureModel() (Miroslav Bajtoš)
-
- * Rename DataModel to PersistedModel (Miroslav Bajtoš)
-
- * Make app.get/app.set available in browser (Miroslav Bajtoš)
-
- * Exclude express-middleware from browser bundle (Miroslav Bajtoš)
-
- * test: Remove forgotten call of `console.log()` (Miroslav Bajtoš)
-
- * Clean up express middleware dependencies (Raymond Feng)
-
- * Update strong-remoting dep (Raymond Feng)
-
- * Rename express-wrapper to express-middleware (Raymond Feng)
-
- * Clean up the tests (Raymond Feng)
-
- * Upgrade to Express 4.x (Raymond Feng)
-
- * Deprecate app.boot, remove app.installMiddleware (Miroslav Bajtoš)
-
- * 2.0.0-beta3 (Miroslav Bajtoš)
-
- * package.json: fix malformed json (Miroslav Bajtoš)
-
- * 2.0.0-beta2 (Ritchie Martori)
-
- * 2.0.0-beta1 (Ritchie Martori)
-
- * Add RC version (Ritchie Martori)
-
- * Depend on juggler@1.6.0 (Ritchie Martori)
-
- * !fixup Mark DAO methods as delegate (Ritchie Martori)
-
- * Ensure changes are created in sync (Ritchie Martori)
-
- * Remove un-rectify-able changes (Ritchie Martori)
-
- * Rework change conflict detection (Ritchie Martori)
-
- * - Use the RemoteObjects class to find remote objects instead of creating a cache  - Use the SharedClass class to build the remote connector  - Change default base model from Model to DataModel  - Fix DataModel errors not logging correct method names  - Use the strong-remoting 1.4 resolver API to resolve dynamic remote methods (relation api)  - Remove use of fn object for storing remoting meta data (Ritchie Martori)
-
- * In progress: rework remoting meta-data (Ritchie Martori)
-
- * Add test for conflicts where both deleted (Ritchie Martori)
-
- * Rework replication test (Ritchie Martori)
-
- * bump juggler version (Ritchie Martori)
-
- * Change#getModel(), Doc cleanup, Conflict event (Ritchie Martori)
-
- * Add error logging for missing data (Ritchie Martori)
-
- * Fix issues when using MongoDB for replication (Ritchie Martori)
-
- * !fixup Test cleanup (Ritchie Martori)
-
- * Move replication implementation to DataModel (Ritchie Martori)
-
- * All tests passing (Ritchie Martori)
-
- * !fixup use DataModel instead of Model for all data based models (Ritchie Martori)
-
- * fixup! unskip failing tests (Ritchie Martori)
-
- * !fixup RemoteConnector tests (Ritchie Martori)
-
- * Add missing test/model file (Ritchie Martori)
-
- * Refactor DataModel remoting (Ritchie Martori)
-
- * !fixup .replicate() argument handling (Ritchie Martori)
-
- * Fixes for e2e replication / remote connector tests (Ritchie Martori)
-
- * Add replication e2e tests (Ritchie Martori)
-
- * fixup! Assert model exists (Ritchie Martori)
-
- * fixup! rename Change.track => rectifyModelChanges (Ritchie Martori)
-
- * Add model tests (Ritchie Martori)
-
- * Add replication example (Ritchie Martori)
-
- * Add Checkpoint model and Model replication methods (Ritchie Martori)
-
- * Add Change model (Ritchie Martori)
 
 
 2014-06-27, Version 1.9.1
@@ -1123,142 +928,6 @@
  * Fix "ReferenceError: loopback is not defined" in registry.memory(). (Guilherme Cirne)
 
  * Invalid Access Token return 401 (Karl Mikkelsen)
-
- * Bump version and update deps (Raymond Feng)
-
- * Update debug setting (Raymond Feng)
-
- * Mark `app.boot` as deprecated. (Miroslav Bajtoš)
-
- * Update link to doc (Rand McKinney)
-
-
-2014-06-26, Version 2.0.0-beta4
-===============================
-
- * 2.0.0-beta4 (Miroslav Bajtoš)
-
- * package: upgrade juggler to 2.0.0-beta2 (Miroslav Bajtoš)
-
- * Fix loopback in PhantomJS, fix karma tests (Miroslav Bajtoš)
-
- * Allow peer to use beta2 of datasource-juggler (and future) (Laurent)
-
- * Remove `app.boot` (Miroslav Bajtoš)
-
- * Fix remote method definition in client-server example (Ritchie Martori)
-
- * lib/registry: `getModel` throws, add `findModel` (Miroslav Bajtoš)
-
- * Remove loopback-explorer from dev deps (Miroslav Bajtoš)
-
- * Add loopback.version back (Miroslav Bajtoš)
-
- * registry: export DataSource class (Miroslav Bajtoš)
-
- * registry: fix non-unique default dataSources (Miroslav Bajtoš)
-
- * lib/registry fix jsdoc comments (Miroslav Bajtoš)
-
- * test: add debug logs (Miroslav Bajtoš)
-
- * refactor: extract runtime and registry (Miroslav Bajtoš)
-
- * Remove assertIsModel and isDataSource (Miroslav Bajtoš)
-
- * lib/loopback: fix jsdoc comments (Miroslav Bajtoš)
-
- * Add createModelFromConfig and configureModel() (Miroslav Bajtoš)
-
- * Rename DataModel to PersistedModel (Miroslav Bajtoš)
-
- * Make app.get/app.set available in browser (Miroslav Bajtoš)
-
- * Exclude express-middleware from browser bundle (Miroslav Bajtoš)
-
- * test: Remove forgotten call of `console.log()` (Miroslav Bajtoš)
-
- * Clean up express middleware dependencies (Raymond Feng)
-
- * Update strong-remoting dep (Raymond Feng)
-
- * Rename express-wrapper to express-middleware (Raymond Feng)
-
- * Clean up the tests (Raymond Feng)
-
- * Upgrade to Express 4.x (Raymond Feng)
-
- * Deprecate app.boot, remove app.installMiddleware (Miroslav Bajtoš)
-
- * 2.0.0-beta3 (Miroslav Bajtoš)
-
- * package.json: fix malformed json (Miroslav Bajtoš)
-
- * 2.0.0-beta2 (Ritchie Martori)
-
- * 2.0.0-beta1 (Ritchie Martori)
-
- * Add RC version (Ritchie Martori)
-
- * Depend on juggler@1.6.0 (Ritchie Martori)
-
- * !fixup Mark DAO methods as delegate (Ritchie Martori)
-
- * Ensure changes are created in sync (Ritchie Martori)
-
- * Remove un-rectify-able changes (Ritchie Martori)
-
- * Rework change conflict detection (Ritchie Martori)
-
- * - Use the RemoteObjects class to find remote objects instead of creating a cache  - Use the SharedClass class to build the remote connector  - Change default base model from Model to DataModel  - Fix DataModel errors not logging correct method names  - Use the strong-remoting 1.4 resolver API to resolve dynamic remote methods (relation api)  - Remove use of fn object for storing remoting meta data (Ritchie Martori)
-
- * In progress: rework remoting meta-data (Ritchie Martori)
-
- * Add test for conflicts where both deleted (Ritchie Martori)
-
- * Rework replication test (Ritchie Martori)
-
- * bump juggler version (Ritchie Martori)
-
- * Change#getModel(), Doc cleanup, Conflict event (Ritchie Martori)
-
- * Add error logging for missing data (Ritchie Martori)
-
- * Fix issues when using MongoDB for replication (Ritchie Martori)
-
- * !fixup Test cleanup (Ritchie Martori)
-
- * Move replication implementation to DataModel (Ritchie Martori)
-
- * All tests passing (Ritchie Martori)
-
- * !fixup use DataModel instead of Model for all data based models (Ritchie Martori)
-
- * fixup! unskip failing tests (Ritchie Martori)
-
- * !fixup RemoteConnector tests (Ritchie Martori)
-
- * Add missing test/model file (Ritchie Martori)
-
- * Refactor DataModel remoting (Ritchie Martori)
-
- * !fixup .replicate() argument handling (Ritchie Martori)
-
- * Fixes for e2e replication / remote connector tests (Ritchie Martori)
-
- * Add replication e2e tests (Ritchie Martori)
-
- * fixup! Assert model exists (Ritchie Martori)
-
- * fixup! rename Change.track => rectifyModelChanges (Ritchie Martori)
-
- * Add model tests (Ritchie Martori)
-
- * Add replication example (Ritchie Martori)
-
- * Add Checkpoint model and Model replication methods (Ritchie Martori)
-
- * Add Change model (Ritchie Martori)
 
 
 2014-06-25, Version 1.9.0
@@ -1362,85 +1031,11 @@
 
  * Update README and the module diagram (Raymond Feng)
 
-
-2014-05-28, Version 2.0.0-beta3
-===============================
-
- * 2.0.0-beta3 (Miroslav Bajtoš)
-
- * package.json: fix malformed json (Miroslav Bajtoš)
-
  * app: implement `connector()` and `connectors` (Miroslav Bajtoš)
 
  * Fix a typo in `app.boot`. (Samuel Reed)
 
- * 2.0.0-beta2 (Ritchie Martori)
-
- * 2.0.0-beta1 (Ritchie Martori)
-
  * Make app.datasources unique per app instance (Miroslav Bajtoš)
-
- * Add RC version (Ritchie Martori)
-
- * Depend on juggler@1.6.0 (Ritchie Martori)
-
- * !fixup Mark DAO methods as delegate (Ritchie Martori)
-
- * Ensure changes are created in sync (Ritchie Martori)
-
- * Remove un-rectify-able changes (Ritchie Martori)
-
- * Rework change conflict detection (Ritchie Martori)
-
- * - Use the RemoteObjects class to find remote objects instead of creating a cache  - Use the SharedClass class to build the remote connector  - Change default base model from Model to DataModel  - Fix DataModel errors not logging correct method names  - Use the strong-remoting 1.4 resolver API to resolve dynamic remote methods (relation api)  - Remove use of fn object for storing remoting meta data (Ritchie Martori)
-
- * In progress: rework remoting meta-data (Ritchie Martori)
-
- * Add test for conflicts where both deleted (Ritchie Martori)
-
- * Rework replication test (Ritchie Martori)
-
- * bump juggler version (Ritchie Martori)
-
- * Change#getModel(), Doc cleanup, Conflict event (Ritchie Martori)
-
- * Add error logging for missing data (Ritchie Martori)
-
- * Fix issues when using MongoDB for replication (Ritchie Martori)
-
- * !fixup Test cleanup (Ritchie Martori)
-
- * Move replication implementation to DataModel (Ritchie Martori)
-
- * All tests passing (Ritchie Martori)
-
- * !fixup use DataModel instead of Model for all data based models (Ritchie Martori)
-
- * fixup! unskip failing tests (Ritchie Martori)
-
- * !fixup RemoteConnector tests (Ritchie Martori)
-
- * Add missing test/model file (Ritchie Martori)
-
- * Refactor DataModel remoting (Ritchie Martori)
-
- * !fixup .replicate() argument handling (Ritchie Martori)
-
- * Fixes for e2e replication / remote connector tests (Ritchie Martori)
-
- * Add replication e2e tests (Ritchie Martori)
-
- * fixup! Assert model exists (Ritchie Martori)
-
- * fixup! rename Change.track => rectifyModelChanges (Ritchie Martori)
-
- * Add model tests (Ritchie Martori)
-
- * Add replication example (Ritchie Martori)
-
- * Add Checkpoint model and Model replication methods (Ritchie Martori)
-
- * Add Change model (Ritchie Martori)
 
 
 2014-05-27, Version 1.8.5
@@ -1782,15 +1377,6 @@
 
  * Improve jsdox documentation of app object (Miroslav Bajtoš)
 
- * Make sure methods are called in the context of the calling class (Raymond Feng)
-
- * Start to move md to jsdoc (Ritchie Martori)
-
-
-2014-01-14, Version 1.5.0
-=========================
-
-
 
 2014-01-14, Version 1.5.1
 =========================
@@ -1800,6 +1386,10 @@
  * Make sure methods are called in the context of the calling class (Raymond Feng)
 
  * Start to move md to jsdoc (Ritchie Martori)
+
+
+2014-01-14, Version 1.5.0
+=========================
 
  * Replace `on` with `once` in middleware examples (Miroslav Bajtoš)
 
@@ -1913,18 +1503,17 @@
 
  * Add Model.requireToken, default swagger to false (Ritchie Martori)
 
- * Bump version (Raymond Feng)
-
  * Add password reset (Ritchie Martori)
-
-
-2013-12-06, Version show
-========================
-
 
 
 2013-12-06, Version 1.3.3
 =========================
+
+ * Bump version (Raymond Feng)
+
+
+2013-12-06, Version show
+========================
 
  * Bump version (Raymond Feng)
 
@@ -1939,12 +1528,6 @@
  * Minor formatting and wording fixes. (Rand McKinney)
 
  * docs: describe http mapping of arguments (Miroslav Bajtos)
-
-
-2013-12-05, Version 1.3.2
-=========================
-
- * Bump version (Ritchie)
 
  * SLA-725 support PORT and HOST environment for PaaS support (Ritchie)
 
@@ -2212,40 +1795,9 @@
 
  * Update docs for api->project rename. (Michael Schoonmaker)
 
-
-2013-09-12, Version strongloopsuite-1.0.0-4
-===========================================
-
-
-
-2013-09-12, Version strongloopsuite-1.0.0-5
-===========================================
-
- * Update docs for api->project rename. (Michael Schoonmaker)
-
  * Use a pure JS bcrypt (Ritchie)
 
  * Added little boxes to Getting Started. (Michael Schoonmaker)
-
-
-2013-09-11, Version strongloopsuite-1.0.0-3
-===========================================
-
- * Add keywords to package.json (Raymond Feng)
-
-
-2013-09-10, Version strongloopsuite-1.0.0-2
-===========================================
-
- * Add repo (Raymond Feng)
-
- * Finalize package.json for sls-1.0.0 (Raymond Feng)
-
- * Changed tag to strongloopsuite-1.0.0-2 (cgole)
-
-
-2013-09-09, Version strongloopsuite-1.0.0-1
-===========================================
 
  * Update assets mapping (Raymond Feng)
 
@@ -2257,33 +1809,21 @@
 
  * Add command line docs (Ritchie Martori)
 
-
-2013-09-05, Version strongloopsuite-1.0.0-0
-===========================================
-
- * Updated to use tagged version strongloopsuite-1.0.0-0 of dependencies (cgole)
-
  * Add getting started link (Ritchie Martori)
 
  * Update the Quick Start (Ritchie Martori)
-
- * Update model docs further. (Michael Schoonmaker)
-
- * Updated model docs (Ritchie Martori)
-
- * Concepts overhaul in progress (Ritchie Martori)
-
-
-2013-09-04, Version 1.2.0
-=========================
-
- * Updated to use tagged version of loopback-datasource-juggler and strong-remoting (cgole)
 
  * Fix package.json to remove duplicate mocha deps (Raymond Feng)
 
  * Tidy up package.json for LoopBack 1.0.0 (Raymond Feng)
 
+ * Update model docs further. (Michael Schoonmaker)
+
  * Update license (Raymond Feng)
+
+ * Updated model docs (Ritchie Martori)
+
+ * Concepts overhaul in progress (Ritchie Martori)
 
  * Update the rest doc with more samples, fix the curl encoding (Raymond Feng)
 
