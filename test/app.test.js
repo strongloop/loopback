@@ -65,6 +65,62 @@ describe('app', function() {
       });
     });
 
+    it('allows extra handlers on express stack during app.use', function(done) {
+      function handlerThatAddsHandler(name) {
+        app.use(namedHandler('extra-handler'));
+        return namedHandler(name);
+      }
+
+      var myHandler;
+      app.middleware('routes:before',
+        myHandler = handlerThatAddsHandler('my-handler'));
+      var found = app._findLayerByHandler(myHandler);
+      expect(found).to.be.object;
+      expect(myHandler).to.equal(found.handle);
+      expect(found).have.property('phase', 'routes:before');
+      executeMiddlewareHandlers(app, function(err) {
+        if (err) return done(err);
+        expect(steps).to.eql(['my-handler', 'extra-handler']);
+        done();
+      });
+    });
+
+    it('allows handlers to be wrapped as __NR_handler on express stack',
+      function(done) {
+        var myHandler = namedHandler('my-handler');
+        var wrappedHandler = function(req, res, next) {
+          myHandler(req, res, next);
+        };
+        wrappedHandler['__NR_handler'] = myHandler;
+        app.middleware('routes:before', wrappedHandler);
+        var found = app._findLayerByHandler(myHandler);
+        expect(found).to.be.object;
+        expect(found).have.property('phase', 'routes:before');
+        executeMiddlewareHandlers(app, function(err) {
+          if (err) return done(err);
+          expect(steps).to.eql(['my-handler']);
+          done();
+        });
+      });
+
+    it('allows handlers to be wrapped as a property on express stack',
+      function(done) {
+        var myHandler = namedHandler('my-handler');
+        var wrappedHandler = function(req, res, next) {
+          myHandler(req, res, next);
+        };
+        wrappedHandler['__handler'] = myHandler;
+        app.middleware('routes:before', wrappedHandler);
+        var found = app._findLayerByHandler(myHandler);
+        expect(found).to.be.object;
+        expect(found).have.property('phase', 'routes:before');
+        executeMiddlewareHandlers(app, function(err) {
+          if (err) return done(err);
+          expect(steps).to.eql(['my-handler']);
+          done();
+        });
+      });
+
     it('injects error from previous phases into the router', function(done) {
       var expectedError = new Error('expected error');
 
