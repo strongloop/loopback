@@ -137,6 +137,13 @@ describe('User', function() {
       assert(u.password !== 'bar');
     });
 
+    it('does not hash the password if it\'s already hashed', function() {
+      var u1 = new User({username: 'foo', password: 'bar'});
+      assert(u1.password !== 'bar');
+      var u2 = new User({username: 'foo', password: u1.password});
+      assert(u2.password === u1.password);
+    });
+
     describe('custom password hash', function() {
       var defaultHashPassword;
       var defaultValidatePassword;
