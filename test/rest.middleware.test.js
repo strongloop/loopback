@@ -164,6 +164,44 @@ describe('loopback.rest', function() {
     }, done);
   });
 
+  it('should report 200 for legacy explorer route /routes', function(done) {
+    app.use(loopback.rest());
+    request(app).get('/routes')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body).to.eql([]);
+        done();
+      });
+  });
+
+  it('should report 200 for legacy explorer route /models', function(done) {
+    app.use(loopback.rest());
+    request(app).get('/models')
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body).to.eql({});
+        done();
+      });
+  });
+
+  it('should report 404 for disabled legacy explorer route /routes', function(done) {
+    app.set('legacyExplorer', false);
+    app.use(loopback.rest());
+    request(app).get('/routes')
+      .expect(404)
+      .end(done);
+  });
+
+  it('should report 404 for disabled legacy explorer route /models', function(done) {
+    app.set('legacyExplorer', false);
+    app.use(loopback.rest());
+    request(app).get('/models')
+      .expect(404)
+      .end(done);
+  });
+
   describe('context propagation', function() {
     var User;
 

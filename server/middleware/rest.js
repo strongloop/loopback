@@ -4,6 +4,7 @@
 
 var loopback = require('../../lib/loopback');
 var async = require('async');
+var deprecate = require('depd')('loopback');
 
 /*!
  * Export the middleware.
@@ -28,10 +29,17 @@ function rest() {
   return function restApiHandler(req, res, next) {
     var app = req.app;
 
-    if (req.url === '/routes') {
-      return res.send(app.handler('rest').adapter.allRoutes());
-    } else if (req.url === '/models') {
-      return res.send(app.remotes().toJSON());
+    // added for https://github.com/strongloop/loopback/issues/1134
+    if (app.get('legacyExplorer') !== false) {
+      deprecate(
+        'Routes "/methods" and "/models" are considered dangerous and should not be used.\n' +
+        'Disable them by setting "legacyExplorer=false" in "server/config.json" or via "app.set()".'
+      );
+      if (req.url === '/routes') {
+        return res.send(app.handler('rest').adapter.allRoutes());
+      } else if (req.url === '/models') {
+        return res.send(app.remotes().toJSON());
+      }
     }
 
     if (!handlers) {
