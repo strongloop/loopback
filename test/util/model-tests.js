@@ -36,7 +36,8 @@ module.exports = function defineModelTestsWithDataSource(options) {
         return extendedModel;
       };
 
-      User = PersistedModel.extend('user', {
+      User = PersistedModel.extend('UtilUser', {
+        id: { id: true, type: String, defaultFn: 'guid' },
         'first': String,
         'last': String,
         'age': Number,
@@ -48,8 +49,6 @@ module.exports = function defineModelTestsWithDataSource(options) {
         trackChanges: true
       });
 
-      // enable destroy all for testing
-      User.destroyAll.shared = true;
       User.attachTo(dataSource);
     });
 
@@ -187,10 +186,13 @@ module.exports = function defineModelTestsWithDataSource(options) {
       it('Remove a model from the attached data source', function(done) {
         User.create({first: 'joe', last: 'bob'}, function(err, user) {
           User.findById(user.id, function(err, foundUser) {
+            if (err) return done(err);
             assert.equal(user.id, foundUser.id);
-            foundUser.destroy(function() {
-              User.findById(user.id, function(err, notFound) {
-                assert.equal(notFound, null);
+            User.deleteById(foundUser.id, function(err) {
+              if (err) return done(err);
+              User.find({ where: { id: user.id } }, function(err, found) {
+                if (err) return done(err);
+                assert.equal(found.length, 0);
                 done();
               });
             });

@@ -14,14 +14,16 @@ describe('Replication / Change APIs', function() {
     dataSource = this.dataSource = loopback.createDataSource({
       connector: loopback.Memory
     });
-    SourceModel = this.SourceModel = PersistedModel.extend('SourceModel', {}, {
-      trackChanges: true
-    });
+    SourceModel = this.SourceModel = PersistedModel.extend('SourceModel',
+      { id: { id: true, type: String, defaultFn: 'guid' } },
+      { trackChanges: true });
+
     SourceModel.attachTo(dataSource);
 
-    TargetModel = this.TargetModel = PersistedModel.extend('TargetModel', {}, {
-      trackChanges: true
-    });
+    TargetModel = this.TargetModel = PersistedModel.extend('TargetModel',
+      { id: { id: true, type: String, defaultFn: 'guid' } },
+      { trackChanges: true });
+
     TargetModel.attachTo(dataSource);
 
     test.startingCheckpoint = -1;
@@ -169,11 +171,11 @@ describe('Replication / Change APIs', function() {
       var test = this;
       this.conflict.models(function(err, source, target) {
         assert.deepEqual(source.toJSON(), {
-          id: 1,
+          id: test.model.id,
           name: 'source update'
         });
         assert.deepEqual(target.toJSON(), {
-          id: 1,
+          id: test.model.id,
           name: 'target update'
         });
         done();
@@ -242,7 +244,7 @@ describe('Replication / Change APIs', function() {
       this.conflict.models(function(err, source, target) {
         assert.equal(source, null);
         assert.deepEqual(target.toJSON(), {
-          id: 1,
+          id: test.model.id,
           name: 'target update'
         });
         done();
@@ -311,7 +313,7 @@ describe('Replication / Change APIs', function() {
       this.conflict.models(function(err, source, target) {
         assert.equal(target, null);
         assert.deepEqual(source.toJSON(), {
-          id: 1,
+          id: test.model.id,
           name: 'source update'
         });
         done();

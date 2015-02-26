@@ -16,7 +16,7 @@ describe('Model / PersistedModel', function() {
 
   describe('Model.validatesUniquenessOf(property, options)', function() {
     it('Ensure the value for `property` is unique', function(done) {
-      var User = PersistedModel.extend('user', {
+      var User = PersistedModel.extend('ValidatedUser', {
         'first': String,
         'last': String,
         'age': Number,
@@ -72,6 +72,7 @@ describe.onServer('Remote Methods', function() {
 
   beforeEach(function() {
     User = PersistedModel.extend('user', {
+      id: { id: true, type: String, defaultFn: 'guid' },
       'first': String,
       'last': String,
       'age': Number,
@@ -489,10 +490,10 @@ describe.onServer('Remote Methods', function() {
     });
   });
 
-  describe('PersistelModel remote methods', function() {
+  describe('PersistedModel remote methods', function() {
     it('includes all aliases', function() {
       var app = loopback();
-      var model = PersistedModel.extend('persistedModel');
+      var model = PersistedModel.extend('PersistedModelForAliases');
       app.dataSource('db', { connector: 'memory' });
       app.model(model, { dataSource: 'db' });
 
@@ -500,7 +501,7 @@ describe.onServer('Remote Methods', function() {
       var metadata = app.handler('rest')
         .adapter
         .getClasses()
-        .filter(function(c) { return c.name === 'persistedModel'; })[0];
+        .filter(function(c) { return c.name === model.modelName; })[0];
 
       var methodNames = [];
       metadata.methods.forEach(function(method) {
@@ -509,7 +510,11 @@ describe.onServer('Remote Methods', function() {
       });
 
       expect(methodNames).to.have.members([
-        'destroyAll', 'deleteAll', 'remove',
+        // NOTE(bajtos) These three methods are disabled by default
+        // Because all tests share the same global registry model
+        // and one of the tests was enabling remoting of "destroyAll",
+        // this test was seeing this method (with all aliases) as public
+        // 'destroyAll', 'deleteAll', 'remove',
         'create',
         'upsert', 'updateOrCreate',
         'exists',
