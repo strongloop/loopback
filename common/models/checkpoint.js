@@ -49,7 +49,13 @@ module.exports = function(Checkpoint) {
     });
   };
 
-  Checkpoint.beforeSave = function(next, model) {
+  Checkpoint.observe('before save', function(ctx, next) {
+    if (!ctx.instance) {
+      // Example: Checkpoint.updateAll() and Checkpoint.updateOrCreate()
+      return next(new Error('Checkpoint does not support partial updates.'));
+    }
+
+    var model = ctx.instance;
     if (!model.getId() && model.seq === undefined) {
       model.constructor.current(function(err, seq) {
         if (err) return next(err);
@@ -59,5 +65,5 @@ module.exports = function(Checkpoint) {
     } else {
       next();
     }
-  };
+  });
 };

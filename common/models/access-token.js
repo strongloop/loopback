@@ -65,20 +65,18 @@ module.exports = function(AccessToken) {
   /*!
    * Hook to create accessToken id.
    */
-
-  AccessToken.beforeCreate = function(next, data) {
-    data = data || {};
+  AccessToken.observe('before save', function(ctx, next) {
+    if (!ctx.instance || ctx.instance.id) {
+      // We are running a partial update or the instance already has an id
+      return next();
+    }
 
     AccessToken.createAccessTokenId(function(err, id) {
-      if (err) {
-        next(err);
-      } else {
-        data.id = id;
-
-        next();
-      }
+      if (err) return next(err);
+      ctx.instance.id = id;
+      next();
     });
-  };
+  });
 
   /**
    * Find a token for the given `ServerRequest`.
