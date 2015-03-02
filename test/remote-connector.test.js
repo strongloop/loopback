@@ -20,7 +20,8 @@ describe('RemoteConnector', function() {
       });
     },
     onDefine: function(Model) {
-      var RemoteModel = Model.extend(Model.modelName);
+      var RemoteModel = Model.extend('Remote' + Model.modelName, {},
+        { plural: Model.pluralModelName });
       RemoteModel.attachTo(loopback.createDataSource({
         connector: loopback.Memory
       }));

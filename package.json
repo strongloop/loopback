@@ -38,6 +38,7 @@
     "canonical-json": "0.0.4",
     "continuation-local-storage": "~3.1.1",
     "debug": "~2.0.0",
+    "depd": "^1.0.0",
     "ejs": "~1.0.0",
     "express": "^4.10.2",
     "inflection": "~1.4.2",
@@ -52,7 +53,7 @@
     "underscore.string": "~2.3.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "^2.17.0"
+    "loopback-datasource-juggler": "^2.19.0"
   },
   "devDependencies": {
     "browserify": "~4.2.3",
@@ -79,7 +80,7 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-script-launcher": "~0.1.0",
     "loopback-boot": "^1.1.0",
-    "loopback-datasource-juggler": "^2.17.0",
+    "loopback-datasource-juggler": "^2.19.0",
     "loopback-testing": "~0.2.0",
     "mocha": "~1.21.4",
     "strong-task-emitter": "0.0.x",
@@ -94,6 +95,7 @@
     "./lib/server-app.js": "./lib/browser-express.js",
     "connect": false,
     "nodemailer": false,
+    "depd": "loopback-datasource-juggler/lib/browser.depd.js",
     "bcrypt": false
   },
   "license": {

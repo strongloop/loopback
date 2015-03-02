@@ -6,9 +6,13 @@ describe('Change', function() {
     var memory = loopback.createDataSource({
       connector: loopback.Memory
     });
-    TestModel = loopback.PersistedModel.extend('chtest', {}, {
-      trackChanges: true
-    });
+    TestModel = loopback.PersistedModel.extend('ChangeTestModel',
+      {
+        id: { id: true, type: 'string', defaultFn: 'guid' }
+      },
+      {
+        trackChanges: true
+      });
     this.modelName = TestModel.modelName;
     TestModel.attachTo(memory);
     Change = TestModel.getChangeModel();
