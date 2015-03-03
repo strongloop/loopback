@@ -1,3 +1,21 @@
+2015-03-03, Version 2.14.0
+==========================
+
+ * Replace deprecated hooks with Operation hooks (Miroslav Bajtoš)
+
+ * test: don't warn about running deprecated paths (Miroslav Bajtoš)
+
+ * karma conf: prevent timeouts on Travis CI (Miroslav Bajtoš)
+
+ * Pass options from User.login to createAccessToken (Raymond Feng)
+
+ * Config option to disable legacy explorer routes Setting legacyExplorer to false in the loopback config will disable the routes /routes and /models made available in loopback.rest. The deprecate module has been added to the project with a reference added for the legacyExplorer option as it is no longer required by loopback-explorer. Tests added to validate functionality of disabled and enabled legacy explorer routes. (Ron Edgecomb)
+
+ * test: setup GUID for all models tracking changes (Miroslav Bajtoš)
+
+ * Change tracking requires a string id set to GUID (Miroslav Bajtoš)
+
+
 2015-02-25, Version 2.13.0
 ==========================
 
