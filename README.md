@@ -69,16 +69,9 @@ The LoopBack community has created and supports a number of additional connector
 
 ### Examples
 
-* [loopback-example-app](https://github.com/strongloop/loopback-example-app)
-* [loopback-example-database](https://github.com/strongloop/loopback-example-database)
-* [loopback-example-datagraph](https://github.com/strongloop/loopback-example-datagraph)
-* [loopback-example-full-stack](https://github.com/strongloop/loopback-example-full-stack)
-* [loopback-example-office-supplies](https://github.com/strongloop/loopback-example-office-supplies)
-* [loopback-example-todo](https://github.com/strongloop/loopback-example-todo)
-* [loopback-example-access-control](https://github.com/strongloop/loopback-example-access-control)
-* [loopback-example-proxy](https://github.com/strongloop/loopback-example-proxy)
-* [strongloop-community/loopback-examples-ios](https://github.com/strongloop-community/loopback-examples-ios)
-* [loopback-example-ssl](https://github.com/strongloop/loopback-example-ssl)
+StrongLoop provides a number of example applications that illustrate various key LoopBack features. In some cases, they have accompanying step-by-step instructions (tutorials).
+
+See [loopback-example](https://github.com/strongloop/loopback-example) for details.
 
 ## Resources
 
