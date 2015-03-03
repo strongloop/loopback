@@ -28,6 +28,14 @@ describe('Replication / Change APIs', function() {
       { id: { id: true, type: String, defaultFn: 'guid' } },
       { trackChanges: true });
 
+    // NOTE(bajtos) At the moment, all models share the same Checkpoint
+    // model. This causes the in-process replication to work differently
+    // than client-server replication.
+    // As a workaround, we manually setup unique Checkpoint for TargetModel.
+    var TargetChange = TargetModel.Change;
+    TargetChange.Checkpoint = loopback.Checkpoint.extend('TargetCheckpoint');
+    TargetChange.Checkpoint.attachTo(dataSource);
+
     TargetModel.attachTo(dataSource);
 
     test.startingCheckpoint = -1;
@@ -223,6 +231,47 @@ describe('Replication / Change APIs', function() {
         }
       ], done);
     });
+
+    it('returns new current checkpoints to callback', function(done) {
+      var sourceCp, targetCp;
+      async.series([
+        bumpSourceCheckpoint,
+        bumpTargetCheckpoint,
+        bumpTargetCheckpoint,
+        function replicate(cb) {
+          expect(sourceCp).to.not.equal(targetCp);
+
+          SourceModel.replicate(
+            TargetModel,
+            function(err, conflicts, newCheckpoints) {
+              if (err) return cb(err);
+              expect(conflicts, 'conflicts').to.eql([]);
+              expect(newCheckpoints, 'currentCheckpoints').to.eql({
+                source: sourceCp + 1,
+                target: targetCp + 1
+              });
+              cb();
+            });
+        }
+      ], done);
+
+      function bumpSourceCheckpoint(cb) {
+        SourceModel.checkpoint(function(err, inst) {
+          if (err) return cb(err);
+          sourceCp = inst.seq;
+          cb();
+        });
+      }
+
+      function bumpTargetCheckpoint(cb) {
+        TargetModel.checkpoint(function(err, inst) {
+          if (err) return cb(err);
+          targetCp = inst.seq;
+          cb();
+        });
+      }
+    });
+
   });
 
   describe('conflict detection - both updated', function() {

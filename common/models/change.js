@@ -428,6 +428,8 @@ module.exports = function(Change) {
   Change.getCheckpointModel = function() {
     var checkpointModel = this.Checkpoint;
     if (checkpointModel) return checkpointModel;
+    // FIXME(bajtos) This code creates multiple different models with the same
+    // model name, which is not a valid supported usage of juggler's API.
     this.Checkpoint = checkpointModel = loopback.Checkpoint.extend('checkpoint');
     assert(this.dataSource, 'Cannot getCheckpointModel(): ' + this.modelName +
       ' is not attached to a dataSource');
