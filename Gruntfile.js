@@ -1,6 +1,9 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  // Do not report warnings from unit-tests exercising deprecated paths
+  process.env.NO_DEPRECATION = 'loopback';
+
   grunt.loadNpmTasks('grunt-mocha-test');
 
   // Project configuration.
