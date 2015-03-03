@@ -8,19 +8,23 @@ var expect = require('chai').expect;
 
 describe('Replication / Change APIs', function() {
   var dataSource, SourceModel, TargetModel;
+  var tid = 0; // per-test unique id used e.g. to build unique model names
 
   beforeEach(function() {
+    tid++;
     var test = this;
     dataSource = this.dataSource = loopback.createDataSource({
       connector: loopback.Memory
     });
-    SourceModel = this.SourceModel = PersistedModel.extend('SourceModel',
+    SourceModel = this.SourceModel = PersistedModel.extend(
+      'SourceModel-' + tid,
       { id: { id: true, type: String, defaultFn: 'guid' } },
       { trackChanges: true });
 
     SourceModel.attachTo(dataSource);
 
-    TargetModel = this.TargetModel = PersistedModel.extend('TargetModel',
+    TargetModel = this.TargetModel = PersistedModel.extend(
+      'TargetModel-' + tid,
       { id: { id: true, type: String, defaultFn: 'guid' } },
       { trackChanges: true });
 
@@ -108,6 +112,65 @@ describe('Replication / Change APIs', function() {
           });
         });
       }
+    });
+
+    it('applies "since" filter on source changes', function(done) {
+      async.series([
+        function createModelInSourceCp1(next) {
+          SourceModel.create({ id: '1' }, next);
+        },
+        function checkpoint(next) {
+          SourceModel.checkpoint(next);
+        },
+        function createModelInSourceCp2(next) {
+          SourceModel.create({ id: '2' }, next);
+        },
+        function replicateLastChangeOnly(next) {
+          SourceModel.currentCheckpoint(function(err, cp) {
+            if (err) return done(err);
+            SourceModel.replicate(cp, TargetModel, next);
+          });
+        },
+        function verify(next) {
+          TargetModel.find(function(err, list) {
+            if (err) return done(err);
+            var ids = list.map(function(it) { return it.id; });
+            // '1' should be skipped by replication
+            expect(ids).to.eql(['2']);
+            next();
+          });
+        }
+      ], done);
+    });
+
+    it('applies "since" filter on target changes', function(done) {
+      // Because the "since" filter is just an optimization,
+      // there isn't really any observable behaviour we could
+      // check to assert correct implementation.
+      var diffSince = [];
+      spyAndStoreSinceArg(TargetModel, 'diff', diffSince);
+
+      SourceModel.replicate(10, TargetModel, function(err) {
+        if (err) return done(err);
+        expect(diffSince).to.eql([10]);
+        done();
+      });
+    });
+
+    it('uses different "since" value for source and target', function(done) {
+      var sourceSince = [];
+      var targetSince = [];
+
+      spyAndStoreSinceArg(SourceModel, 'changes', sourceSince);
+      spyAndStoreSinceArg(TargetModel, 'diff', targetSince);
+
+      var since = { source: 1, target: 2 };
+      SourceModel.replicate(since, TargetModel, function(err) {
+        if (err) return done(err);
+        expect(sourceSince).to.eql([1]);
+        expect(targetSince).to.eql([2]);
+        done();
+      });
     });
   });
 
@@ -493,4 +556,12 @@ describe('Replication / Change APIs', function() {
         });
     }
   });
+
+  function spyAndStoreSinceArg(Model, methodName, store) {
+    var orig = Model[methodName];
+    Model[methodName] = function(since) {
+      store.push(since);
+      orig.apply(this, arguments);
+    };
+  }
 });
