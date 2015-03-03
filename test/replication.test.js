@@ -134,9 +134,8 @@ describe('Replication / Change APIs', function() {
         function verify(next) {
           TargetModel.find(function(err, list) {
             if (err) return done(err);
-            var ids = list.map(function(it) { return it.id; });
             // '1' should be skipped by replication
-            expect(ids).to.eql(['2']);
+            expect(getIds(list)).to.eql(['2']);
             next();
           });
         }
@@ -171,6 +170,58 @@ describe('Replication / Change APIs', function() {
         expect(targetSince).to.eql([2]);
         done();
       });
+    });
+
+    it('picks up changes made during replication', function(done) {
+      var bulkUpdate = TargetModel.bulkUpdate;
+      TargetModel.bulkUpdate = function(data, cb) {
+        var self = this;
+        // simulate the situation when another model is created
+        // while a replication run is in progress
+        SourceModel.create({ id: 'racer' }, function(err) {
+          if (err) return cb(err);
+          bulkUpdate.call(self, data, cb);
+        });
+      };
+
+      var lastCp;
+      async.series([
+        function buildSomeDataToReplicate(next) {
+          SourceModel.create({ id: 'init' }, next);
+        },
+        function getLastCp(next) {
+          SourceModel.currentCheckpoint(function(err, cp) {
+            if (err) return done(err);
+            lastCp = cp;
+            next();
+          });
+        },
+        function replicate(next) {
+          SourceModel.replicate(TargetModel, next);
+        },
+        function verifyAssumptions(next) {
+          SourceModel.find(function(err, list) {
+            expect(getIds(list), 'source ids')
+              .to.eql(['init', 'racer']);
+
+            TargetModel.find(function(err, list) {
+              expect(getIds(list), 'target ids after first sync')
+                .to.eql(['init']);
+              next();
+            });
+          });
+        },
+        function replicateAgain(next) {
+          TargetModel.bulkUpdate = bulkUpdate;
+          SourceModel.replicate(lastCp + 1, TargetModel, next);
+        },
+        function verify(next) {
+          TargetModel.find(function(err, list) {
+            expect(getIds(list), 'target ids').to.eql(['init', 'racer']);
+            next();
+          });
+        }
+      ], done);
     });
   });
 
@@ -563,5 +614,15 @@ describe('Replication / Change APIs', function() {
       store.push(since);
       orig.apply(this, arguments);
     };
+  }
+
+  function getPropValue(obj, name) {
+    return Array.isArray(obj) ?
+      obj.map(function(it) { return getPropValue(it, name); }) :
+      obj[name];
+  }
+
+  function getIds(list) {
+    return getPropValue(list, 'id');
   }
 });
