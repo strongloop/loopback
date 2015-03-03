@@ -12,6 +12,7 @@ describe('User', function() {
   var validCredentialsEmailVerified = {email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
   var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
   var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
+  var validCredentialsWithTTLAndScope = {email: 'foo@bar.com', password: 'bar', ttl: 3600, scope: 'all'};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
   var incompleteCredentials = {password: 'bar1'};
 
@@ -247,6 +248,36 @@ describe('User', function() {
         });
       });
     });
+
+    it('Login a user using a custom createAccessToken with options',
+      function(done) {
+        var createToken = User.prototype.createAccessToken; // Save the original method
+        // Override createAccessToken
+        User.prototype.createAccessToken = function(ttl, options, cb) {
+          // Reduce the ttl by half for testing purpose
+          this.accessTokens.create({ttl: ttl / 2, scopes: options.scope}, cb);
+        };
+        User.login(validCredentialsWithTTLAndScope, function(err, accessToken) {
+          assert(accessToken.userId);
+          assert(accessToken.id);
+          assert.equal(accessToken.ttl, 1800);
+          assert.equal(accessToken.id.length, 64);
+          assert.equal(accessToken.scopes, 'all');
+
+          User.findById(accessToken.userId, function(err, user) {
+            user.createAccessToken(120, {scope: 'default'}, function(err, accessToken) {
+              assert(accessToken.userId);
+              assert(accessToken.id);
+              assert.equal(accessToken.ttl, 60);
+              assert.equal(accessToken.id.length, 64);
+              assert.equal(accessToken.scopes, 'default');
+              // Restore create access token
+              User.prototype.createAccessToken = createToken;
+              done();
+            });
+          });
+        });
+      });
 
     it('Login should only allow correct credentials', function(done) {
       User.login(invalidCredentials, function(err, accessToken) {
