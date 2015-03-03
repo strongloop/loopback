@@ -41,7 +41,7 @@ module.exports = function(Checkpoint) {
       if (checkpoint) {
         cb(null, checkpoint.seq);
       } else {
-        Checkpoint.create({seq: 0}, function(err, checkpoint) {
+        Checkpoint.create({ seq: 1 }, function(err, checkpoint) {
           if (err) return cb(err);
           cb(null, checkpoint.seq);
         });

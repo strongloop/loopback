@@ -14,7 +14,7 @@ describe('Checkpoint', function() {
         function(next) {
           Checkpoint.current(function(err, seq) {
             if (err) next(err);
-            expect(seq).to.equal(2);
+            expect(seq).to.equal(3);
             next();
           });
         }
