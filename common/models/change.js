@@ -446,10 +446,13 @@ module.exports = function(Change) {
   Change.prototype.debug = function() {
     if (debug.enabled) {
       var args = Array.prototype.slice.call(arguments);
+      args[0] = args[0] + ' %s';
+      args.push(this.modelName);
       debug.apply(this, args);
       debug('\tid', this.id);
       debug('\trev', this.rev);
       debug('\tprev', this.prev);
+      debug('\tcheckpoint', this.checkpoint);
       debug('\tmodelName', this.modelName);
       debug('\tmodelId', this.modelId);
       debug('\ttype', this.type());
