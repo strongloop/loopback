@@ -87,6 +87,6 @@ See https://github.com/strongloop/loopback/wiki/Contributing
 
 ## Issues
 
-See https://github.com/strongloop/loopback/wiki/Issues
+See https://github.com/strongloop/loopback/wiki/Reporting-issues
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
