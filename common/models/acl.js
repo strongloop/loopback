@@ -256,10 +256,14 @@ module.exports = function(ACL) {
     var staticACLs = [];
     if (modelClass && modelClass.settings.acls) {
       modelClass.settings.acls.forEach(function(acl) {
-        if (!acl.property || acl.property === ACL.ALL || property === acl.property) {
+        var prop = acl.property;
+        // We support static ACL property with array of string values.
+        if (Array.isArray(prop) && prop.indexOf(property) >= 0)
+          prop = property;
+        if (!prop || prop === ACL.ALL || property === prop) {
           staticACLs.push(new ACL({
             model: model,
-            property: acl.property || ACL.ALL,
+            property: prop || ACL.ALL,
             principalType: acl.principalType,
             principalId: acl.principalId, // TODO: Should it be a name?
             accessType: acl.accessType || ACL.ALL,
