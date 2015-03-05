@@ -5,6 +5,7 @@ var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
 var expect = require('chai').expect;
+var debug = require('debug')('test');
 
 describe('Replication / Change APIs', function() {
   var dataSource, SourceModel, TargetModel;
@@ -44,12 +45,7 @@ describe('Replication / Change APIs', function() {
       SourceModel.create({name: 'foo'}, function(err, inst) {
         if (err) return cb(err);
         test.model = inst;
-
-        // give loopback a chance to register the change
-        // TODO(ritch) get rid of this...
-        setTimeout(function() {
-          SourceModel.replicate(TargetModel, cb);
-        }, 100);
+        SourceModel.replicate(TargetModel, cb);
       });
     };
   });
@@ -190,6 +186,8 @@ describe('Replication / Change APIs', function() {
           if (err) return cb(err);
           bulkUpdate.call(self, data, cb);
         });
+        // create the new model only once
+        TargetModel.bulkUpdate = bulkUpdate;
       };
 
       var lastCp;
@@ -214,13 +212,12 @@ describe('Replication / Change APIs', function() {
 
             TargetModel.find(function(err, list) {
               expect(getIds(list), 'target ids after first sync')
-                .to.eql(['init']);
+                .to.include.members(['init']);
               next();
             });
           });
         },
         function replicateAgain(next) {
-          TargetModel.bulkUpdate = bulkUpdate;
           SourceModel.replicate(lastCp + 1, TargetModel, next);
         },
         function verify(next) {
@@ -272,6 +269,26 @@ describe('Replication / Change APIs', function() {
       }
     });
 
+    it('leaves current target checkpoint empty', function(done) {
+      async.series([
+        function createTestData(next) {
+          SourceModel.create({}, next);
+        },
+        replicateExpectingSuccess(),
+        function verify(next) {
+          TargetModel.currentCheckpoint(function(err, cp) {
+            if (err) return next(err);
+            TargetModel.getChangeModel().find(
+              { where: { checkpoint: { gte: cp } } },
+              function(err, changes) {
+                if (err) return done(err);
+                expect(changes).to.be.empty();
+                done();
+              });
+          });
+        }
+      ], done);
+    });
   });
 
   describe('conflict detection - both updated', function() {
@@ -656,6 +673,90 @@ describe('Replication / Change APIs', function() {
         });
     }
   });
+
+  describe('complex setup', function() {
+    var sourceInstance;
+
+    beforeEach(function createReplicatedInstance(done) {
+      async.series([
+        function createInstance(next) {
+          SourceModel.create({ id: 'test-instance' }, function(err, result) {
+            sourceInstance = result;
+            next(err);
+          });
+        },
+        replicateExpectingSuccess(),
+        verifyModelsAreEqual()
+      ], done);
+    });
+
+    it('correctly replicates without checkpoint filter', function(done) {
+      async.series([
+        updateSourceInstanceNameTo('updated'),
+        replicateExpectingSuccess(),
+        verifyModelsAreEqual(),
+
+        function deleteInstance(next) {
+          sourceInstance.remove(next);
+        },
+        replicateExpectingSuccess(),
+        function verifyTargetModelWasDeleted(next) {
+          TargetModel.find(function(err, list) {
+            if (err) return next(err);
+            expect(getIds(list)).to.not.contain(sourceInstance.id);
+            next();
+          });
+        }
+      ], done);
+    });
+
+    it('replicates multiple updates within the same CP', function(done) {
+      async.series([
+        replicateExpectingSuccess(),
+        verifyModelsAreEqual(),
+
+        updateSourceInstanceNameTo('updated'),
+        updateSourceInstanceNameTo('again'),
+        replicateExpectingSuccess(),
+        verifyModelsAreEqual()
+      ], done);
+    });
+
+    function updateSourceInstanceNameTo(value) {
+      return function updateInstance(next) {
+        sourceInstance.name = value;
+        sourceInstance.save(next);
+      };
+    }
+
+    function verifyModelsAreEqual() {
+      return function verify(next) {
+        TargetModel.findById(sourceInstance.id, function(err, target) {
+          if (err) return next(err);
+          expect(target && target.toObject()).to.eql(sourceInstance.toObject());
+          next();
+        });
+      };
+    }
+  });
+
+  function replicateExpectingSuccess(source, target, since) {
+    if (!source) source = SourceModel;
+    if (!target) target = TargetModel;
+    if (!since) since = -1;
+    return function replicate(next) {
+      debug('replicateExpectingSuccess from %s to %s since %s',
+        source.modelName, target.modelName, since);
+      source.replicate(since, target, function(err, conflicts) {
+        if (err) return next(err);
+        if (conflicts.length) {
+          return next(new Error('Unexpected conflicts\n' +
+            conflicts.map(JSON.stringify).join('\n')));
+        }
+        next();
+      });
+    };
+  }
 
   function spyAndStoreSinceArg(Model, methodName, store) {
     var orig = Model[methodName];
