@@ -1327,8 +1327,8 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/' + test.book.id + '/chapters/' + test.chapter.id + '/notes/' + test.cnote.id)
         .expect(200, function(err, res) {
-          expect(res.headers['x-before']).to.empty();
-          expect(res.headers['x-after']).to.empty();
+          expect(res.headers['x-before']).to.empty;
+          expect(res.headers['x-after']).to.empty;
           done();
         });
     });

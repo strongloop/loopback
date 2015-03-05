@@ -75,7 +75,8 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
         SourceModel.changes(FUTURE_CHECKPOINT, {}, function(err, changes) {
           if (err) return done(err);
-          expect(changes).to.be.empty();
+          /*jshint -W030 */
+          expect(changes).to.be.empty;
           done();
         });
       });
