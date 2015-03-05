@@ -332,7 +332,7 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, '/mountpath/test', function(err) {
         if (err) return done(err);
-        expect(mountWasEmitted, 'mountWasEmitted').to.be.true();
+        expect(mountWasEmitted, 'mountWasEmitted').to.be.true;
         expect(data).to.eql({
           mountpath: '/mountpath',
           parent: app
