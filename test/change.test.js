@@ -1,3 +1,5 @@
+var async = require('async');
+
 var Change;
 var TestModel;
 
@@ -131,17 +133,66 @@ describe('Change', function() {
   });
 
   describe('change.rectify(callback)', function() {
-    it('should create a new change with the correct revision', function(done) {
-      var test = this;
-      var change = new Change({
+    var change;
+    beforeEach(function() {
+      change = new Change({
         modelName: this.modelName,
         modelId: this.modelId
       });
+    });
 
+    it('should create a new change with the correct revision', function(done) {
+      var test = this;
       change.rectify(function(err, ch) {
         assert.equal(ch.rev, test.revisionForModel);
         done();
       });
+    });
+
+    // This test is a low-level equivalent of the test in replication.test.js
+    // called "replicates multiple updates within the same CP"
+    it('should merge updates within the same checkpoint', function(done) {
+      var test = this;
+      var originalRev = this.revisionForModel;
+      var cp;
+
+      async.series([
+        rectify,
+        checkpoint,
+        update,
+        rectify,
+        update,
+        rectify,
+        function(next) {
+          expect(change.checkpoint, 'checkpoint').to.equal(cp);
+          expect(change.type(), 'type').to.equal('update');
+          expect(change.prev, 'prev').to.equal(originalRev);
+          expect(change.rev, 'rev').to.equal(test.revisionForModel);
+          next();
+        }
+      ], done);
+
+      function rectify(next) {
+        change.rectify(next);
+      }
+
+      function checkpoint(next) {
+        TestModel.checkpoint(function(err, inst) {
+          if (err) return next(err);
+          cp = inst.seq;
+          next();
+        });
+      }
+
+      function update(next) {
+        var model = test.model;
+
+        model.name += 'updated';
+        model.save(function(err) {
+          test.revisionForModel = Change.revisionForInst(model);
+          next(err);
+        });
+      }
     });
   });
 
