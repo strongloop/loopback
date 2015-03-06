@@ -285,7 +285,7 @@ describe('Replication / Change APIs', function() {
               { where: { checkpoint: { gte: cp } } },
               function(err, changes) {
                 if (err) return done(err);
-                expect(changes).to.be.empty();
+                expect(changes).to.have.length(0);
                 done();
               });
           });
