@@ -20,6 +20,9 @@ module.exports = function(config) {
       'test/model.test.js',
       'test/model.application.test.js',
       'test/geo-point.test.js',
+      'test/replication.test.js',
+      'test/change.test.js',
+      'test/checkpoint.test.js',
       'test/app.test.js'
     ],
 
