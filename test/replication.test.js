@@ -850,7 +850,84 @@ describe('Replication / Change APIs', function() {
             sync(ClientA, Server)
           ], done);
         });
+
+        it('handles conflict resolved using "ours"', function(done) {
+          testResolvedConflictIsHandledWithNoMoreConflicts(
+            function resolveUsingOurs(conflict, cb) {
+              conflict.resolve(cb);
+            },
+            done);
+        });
+
+        it('handles conflict resolved using "theirs"', function(done) {
+          testResolvedConflictIsHandledWithNoMoreConflicts(
+            function resolveUsingTheirs(conflict, cb) {
+              conflict.models(function(err, source, target) {
+                if (err) return cb(err);
+                // We sync ClientA->Server first
+                expect(conflict.SourceModel.modelName)
+                  .to.equal(ClientB.modelName);
+                var m = new conflict.SourceModel(target);
+                m.save(cb);
+              });
+            },
+            done);
+        });
+
+        it('handles conflict resolved manually', function(done) {
+          testResolvedConflictIsHandledWithNoMoreConflicts(
+            function resolveManually(conflict, cb) {
+              conflict.models(function(err, source, target) {
+                if (err) return cb(err);
+                var m = new conflict.SourceModel(source || target);
+                m.name = 'manual';
+                m.save(function(err) {
+                  if (err) return cb(err);
+                  conflict.resolve(function(err) {
+                    if (err) return cb(err);
+                    cb();
+                  });
+                });
+              });
+            },
+            done);
+        });
       });
+
+      function testResolvedConflictIsHandledWithNoMoreConflicts(resolver, cb) {
+        async.series([
+          // sync the new model to ClientB
+          sync(ClientB, Server),
+          verifyInstanceWasReplicated(ClientA, ClientB),
+
+          // ClientA makes a change
+          updateSourceInstanceNameTo('a'),
+          sync(ClientA, Server),
+
+          // ClientB changes the same instance
+          updateClientB('b'),
+
+          function syncAndResolveConflict(next) {
+            replicate(ClientB, Server, function(err, conflicts, cps) {
+              if (err) return next(err);
+
+              expect(conflicts).to.have.length(1);
+              expect(conflicts[0].SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+
+              debug('Resolving the conflict %j', conflicts[0]);
+              resolver(conflicts[0], next);
+            });
+          },
+
+          // repeat the last sync, it should pass now
+          sync(ClientB, Server),
+          // and sync back to ClientA too
+          sync(ClientA, Server),
+
+          verifyInstanceWasReplicated(ClientB, ClientA)
+        ], cb);
+      }
 
       function updateClientB(name) {
         return function updateInstanceB(next) {
@@ -865,8 +942,10 @@ describe('Replication / Change APIs', function() {
       function sync(client, server) {
         return function syncBothWays(next) {
           async.series([
-            replicateExpectingSuccess(server, client),
-            replicateExpectingSuccess(client, server)
+            // NOTE(bajtos) It's important to replicate from the client to the
+            // server first, so that we can resolve any conflicts at the client
+            replicateExpectingSuccess(client, server),
+            replicateExpectingSuccess(server, client)
           ], next);
         };
       }
@@ -900,31 +979,60 @@ describe('Replication / Change APIs', function() {
         });
       };
     }
+
+    function verifyInstanceWasReplicated(source, target) {
+      return function verify(next) {
+        source.findById(sourceInstanceId, function(err, expected) {
+          if (err) return next(err);
+          target.findById(sourceInstanceId, function(err, actual) {
+            if (err) return next(err);
+            expect(actual && actual.toObject())
+              .to.eql(expected && expected.toObject());
+            debug('replicated instance: %j', actual);
+            next();
+          });
+        });
+      };
+    }
   });
 
   var _since = {};
+  function replicate(source, target, since, next) {
+    if (typeof since === 'function') {
+      next = since;
+      since = undefined;
+    }
+
+    var sinceIx = source.modelName + ':to:' + target.modelName;
+    if (since === undefined) {
+      since = useSinceFilter ?
+        _since[sinceIx] || -1 :
+        -1;
+    }
+
+    debug('replicate from %s to %s since %j',
+      source.modelName, target.modelName, since);
+
+    source.replicate(since, target, function(err, conflicts, cps) {
+      if (err) return next(err);
+      if (conflicts.length === 0) {
+        _since[sinceIx] = cps;
+      }
+      next(err, conflicts, cps);
+    });
+  }
+
   function replicateExpectingSuccess(source, target, since) {
     if (!source) source = SourceModel;
     if (!target) target = TargetModel;
 
-    return function replicate(next) {
-      var sinceIx = source.modelName + ':to:' + target.modelName;
-      if (since === undefined) {
-        since = useSinceFilter ?
-          _since[sinceIx] || -1 :
-          -1;
-      }
-
-      debug('replicateExpectingSuccess from %s to %s since %j',
-        source.modelName, target.modelName, since);
-
-      source.replicate(since, target, function(err, conflicts, cps) {
+    return function doReplicate(next) {
+      replicate(source, target, since, function(err, conflicts, cps) {
         if (err) return next(err);
         if (conflicts.length) {
           return next(new Error('Unexpected conflicts\n' +
             conflicts.map(JSON.stringify).join('\n')));
         }
-        _since[sinceIx] = cps;
         next();
       });
     };
