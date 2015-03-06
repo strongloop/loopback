@@ -161,8 +161,8 @@ module.exports = function(Role) {
       }
       debug('Model found: %j', inst);
       var ownerId = inst.userId || inst.owner;
-      if (ownerId) {
-        if (callback) callback(null, matches(ownerId, userId));
+      if (ownerId && matches(ownerId, userId)) {
+        if (callback) callback(null, true);
         return;
       } else {
         // Try to follow belongsTo
