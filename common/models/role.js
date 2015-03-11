@@ -161,7 +161,8 @@ module.exports = function(Role) {
       }
       debug('Model found: %j', inst);
       var ownerId = inst.userId || inst.owner;
-      if (ownerId) {
+      // Ensure ownerId exists and is not a function/relation
+      if (ownerId && 'function' !== typeof ownerId) {
         if (callback) callback(null, matches(ownerId, userId));
         return;
       } else {
