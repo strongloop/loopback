@@ -88,10 +88,7 @@ describe('Replication / Change APIs', function() {
       var targetData;
 
       this.SourceModel.create({name: 'foo'}, function(err) {
-        setTimeout(replicate, 100);
-      });
-
-      function replicate() {
+        if (err) return done(err);
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
           assert(conflicts.length === 0);
@@ -117,7 +114,7 @@ describe('Replication / Change APIs', function() {
             done();
           });
         });
-      }
+      });
     });
 
     it('applies "since" filter on source changes', function(done) {
