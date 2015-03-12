@@ -120,7 +120,9 @@ describe('remoting - integration', function() {
         'updateAll(where:object,data:object) POST /stores/update',
         'deleteById(id:any) DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
-        'prototype.updateAttributes(data:object):store PUT /stores/:id'
+        'prototype.updateAttributes(data:object):store PUT /stores/:id',
+        'details(id:any):store GET /stores/:id/details',
+        'prototype.test():store GET /stores/:id/test'
       ];
 
       // The list of methods is from docs:
