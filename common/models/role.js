@@ -29,42 +29,55 @@ module.exports = function(Role) {
   // Set up the connection to users/applications/roles once the model
   Role.once('dataSourceAttached', function() {
     var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+
+    /**
+     * Fetch the ids of all users assigned to this role
+     * @param  {Function} callback
+     */
     Role.prototype.users = function(callback) {
-      roleMappingModel.find({where: {roleId: this.id,
-        principalType: RoleMapping.USER}}, function(err, mappings) {
+      roleMappingModel.find({
+        where: {roleId: this.id, principalType: RoleMapping.USER}
+      }, function(err, mappings) {
         if (err) {
-          if (callback) callback(err);
-          return;
+          return callback(err);
         }
-        return mappings.map(function(m) {
+        callback(null, mappings.map(function(m) {
           return m.principalId;
-        });
+        }));
       });
     };
 
+    /**
+     * Fetch the ids of all applications assigned to this role
+     * @param  {Function} callback
+     */
     Role.prototype.applications = function(callback) {
-      roleMappingModel.find({where: {roleId: this.id,
-        principalType: RoleMapping.APPLICATION}}, function(err, mappings) {
+      roleMappingModel.find({
+          where: {roleId: this.id, principalType: RoleMapping.APPLICATION}
+      }, function(err, mappings) {
         if (err) {
-          if (callback) callback(err);
-          return;
+          return callback(err);
         }
-        return mappings.map(function(m) {
+        callback(null, mappings.map(function(m) {
           return m.principalId;
-        });
+        }));
       });
     };
 
+    /**
+     * Fetch the ids of all roles assigned to this role
+     * @param  {Function} callback
+     */
     Role.prototype.roles = function(callback) {
-      roleMappingModel.find({where: {roleId: this.id,
-        principalType: RoleMapping.ROLE}}, function(err, mappings) {
+      roleMappingModel.find({
+        where: {roleId: this.id, principalType: RoleMapping.ROLE}
+      }, function(err, mappings) {
         if (err) {
-          if (callback) callback(err);
-          return;
+          return callback(err);
         }
-        return mappings.map(function(m) {
+        callback(null, mappings.map(function(m) {
           return m.principalId;
-        });
+        }));
       });
     };
 
