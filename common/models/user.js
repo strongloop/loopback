@@ -303,11 +303,12 @@ module.exports = function(User) {
    *
    * ```js
    *    var options = {
-  *      type: 'email',
-  *      to: user.email,
-  *      template: 'verify.ejs',
-  *      redirect: '/'
-  *    };
+   *      type: 'email',
+   *      to: user.email,
+   *      template: 'verify.ejs',
+   *      redirect: '/',
+   *      tokenGenerator: function (user, cb) { cb("random-token"); }
+   *    };
    *
    *    user.verify(options, next);
    * ```
@@ -323,6 +324,11 @@ module.exports = function(User) {
    *  page, for example, `'verify.ejs'.
    * @property {String} redirect Page to which user will be redirected after
    *  they verify their email, for example `'/'` for root URI.
+   * @property {Function} generateVerificationToken A function to be used to
+   *  generate the verification token. It must accept the user object and a
+   *  callback function. This function should NOT add the token to the user
+   *  object, instead simply execute the callback with the token! User saving
+   *  and email sending will be handled in the `verify()` method.
    */
 
   User.prototype.verify = function(options, fn) {
@@ -360,19 +366,20 @@ module.exports = function(User) {
     // Email model
     var Email = options.mailer || this.constructor.email || loopback.getModelByType(loopback.Email);
 
-    crypto.randomBytes(64, function(err, buf) {
-      if (err) {
-        fn(err);
-      } else {
-        user.verificationToken = buf.toString('hex');
-        user.save(function(err) {
-          if (err) {
-            fn(err);
-          } else {
-            sendEmail(user);
-          }
-        });
-      }
+    // Set a default token generation function if one is not provided
+    var tokenGenerator = options.generateVerificationToken || User.generateVerificationToken;
+
+    tokenGenerator(user, function(err, token) {
+      if (err) { return fn(err); }
+
+      user.verificationToken = token;
+      user.save(function(err) {
+        if (err) {
+          fn(err);
+        } else {
+          sendEmail(user);
+        }
+      });
     });
 
     // TODO - support more verification types
@@ -399,6 +406,22 @@ module.exports = function(User) {
         }
       });
     }
+  };
+
+  /**
+   * A default verification token generator which accepts the user the token is
+   * being generated for and a callback function to indicate completion.
+   * This one uses the crypto library and 64 random bytes (converted to hex)
+   * for the token. When used in combination with the user.verify() method this
+   * function will be called with the `user` object as it's context (`this`).
+   *
+   * @param {object} user The User this token is being generated for.
+   * @param {Function} cb The generator must pass back the new token with this function call
+   */
+  User.generateVerificationToken = function(user, cb) {
+    crypto.randomBytes(64, function(err, buf) {
+      cb(err, buf && buf.toString('hex'));
+    });
   };
 
   /**
