@@ -63,7 +63,7 @@ module.exports = function(Role) {
        */
       Role.prototype[pluralName] = function(query, callback) {
         listByPrincipalType(model, principalType, query, callback);
-      }
+      };
     });
 
     /**

@@ -210,14 +210,14 @@ describe('role model', function() {
 
   });
 
-  describe('listByPrincipalType', function(){
+  describe('listByPrincipalType', function() {
     var sandbox;
 
-    beforeEach(function(){
+    beforeEach(function() {
       sandbox = sinon.sandbox.create();
     });
 
-    afterEach(function(){
+    afterEach(function() {
       sandbox.restore();
     });
 
@@ -232,13 +232,13 @@ describe('role model', function() {
 
       mappings = Object.keys(principalTypesToModels);
 
-      mappings.forEach(function(principalType){
+      mappings.forEach(function(principalType) {
         var Model = principalTypesToModels[principalType];
-        Model.create({name:"test", email:'x@y.com', password: 'foobar'}, function(err, model){
-          Role.create({name:'testRole'}, function(err, role){
-            role.principals.create({principalType: principalType, principalId: model.id}, function(err, p){
+        Model.create({name:'test', email:'x@y.com', password: 'foobar'}, function(err, model) {
+          Role.create({name:'testRole'}, function(err, role) {
+            role.principals.create({principalType: principalType, principalId: model.id}, function(err, p) {
               var pluralName = Model.pluralModelName.toLowerCase();
-              role[pluralName](function(err, models){
+              role[pluralName](function(err, models) {
                 assert(!err);
                 assert.equal(models.length, 1);
                 if (++runs === mappings.length) {
@@ -246,8 +246,8 @@ describe('role model', function() {
                 }
               });
             });
-          })
-        })
+          });
+        });
       });
     });
 
@@ -255,7 +255,7 @@ describe('role model', function() {
       User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
         Role.create({name: 'userRole'}, function(err, role) {
           role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
-            var query = {fields:['id','name']};
+            var query = {fields:['id', 'name']};
             sandbox.spy(User, 'find');
             role.users(query, function(err, users) {
               assert(!err);
@@ -268,6 +268,6 @@ describe('role model', function() {
         });
       });
     });
-  })
+  });
 
 });
