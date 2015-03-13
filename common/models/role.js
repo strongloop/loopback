@@ -40,27 +40,27 @@ module.exports = function(Role) {
     principalTypesToModels[RoleMapping.APPLICATION] = Application;
     principalTypesToModels[RoleMapping.ROLE] = Role;
 
-    Object.keys(principalTypesToModels).forEach(function(principalType){
+    Object.keys(principalTypesToModels).forEach(function(principalType) {
       var model = principalTypesToModels[principalType];
       var pluralName = model.pluralModelName.toLowerCase();
-      /** 
+      /**
        * Fetch all users assigned to this role
        * @function Role.prototype#users
        * @param {object} [query] query object passed to model find call
        * @param  {Function} [callback]
-       */ 
-      /** 
+       */
+      /**
        * Fetch all applications assigned to this role
        * @function Role.prototype#applications
        * @param {object} [query] query object passed to model find call
        * @param  {Function} [callback]
        */
-      /** 
+      /**
        * Fetch all roles assigned to this role
        * @function Role.prototype#roles
        * @param {object} [query] query object passed to model find call
        * @param {Function} [callback]
-       */ 
+       */
       Role.prototype[pluralName] = function(query, callback) {
         listByPrincipalType(model, principalType, query, callback);
       }
