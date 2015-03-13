@@ -1,4 +1,5 @@
 var assert = require('assert');
+var sinon = require('sinon');
 var loopback = require('../index');
 var Role = loopback.Role;
 var RoleMapping = loopback.RoleMapping;
@@ -209,49 +210,64 @@ describe('role model', function() {
 
   });
 
-  it('should fetch all user ids assigned to the role', function(done) {
-    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
-      Role.create({name: 'userRole'}, function(err, role) {
-        role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
-          role.users(function(err, users) {
-            assert(!err);
-            assert.equal(users.length, 1);
-            assert.equal(users[0], user.id);
-            done();
-          });
-        });
-      });
-    });
-  });
+  describe('listByPrincipalType', function(){
+    var sandbox;
 
-  it('should fetch all application ids assigned to the role', function(done) {
-    Application.create({name: 'New App'}, function(err, application) {
-      Role.create({name: 'applicationRole'}, function(err, role) {
-        role.principals.create({principalType: RoleMapping.APPLICATION, principalId: application.id}, function(err, p) {
-          role.applications(function(err, applications) {
-            assert(!err);
-            assert.equal(applications.length, 1);
-            assert.equal(applications[0], application.id);
-            done();
-          });
-        });
-      });
+    beforeEach(function(){
+      sandbox = sinon.sandbox.create();
     });
-  });
 
-  it('should fetch all role ids assigned to the role', function(done) {
-    Role.create({name: 'New Role'}, function(err, newRole) {
-      Role.create({name: 'applicationRole'}, function(err, role) {
-        role.principals.create({principalType: RoleMapping.ROLE, principalId: newRole.id}, function(err, p) {
-          role.roles(function(err, roles) {
-            assert(!err);
-            assert.equal(roles.length, 1);
-            assert.equal(roles[0], newRole.id);
-            done();
+    afterEach(function(){
+      sandbox.restore();
+    });
+
+    it('should fetch all models assigned to the role', function(done) {
+      var principalTypesToModels = {};
+      var runs = 0;
+      var mappings;
+
+      principalTypesToModels[RoleMapping.USER] = User;
+      principalTypesToModels[RoleMapping.APPLICATION] = Application;
+      principalTypesToModels[RoleMapping.ROLE] = Role;
+
+      mappings = Object.keys(principalTypesToModels);
+
+      mappings.forEach(function(principalType){
+        var Model = principalTypesToModels[principalType];
+        Model.create({name:"test", email:'x@y.com', password: 'foobar'}, function(err, model){
+          Role.create({name:'testRole'}, function(err, role){
+            role.principals.create({principalType: principalType, principalId: model.id}, function(err, p){
+              var pluralName = Model.pluralModelName.toLowerCase();
+              role[pluralName](function(err, models){
+                assert(!err);
+                assert.equal(models.length, 1);
+                if (++runs === mappings.length) {
+                  done();
+                }
+              });
+            });
+          })
+        })
+      });
+    });
+
+    it('should apply query', function(done) {
+      User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
+        Role.create({name: 'userRole'}, function(err, role) {
+          role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
+            var query = {fields:['id','name']};
+            sandbox.spy(User, 'find');
+            role.users(query, function(err, users) {
+              assert(!err);
+              assert.equal(users.length, 1);
+              assert.equal(users[0].id, user.id);
+              assert(User.find.calledWith(query));
+              done();
+            });
           });
         });
       });
     });
-  });
+  })
 
 });

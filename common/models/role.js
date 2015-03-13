@@ -6,6 +6,10 @@ var async = require('async');
 var AccessContext = require('../../lib/access-context').AccessContext;
 
 var RoleMapping = loopback.RoleMapping;
+var Role = loopback.Role;
+var User = loopback.User;
+var Application = loopback.Application;
+
 assert(RoleMapping, 'RoleMapping model must be defined before Role model');
 
 /**
@@ -29,57 +33,66 @@ module.exports = function(Role) {
   // Set up the connection to users/applications/roles once the model
   Role.once('dataSourceAttached', function() {
     var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var principalTypesToModels = {};
+
+    principalTypesToModels[RoleMapping.USER] = User;
+    principalTypesToModels[RoleMapping.APPLICATION] = Application;
+    principalTypesToModels[RoleMapping.ROLE] = Role;
+
+    Object.keys(principalTypesToModels).forEach(function(principalType){
+      var model = principalTypesToModels[principalType];
+      var pluralName = model.pluralModelName.toLowerCase();
+      /** 
+       * Fetch all users assigned to this role
+       * @function Role.prototype#users
+       * @param {object} [query] query object passed to model find call
+       * @param  {Function} [callback]
+       */ 
+      /** 
+       * Fetch all applications assigned to this role
+       * @function Role.prototype#applications
+       * @param {object} [query] query object passed to model find call
+       * @param  {Function} [callback]
+       */
+      /** 
+       * Fetch all roles assigned to this role
+       * @function Role.prototype#roles
+       * @param {object} [query] query object passed to model find call
+       * @param {Function} [callback]
+       */ 
+      Role.prototype[pluralName] = function(query, callback) {
+        listByPrincipalType(model, principalType, query, callback);
+      }
+    });
 
     /**
-     * Fetch the ids of all users assigned to this role
-     * @param  {Function} callback
+     * Fetch all models assigned to this role
+     * @param {*} model model type to fetch
+     * @param {String} [principalType] principalType used in the rolemapping for model
+     * @param {object} [query] query object passed to model find call
+     * @param  {Function} [callback]
      */
-    Role.prototype.users = function(callback) {
+    function listByPrincipalType(model, principalType, query, callback) {
+      if (callback === undefined) {
+        callback = query;
+        query = {};
+      }
+
       roleMappingModel.find({
-        where: {roleId: this.id, principalType: RoleMapping.USER}
+        where: {roleId: this.id, principalType: principalType}
       }, function(err, mappings) {
+        var ids;
         if (err) {
           return callback(err);
         }
-        callback(null, mappings.map(function(m) {
+        ids = mappings.map(function(m) {
           return m.principalId;
-        }));
+        });
+        query.where = query.where || {};
+        query.where.id = {inq: ids};
+        model.find(query, callback);
       });
-    };
-
-    /**
-     * Fetch the ids of all applications assigned to this role
-     * @param  {Function} callback
-     */
-    Role.prototype.applications = function(callback) {
-      roleMappingModel.find({
-          where: {roleId: this.id, principalType: RoleMapping.APPLICATION}
-      }, function(err, mappings) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null, mappings.map(function(m) {
-          return m.principalId;
-        }));
-      });
-    };
-
-    /**
-     * Fetch the ids of all roles assigned to this role
-     * @param  {Function} callback
-     */
-    Role.prototype.roles = function(callback) {
-      roleMappingModel.find({
-        where: {roleId: this.id, principalType: RoleMapping.ROLE}
-      }, function(err, mappings) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null, mappings.map(function(m) {
-          return m.principalId;
-        }));
-      });
-    };
+    }
 
   });
 
