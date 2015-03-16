@@ -126,7 +126,7 @@ module.exports = function(Change) {
           modelId: modelId
         });
         ch.debug('creating change');
-        ch.save(callback);
+        Change.updateOrCreate(ch, callback);
       }
     });
   };
@@ -248,6 +248,7 @@ module.exports = function(Change) {
    */
 
   Change.revisionForInst = function(inst) {
+    assert(inst, 'Change.revisionForInst() requires an instance object.');
     return this.hash(CJSON.stringify(inst));
   };
 
@@ -370,14 +371,17 @@ module.exports = function(Change) {
     this.find({
       where: {
         modelName: modelName,
-        modelId: {inq: modelIds},
-        checkpoint: {gte: since}
+        modelId: {inq: modelIds}
       }
-    }, function(err, localChanges) {
+    }, function(err, allLocalChanges) {
       if (err) return callback(err);
       var deltas = [];
       var conflicts = [];
       var localModelIds = [];
+
+      var localChanges = allLocalChanges.filter(function(c) {
+        return c.checkpoint >= since;
+      });
 
       localChanges.forEach(function(localChange) {
         localChange = new Change(localChange);
@@ -396,9 +400,20 @@ module.exports = function(Change) {
       });
 
       modelIds.forEach(function(id) {
-        if (localModelIds.indexOf(id) === -1) {
-          deltas.push(remoteChangeIndex[id]);
+        if (localModelIds.indexOf(id) !== -1) return;
+
+        var d = remoteChangeIndex[id];
+        var oldChange = allLocalChanges.filter(function(c) {
+          return c.modelId === id;
+        })[0];
+
+        if (oldChange) {
+          d.prev = oldChange.rev;
+        } else {
+          d.prev = null;
         }
+
+        deltas.push(d);
       });
 
       callback(null, {
