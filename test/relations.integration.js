@@ -1269,10 +1269,10 @@ describe('relations - integration', function() {
 
     it('has a basic error handler', function(done) {
       var test = this;
-      this.get('/api/books/unknown/pages/' + test.page.id + '/notes')
+      this.get('/api/books/999/pages/' + test.page.id + '/notes')
         .expect(404, function(err, res) {
           expect(res.body.error).to.be.an.object;
-          var expected = 'could not find a model with id unknown';
+          var expected = 'could not find a model with id 999';
           expect(res.body.error.message).to.equal(expected);
           expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
           done();
