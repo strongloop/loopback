@@ -476,7 +476,10 @@ module.exports = function(User) {
             }
           });
         } else {
-          cb();
+          err = new Error("User '" + options.email + "' does not exist");
+          err.statusCode = 404;
+          err.code = 'USER_NOT_FOUND';
+          cb(err);
         }
       });
     } else {
