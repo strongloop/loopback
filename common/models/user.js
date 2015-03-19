@@ -456,7 +456,7 @@ module.exports = function(User) {
     var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
     options = options || {};
-    if (typeof options.email === 'string') {
+    if (typeof options.email === 'string' && options.email.trim() != '') {
       UserModel.findOne({ where: {email: options.email} }, function(err, user) {
         if (err) {
           cb(err);
