@@ -397,7 +397,8 @@ module.exports = function(User) {
         subject: options.subject || 'Thanks for Registering',
         text: options.text,
         html: template(options),
-        headers: options.headers || {}
+        headers: options.headers || {},
+        attachments: options.attachments || []
       }, function(err, email) {
         if (err) {
           fn(err);
