@@ -479,7 +479,7 @@ module.exports = function(User) {
     var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
     options = options || {};
-    if (typeof options.email === 'string') {
+    if (typeof options.email === 'string' && options.email.trim() !== '') {
       UserModel.findOne({ where: {email: options.email} }, function(err, user) {
         if (err) {
           cb(err);
@@ -499,7 +499,10 @@ module.exports = function(User) {
             }
           });
         } else {
-          cb();
+          err = new Error("User '" + options.email + "' does not exist");
+          err.statusCode = 404;
+          err.code = 'USER_NOT_FOUND';
+          cb(err);
         }
       });
     } else {
