@@ -636,13 +636,25 @@ describe('relations - integration', function() {
         function(err, group) {
           if (err) return done(err);
           test.group = group;
-          group.cover.build({ url: 'http://image.url' });
-          group.save(done);
+          done();
         });
     });
 
     after(function(done) {
       this.app.models.group.destroyAll(done);
+    });
+
+    it('creates an embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+
+      this.post(url)
+        .send({ url: 'http://image.url' })
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { url: 'http://image.url' }
+          );
+          done();
+        });
     });
 
     it('includes the embedded models', function(done) {
@@ -668,6 +680,41 @@ describe('relations - integration', function() {
           );
           done();
         });
+    });
+
+    it('updates an embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+
+      this.put(url)
+        .send({ url: 'http://changed.url' })
+        .expect(200, function(err, res) {
+          expect(res.body.url).to.be.equal('http://changed.url');
+          done();
+        });
+    });
+
+    it('returns the updated embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+
+      this.get(url)
+        .expect(200, function(err, res) {
+          expect(res.body).to.be.eql(
+            { url: 'http://changed.url' }
+          );
+          done();
+        });
+    });
+
+    it('deletes an embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+      
+      this.del(url).expect(204, done);
+    });
+
+    it('deleted the embedded model', function(done) {
+      var url = '/api/groups/' + this.group.id + '/cover';
+
+      this.get(url).expect(404, done);
     });
 
   });
