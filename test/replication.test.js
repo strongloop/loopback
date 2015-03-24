@@ -963,50 +963,70 @@ describe('Replication / Change APIs', function() {
           ], done);
         });
 
-        it('handles conflict resolved using "ours"', function(done) {
-          testResolvedConflictIsHandledWithNoMoreConflicts(
+        it('handles UPDATE conflict resolved using "ours"', function(done) {
+          testUpdateConflictIsResolved(
             function resolveUsingOurs(conflict, cb) {
-              conflict.resolve(cb);
+              conflict.resolveUsingSource(cb);
             },
             done);
         });
 
-        it('handles conflict resolved using "theirs"', function(done) {
-          testResolvedConflictIsHandledWithNoMoreConflicts(
+        it('handles UPDATE conflict resolved using "theirs"', function(done) {
+          testUpdateConflictIsResolved(
             function resolveUsingTheirs(conflict, cb) {
-              conflict.models(function(err, source, target) {
-                if (err) return cb(err);
-                // We sync ClientA->Server first
-                expect(conflict.SourceModel.modelName)
-                  .to.equal(ClientB.modelName);
-                var m = new conflict.SourceModel(target);
-                m.save(cb);
-              });
+              // We sync ClientA->Server first
+              expect(conflict.SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+              conflict.resolveUsingTarget(cb);
             },
             done);
         });
 
-        it('handles conflict resolved manually', function(done) {
-          testResolvedConflictIsHandledWithNoMoreConflicts(
+        it('handles UPDATE conflict resolved manually', function(done) {
+          testUpdateConflictIsResolved(
             function resolveManually(conflict, cb) {
-              conflict.models(function(err, source, target) {
-                if (err) return cb(err);
-                var m = source || new conflict.SourceModel(target);
-                m.name = 'manual';
-                m.save(function(err) {
-                  if (err) return cb(err);
-                  conflict.resolve(function(err) {
-                    if (err) return cb(err);
-                    cb();
-                  });
-                });
-              });
+              conflict.resolveManually({ name: 'manual' }, cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved using "ours"', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveUsingOurs(conflict, cb) {
+              conflict.resolveUsingSource(cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved using "theirs"', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveUsingTheirs(conflict, cb) {
+              // We sync ClientA->Server first
+              expect(conflict.SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+              conflict.resolveUsingTarget(cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved as manual delete', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveManually(conflict, cb) {
+              conflict.resolveManually(null, cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved manually', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveManually(conflict, cb) {
+              conflict.resolveManually({ name: 'manual' }, cb);
             },
             done);
         });
       });
 
-      function testResolvedConflictIsHandledWithNoMoreConflicts(resolver, cb) {
+      function testUpdateConflictIsResolved(resolver, cb) {
         async.series([
           // sync the new model to ClientB
           sync(ClientB, Server),
@@ -1014,6 +1034,44 @@ describe('Replication / Change APIs', function() {
 
           // ClientA makes a change
           updateSourceInstanceNameTo('a'),
+          sync(ClientA, Server),
+
+          // ClientB changes the same instance
+          updateClientB('b'),
+
+          function syncAndResolveConflict(next) {
+            replicate(ClientB, Server, function(err, conflicts, cps) {
+              if (err) return next(err);
+
+              expect(conflicts).to.have.length(1);
+              expect(conflicts[0].SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+
+              debug('Resolving the conflict %j', conflicts[0]);
+              resolver(conflicts[0], next);
+            });
+          },
+
+          // repeat the last sync, it should pass now
+          sync(ClientB, Server),
+          // and sync back to ClientA too
+          sync(ClientA, Server),
+
+          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId)
+        ], cb);
+      }
+
+      function testDeleteConflictIsResolved(resolver, cb) {
+        async.series([
+          // sync the new model to ClientB
+          sync(ClientB, Server),
+          verifyInstanceWasReplicated(ClientA, ClientB, sourceInstanceId),
+
+          // ClientA makes a change
+          function deleteInstanceOnClientA(next) {
+            ClientA.deleteById(sourceInstanceId, next);
+          },
+
           sync(ClientA, Server),
 
           // ClientB changes the same instance
