@@ -68,6 +68,7 @@ module.exports = function(Role) {
 
     /**
      * Fetch all models assigned to this role
+     * @private
      * @param {*} model model type to fetch
      * @param {String} [principalType] principalType used in the rolemapping for model
      * @param {object} [query] query object passed to model find call
