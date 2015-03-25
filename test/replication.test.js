@@ -88,12 +88,10 @@ describe('Replication / Change APIs', function() {
       var targetData;
 
       this.SourceModel.create({name: 'foo'}, function(err) {
-        setTimeout(replicate, 100);
-      });
-
-      function replicate() {
+        if (err) return done(err);
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
+          if (err) return done(err);
           assert(conflicts.length === 0);
           async.parallel([
             function(cb) {
@@ -117,7 +115,7 @@ describe('Replication / Change APIs', function() {
             done();
           });
         });
-      }
+      });
     });
 
     it('applies "since" filter on source changes', function(done) {
@@ -179,18 +177,11 @@ describe('Replication / Change APIs', function() {
     });
 
     it('picks up changes made during replication', function(done) {
-      var bulkUpdate = TargetModel.bulkUpdate;
-      TargetModel.bulkUpdate = function(data, cb) {
-        var self = this;
+      setupRaceConditionInReplication(function(cb) {
         // simulate the situation when another model is created
         // while a replication run is in progress
-        SourceModel.create({ id: 'racer' }, function(err) {
-          if (err) return cb(err);
-          bulkUpdate.call(self, data, cb);
-        });
-        // create the new model only once
-        TargetModel.bulkUpdate = bulkUpdate;
-      };
+        SourceModel.create({ id: 'racer' }, cb);
+      });
 
       var lastCp;
       async.series([
@@ -290,6 +281,128 @@ describe('Replication / Change APIs', function() {
           });
         }
       ], done);
+    });
+
+    describe('with 3rd-party changes', function() {
+      it('detects UPDATE made during UPDATE', function(done) {
+        async.series([
+          createModel(SourceModel, { id: '1' }),
+          replicateExpectingSuccess(),
+          function updateModel(next) {
+            SourceModel.updateAll({ id: '1' }, { name: 'source' }, next);
+          },
+          function replicateWith3rdPartyModifyingData(next) {
+            setupRaceConditionInReplication(function(cb) {
+              TargetModel.dataSource.connector.updateAttributes(
+                TargetModel.modelName,
+                '1',
+                { name: '3rd-party' },
+                cb);
+            });
+
+            SourceModel.replicate(
+              TargetModel,
+              function(err, conflicts, cps, updates) {
+                if (err) return next(err);
+
+                var conflictedIds = getPropValue(conflicts || [], 'modelId');
+                expect(conflictedIds).to.eql(['1']);
+
+                // resolve the conflict using ours
+                conflicts[0].resolve(next);
+              });
+          },
+
+          replicateExpectingSuccess(),
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+        ], done);
+      });
+
+      it('detects CREATE made during CREATE', function(done) {
+        async.series([
+          // FIXME(bajtos) Remove the 'name' property once the implementation
+          // of UPDATE is fixed to correctly remove properties
+          createModel(SourceModel, { id: '1', name: 'source' }),
+          function replicateWith3rdPartyModifyingData(next) {
+            setupRaceConditionInReplication(function(cb) {
+              TargetModel.dataSource.connector.create(
+                TargetModel.modelName,
+                { id: '1', name: '3rd-party' },
+                cb);
+            });
+
+            SourceModel.replicate(
+              TargetModel,
+              function(err, conflicts, cps, updates) {
+                if (err) return next(err);
+
+                var conflictedIds = getPropValue(conflicts || [], 'modelId');
+                expect(conflictedIds).to.eql(['1']);
+
+                // resolve the conflict using ours
+                conflicts[0].resolve(next);
+              });
+          },
+
+          replicateExpectingSuccess(),
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+        ], done);
+      });
+
+      it('detects UPDATE made during DELETE', function(done) {
+        async.series([
+          createModel(SourceModel, { id: '1' }),
+          replicateExpectingSuccess(),
+          function deleteModel(next) {
+            SourceModel.deleteById('1', next);
+          },
+          function replicateWith3rdPartyModifyingData(next) {
+            setupRaceConditionInReplication(function(cb) {
+              TargetModel.dataSource.connector.updateAttributes(
+                TargetModel.modelName,
+                '1',
+                { name: '3rd-party' },
+                cb);
+            });
+
+            SourceModel.replicate(
+              TargetModel,
+              function(err, conflicts, cps, updates) {
+                if (err) return next(err);
+
+                var conflictedIds = getPropValue(conflicts || [], 'modelId');
+                expect(conflictedIds).to.eql(['1']);
+
+                // resolve the conflict using ours
+                conflicts[0].resolve(next);
+              });
+          },
+
+          replicateExpectingSuccess(),
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+        ], done);
+      });
+
+      it('handles DELETE made during DELETE', function(done) {
+        async.series([
+          createModel(SourceModel, { id: '1' }),
+          replicateExpectingSuccess(),
+          function deleteModel(next) {
+            SourceModel.deleteById('1', next);
+          },
+          function setup3rdPartyModifyingData(next) {
+            setupRaceConditionInReplication(function(cb) {
+              TargetModel.dataSource.connector.destroy(
+                TargetModel.modelName,
+                '1',
+                cb);
+            });
+            next();
+          },
+          replicateExpectingSuccess(),
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+        ], done);
+      });
     });
   });
 
@@ -850,54 +963,74 @@ describe('Replication / Change APIs', function() {
           ], done);
         });
 
-        it('handles conflict resolved using "ours"', function(done) {
-          testResolvedConflictIsHandledWithNoMoreConflicts(
+        it('handles UPDATE conflict resolved using "ours"', function(done) {
+          testUpdateConflictIsResolved(
             function resolveUsingOurs(conflict, cb) {
-              conflict.resolve(cb);
+              conflict.resolveUsingSource(cb);
             },
             done);
         });
 
-        it('handles conflict resolved using "theirs"', function(done) {
-          testResolvedConflictIsHandledWithNoMoreConflicts(
+        it('handles UPDATE conflict resolved using "theirs"', function(done) {
+          testUpdateConflictIsResolved(
             function resolveUsingTheirs(conflict, cb) {
-              conflict.models(function(err, source, target) {
-                if (err) return cb(err);
-                // We sync ClientA->Server first
-                expect(conflict.SourceModel.modelName)
-                  .to.equal(ClientB.modelName);
-                var m = new conflict.SourceModel(target);
-                m.save(cb);
-              });
+              // We sync ClientA->Server first
+              expect(conflict.SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+              conflict.resolveUsingTarget(cb);
             },
             done);
         });
 
-        it('handles conflict resolved manually', function(done) {
-          testResolvedConflictIsHandledWithNoMoreConflicts(
+        it('handles UPDATE conflict resolved manually', function(done) {
+          testUpdateConflictIsResolved(
             function resolveManually(conflict, cb) {
-              conflict.models(function(err, source, target) {
-                if (err) return cb(err);
-                var m = new conflict.SourceModel(source || target);
-                m.name = 'manual';
-                m.save(function(err) {
-                  if (err) return cb(err);
-                  conflict.resolve(function(err) {
-                    if (err) return cb(err);
-                    cb();
-                  });
-                });
-              });
+              conflict.resolveManually({ name: 'manual' }, cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved using "ours"', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveUsingOurs(conflict, cb) {
+              conflict.resolveUsingSource(cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved using "theirs"', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveUsingTheirs(conflict, cb) {
+              // We sync ClientA->Server first
+              expect(conflict.SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+              conflict.resolveUsingTarget(cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved as manual delete', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveManually(conflict, cb) {
+              conflict.resolveManually(null, cb);
+            },
+            done);
+        });
+
+        it('handles DELETE conflict resolved manually', function(done) {
+          testDeleteConflictIsResolved(
+            function resolveManually(conflict, cb) {
+              conflict.resolveManually({ name: 'manual' }, cb);
             },
             done);
         });
       });
 
-      function testResolvedConflictIsHandledWithNoMoreConflicts(resolver, cb) {
+      function testUpdateConflictIsResolved(resolver, cb) {
         async.series([
           // sync the new model to ClientB
           sync(ClientB, Server),
-          verifyInstanceWasReplicated(ClientA, ClientB),
+          verifyInstanceWasReplicated(ClientA, ClientB, sourceInstanceId),
 
           // ClientA makes a change
           updateSourceInstanceNameTo('a'),
@@ -924,7 +1057,45 @@ describe('Replication / Change APIs', function() {
           // and sync back to ClientA too
           sync(ClientA, Server),
 
-          verifyInstanceWasReplicated(ClientB, ClientA)
+          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId)
+        ], cb);
+      }
+
+      function testDeleteConflictIsResolved(resolver, cb) {
+        async.series([
+          // sync the new model to ClientB
+          sync(ClientB, Server),
+          verifyInstanceWasReplicated(ClientA, ClientB, sourceInstanceId),
+
+          // ClientA makes a change
+          function deleteInstanceOnClientA(next) {
+            ClientA.deleteById(sourceInstanceId, next);
+          },
+
+          sync(ClientA, Server),
+
+          // ClientB changes the same instance
+          updateClientB('b'),
+
+          function syncAndResolveConflict(next) {
+            replicate(ClientB, Server, function(err, conflicts, cps) {
+              if (err) return next(err);
+
+              expect(conflicts).to.have.length(1);
+              expect(conflicts[0].SourceModel.modelName)
+                .to.equal(ClientB.modelName);
+
+              debug('Resolving the conflict %j', conflicts[0]);
+              resolver(conflicts[0], next);
+            });
+          },
+
+          // repeat the last sync, it should pass now
+          sync(ClientB, Server),
+          // and sync back to ClientA too
+          sync(ClientA, Server),
+
+          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId)
         ], cb);
       }
 
@@ -953,6 +1124,7 @@ describe('Replication / Change APIs', function() {
 
     function updateSourceInstanceNameTo(value) {
       return function updateInstance(next) {
+        debug('update source instance name to %j', value);
         sourceInstance.name = value;
         sourceInstance.save(next);
       };
@@ -960,6 +1132,7 @@ describe('Replication / Change APIs', function() {
 
     function deleteSourceInstance(value) {
       return function deleteInstance(next) {
+        debug('delete source instance', value);
         sourceInstance.remove(function(err) {
           sourceInstance = null;
           next(err);
@@ -975,21 +1148,6 @@ describe('Replication / Change APIs', function() {
           expect(targetInstance && targetInstance.toObject())
             .to.eql(sourceInstance && sourceInstance.toObject());
           next();
-        });
-      };
-    }
-
-    function verifyInstanceWasReplicated(source, target) {
-      return function verify(next) {
-        source.findById(sourceInstanceId, function(err, expected) {
-          if (err) return next(err);
-          target.findById(sourceInstanceId, function(err, actual) {
-            if (err) return next(err);
-            expect(actual && actual.toObject())
-              .to.eql(expected && expected.toObject());
-            debug('replicated instance: %j', actual);
-            next();
-          });
         });
       };
     }
@@ -1021,6 +1179,12 @@ describe('Replication / Change APIs', function() {
     });
   }
 
+  function createModel(Model, data) {
+    return function create(next) {
+      Model.create(data, next);
+    };
+  }
+
   function replicateExpectingSuccess(source, target, since) {
     if (!source) source = SourceModel;
     if (!target) target = TargetModel;
@@ -1033,6 +1197,37 @@ describe('Replication / Change APIs', function() {
             conflicts.map(JSON.stringify).join('\n')));
         }
         next();
+      });
+    };
+  }
+
+  function setupRaceConditionInReplication(fn) {
+    var bulkUpdate = TargetModel.bulkUpdate;
+    TargetModel.bulkUpdate = function(data, cb) {
+      // simulate the situation when a 3rd party modifies the database
+      // while a replication run is in progress
+      var self = this;
+      fn(function(err) {
+        if (err) return cb(err);
+        bulkUpdate.call(self, data, cb);
+      });
+
+      // apply the 3rd party modification only once
+      TargetModel.bulkUpdate = bulkUpdate;
+    };
+  }
+
+  function verifyInstanceWasReplicated(source, target, id) {
+    return function verify(next) {
+      source.findById(id, function(err, expected) {
+        if (err) return next(err);
+        target.findById(id, function(err, actual) {
+          if (err) return next(err);
+          expect(actual && actual.toObject())
+            .to.eql(expected && expected.toObject());
+          debug('replicated instance: %j', actual);
+          next();
+        });
       });
     };
   }

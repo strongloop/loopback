@@ -83,7 +83,7 @@ See [loopback-example](https://github.com/strongloop/loopback-example) for detai
 
 ## Contributing
 
-See https://github.com/strongloop/loopback/wiki/Contributing
+See https://github.com/strongloop/loopback/wiki/Contributing-code
 
 ## Issues
 

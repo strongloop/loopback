@@ -126,7 +126,7 @@ module.exports = function(Change) {
           modelId: modelId
         });
         ch.debug('creating change');
-        ch.save(callback);
+        Change.updateOrCreate(ch, callback);
       }
     });
   };
@@ -248,6 +248,7 @@ module.exports = function(Change) {
    */
 
   Change.revisionForInst = function(inst) {
+    assert(inst, 'Change.revisionForInst() requires an instance object.');
     return this.hash(CJSON.stringify(inst));
   };
 
@@ -370,14 +371,17 @@ module.exports = function(Change) {
     this.find({
       where: {
         modelName: modelName,
-        modelId: {inq: modelIds},
-        checkpoint: {gte: since}
+        modelId: {inq: modelIds}
       }
-    }, function(err, localChanges) {
+    }, function(err, allLocalChanges) {
       if (err) return callback(err);
       var deltas = [];
       var conflicts = [];
       var localModelIds = [];
+
+      var localChanges = allLocalChanges.filter(function(c) {
+        return c.checkpoint >= since;
+      });
 
       localChanges.forEach(function(localChange) {
         localChange = new Change(localChange);
@@ -396,9 +400,20 @@ module.exports = function(Change) {
       });
 
       modelIds.forEach(function(id) {
-        if (localModelIds.indexOf(id) === -1) {
-          deltas.push(remoteChangeIndex[id]);
+        if (localModelIds.indexOf(id) !== -1) return;
+
+        var d = remoteChangeIndex[id];
+        var oldChange = allLocalChanges.filter(function(c) {
+          return c.modelId === id;
+        })[0];
+
+        if (oldChange) {
+          d.prev = oldChange.rev;
+        } else {
+          d.prev = null;
         }
+
+        deltas.push(d);
       });
 
       callback(null, {
@@ -601,6 +616,13 @@ module.exports = function(Change) {
   /**
    * Resolve the conflict.
    *
+   * Set the source change's previous revision to the current revision of the
+   * (conflicting) target change. Since the changes are no longer conflicting
+   * and appear as if the source change was based on the target, they will be
+   * replicated normally as part of the next replicate() call.
+   *
+   * This is effectively resolving the conflict using the source version.
+   *
    * @callback {Function} callback
    * @param {Error} err
    */
@@ -612,6 +634,74 @@ module.exports = function(Change) {
       sourceChange.prev = targetChange.rev;
       sourceChange.save(cb);
     });
+  };
+
+  /**
+   * Resolve the conflict using the instance data in the source model.
+   *
+   * @callback {Function} callback
+   * @param {Error} err
+   */
+  Conflict.prototype.resolveUsingSource = function(cb) {
+    this.resolve(function(err) {
+      // don't forward any cb arguments from resolve()
+      cb(err);
+    });
+  };
+
+  /**
+   * Resolve the conflict using the instance data in the target model.
+   *
+   * @callback {Function} callback
+   * @param {Error} err
+   */
+  Conflict.prototype.resolveUsingTarget = function(cb) {
+    var conflict = this;
+
+    conflict.models(function(err, source, target) {
+      if (err) return done(err);
+      if (target === null) {
+        return conflict.SourceModel.deleteById(conflict.modelId, done);
+      }
+      var inst = new conflict.SourceModel(target);
+      inst.save(done);
+    });
+
+    function done(err) {
+      // don't forward any cb arguments from internal calls
+      cb(err);
+    }
+  };
+
+  /**
+   * Resolve the conflict using the supplied instance data.
+   *
+   * @param {Object} data The set of changes to apply on the model
+   * instance. Use `null` value to delete the source instance instead.
+   * @callback {Function} callback
+   * @param {Error} err
+   */
+
+  Conflict.prototype.resolveManually = function(data, cb) {
+    var conflict = this;
+    if (!data) {
+      return conflict.SourceModel.deleteById(conflict.modelId, done);
+    }
+
+    conflict.models(function(err, source, target) {
+      if (err) return done(err);
+      var inst = source || new conflict.SourceModel(target);
+      inst.setAttributes(data);
+      inst.save(function(err) {
+        if (err) return done(err);
+        conflict.resolve(done);
+      });
+    });
+
+    function done(err) {
+      // don't forward any cb arguments from internal calls
+      cb(err);
+    }
   };
 
   /**

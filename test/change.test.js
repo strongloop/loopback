@@ -1,4 +1,5 @@
 var async = require('async');
+var expect = require('chai').expect;
 
 var Change;
 var TestModel;
@@ -134,11 +135,16 @@ describe('Change', function() {
 
   describe('change.rectify(callback)', function() {
     var change;
-    beforeEach(function() {
-      change = new Change({
-        modelName: this.modelName,
-        modelId: this.modelId
-      });
+    beforeEach(function(done) {
+      Change.findOrCreate(
+        {
+          modelName: this.modelName,
+          modelId: this.modelId
+        },
+        function(err, ch) {
+          change = ch;
+          done(err);
+        });
     });
 
     it('should create a new change with the correct revision', function(done) {
@@ -344,8 +350,87 @@ describe('Change', function() {
       ];
 
       Change.diff(this.modelName, 0, remoteChanges, function(err, diff) {
+        if (err) return done(err);
         assert.equal(diff.deltas.length, 1);
         assert.equal(diff.conflicts.length, 1);
+        done();
+      });
+    });
+
+    it('should set "prev" to local revision in non-conflicting delta', function(done) {
+      var updateRecord = {
+        rev: 'foo-new',
+        prev: 'foo',
+        modelName: this.modelName,
+        modelId: '9',
+        checkpoint: 2
+      };
+      Change.diff(this.modelName, 0, [updateRecord], function(err, diff) {
+        if (err) return done(err);
+        expect(diff.conflicts, 'conflicts').to.have.length(0);
+        expect(diff.deltas, 'deltas').to.have.length(1);
+        var actual = diff.deltas[0].toObject();
+        delete actual.id;
+        expect(actual).to.eql({
+          checkpoint: 2,
+          modelId: '9',
+          modelName: updateRecord.modelName,
+          prev: 'foo', // this is the current local revision
+          rev: 'foo-new',
+        });
+        done();
+      });
+    });
+
+    it('should set "prev" to local revision in remote-only delta', function(done) {
+      var updateRecord = {
+        rev: 'foo-new',
+        prev: 'foo-prev',
+        modelName: this.modelName,
+        modelId: '9',
+        checkpoint: 2
+      };
+      // IMPORTANT: the diff call excludes the local change
+      // with rev=foo CP=1
+      Change.diff(this.modelName, 2, [updateRecord], function(err, diff) {
+        if (err) return done(err);
+        expect(diff.conflicts, 'conflicts').to.have.length(0);
+        expect(diff.deltas, 'deltas').to.have.length(1);
+        var actual = diff.deltas[0].toObject();
+        delete actual.id;
+        expect(actual).to.eql({
+          checkpoint: 2,
+          modelId: '9',
+          modelName: updateRecord.modelName,
+          prev: 'foo', // this is the current local revision
+          rev: 'foo-new',
+        });
+        done();
+      });
+    });
+
+    it('should set "prev" to null for a new instance', function(done) {
+      var updateRecord = {
+        rev: 'new-rev',
+        prev: 'new-prev',
+        modelName: this.modelName,
+        modelId: 'new-id',
+        checkpoint: 2
+      };
+
+      Change.diff(this.modelName, 0, [updateRecord], function(err, diff) {
+        if (err) return done(err);
+        expect(diff.conflicts).to.have.length(0);
+        expect(diff.deltas).to.have.length(1);
+        var actual = diff.deltas[0].toObject();
+        delete actual.id;
+        expect(actual).to.eql({
+          checkpoint: 2,
+          modelId: 'new-id',
+          modelName: updateRecord.modelName,
+          prev: null, // this is the current local revision
+          rev: 'new-rev',
+        });
         done();
       });
     });
