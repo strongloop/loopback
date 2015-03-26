@@ -9,6 +9,7 @@ var CJSON = {stringify: require('canonical-json')};
 var async = require('async');
 var assert = require('assert');
 var debug = require('debug')('loopback:change');
+var deprecate = require('depd')('loopback');
 
 /**
  * Change list entry.
@@ -73,18 +74,43 @@ module.exports = function(Change) {
    */
 
   Change.rectifyModelChanges = function(modelName, modelIds, callback) {
-    var tasks = [];
     var Change = this;
+    var errors = [];
 
-    modelIds.forEach(function(id) {
-      tasks.push(function(cb) {
+    var tasks = modelIds.map(function(id) {
+      return function(cb) {
         Change.findOrCreateChange(modelName, id, function(err, change) {
-          if (err) return Change.handleError(err, cb);
-          change.rectify(cb);
+          if (err) return next(err);
+          change.rectify(next);
         });
-      });
+
+        function next(err) {
+          if (err) {
+            err.modelName = modelName;
+            err.modelId = id;
+            errors.push(err);
+          }
+          cb();
+        }
+      };
     });
-    async.parallel(tasks, callback);
+
+    async.parallel(tasks, function(err) {
+      if (err) return callback(err);
+      if (errors.length) {
+        var desc = errors
+          .map(function(e) {
+            return '#' + e.modelId + ' - ' + e.toString();
+          })
+          .join('\n');
+
+        var msg = 'Cannot rectify ' + modelName + ' changes:\n' + desc;
+        err = new Error(msg);
+        err.details = { errors: errors };
+        return callback(err);
+      }
+      callback();
+    });
   };
 
   /**
@@ -217,7 +243,7 @@ module.exports = function(Change) {
     var model = this.getModelCtor();
     var id = this.getModelId();
     model.findById(id, function(err, inst) {
-      if (err) return Change.handleError(err, cb);
+      if (err) return cb(err);
       if (inst) {
         cb(null, Change.revisionForInst(inst));
       } else {
@@ -459,6 +485,9 @@ module.exports = function(Change) {
   };
 
   Change.handleError = function(err) {
+    deprecate('Change.handleError is deprecated, ' +
+      'you should pass errors to your callback instead.');
+
     if (!this.settings.ignoreErrors) {
       throw err;
     }
