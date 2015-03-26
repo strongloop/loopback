@@ -72,7 +72,7 @@ module.exports = function(Role) {
      * @param {*} model model type to fetch
      * @param {String} [principalType] principalType used in the rolemapping for model
      * @param {object} [query] query object passed to model find call
-     * @param  {Function} [callback]
+     * @param  {Function} [callback] callback function called with `(err, models)` arguments.
      */
     function listByPrincipalType(model, principalType, query, callback) {
       if (callback === undefined) {
@@ -92,7 +92,9 @@ module.exports = function(Role) {
         });
         query.where = query.where || {};
         query.where.id = {inq: ids};
-        model.find(query, callback);
+        model.find(query, function(err, models) {
+          callback(err, models);
+        });
       });
     }
 
