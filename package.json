@@ -93,6 +93,7 @@
   "browser": {
     "express": "./lib/browser-express.js",
     "./lib/server-app.js": "./lib/browser-express.js",
+    "./server/current-context.js": "./browser/current-context.js",
     "connect": false,
     "nodemailer": false,
     "supertest": false,

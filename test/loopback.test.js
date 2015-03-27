@@ -462,5 +462,19 @@ describe('loopback', function() {
           done();
         });
     });
+
+    it('works outside REST middleware', function(done) {
+      loopback.runInContext(function() {
+        var ctx = loopback.getCurrentContext();
+        expect(ctx).is.an('object');
+        ctx.set('test-key', 'test-value');
+        process.nextTick(function() {
+          var ctx = loopback.getCurrentContext();
+          expect(ctx).is.an('object');
+          expect(ctx.get('test-key')).to.equal('test-value');
+          done();
+        });
+      });
+    });
   });
 });
