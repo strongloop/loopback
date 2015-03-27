@@ -838,7 +838,7 @@ describe('app', function() {
   });
 
   describe('app.connector', function() {
-     // any connector will do
+    // any connector will do
     it('adds the connector to the registry', function() {
       app.connector('foo-bar', loopback.Memory);
       expect(app.connectors['foo-bar']).to.equal(loopback.Memory);

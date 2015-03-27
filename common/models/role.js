@@ -71,7 +71,7 @@ module.exports = function(Role) {
 
   });
 
-// Special roles
+  // Special roles
   Role.OWNER = '$owner'; // owner of the object
   Role.RELATED = '$related'; // any User with a relationship to the object
   Role.AUTHENTICATED = '$authenticated'; // authenticated user

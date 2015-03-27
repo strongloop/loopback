@@ -12,7 +12,7 @@ var loopback = require('../../lib/loopback');
  */
 
 module.exports = function(RoleMapping) {
-// Principal types
+  // Principal types
   RoleMapping.USER = 'USER';
   RoleMapping.APP = RoleMapping.APPLICATION = 'APP';
   RoleMapping.ROLE = 'ROLE';
