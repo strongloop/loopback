@@ -60,8 +60,8 @@ describe('DataSource', function() {
       });
 
       var Color = ds.createModel('color', {name: String});
-      assert(Color.prototype instanceof loopback.Model);
-      assert.equal(Color.base, loopback.Model);
+      assert(Color.prototype instanceof Color.registry.getModel('Model'));
+      assert.equal(Color.base.modelName, 'PersistedModel');
     });
 
   });

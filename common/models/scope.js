@@ -25,6 +25,7 @@ module.exports = function(Scope) {
    */
   Scope.checkPermission = function(scope, model, property, accessType, callback) {
     var ACL = loopback.ACL;
+    var registry = this.registry;
     assert(ACL,
       'ACL model must be defined before Scope.checkPermission is called');
 
@@ -32,7 +33,7 @@ module.exports = function(Scope) {
       if (err) {
         if (callback) callback(err);
       } else {
-        var aclModel = loopback.getModelByType(ACL);
+        var aclModel = registry.getModelByType(ACL);
         aclModel.checkPermission(ACL.SCOPE, scope.id, model, property, accessType, callback);
       }
     });

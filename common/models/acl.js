@@ -375,6 +375,8 @@ module.exports = function(ACL) {
    */
 
   ACL.checkAccessForContext = function(context, callback) {
+    var registry = this.registry;
+
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
@@ -394,7 +396,7 @@ module.exports = function(ACL) {
     var staticACLs = this.getStaticACLs(model.modelName, property);
 
     var self = this;
-    var roleModel = loopback.getModelByType(Role);
+    var roleModel = registry.getModelByType(Role);
     this.find({where: {model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery}}, function(err, acls) {
       if (err) {

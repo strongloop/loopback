@@ -29,7 +29,8 @@ module.exports = function(Role) {
 
   // Set up the connection to users/applications/roles once the model
   Role.once('dataSourceAttached', function() {
-    var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var registry = Role.registry;
+    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
     Role.prototype.users = function(callback) {
       roleMappingModel.find({where: {roleId: this.id,
         principalType: RoleMapping.USER}}, function(err, mappings) {
@@ -242,6 +243,8 @@ module.exports = function(Role) {
       context = new AccessContext(context);
     }
 
+    var registry = this.registry;
+
     debug('isInRole(): %s', role);
     context.debug();
 
@@ -277,7 +280,7 @@ module.exports = function(Role) {
       return;
     }
 
-    var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
     this.findOne({where: {name: role}}, function(err, result) {
       if (err) {
         if (callback) callback(err);
@@ -332,6 +335,7 @@ module.exports = function(Role) {
       context = new AccessContext(context);
     }
     var roles = [];
+    var registry = this.registry;
 
     var addRole = function(role) {
       if (role && roles.indexOf(role) === -1) {
@@ -358,7 +362,7 @@ module.exports = function(Role) {
       });
     });
 
-    var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
     context.principals.forEach(function(p) {
       // Check against the role mappings
       var principalType = p.type || undefined;
