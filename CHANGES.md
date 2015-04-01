@@ -1,3 +1,67 @@
+2015-04-01, Version 2.15.0
+==========================
+
+ * Improve error handling in replication (Miroslav Bajtoš)
+
+ * Add `loopback.runInContext` (Miroslav Bajtoš)
+
+ * Fix style issues (Raymond Feng)
+
+ * Document the new third callback arg of replicate() (Miroslav Bajtoš)
+
+ * Fix API doc for updateAll/deleteAll (Miroslav Bajtoš)
+
+ * Import subset of underscore.string scripts only (Miroslav Bajtoš)
+
+ * Use `ctx.instance` provided by "after delete" hook (Miroslav Bajtoš)
+
+ * Add conflict resolution API (Miroslav Bajtoš)
+
+ * Detect 3rd-party changes made during replication (Miroslav Bajtoš)
+
+ * Ability to pass in custom verification token generator This commit adds the ability for the developer to use a custom token generator function for the user.verify(...) method. By default, the system will still use the crypto.randomBytes() method if no option is provided. (jakerella)
+
+ * Remove unnecessary delay in tests. (Miroslav Bajtoš)
+
+ * Update README.md (Simon Ho)
+
+ * Remove duplicate cb func from getRoles and other doc cleanup (crandmck)
+
+ * Enhance the token middleware to support current user literal (Raymond Feng)
+
+ * Handling owner being a relation/function (Benjamin Boudreau)
+
+ * Run replication tests in the browser too (Miroslav Bajtoš)
+
+ * Add replication tests for conflict resolution (Miroslav Bajtoš)
+
+ * Fix an assertion broke by recent chai upgrade. (Miroslav Bajtoš)
+
+ * Static ACL support array of properties now (ulion)
+
+ * Add more integration tests for replication (Miroslav Bajtoš)
+
+ * Prevent more kinds of false replication conflicts (Miroslav Bajtoš)
+
+ * Upgrade deps (Raymond Feng)
+
+ * Fix "Issues" link in readme (Simon Ho)
+
+ * Add more debug logs to replication (Miroslav Bajtoš)
+
+ * Fixes #1158. (Jason Sturges)
+
+ * Checkpoint: start with seq=1 instead of seq=0 (Miroslav Bajtoš)
+
+ * Return new checkpoints in callback of replicate() (Miroslav Bajtoš)
+
+ * Create a remote checkpoint during replication too (Miroslav Bajtoš)
+
+ * Replication: fix checkpoint-related race condition (Miroslav Bajtoš)
+
+ * Support different "since" for source and target (Miroslav Bajtoš)
+
+
 2015-03-03, Version 2.14.0
 ==========================
 
