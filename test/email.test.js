@@ -82,4 +82,15 @@ describe('Email and SMTP', function() {
       });
     });
   });
+  describe('Email templates', function() {
+    beforeEach(function() {
+      MyEmail = loopback.Email.extend('my-email');
+      loopback.autoAttach();
+    });
+    it('should ', function() {
+      var connector = new MailConnector({transports: [
+        {type: 'stub', service: 'gmail'}
+      ]});
+    });
+  });
 });

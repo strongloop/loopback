@@ -6,6 +6,7 @@ var loopback = require('../../lib/loopback');
 var path = require('path');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
+var url = require('url');
 
 var bcrypt;
 try {
@@ -305,7 +306,7 @@ module.exports = function(User) {
    *    var options = {
    *      type: 'email',
    *      to: user.email,
-   *      template: 'verify.ejs',
+   *      template: 'verify',
    *      redirect: '/',
    *      tokenGenerator: function (user, cb) { cb("random-token"); }
    *    };
@@ -341,28 +342,26 @@ module.exports = function(User) {
     assert(options.to || this.email, 'Must include options.to when calling user.verify() or the user must have an email property');
     assert(options.from, 'Must include options.from when calling user.verify() or the user must have an email property');
 
-    options.redirect = options.redirect || '/';
-    options.template = path.resolve(options.template || path.join(__dirname, '..', '..', 'templates', 'verify.ejs'));
-    options.user = this;
-    options.protocol = options.protocol || 'http';
-
     var app = userModel.app;
+    var template = options.template || 'verify';
+    options.redirect = options.redirect || '/';
+    options.cache = options.cache || true;  // instruct the template engine to cache the template
+    options.user = this;
+    options.to = options.to || this.email; // we want the actual email address available in the template options
+    options.protocol = options.protocol || (app && app.get('protocol')) || 'http';
+
     options.host = options.host || (app && app.get('host')) || 'localhost';
     options.port = options.port || (app && app.get('port')) || 3000;
     options.restApiRoot = options.restApiRoot || (app && app.get('restApiRoot')) || '/api';
-    options.verifyHref = options.verifyHref ||
-      options.protocol +
-      '://' +
-      options.host +
-      ':' +
-      options.port +
-      options.restApiRoot +
-      userModel.http.path +
-      userModel.sharedClass.find('confirm', true).http.path +
-      '?uid=' +
-      options.user.id +
-      '&redirect=' +
-      options.redirect;
+    options.verifyHref = options.verifyHref || url.format({
+      protocol : options.protocol,
+      hostname : options.host,
+      port     : options.port,
+      pathname : options.restApiRoot +
+                 userModel.http.path +
+                 userModel.sharedClass.find('confirm', true).http.path,
+      query    : { 'uid' :  options.user.id, 'redirect' : options.redirect }
+    });
 
     // Email model
     var Email = options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
@@ -375,17 +374,23 @@ module.exports = function(User) {
 
       user.verificationToken = token;
       user.save(function(err) {
-        if (err) {
-          fn(err);
-        } else {
-          sendEmail(user);
+        if (err) { return fn(err); }
+        // TODO - support more verification types
+        switch (options.type) {
+          case 'email':
+            /* falls through */
+          default:
+            sendEmail(user);
+            break;
         }
       });
     });
 
-    // TODO - support more verification types
     function sendEmail(user) {
-      options.verifyHref += '&token=' + user.verificationToken;
+      var urlObj = url.parse(options.verifyHref, true);
+      urlObj.query.token = user.verificationToken;
+      delete urlObj.search; // otherwise search will be used in place of query
+      options.verifyHref = url.format(urlObj);
 
       options.text = options.text || 'Please verify your email by opening this link in a web browser:\n\t{href}';
 
