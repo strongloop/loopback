@@ -113,12 +113,12 @@ describe('remoting - integration', function() {
       var expectedMethods = [
         'create(data:object):store POST /stores',
         'upsert(data:object):store PUT /stores',
-        'exists(id:any):boolean GET /stores/:id/exists',
-        'findById(id:any):store GET /stores/:id',
+        'exists(id:number):boolean GET /stores/:id/exists',
+        'findById(id:number):store GET /stores/:id',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
         'updateAll(where:object,data:object) POST /stores/update',
-        'deleteById(id:any) DELETE /stores/:id',
+        'deleteById(id:number) DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
         'prototype.updateAttributes(data:object):store PUT /stores/:id'
       ];
@@ -180,11 +180,11 @@ describe('remoting - integration', function() {
           });
 
         var expectedMethods = [
-              'prototype.__findById__widgets(fk:any):widget ' +
+              'prototype.__findById__widgets(fk:number):widget ' +
               'GET /stores/:id/widgets/:fk',
-              'prototype.__destroyById__widgets(fk:any) ' +
+              'prototype.__destroyById__widgets(fk:number) ' +
               'DELETE /stores/:id/widgets/:fk',
-              'prototype.__updateById__widgets(fk:any,data:widget):widget ' +
+              'prototype.__updateById__widgets(fk:number,data:widget):widget ' +
               'PUT /stores/:id/widgets/:fk',
               'prototype.__get__widgets(filter:object):widget ' +
               'GET /stores/:id/widgets',
@@ -211,17 +211,17 @@ describe('remoting - integration', function() {
         });
 
       var expectedMethods = [
-          'prototype.__findById__patients(fk:any):patient ' +
+          'prototype.__findById__patients(fk:number):patient ' +
           'GET /physicians/:id/patients/:fk',
-          'prototype.__destroyById__patients(fk:any) ' +
+          'prototype.__destroyById__patients(fk:number) ' +
           'DELETE /physicians/:id/patients/:fk',
-          'prototype.__updateById__patients(fk:any,data:patient):patient ' +
+          'prototype.__updateById__patients(fk:number,data:patient):patient ' +
           'PUT /physicians/:id/patients/:fk',
-          'prototype.__link__patients(fk:any,data:appointment):appointment ' +
+          'prototype.__link__patients(fk:number,data:appointment):appointment ' +
           'PUT /physicians/:id/patients/rel/:fk',
-          'prototype.__unlink__patients(fk:any) ' +
+          'prototype.__unlink__patients(fk:number) ' +
           'DELETE /physicians/:id/patients/rel/:fk',
-          'prototype.__exists__patients(fk:any):boolean ' +
+          'prototype.__exists__patients(fk:number):boolean ' +
           'HEAD /physicians/:id/patients/rel/:fk',
           'prototype.__get__patients(filter:object):patient ' +
           'GET /physicians/:id/patients',
