@@ -707,13 +707,11 @@ describe('relations - integration', function() {
 
     it('deletes an embedded model', function(done) {
       var url = '/api/groups/' + this.group.id + '/cover';
-      
       this.del(url).expect(204, done);
     });
 
     it('deleted the embedded model', function(done) {
       var url = '/api/groups/' + this.group.id + '/cover';
-
       this.get(url).expect(404, done);
     });
 
