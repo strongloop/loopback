@@ -625,17 +625,15 @@ module.exports = function(User) {
       }
     );
 
-    UserModel.on('attached', function() {
-      UserModel.afterRemote('confirm', function(ctx, inst, next) {
-        if (ctx.args.redirect !== undefined) {
-          if (!ctx.res) {
-            return next(new Error('The transport does not support HTTP redirects.'));
-          }
-          ctx.res.location(ctx.args.redirect);
-          ctx.res.status(302);
+    UserModel.afterRemote('confirm', function(ctx, inst, next) {
+      if (ctx.args.redirect !== undefined) {
+        if (!ctx.res) {
+          return next(new Error('The transport does not support HTTP redirects.'));
         }
-        next();
-      });
+        ctx.res.location(ctx.args.redirect);
+        ctx.res.status(302);
+      }
+      next();
     });
 
     // default models
