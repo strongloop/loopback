@@ -334,6 +334,7 @@ module.exports = function(User) {
   User.prototype.verify = function(options, fn) {
     var user = this;
     var userModel = this.constructor;
+    var registry = userModel.registry;
     assert(typeof options === 'object', 'options required when calling user.verify()');
     assert(options.type, 'You must supply a verification type (options.type)');
     assert(options.type === 'email', 'Unsupported verification type');
@@ -364,7 +365,7 @@ module.exports = function(User) {
       options.redirect;
 
     // Email model
-    var Email = options.mailer || this.constructor.email || loopback.getModelByType(loopback.Email);
+    var Email = options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
 
     // Set a default token generation function if one is not provided
     var tokenGenerator = options.generateVerificationToken || User.generateVerificationToken;

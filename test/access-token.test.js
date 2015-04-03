@@ -352,7 +352,7 @@ function createTestApp(testToken, settings, done) {
   var app = loopback();
 
   app.use(loopback.cookieParser('secret'));
-  app.use(loopback.token({model: 'MyToken', currentUserLiteral: 'me'}));
+  app.use(loopback.token({model: Token, currentUserLiteral: 'me'}));
   app.get('/token', function(req, res) {
     res.cookie('authorization', testToken.id, {signed: true});
     res.end();
