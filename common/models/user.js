@@ -500,7 +500,10 @@ module.exports = function(User) {
             }
           });
         } else {
-          cb();
+          err = new Error('User not found by the email: ' + options.email);
+          err.statusCode = 404;
+          err.code = 'USER_NOT_FOUND';
+          cb(err);
         }
       });
     } else {
