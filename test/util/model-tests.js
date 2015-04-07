@@ -50,6 +50,10 @@ module.exports = function defineModelTestsWithDataSource(options) {
       });
 
       User.attachTo(dataSource);
+      User.handleChangeError = function(err) {
+        console.warn('WARNING: unhandled change-tracking error');
+        console.warn(err);
+      };
     });
 
     describe('Model.validatesPresenceOf(properties...)', function() {

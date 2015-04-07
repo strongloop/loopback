@@ -1,3 +1,4 @@
+var assert = require('assert');
 var async = require('async');
 var loopback = require('../');
 var Change = loopback.Change;
