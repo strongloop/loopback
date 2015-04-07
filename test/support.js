@@ -30,9 +30,6 @@ beforeEach(function() {
       {type: 'STUB'}
     ]
   });
-
-  // auto attach data sources to models
-  loopback.autoAttach();
 });
 
 assertValidDataSource = function(dataSource) {

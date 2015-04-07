@@ -3,6 +3,7 @@ describe('loopback.rest', function() {
   beforeEach(function() {
     var ds = app.dataSource('db', { connector: loopback.Memory });
     MyModel = ds.createModel('MyModel', {name: String});
+    loopback.autoAttach();
   });
 
   it('works out-of-the-box', function(done) {

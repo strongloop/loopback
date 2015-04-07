@@ -501,9 +501,11 @@ describe.onServer('Remote Methods', function() {
   describe('Model._getACLModel()', function() {
     it('should return the subclass of ACL', function() {
       var Model = require('../').Model;
+      var originalValue = Model._ACL();
       var acl = ACL.extend('acl');
       Model._ACL(null); // Reset the ACL class for the base model
       var model = Model._ACL();
+      Model._ACL(originalValue); // Reset the value back
       assert.equal(model, acl);
     });
   });

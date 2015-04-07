@@ -23,6 +23,7 @@ describe('User', function() {
 
     // Update the AccessToken relation to use the subclass of User
     AccessToken.belongsTo(User);
+    User.hasMany(AccessToken);
 
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
@@ -1071,6 +1072,7 @@ describe('User', function() {
           assert.equal(info.accessToken.ttl / 60, 15);
           assert(calledBack);
           info.accessToken.user(function(err, user) {
+            if (err) return done(err);
             assert.equal(user.email, email);
             done();
           });
