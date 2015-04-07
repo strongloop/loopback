@@ -219,6 +219,24 @@ describe.onServer('Remote Methods', function() {
     });
   });
 
+  describe('Model.afterRemoteError(name, fn)', function() {
+    it('runs the function when method fails', function(done) {
+      var actualError = 'hook not called';
+      User.afterRemoteError('login', function(ctx, next) {
+        actualError = ctx.error;
+        next();
+      });
+
+      request(app).get('/users/sign-in?username=bob&password=123')
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(actualError)
+            .to.have.property('message', 'bad username and password!');
+          done();
+        });
+    });
+  });
+
   describe('Remote Method invoking context', function() {
     describe('ctx.req', function() {
       it('The express ServerRequest object', function(done) {
