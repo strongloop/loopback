@@ -9,8 +9,9 @@ var RoleMapping = loopback.RoleMapping;
 assert(RoleMapping, 'RoleMapping model must be defined before Role model');
 
 /**
- * The Role Model
+ * The Role model
  * @class Role
+ * @header Role object
  */
 module.exports = function(Role) {
 
@@ -28,7 +29,8 @@ module.exports = function(Role) {
 
   // Set up the connection to users/applications/roles once the model
   Role.once('dataSourceAttached', function() {
-    var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var registry = Role.registry;
+    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
     Role.prototype.users = function(callback) {
       roleMappingModel.find({where: {roleId: this.id,
         principalType: RoleMapping.USER}}, function(err, mappings) {
@@ -70,7 +72,7 @@ module.exports = function(Role) {
 
   });
 
-// Special roles
+  // Special roles
   Role.OWNER = '$owner'; // owner of the object
   Role.RELATED = '$related'; // any User with a relationship to the object
   Role.AUTHENTICATED = '$authenticated'; // authenticated user
@@ -113,7 +115,7 @@ module.exports = function(Role) {
   }
 
   /*!
-   * Check if two user ids matches
+   * Check if two user IDs matches
    * @param {*} id1
    * @param {*} id2
    * @returns {boolean}
@@ -161,7 +163,8 @@ module.exports = function(Role) {
       }
       debug('Model found: %j', inst);
       var ownerId = inst.userId || inst.owner;
-      if (ownerId) {
+      // Ensure ownerId exists and is not a function/relation
+      if (ownerId && 'function' !== typeof ownerId) {
         if (callback) callback(null, matches(ownerId, userId));
         return;
       } else {
@@ -200,11 +203,12 @@ module.exports = function(Role) {
   });
 
   /**
-   * Check if the user id is authenticated
-   * @param {Object} context The security context
-   * @callback {Function} callback
-   * @param {Error} err
-   * @param {Boolean} isAuthenticated
+   * Check if the user ID is authenticated
+   * @param {Object} context The security context.
+   *
+   * @callback {Function} callback Callback function.
+   * @param {Error} err Error object.
+   * @param {Boolean} isAuthenticated True if the user is authenticated.
    */
   Role.isAuthenticated = function isAuthenticated(context, callback) {
     process.nextTick(function() {
@@ -225,18 +229,21 @@ module.exports = function(Role) {
   });
 
   /**
-   * Check if a given principal is in the role
+   * Check if a given principal is in the specified role.
    *
-   * @param {String} role The role name
-   * @param {Object} context The context object
-   * @callback {Function} callback
-   * @param {Error} err
-   * @param {Boolean} isInRole
+   * @param {String} role The role name.
+   * @param {Object} context The context object.
+   *
+   * @callback {Function} callback Callback function.
+   * @param {Error} err Error object.
+   * @param {Boolean} isInRole True if the principal is in the specified role.
    */
   Role.isInRole = function(role, context, callback) {
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
+
+    var registry = this.registry;
 
     debug('isInRole(): %s', role);
     context.debug();
@@ -273,7 +280,7 @@ module.exports = function(Role) {
       return;
     }
 
-    var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
     this.findOne({where: {name: role}}, function(err, result) {
       if (err) {
         if (callback) callback(err);
@@ -316,19 +323,19 @@ module.exports = function(Role) {
   };
 
   /**
-   * List roles for a given principal
-   * @param {Object} context The security context
-   * @param {Function} callback
+   * List roles for a given principal.
+   * @param {Object} context The security context.
    *
-   * @callback {Function} callback
-   * @param {Error=} err
-   * @param {String[]} roles An array of role ids
+   * @callback {Function} callback Callback function.
+   * @param {Error} err Error object.
+   * @param {String[]} roles An array of role IDs
    */
   Role.getRoles = function(context, callback) {
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
     var roles = [];
+    var registry = this.registry;
 
     var addRole = function(role) {
       if (role && roles.indexOf(role) === -1) {
@@ -355,7 +362,7 @@ module.exports = function(Role) {
       });
     });
 
-    var roleMappingModel = this.RoleMapping || loopback.getModelByType(RoleMapping);
+    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
     context.principals.forEach(function(p) {
       // Check against the role mappings
       var principalType = p.type || undefined;

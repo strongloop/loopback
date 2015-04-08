@@ -28,6 +28,7 @@ function rest() {
 
   return function restApiHandler(req, res, next) {
     var app = req.app;
+    var registry = app.registry;
 
     // added for https://github.com/strongloop/loopback/issues/1134
     if (app.get('legacyExplorer') !== false) {
@@ -55,14 +56,8 @@ function rest() {
       }
 
       if (app.isAuthEnabled) {
-        // NOTE(bajtos) It would be better to search app.models for a model
-        // of type AccessToken instead of searching all loopback models.
-        // Unfortunately that's not supported now.
-        // Related discussions:
-        // https://github.com/strongloop/loopback/pull/167
-        // https://github.com/strongloop/loopback/commit/f07446a
-        var AccessToken = loopback.getModelByType(loopback.AccessToken);
-        handlers.push(loopback.token({ model: AccessToken }));
+        var AccessToken = registry.getModelByType('AccessToken');
+        handlers.push(loopback.token({ model: AccessToken, app: app }));
       }
 
       handlers.push(function(req, res, next) {

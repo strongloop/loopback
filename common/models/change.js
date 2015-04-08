@@ -9,6 +9,7 @@ var CJSON = {stringify: require('canonical-json')};
 var async = require('async');
 var assert = require('assert');
 var debug = require('debug')('loopback:change');
+var deprecate = require('depd')('loopback');
 
 /**
  * Change list entry.
@@ -73,18 +74,43 @@ module.exports = function(Change) {
    */
 
   Change.rectifyModelChanges = function(modelName, modelIds, callback) {
-    var tasks = [];
     var Change = this;
+    var errors = [];
 
-    modelIds.forEach(function(id) {
-      tasks.push(function(cb) {
+    var tasks = modelIds.map(function(id) {
+      return function(cb) {
         Change.findOrCreateChange(modelName, id, function(err, change) {
-          if (err) return Change.handleError(err, cb);
-          change.rectify(cb);
+          if (err) return next(err);
+          change.rectify(next);
         });
-      });
+
+        function next(err) {
+          if (err) {
+            err.modelName = modelName;
+            err.modelId = id;
+            errors.push(err);
+          }
+          cb();
+        }
+      };
     });
-    async.parallel(tasks, callback);
+
+    async.parallel(tasks, function(err) {
+      if (err) return callback(err);
+      if (errors.length) {
+        var desc = errors
+          .map(function(e) {
+            return '#' + e.modelId + ' - ' + e.toString();
+          })
+          .join('\n');
+
+        var msg = 'Cannot rectify ' + modelName + ' changes:\n' + desc;
+        err = new Error(msg);
+        err.details = { errors: errors };
+        return callback(err);
+      }
+      callback();
+    });
   };
 
   /**
@@ -126,7 +152,7 @@ module.exports = function(Change) {
           modelId: modelId
         });
         ch.debug('creating change');
-        ch.save(callback);
+        Change.updateOrCreate(ch, callback);
       }
     });
   };
@@ -141,10 +167,6 @@ module.exports = function(Change) {
 
   Change.prototype.rectify = function(cb) {
     var change = this;
-    var tasks = [
-      updateRevision,
-      updateCheckpoint
-    ];
     var currentRev = this.rev;
 
     change.debug('rectify change');
@@ -153,8 +175,53 @@ module.exports = function(Change) {
       if (err) throw new Error(err);
     };
 
-    async.parallel(tasks, function(err) {
+    async.parallel([
+      function getCurrentCheckpoint(next) {
+        change.constructor.getCheckpointModel().current(next);
+      },
+      function getCurrentRevision(next) {
+        change.currentRevision(next);
+      }
+    ], doRectify);
+
+    function doRectify(err, results) {
       if (err) return cb(err);
+      var checkpoint = results[0];
+      var rev = results[1];
+
+      if (rev) {
+        // avoid setting rev and prev to the same value
+        if (currentRev === rev) {
+          change.debug('rev and prev are equal (not updating rev)');
+        } else {
+          change.rev = rev;
+          change.debug('updated revision (was ' + currentRev + ')');
+          if (change.checkpoint !== checkpoint) {
+            // previous revision is updated only across checkpoints
+            change.prev = currentRev;
+            change.debug('updated prev');
+          }
+        }
+      } else {
+        change.rev = null;
+        change.debug('updated revision (was ' + currentRev + ')');
+        if (change.checkpoint !== checkpoint) {
+          // previous revision is updated only across checkpoints
+          if (currentRev) {
+            change.prev = currentRev;
+          } else if (!change.prev) {
+            change.debug('ERROR - could not determing prev');
+            change.prev = Change.UNKNOWN;
+          }
+          change.debug('updated prev');
+        }
+      }
+
+      if (change.checkpoint != checkpoint) {
+        debug('update checkpoint to', checkpoint);
+        change.checkpoint = checkpoint;
+      }
+
       if (change.prev === Change.UNKNOWN) {
         // this occurs when a record of a change doesn't exist
         // and its current revision is null (not found)
@@ -162,41 +229,6 @@ module.exports = function(Change) {
       } else {
         change.save(cb);
       }
-    });
-
-    function updateRevision(cb) {
-      // get the current revision
-      change.currentRevision(function(err, rev) {
-        if (err) return Change.handleError(err, cb);
-        if (rev) {
-          // avoid setting rev and prev to the same value
-          if (currentRev !== rev) {
-            change.rev = rev;
-            change.prev = currentRev;
-          } else {
-            change.debug('rev and prev are equal (not updating rev)');
-          }
-        } else {
-          change.rev = null;
-          if (currentRev) {
-            change.prev = currentRev;
-          } else if (!change.prev) {
-            change.debug('ERROR - could not determing prev');
-            change.prev = Change.UNKNOWN;
-          }
-        }
-        change.debug('updated revision (was ' + currentRev + ')');
-        cb();
-      });
-    }
-
-    function updateCheckpoint(cb) {
-      change.constructor.getCheckpointModel().current(function(err, checkpoint) {
-        if (err) return Change.handleError(err);
-        debug('updated checkpoint to', checkpoint);
-        change.checkpoint = checkpoint;
-        cb();
-      });
     }
   };
 
@@ -211,7 +243,7 @@ module.exports = function(Change) {
     var model = this.getModelCtor();
     var id = this.getModelId();
     model.findById(id, function(err, inst) {
-      if (err) return Change.handleError(err, cb);
+      if (err) return cb(err);
       if (inst) {
         cb(null, Change.revisionForInst(inst));
       } else {
@@ -242,6 +274,7 @@ module.exports = function(Change) {
    */
 
   Change.revisionForInst = function(inst) {
+    assert(inst, 'Change.revisionForInst() requires an instance object.');
     return this.hash(CJSON.stringify(inst));
   };
 
@@ -364,14 +397,17 @@ module.exports = function(Change) {
     this.find({
       where: {
         modelName: modelName,
-        modelId: {inq: modelIds},
-        checkpoint: {gte: since}
+        modelId: {inq: modelIds}
       }
-    }, function(err, localChanges) {
+    }, function(err, allLocalChanges) {
       if (err) return callback(err);
       var deltas = [];
       var conflicts = [];
       var localModelIds = [];
+
+      var localChanges = allLocalChanges.filter(function(c) {
+        return c.checkpoint >= since;
+      });
 
       localChanges.forEach(function(localChange) {
         localChange = new Change(localChange);
@@ -390,9 +426,20 @@ module.exports = function(Change) {
       });
 
       modelIds.forEach(function(id) {
-        if (localModelIds.indexOf(id) === -1) {
-          deltas.push(remoteChangeIndex[id]);
+        if (localModelIds.indexOf(id) !== -1) return;
+
+        var d = remoteChangeIndex[id];
+        var oldChange = allLocalChanges.filter(function(c) {
+          return c.modelId === id;
+        })[0];
+
+        if (oldChange) {
+          d.prev = oldChange.rev;
+        } else {
+          d.prev = null;
         }
+
+        deltas.push(d);
       });
 
       callback(null, {
@@ -438,6 +485,9 @@ module.exports = function(Change) {
   };
 
   Change.handleError = function(err) {
+    deprecate('Change.handleError is deprecated, ' +
+      'you should pass errors to your callback instead.');
+
     if (!this.settings.ignoreErrors) {
       throw err;
     }
@@ -446,10 +496,13 @@ module.exports = function(Change) {
   Change.prototype.debug = function() {
     if (debug.enabled) {
       var args = Array.prototype.slice.call(arguments);
+      args[0] = args[0] + ' %s';
+      args.push(this.modelName);
       debug.apply(this, args);
       debug('\tid', this.id);
       debug('\trev', this.rev);
       debug('\tprev', this.prev);
+      debug('\tcheckpoint', this.checkpoint);
       debug('\tmodelName', this.modelName);
       debug('\tmodelId', this.modelId);
       debug('\ttype', this.type());
@@ -592,6 +645,13 @@ module.exports = function(Change) {
   /**
    * Resolve the conflict.
    *
+   * Set the source change's previous revision to the current revision of the
+   * (conflicting) target change. Since the changes are no longer conflicting
+   * and appear as if the source change was based on the target, they will be
+   * replicated normally as part of the next replicate() call.
+   *
+   * This is effectively resolving the conflict using the source version.
+   *
    * @callback {Function} callback
    * @param {Error} err
    */
@@ -603,6 +663,74 @@ module.exports = function(Change) {
       sourceChange.prev = targetChange.rev;
       sourceChange.save(cb);
     });
+  };
+
+  /**
+   * Resolve the conflict using the instance data in the source model.
+   *
+   * @callback {Function} callback
+   * @param {Error} err
+   */
+  Conflict.prototype.resolveUsingSource = function(cb) {
+    this.resolve(function(err) {
+      // don't forward any cb arguments from resolve()
+      cb(err);
+    });
+  };
+
+  /**
+   * Resolve the conflict using the instance data in the target model.
+   *
+   * @callback {Function} callback
+   * @param {Error} err
+   */
+  Conflict.prototype.resolveUsingTarget = function(cb) {
+    var conflict = this;
+
+    conflict.models(function(err, source, target) {
+      if (err) return done(err);
+      if (target === null) {
+        return conflict.SourceModel.deleteById(conflict.modelId, done);
+      }
+      var inst = new conflict.SourceModel(target);
+      inst.save(done);
+    });
+
+    function done(err) {
+      // don't forward any cb arguments from internal calls
+      cb(err);
+    }
+  };
+
+  /**
+   * Resolve the conflict using the supplied instance data.
+   *
+   * @param {Object} data The set of changes to apply on the model
+   * instance. Use `null` value to delete the source instance instead.
+   * @callback {Function} callback
+   * @param {Error} err
+   */
+
+  Conflict.prototype.resolveManually = function(data, cb) {
+    var conflict = this;
+    if (!data) {
+      return conflict.SourceModel.deleteById(conflict.modelId, done);
+    }
+
+    conflict.models(function(err, source, target) {
+      if (err) return done(err);
+      var inst = source || new conflict.SourceModel(target);
+      inst.setAttributes(data);
+      inst.save(function(err) {
+        if (err) return done(err);
+        conflict.resolve(done);
+      });
+    });
+
+    function done(err) {
+      // don't forward any cb arguments from internal calls
+      cb(err);
+    }
   };
 
   /**

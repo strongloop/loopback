@@ -332,7 +332,7 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, '/mountpath/test', function(err) {
         if (err) return done(err);
-        expect(mountWasEmitted, 'mountWasEmitted').to.be.true();
+        expect(mountWasEmitted, 'mountWasEmitted').to.be.true;
         expect(data).to.eql({
           mountpath: '/mountpath',
           parent: app
@@ -628,7 +628,7 @@ describe('app', function() {
       var Foo = app.models.foo;
       var f = new Foo();
 
-      assert(f instanceof loopback.Model);
+      assert(f instanceof app.registry.getModel('Model'));
     });
 
     it('interprets extra first-level keys as options', function() {
@@ -673,14 +673,15 @@ describe('app', function() {
 
   describe('app.model(ModelCtor, config)', function() {
     it('attaches the model to a datasource', function() {
+      var previousModel = loopback.registry.findModel('TestModel');
       app.dataSource('db', { connector: 'memory' });
-      var TestModel = loopback.Model.extend('TestModel');
-      // TestModel was most likely already defined in a different test,
-      // thus TestModel.dataSource may be already set
-      delete TestModel.dataSource;
 
-      app.model(TestModel, { dataSource: 'db' });
+      if (previousModel) {
+        delete previousModel.dataSource;
+      }
 
+      assert(!previousModel || !previousModel.dataSource);
+      app.model('TestModel', { dataSource: 'db' });
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
   });
@@ -838,7 +839,7 @@ describe('app', function() {
   });
 
   describe('app.connector', function() {
-     // any connector will do
+    // any connector will do
     it('adds the connector to the registry', function() {
       app.connector('foo-bar', loopback.Memory);
       expect(app.connectors['foo-bar']).to.equal(loopback.Memory);

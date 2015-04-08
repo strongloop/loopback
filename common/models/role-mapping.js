@@ -12,7 +12,7 @@ var loopback = require('../../lib/loopback');
  */
 
 module.exports = function(RoleMapping) {
-// Principal types
+  // Principal types
   RoleMapping.USER = 'USER';
   RoleMapping.APP = RoleMapping.APPLICATION = 'APP';
   RoleMapping.ROLE = 'ROLE';
@@ -24,9 +24,11 @@ module.exports = function(RoleMapping) {
    * @param {Application} application
    */
   RoleMapping.prototype.application = function(callback) {
+    var registry = this.constructor.registry;
+
     if (this.principalType === RoleMapping.APPLICATION) {
       var applicationModel = this.constructor.Application ||
-        loopback.getModelByType(loopback.Application);
+        registry.getModelByType('Application');
       applicationModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
@@ -42,9 +44,10 @@ module.exports = function(RoleMapping) {
    * @param {User} user
    */
   RoleMapping.prototype.user = function(callback) {
+    var RoleMapping = this.constructor;
     if (this.principalType === RoleMapping.USER) {
-      var userModel = this.constructor.User ||
-        loopback.getModelByType(loopback.User);
+      var userModel = RoleMapping.User ||
+        RoleMapping.registry.getModelByType('User');
       userModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
@@ -60,9 +63,11 @@ module.exports = function(RoleMapping) {
    * @param {User} childUser
    */
   RoleMapping.prototype.childRole = function(callback) {
+    var registry = this.constructor.registry;
+
     if (this.principalType === RoleMapping.ROLE) {
       var roleModel = this.constructor.Role ||
-        loopback.getModelByType(loopback.Role);
+        registry.getModelByType(loopback.Role);
       roleModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {

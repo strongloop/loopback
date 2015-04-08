@@ -23,6 +23,7 @@ describe('User', function() {
 
     // Update the AccessToken relation to use the subclass of User
     AccessToken.belongsTo(User);
+    User.hasMany(AccessToken);
 
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
@@ -842,6 +843,91 @@ describe('User', function() {
           });
       });
 
+      it('Verify a user\'s email address with custom token generator', function(done) {
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(user, 'afterRemote should include result');
+
+          var options = {
+            type: 'email',
+            to: user.email,
+            from: 'noreply@myapp.org',
+            redirect: '/',
+            protocol: ctx.req.protocol,
+            host: ctx.req.get('host'),
+            generateVerificationToken: function(user, cb) {
+              assert(user);
+              assert.equal(user.email, 'bar@bat.com');
+              assert(cb);
+              assert.equal(typeof cb, 'function');
+              // let's ensure async execution works on this one
+              process.nextTick(function() {
+                cb(null, 'token-123456');
+              });
+            }
+          };
+
+          user.verify(options, function(err, result) {
+            assert(result.email);
+            assert(result.email.response);
+            assert(result.token);
+            assert.equal(result.token, 'token-123456');
+            var msg = result.email.response.toString('utf-8');
+            assert(~msg.indexOf('token-123456'));
+            done();
+          });
+        });
+
+        request(app)
+          .post('/users')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .send({email: 'bar@bat.com', password: 'bar'})
+          .end(function(err, res) {
+            if (err) {
+              return done(err);
+            }
+          });
+      });
+
+      it('Fails if custom token generator returns error', function(done) {
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(user, 'afterRemote should include result');
+
+          var options = {
+            type: 'email',
+            to: user.email,
+            from: 'noreply@myapp.org',
+            redirect: '/',
+            protocol: ctx.req.protocol,
+            host: ctx.req.get('host'),
+            generateVerificationToken: function(user, cb) {
+              // let's ensure async execution works on this one
+              process.nextTick(function() {
+                cb(new Error('Fake error'));
+              });
+            }
+          };
+
+          user.verify(options, function(err, result) {
+            assert(err);
+            assert.equal(err.message, 'Fake error');
+            assert.equal(result, undefined);
+            done();
+          });
+        });
+
+        request(app)
+          .post('/users')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .send({email: 'bar@bat.com', password: 'bar'})
+          .end(function(err, res) {
+            if (err) {
+              return done(err);
+            }
+          });
+      });
+
     });
 
     describe('User.confirm(options, fn)', function() {
@@ -986,6 +1072,7 @@ describe('User', function() {
           assert.equal(info.accessToken.ttl / 60, 15);
           assert(calledBack);
           info.accessToken.user(function(err, user) {
+            if (err) return done(err);
             assert.equal(user.email, email);
             done();
           });

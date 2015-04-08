@@ -266,6 +266,8 @@ describe('security ACLs', function() {
         {principalType: ACL.USER, principalId: 'u001', property: 'name',
           accessType: ACL.ALL, permission: ACL.ALLOW},
         {principalType: ACL.USER, principalId: 'u002', property: 'findOne',
+          accessType: ACL.ALL, permission: ACL.ALLOW},
+        {principalType: ACL.USER, principalId: 'u003', property: ['findOne', 'findById'],
           accessType: ACL.ALL, permission: ACL.ALLOW}
       ]
     });
@@ -274,7 +276,11 @@ describe('security ACLs', function() {
     assert(staticACLs.length === 3);
 
     staticACLs = ACL.getStaticACLs('Model1', 'findOne');
+    assert(staticACLs.length === 2);
+
+    staticACLs = ACL.getStaticACLs('Model1', 'findById');
     assert(staticACLs.length === 1);
+    assert(staticACLs[0].property === 'findById');
   });
 
   it('should check access against LDL, ACL, and Role', function() {
