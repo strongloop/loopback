@@ -1,3 +1,9 @@
+# LoopBack
+
+[![Join the chat at https://gitter.im/strongloop/loopback](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/strongloop/loopback?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/strongloop/loopback?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 LoopBack is a highly-extensible, open-source Node.js framework that enables you to:
 
   * Create dynamic end-to-end REST APIs with little or no coding.
@@ -12,7 +18,7 @@ LoopBack consists of:
   * A library of Node.js modules.
   * [Yeoman](http://yeoman.io/) generators for scaffolding applications.
   * Client SDKs for iOS, Android, and web clients.
-  
+
 LoopBack tools include:
   * Command-line tool `slc loopback` to create applications, models, data sources, and so on.
   * StrongLoop Arc, a graphical tool for editing LoopBack applications; and for deploying and monitoring applications.
@@ -40,7 +46,7 @@ The LoopBack framework is a set of Node.js modules that you can use independentl
 * [loopback-connector-oracle](https://github.com/strongloop/loopback-connector-oracle)
 * [loopback-connector-mssql](https://github.com/strongloop/loopback-connector-mssql)
 * [loopback-connector-soap](https://github.com/strongloop/loopback-connector-soap)
-* [loopback-connector-atg](https://github.com/strongloop/loopback-connector-atg) 
+* [loopback-connector-atg](https://github.com/strongloop/loopback-connector-atg)
 
 ### Community Connectors
 
@@ -65,16 +71,9 @@ The LoopBack community has created and supports a number of additional connector
 
 ### Examples
 
-* [loopback-example-app](https://github.com/strongloop/loopback-example-app)
-* [loopback-example-database](https://github.com/strongloop/loopback-example-database)
-* [loopback-example-datagraph](https://github.com/strongloop/loopback-example-datagraph)
-* [loopback-example-full-stack](https://github.com/strongloop/loopback-example-full-stack)
-* [loopback-example-office-supplies](https://github.com/strongloop/loopback-example-office-supplies)
-* [loopback-example-todo](https://github.com/strongloop/loopback-example-todo)
-* [loopback-example-access-control](https://github.com/strongloop/loopback-example-access-control)
-* [loopback-example-proxy](https://github.com/strongloop/loopback-example-proxy)
-* [strongloop-community/loopback-examples-ios](https://github.com/strongloop-community/loopback-examples-ios)
-* [loopback-example-ssl](https://github.com/strongloop/loopback-example-ssl)
+StrongLoop provides a number of example applications that illustrate various key LoopBack features. In some cases, they have accompanying step-by-step instructions (tutorials).
+
+See [loopback-example](https://github.com/strongloop/loopback-example) for details.
 
 ## Resources
 
@@ -82,11 +81,14 @@ The LoopBack community has created and supports a number of additional connector
   * [API documentation](http://apidocs.strongloop.com/loopback).
   * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
   * [GitHub issues](https://github.com/strongloop/loopback/issues).
+  * [Gitter chat](https://gitter.im/strongloop/loopback).
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) on how to contribute.
+See https://github.com/strongloop/loopback/wiki/Contributing-code
 
-A brief guide for [contributing to LoopBack projects](https://github.com/strongloop/loopback/wiki/How-To-Contribute).
+## Issues
+
+See https://github.com/strongloop/loopback/wiki/Reporting-issues
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
