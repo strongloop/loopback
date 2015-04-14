@@ -617,9 +617,8 @@ module.exports = function(Change) {
     ], done);
 
     function getSourceChange(cb) {
-      conflict.SourceChange.findOne({where: {
-        modelId: conflict.modelId
-      }}, function(err, change) {
+      var SourceModel = conflict.SourceModel;
+      SourceModel.findLastChange(conflict.modelId, function(err, change) {
         if (err) return cb(err);
         sourceChange = change;
         cb();
@@ -627,9 +626,8 @@ module.exports = function(Change) {
     }
 
     function getTargetChange(cb) {
-      conflict.TargetChange.findOne({where: {
-        modelId: conflict.modelId
-      }}, function(err, change) {
+      var TargetModel = conflict.TargetModel;
+      TargetModel.findLastChange(conflict.modelId, function(err, change) {
         if (err) return cb(err);
         targetChange = change;
         cb();
@@ -658,11 +656,15 @@ module.exports = function(Change) {
 
   Conflict.prototype.resolve = function(cb) {
     var conflict = this;
-    conflict.changes(function(err, sourceChange, targetChange) {
-      if (err) return cb(err);
-      sourceChange.prev = targetChange.rev;
-      sourceChange.save(cb);
-    });
+    conflict.TargetModel.findLastChange(
+      this.modelId,
+      function(err, targetChange) {
+        if (err) return cb(err);
+        conflict.SourceModel.updateLastChange(
+          conflict.modelId,
+          { prev: targetChange.rev },
+          cb);
+      });
   };
 
   /**
@@ -692,7 +694,9 @@ module.exports = function(Change) {
       if (target === null) {
         return conflict.SourceModel.deleteById(conflict.modelId, done);
       }
-      var inst = new conflict.SourceModel(target);
+      var inst = new conflict.SourceModel(
+        target.toObject(),
+        { persisted: true });
       inst.save(done);
     });
 
@@ -700,6 +704,23 @@ module.exports = function(Change) {
       // don't forward any cb arguments from internal calls
       cb(err);
     }
+  };
+
+  /**
+   * Return a new Conflict instance with swapped Source and Target models.
+   *
+   * This is useful when resolving a conflict in one-way
+   * replication, where the source data must not be changed:
+   *
+   * ```js
+   * conflict.swapParties().resolveUsingTarget(cb);
+   * ```
+   *
+   * @returns {Conflict} A new Conflict instance.
+   */
+  Conflict.prototype.swapParties = function() {
+    var Ctor = this.constructor;
+    return new Ctor(this.modelId, this.TargetModel, this.SourceModel);
   };
 
   /**

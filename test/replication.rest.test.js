@@ -13,6 +13,7 @@ describe('Replication over REST', function() {
   var serverApp, serverUrl, ServerUser, ServerCar, serverCars;
   var aliceId, peterId, aliceToken, peterToken, emeryToken, request;
   var clientApp, LocalUser, LocalCar, RemoteUser, RemoteCar, clientCars;
+  var conflictedCarId;
 
   before(setupServer);
   before(setupClient);
@@ -154,9 +155,137 @@ describe('Replication over REST', function() {
         });
       });
     });
+  });
 
-    // TODO conflict resolution
-    // TODO verify permissions of individual methods
+  describe('conflict resolution with model-level permissions', function() {
+    var LocalConflict, RemoteConflict;
+
+    before(function setupConflictModels() {
+      LocalConflict = LocalCar.getChangeModel().Conflict;
+      RemoteConflict = RemoteCar.getChangeModel().Conflict;
+    });
+
+    beforeEach(seedConflict);
+
+    describe('as anonymous user', function() {
+      it('rejects resolve() on the client', function(done) {
+        // simulate replication Client->Server
+        var conflict = new LocalConflict(
+          conflictedCarId,
+          LocalCar,
+          RemoteCar);
+        conflict.resolveUsingSource(expectHttpError(401, done));
+      });
+
+      it('rejects resolve() on the server', function(done) {
+        // simulate replication Server->Client
+        var conflict = new RemoteConflict(
+          conflictedCarId,
+          RemoteCar,
+          LocalCar);
+        conflict.resolveUsingSource(expectHttpError(401, done));
+      });
+    });
+
+    describe('as user with READ-only permissions', function() {
+      beforeEach(function() {
+        setAccessToken(emeryToken);
+      });
+
+      it('allows resolve() on the client', function(done) {
+        // simulate replication Client->Server
+        var conflict = new LocalConflict(
+          conflictedCarId,
+          LocalCar,
+          RemoteCar);
+        conflict.resolveUsingSource(done);
+      });
+
+      it('rejects resolve() on the server', function(done) {
+        // simulate replication Server->Client
+        var conflict = new RemoteConflict(
+          conflictedCarId,
+          RemoteCar,
+          LocalCar);
+        conflict.resolveUsingSource(expectHttpError(401, done));
+      });
+    });
+
+    describe('as user with REPLICATE-only permissions', function() {
+      beforeEach(function() {
+        setAccessToken(aliceToken);
+      });
+
+      it('allows reverse resolve() on the client', function(done) {
+        RemoteCar.replicate(LocalCar, function(err, conflicts) {
+          if (err) return done(err);
+          expect(conflicts, 'conflicts').to.have.length(1);
+
+          // By default, conflicts are always resolved by modifying
+          // the source datasource, so that the next replication run
+          // replicates the resolved data.
+          // However, when replicating changes from a datasource that
+          // users are not authorized to change, the users have to resolve
+          // conflicts at the target, discarding any changes made in
+          // the target datasource only.
+          conflicts[0].swapParties().resolveUsingTarget(function(err) {
+            if (err) return done(err);
+
+            RemoteCar.replicate(LocalCar, function(err, conflicts) {
+              if (err) return done(err);
+              if (conflicts.length) return done(conflictError(conflicts));
+              done();
+            });
+          });
+        });
+      });
+
+      it('rejects resolve() on the server', function(done) {
+        RemoteCar.replicate(LocalCar, function(err, conflicts) {
+          if (err) return done(err);
+          expect(conflicts, 'conflicts').to.have.length(1);
+          conflicts[0].resolveUsingSource(expectHttpError(401, done));
+        });
+      });
+    });
+
+    describe('as user with READ and WRITE permissions', function() {
+      beforeEach(function() {
+        setAccessToken(peterToken);
+      });
+
+      it('allows resolve() on the client', function(done) {
+        LocalCar.replicate(RemoteCar, function(err, conflicts) {
+          if (err) return done(err);
+          expect(conflicts).to.have.length(1);
+
+          conflicts[0].resolveUsingSource(function(err) {
+            if (err) return done(err);
+            LocalCar.replicate(RemoteCar, function(err, conflicts) {
+              if (err) return done(err);
+              if (conflicts.length) return done(conflictError(conflicts));
+              done();
+            });
+          });
+        });
+      });
+
+      it('allows resolve() on the server', function(done) {
+        RemoteCar.replicate(LocalCar, function(err, conflicts) {
+          if (err) return done(err);
+          expect(conflicts).to.have.length(1);
+
+          conflicts[0].resolveUsingSource(function(err) {
+            if (err) return done(err);
+            RemoteCar.replicate(LocalCar, function(err, conflicts) {
+              if (err) return done(err);
+              if (conflicts.length) return done(conflictError(conflicts));
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 
   describe.skip('sync with instance-level permissions', function() {
@@ -222,7 +351,7 @@ describe('Replication over REST', function() {
       ], done);
     });
 
-    // TODO verify conflict resolution
+    // TODO(bajtos) verify conflict resolution
 
     function setupModifiedLocalCopyOfAlice(done) {
       // Replicate directly, bypassing REST+AUTH layers
@@ -245,7 +374,7 @@ describe('Replication over REST', function() {
     base: 'User',
     plural: 'Users', // use the same REST path in all models
     trackChanges: true,
-    strict: true,
+    strict: 'throw',
     persistUndefinedAsNull: true
   };
 
@@ -259,7 +388,7 @@ describe('Replication over REST', function() {
     base: 'PersistedModel',
     plural: 'Cars', // use the same REST path in all models
     trackChanges: true,
-    strict: true,
+    strict: 'throw',
     persistUndefinedAsNull: true,
     acls: [
       // disable anonymous access
@@ -391,9 +520,6 @@ describe('Replication over REST', function() {
         serverApp.dataSources.db.automigrate(next);
       },
       function(next) {
-        ServerUser.deleteAll(next);
-      },
-      function(next) {
         ServerUser.create([ALICE, PETER, EMERY], function(err, created) {
           if (err) return next(err);
           aliceId = created[0].id;
@@ -421,8 +547,8 @@ describe('Replication over REST', function() {
       function(next) {
         ServerCar.create(
           [
-            { maker: 'Ford', model: 'Mustang' },
-            { maker: 'Audi', model: 'R8' }
+            { id: 'Ford-Mustang',  maker: 'Ford', model: 'Mustang' },
+            { id: 'Audi-R8', maker: 'Audi', model: 'R8' }
           ],
           function(err, cars) {
             if (err) return next(err);
@@ -434,16 +560,38 @@ describe('Replication over REST', function() {
   }
 
   function seedClientData(done) {
-    LocalUser.deleteAll(function(err) {
-      if (err) return done(err);
-      LocalCar.deleteAll(function(err) {
-        if (err) return done(err);
+    async.series([
+      function(next) {
+        clientApp.dataSources.db.automigrate(next);
+      },
+      function(next) {
         LocalCar.create(
           [{ maker: 'Local', model: 'Custom' }],
           function(err, cars) {
-            if (err) return done(err);
+            if (err) return next(err);
             clientCars = cars.map(carToString);
-            done();
+            next();
+          });
+      },
+    ], done);
+  }
+
+  function seedConflict(done) {
+    LocalCar.replicate(ServerCar, function(err, conflicts) {
+      if (err) return done(err);
+      if (conflicts.length) return done(conflictError(conflicts));
+      ServerCar.replicate(LocalCar, function(err, conflicts) {
+        if (err) return done(err);
+        if (conflicts.length) return done(conflictError(conflicts));
+
+        // Hard-coded, see the seed data above
+        conflictedCarId = 'Ford-Mustang';
+
+        new LocalCar({ id: conflictedCarId })
+          .updateAttributes({ model: 'Client' }, function(err, c) {
+            if (err) return done(err);
+            new ServerCar({ id: conflictedCarId })
+              .updateAttributes({ model: 'Server' }, done);
           });
       });
     });
