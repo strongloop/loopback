@@ -564,7 +564,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'login',
       {
-        description: 'Login a user with username/email and password',
+        description: 'Login a user with username/email and password.',
         accepts: [
           {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
           {arg: 'include', type: 'string', http: {source: 'query' },
