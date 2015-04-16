@@ -66,7 +66,7 @@ describe('Model / PersistedModel', function() {
 
 describe.onServer('Remote Methods', function() {
 
-  var User;
+  var User, Post;
   var dataSource;
   var app;
 
@@ -84,11 +84,22 @@ describe.onServer('Remote Methods', function() {
       trackChanges: true
     });
 
+    Post = PersistedModel.extend('post', {
+      id: { id: true, type: String, defaultFn: 'guid' },
+      title: String,
+      content: String
+    }, {
+      trackChanges: true
+    });
+
     dataSource = loopback.createDataSource({
       connector: loopback.Memory
     });
 
     User.attachTo(dataSource);
+    Post.attachTo(dataSource);
+
+    User.hasMany(Post);
 
     User.login = function(username, password, fn) {
       if (username === 'foo' && password === 'bar') {
@@ -163,6 +174,63 @@ describe.onServer('Remote Methods', function() {
           done();
         });
     });
+
+    it('Call the findById with filter.fields using HTTP / REST', function(done) {
+      request(app)
+        .post('/users')
+        .send({first: 'x', last: 'y'})
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          var userId = res.body.id;
+          assert(userId);
+          request(app)
+            .get('/users/' + userId + '?filter[fields]=first')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, res) {
+              if (err) return done(err);
+              assert.equal(res.body.first, 'x', 'first should be x');
+              assert(res.body.last === undefined, 'last should not be present');
+              done();
+            });
+        });
+    });
+
+    it('Call the findById with filter.include using HTTP / REST', function(done) {
+      request(app)
+        .post('/users')
+        .send({first: 'x', last: 'y'})
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          var userId = res.body.id;
+          assert(userId);
+          request(app)
+            .post('/users/' + userId + '/posts')
+            .send({title: 'T1', content: 'C1'})
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .end(function(err, res) {
+              if (err) return done(err);
+              var post = res.body;
+              request(app)
+                .get('/users/' + userId + '?filter[include]=posts')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end(function(err, res) {
+                  if (err) return done(err);
+                  assert.equal(res.body.first, 'x', 'first should be x');
+                  assert.equal(res.body.last, 'y', 'last should be y');
+                  assert.deepEqual(post, res.body.posts[0]);
+                  done();
+                });
+            });
+        });
+    });
+
   });
 
   describe('Model.beforeRemote(name, fn)', function() {

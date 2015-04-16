@@ -114,7 +114,7 @@ describe('remoting - integration', function() {
         'create(data:object):store POST /stores',
         'upsert(data:object):store PUT /stores',
         'exists(id:any):boolean GET /stores/:id/exists',
-        'findById(id:any):store GET /stores/:id',
+        'findById(id:any,filter:object):store GET /stores/:id',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
         'updateAll(where:object,data:object) POST /stores/update',
