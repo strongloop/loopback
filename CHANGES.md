@@ -1,3 +1,9 @@
+2015-04-17, Version 2.16.3
+==========================
+
+ * Rework global registry to be per-module-instance (Miroslav Bajtoš)
+
+
 2015-04-17, Version 2.16.1
 ==========================
 
