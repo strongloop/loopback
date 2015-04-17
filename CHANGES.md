@@ -1,3 +1,9 @@
+2015-04-17, Version 2.16.1
+==========================
+
+ * Add back loopback properties like modelBuilder (Miroslav Bajtoš)
+
+
 2015-04-16, Version 2.16.0
 ==========================
 
