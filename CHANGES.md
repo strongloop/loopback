@@ -1,3 +1,37 @@
+2015-04-16, Version 2.16.0
+==========================
+
+ * Expose the `filter` argument for findById (Raymond Feng)
+
+ * fixed the missing '.' in various description fields. (Edmond Lau)
+
+ * Conflict resolution and Access control (Miroslav Bajtoš)
+
+ * Fix the typo (Raymond Feng)
+
+ * Fix PersistedModel._defineChangeModel (Miroslav Bajtoš)
+
+ * AccessControl for change replication (Miroslav Bajtoš)
+
+ * test: remove global autoAttach (Miroslav Bajtoš)
+
+ * Add support for app level Model isolation (Ritchie Martori)
+
+ * Implement ModelCtor.afterRemoteError (Miroslav Bajtoš)
+
+ * Code cleanup, add Model._runWhenAttachedToApp (Miroslav Bajtoš)
+
+ * Refactor Model and PersistedModel registration (Miroslav Bajtoš)
+
+ * Fix the style issue (Raymond Feng)
+
+ * Add missing error handlers to checkpoints() (Miroslav Bajtoš)
+
+ * Fix where param format (Rand McKinney)
+
+ * Test embedsOne CRUD methods (Fabien Franzen)
+
+
 2015-04-01, Version 2.15.0
 ==========================
 
