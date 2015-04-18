@@ -57,6 +57,40 @@
           "model": "widget",
           "type": "hasMany"
         }
+      },
+      "methods": {
+        "details": {
+          "description": "Get additional details about a store.",
+          "accepts": [{
+            "arg": "id",
+            "type": "any",
+            "required": true,
+            "description": "PersistedModel Id"
+          }],
+          "returns": {
+            "arg": "store",
+            "type": "store",
+            "root": true
+          },
+          "http": {
+            "path": "/:id/details",
+            "verb": "get"
+          }
+        },
+        "test": {
+          "description": "Get additional information about a store.",
+          "isStatic": false,
+          "accepts": [],
+          "returns": {
+            "arg": "store",
+            "type": "store",
+            "root": true
+          },
+          "http": {
+            "path": "/test",
+            "verb": "get"
+          }
+        }
       }
     }
   },
