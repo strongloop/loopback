@@ -1,0 +1,10 @@
+{
+  "name": "widget",
+  "properties": {},
+  "relations": {
+    "store": {
+      "model": "store",
+      "type": "belongsTo"
+    }
+  }
+}

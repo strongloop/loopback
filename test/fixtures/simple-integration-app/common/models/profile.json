@@ -1,0 +1,9 @@
+{
+  "name": "profile",
+  "base": "PersistedModel",
+  "properties": {
+    "points": {
+      "type": "number"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "alert",
+  "acls": [
+    {
+      "accessType": "WRITE",
+      "permission": "DENY",
+      "principalType": "ROLE",
+      "principalId": "$everyone"
+    }
+  ],
+  "properties": {}
+}

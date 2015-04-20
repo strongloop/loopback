@@ -1,6 +1,8 @@
 var loopback = require('../');
 var extend = require('util')._extend;
 var Token = loopback.AccessToken.extend('MyToken');
+var ds = loopback.createDataSource({connector: loopback.Memory});
+Token.attachTo(ds);
 var ACL = loopback.ACL;
 
 describe('loopback.token(options)', function() {

@@ -1,0 +1,12 @@
+{
+  "name": "transaction",
+  "acls": [
+    {
+      "accessType": "*",
+      "permission": "DENY",
+      "principalType": "ROLE",
+      "principalId": "$everyone"
+    }
+  ],
+  "properties": {}
+}

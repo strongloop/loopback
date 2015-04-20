@@ -1,0 +1,16 @@
+{
+  "name": "patient",
+  "properties": {
+    "name": "string"
+  },
+  "options": {
+    "relations": {
+      "physicians": {
+        "model": "physician",
+        "type": "hasMany",
+        "through": "appointment",
+        "foreignKey": "physicianId"
+      }
+    }
+  }
+}
