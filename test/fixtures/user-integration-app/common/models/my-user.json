@@ -1,0 +1,18 @@
+{
+  "name": "myUser",
+  "base": "User",
+  "relations": {
+    "blogs": {
+      "model": "blog",
+      "type": "hasMany",
+      "foreignKey": "userId"
+    }
+  },
+  "acls": [
+    {
+      "permission": "ALLOW",
+      "principalType": "ROLE",
+      "principalId": "$owner"
+    }
+  ]
+}

@@ -90,7 +90,10 @@
     "accessTokens": {
       "type": "hasMany",
       "model": "AccessToken",
-      "foreignKey": "userId"
+      "foreignKey": "userId",
+      "options": {
+        "disableInclude": true
+      }
     }
   }
 }

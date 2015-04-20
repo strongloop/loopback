@@ -1,0 +1,15 @@
+{
+  "port": 3000,
+  "host": "0.0.0.0",
+  "cookieSecret": "2d13a01d-44fb-455c-80cb-db9cb3cd3cd0",
+  "remoting": {
+    "json": {
+      "limit": "1kb",
+      "strict": false
+    },
+    "urlencoded": {
+      "limit": "8kb"
+    }
+  },
+  "legacyExplorer": false
+}

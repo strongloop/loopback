@@ -1,0 +1,21 @@
+{
+  "name": "post",
+  "base": "PersistedModel",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "relations": {
+    "user": {
+      "type": "belongsTo",
+      "model": "User"
+    }
+  }
+}
