@@ -10,5 +10,6 @@
     "urlencoded": {
       "limit": "8kb"
     }
-  }
+  },
+  "legacyExplorer": false
 }

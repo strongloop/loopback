@@ -1,0 +1,48 @@
+{
+  "_meta": {
+    "sources": [
+      "../common/models",
+      "./models"
+    ]
+  },
+  "ACL": {
+    "dataSource": "db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Role": {
+    "dataSource": "db",
+    "public": false
+  },
+  "email": {
+    "dataSource": "mail",
+    "public": false
+  },
+  "user": {
+    "dataSource": "db",
+    "public": true
+  },
+  "accessToken": {
+    "dataSource": "db",
+    "public": true
+  },
+  "bank": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "account": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "transaction": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "alert": {
+    "public": true,
+    "dataSource": "db"
+  }
+}

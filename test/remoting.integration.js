@@ -2,7 +2,7 @@ var loopback = require('../');
 var lt = require('loopback-testing');
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
-var app = require(path.join(SIMPLE_APP, 'app.js'));
+var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
 
 describe('remoting - integration', function() {

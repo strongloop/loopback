@@ -1,0 +1,20 @@
+{
+  "name": "appointment",
+  "properties": {
+    "date": "date"
+  },
+  "options": {
+    "relations": {
+      "physician": {
+        "model": "physician",
+        "type": "belongsTo",
+        "foreignKey": "physicianId"
+      },
+      "patient": {
+        "model": "patient",
+        "type": "belongsTo",
+        "foreignKey": "patientId"
+      }
+    }
+  }
+}

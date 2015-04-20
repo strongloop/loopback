@@ -1,0 +1,11 @@
+{
+  "name": "user",
+  "base": "User",
+  "relations": {
+    "accessTokens": {
+      "model": "accessToken",
+      "type": "hasMany",
+      "foreignKey": "userId"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "email",
+  "base": "Email",
+  "acls": [
+    {
+      "accessType": "*",
+      "permission": "DENY",
+      "principalType": "ROLE",
+      "principalId": "$everyone"
+    }
+  ]
+}

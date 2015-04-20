@@ -1,0 +1,16 @@
+{
+  "name": "customer",
+  "base": "PersistedModel",
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "relations": {
+    "profile": {
+      "type": "hasOne",
+      "model": "profile"
+    }
+  }
+}
