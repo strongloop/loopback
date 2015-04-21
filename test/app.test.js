@@ -796,6 +796,34 @@ describe('app', function() {
       app.enableAuth();
       expect(app.isAuthEnabled).to.equal(true);
     });
+
+    it('auto-configures required models to provided dataSource', function() {
+      var AUTH_MODELS = ['User', 'ACL', 'AccessToken', 'Role', 'RoleMapping'];
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      require('../lib/builtin-models')(app.registry);
+      var db = app.dataSource('db', { connector: 'memory' });
+
+      app.enableAuth({ dataSource: 'db' });
+
+      expect(Object.keys(app.models)).to.include.members(AUTH_MODELS);
+
+      AUTH_MODELS.forEach(function(m) {
+        var Model = app.models[m];
+        expect(Model.dataSource, m + '.dataSource').to.equal(db);
+        expect(Model.shared, m + '.shared').to.equal(m === 'User');
+      });
+    });
+
+    it('detects already configured subclass of a required model', function() {
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      var db = app.dataSource('db', { connector: 'memory' });
+      var Customer = app.registry.createModel('Customer', {}, { base: 'User' });
+      app.model(Customer, { dataSource: 'db' });
+
+      app.enableAuth({ dataSource: 'db' });
+
+      expect(Object.keys(app.models)).to.not.include('User');
+    });
   });
 
   describe.onServer('app.get(\'/\', loopback.status())', function() {
