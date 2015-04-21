@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "sources": [
+      "../common/models",
+      "./models"
+    ]
+  },
+  "Email": {
+    "dataSource": "mail",
+    "public": false
+  },
+  "User": {
+    "dataSource": "db",
+    "public": true,
+    "relations": {
+      "posts": {
+        "model": "post",
+        "type": "hasMany",
+        "foreignKey": "userId"
+      }
+    },
+    "acls": [
+      {
+        "permission": "ALLOW",
+        "principalType": "ROLE",
+        "principalId": "$owner"
+      }
+    ]
+  },
+  "AccessToken": {
+    "dataSource": "db",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "db",
+    "public": false
+  },
+  "Role": {
+    "dataSource": "db",
+    "public": false
+  },
+  "myUser": {
+    "dataSource": "db",
+    "public": true
+  },
+  "blog": {
+    "dataSource": "db",
+    "public": true
+  },
+  "post": {
+    "dataSource": "db",
+    "public": true
+  }
+}
