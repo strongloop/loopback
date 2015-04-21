@@ -1,3 +1,11 @@
+2015-04-21, Version 2.17.0
+==========================
+
+ * Disable inclusion of User.accessTokens (Raymond Feng)
+
+ * Upgrade test fixtures to use LB 2.x layout (Raymond Feng)
+
+
 2015-04-17, Version 2.16.3
 ==========================
 
