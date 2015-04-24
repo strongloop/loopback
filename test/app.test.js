@@ -604,6 +604,10 @@ describe('app', function() {
       app.model('MyTestModel', { dataSource: null });
     });
 
+    it('accepts false dataSource', function() {
+      app.model('MyTestModel', { dataSource: false });
+    });
+
     it('should not require dataSource', function() {
       app.model('MyTestModel', {});
     });

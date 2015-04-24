@@ -310,7 +310,7 @@ describe('loopback', function() {
       });
 
       loopback.configureModel(model, {
-        dataSource: null,
+        dataSource: false,
         relations: {
           owner: {
             model: 'Application'
