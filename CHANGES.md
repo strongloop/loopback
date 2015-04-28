@@ -1,3 +1,9 @@
+2015-04-28, Version 2.17.2
+==========================
+
+ * Fix regression in Model.getApp() (Miroslav Bajtoš)
+
+
 2015-04-28, Version 2.17.1
 ==========================
 
