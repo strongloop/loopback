@@ -618,4 +618,33 @@ describe.onServer('Remote Methods', function() {
       ]);
     });
   });
+
+  describe('Model.getApp(cb)', function() {
+    var app, TestModel;
+    beforeEach(function setup() {
+      app = loopback();
+      TestModel = loopback.createModel('TestModelForGetApp'); // unique name
+      app.dataSource('db', { connector: 'memory' });
+    });
+
+    it('calls the callback when already attached', function(done) {
+      app.model(TestModel, { dataSource: 'db' });
+      TestModel.getApp(function(err, a) {
+        if (err) return done(err);
+        expect(a).to.equal(app);
+        done();
+      });
+      // fails on time-out when not implemented correctly
+    });
+
+    it('calls the callback after attached', function(done) {
+      TestModel.getApp(function(err, a) {
+        if (err) return done(err);
+        expect(a).to.equal(app);
+        done();
+      });
+      app.model(TestModel, { dataSource: 'db' });
+      // fails on time-out when not implemented correctly
+    });
+  });
 });
