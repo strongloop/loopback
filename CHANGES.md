@@ -1,3 +1,11 @@
+2015-04-28, Version 2.17.1
+==========================
+
+ * Allow dataSource === false (Raymond Feng)
+
+ * Fix remoting metadata for User.login#include (Miroslav Bajtoš)
+
+
 2015-04-21, Version 2.17.0
 ==========================
 
