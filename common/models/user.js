@@ -567,7 +567,7 @@ module.exports = function(User) {
         description: 'Login a user with username/email and password.',
         accepts: [
           {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
-          {arg: 'include', type: 'string', http: {source: 'query' },
+          {arg: 'include', type: ['string'], http: {source: 'query' },
             description: 'Related objects to include in the response. ' +
             'See the description of return value for more details.'}
         ],
