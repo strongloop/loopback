@@ -170,10 +170,11 @@ module.exports = function(AccessToken) {
 /*
 https://github.com/strongloop/loopback/issues/1326
 */
-    params = params.concat(['access_token']);
-    headers = headers.concat(['X-Access-Token', 'authorization']);
-    cookies = cookies.concat(['access_token', 'authorization']);
-
+	if ( options.noConcat === undefined ){
+		params = params.concat(['access_token']);
+		headers = headers.concat(['X-Access-Token', 'authorization']);
+		cookies = cookies.concat(['access_token', 'authorization']);
+	}
     for (length = params.length; i < length; i++) {
       var param = params[i];
       // replacement for deprecated req.param()
