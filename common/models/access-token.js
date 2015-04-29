@@ -167,7 +167,9 @@ module.exports = function(AccessToken) {
     var i = 0;
     var length;
     var id;
-
+/*
+https://github.com/strongloop/loopback/issues/1326
+*/
     params = params.concat(['access_token']);
     headers = headers.concat(['X-Access-Token', 'authorization']);
     cookies = cookies.concat(['access_token', 'authorization']);
