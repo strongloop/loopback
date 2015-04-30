@@ -170,7 +170,7 @@ module.exports = function(AccessToken) {
     /*
     * https://github.com/strongloop/loopback/issues/1326
     */
-    if (options.noConcat === undefined) {
+    if (options.defaultAccessToken === undefined || options.defaultAccessToken === true) {
       params = params.concat(['access_token']);
       headers = headers.concat(['X-Access-Token', 'authorization']);
       cookies = cookies.concat(['access_token', 'authorization']);
