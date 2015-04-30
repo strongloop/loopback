@@ -353,9 +353,9 @@ function createTestApp(testToken, settings, done) {
 
   var tokenOptions = {};
   var tokenKeySettings = settings.tokenKey || {};
-  var header = tokenKeySettings.header || [];
-  var cookie = tokenKeySettings.cookie || [];
-  var param = tokenKeySettings.param || [];
+  var headers = tokenKeySettings.headers || [];
+  var cookies = tokenKeySettings.cookies || [];
+  var params = tokenKeySettings.params || [];
   var defaultTokenKeys = tokenKeySettings.defaultTokenKeys || undefined;
 
   if (defaultTokenKeys === undefined) {
@@ -368,9 +368,9 @@ function createTestApp(testToken, settings, done) {
       model: Token,
       currentUserLiteral: 'me',
       defaultTokenKeys: defaultTokenKeys,
-      header: header,
-      cookie: cookie,
-      param: param
+      headers: headers,
+      cookies: cookies,
+      params: params
     };
   }
 
