@@ -351,10 +351,33 @@ function createTestApp(testToken, settings, done) {
   var appSettings = settings.app || {};
   var modelSettings = settings.model || {};
 
+  var tokenOptions = {};
+  var tokenKeySettings = settings.tokenKey || {};
+  var header = tokenKeySettings.header || [];
+  var cookie = tokenKeySettings.cookie || [];
+  var param = tokenKeySettings.param || [];
+  var defaultTokenKeys = tokenKeySettings.defaultTokenKeys || undefined;
+
+  if (defaultTokenKeys === undefined) {
+    tokenOptions = {
+      model: Token,
+      currentUserLiteral: 'me'
+    };
+  } else {
+    tokenOptions = {
+      model: Token,
+      currentUserLiteral: 'me',
+      defaultTokenKeys: defaultTokenKeys,
+      header: header,
+      cookie: cookie,
+      param: param
+    };
+  }
+
   var app = loopback();
 
   app.use(loopback.cookieParser('secret'));
-  app.use(loopback.token({model: Token, currentUserLiteral: 'me'}));
+  app.use(loopback.token(tokenOptions));
   app.get('/token', function(req, res) {
     res.cookie('authorization', testToken.id, {signed: true});
     res.end();
