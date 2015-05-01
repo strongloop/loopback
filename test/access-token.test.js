@@ -41,10 +41,10 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
-  it('should populate req.token from an authorization header with bearer token using option.defaultOptionKeys', function(done) {
+  it('should populate req.token from an authorization header with bearer token using option.defaultTokenKeys', function(done) {
     var token = this.token.id;
     token = 'Bearer ' + new Buffer(token).toString('base64');
-    createTestAppAndRequest(this.token, {headers:['authorization'], defaultOptionKeys: false}, done)
+    createTestAppAndRequest(this.token, {headers:['authorization'], defaultTokenKeys: false}, done)
       .get('/')
       .set('authorization', token)
       .expect(200)
