@@ -41,7 +41,17 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
-  describe('populating req.toen from HTTP Basic Auth formatted authorization header', function() {
+  it('should populate req.token from an authorization header with bearer token using option.noDefaultKeys', function(done) {
+    var token = this.token.id;
+    token = 'Bearer ' + new Buffer(token).toString('base64');
+    createTestAppAndRequest(this.token, {headers:['authorization'], noDefaultKeys: true}, done)
+      .get('/')
+      .set('authorization', token)
+      .expect(200)
+      .end(done);
+  });
+
+  describe('populating req.token from HTTP Basic Auth formatted authorization header', function() {
     it('parses "standalone-token"', function(done) {
       var token = this.token.id;
       token = 'Basic ' + new Buffer(token).toString('base64');
