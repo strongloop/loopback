@@ -111,6 +111,14 @@ module.exports = function(grunt) {
         junitReporter: {
           outputFile: 'karma-xunit.xml'
         },
+
+        browserify: {
+          // Disable sourcemaps to prevent
+          // Fatal error: Maximum call stack size exceeded
+          debug: false,
+          // Disable watcher, grunt will exit after the first run
+          watch: false
+        }
       },
       unit: {
         configFile: 'test/karma.conf.js',
