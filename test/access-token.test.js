@@ -1,6 +1,6 @@
 var loopback = require('../');
 var extend = require('util')._extend;
-var util = require('util'); // to get inspect
+var util = require('util'); 
 var debug = require('debug')('AccessToken.test'); 
 var Token = loopback.AccessToken.extend('MyToken');
 var ds = loopback.createDataSource({connector: loopback.Memory});
@@ -46,7 +46,7 @@ describe('loopback.token(options)', function() {
     it('an authorization header, no default Token Keys set and expect authorization in header ', function(done) {
       var token = this.token.id;
       token = 'Bearer ' + new Buffer(token).toString('base64');
-      createTestAppAndRequest(this.token, {headers:['authorization'], defaultTokenKeys: false}, done)
+      createTestAppAndRequest(this.token, {token: {headers:['authorization'], defaultTokenKeys: false}}, done)
         .get('/')
         .set('authorization', token)
         .expect(200)
@@ -56,7 +56,7 @@ describe('loopback.token(options)', function() {
     it('an authorization header, default Token Keys set', function(done) {
       var token = this.token.id;
       token = 'Bearer ' + new Buffer(token).toString('base64');
-      createTestAppAndRequest(this.token, {defaultTokenKeys: true}, done)
+      createTestAppAndRequest(this.token, {token:{defaultTokenKeys: true}}, done)
         .get('/')
         .set('authorization', token)
         .expect(200)
@@ -66,7 +66,7 @@ describe('loopback.token(options)', function() {
     it('an authorization header, no default Token Keys set and no definitions of authorization', function(done) {
       var token = this.token.id;
       token = 'Bearer ' + new Buffer(token).toString('base64');
-      createTestAppAndRequest(this.token, {defaultTokenKeys: false}, done)
+      createTestAppAndRequest(this.token, {token:{defaultTokenKeys: false}}, done)
         .get('/')
         .set('authorization', token)
         .expect(401)
@@ -377,13 +377,13 @@ function createTestAppAndRequest(testToken, settings, done) {
 }
 
 function createTestApp(testToken, settings, done) {
-  done = arguments[arguments.length - 1];
+  done = arguments[arguments.length - 1]; // TODO: are these 3 lines "good"?
   if (settings == done) settings = {};
   settings = settings || {};
-  debug('settings:'+util.inspect(settings));  
+  //debug('settings:'+util.inspect(settings, false, 1));  
  
   var appSettings = settings.app || {}; 
-  debug('appSettings:'+util.inspect(appSettings));
+  //debug('appSettings:'+util.inspect(appSettings, false, 1));
   
   var modelSettings = settings.model || {}; 
   var modelOptions = {
@@ -398,14 +398,16 @@ function createTestApp(testToken, settings, done) {
     ]
   };
   Object.keys(modelSettings).forEach(function(key) { modelOptions[key] = modelSettings[key];});
-  debug('modelSettings:'+util.inspect(modelSettings));
+  //debug('modelSettings:'+util.inspect(modelSettings, false, 1));
   
-  var tokenSettings = settings.token || {
+  var tokenSettings = {
     defaultTokenKeys : true,
     model: Token,
     currentUserLiteral: 'me'
   }; 
-  debug('tokenSettings:'+util.inspect(tokenSettings));
+  // TODO: next line may be givint Object.keys called on non-object
+  //Object.keys(settings.token).forEach(function(key) { tokenSettings[key] = settings.token[key];});
+  debug('tokenSettings:'+util.inspect(tokenSettings, false, 1));
 
   // The order of app.somethings is important
   var app = loopback();
@@ -419,7 +421,7 @@ function createTestApp(testToken, settings, done) {
   });
   app.get('/', function(req, res) {
     try {
-      assert(req.accessToken, 'req should have accessToken');
+      assert(req.accessToken, 'req should have accessToken'); // this fails the defaultTokenKeys=false test
       assert(req.accessToken.id === testToken.id);
     } catch (e) {
       return done(e);
@@ -439,9 +441,8 @@ function createTestApp(testToken, settings, done) {
   app.use(loopback.rest());
   app.enableAuth();
 
-  
   Object.keys(appSettings).forEach(function(key) {app.set(key, appSettings[key]);});
-  
+
   var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
   TestModel.attachTo(loopback.memory());
   app.model(TestModel);
