@@ -380,10 +380,10 @@ function createTestApp(testToken, settings, done) {
   done = arguments[arguments.length - 1];
   if (settings == done) settings = {};
   settings = settings || {};
-  debug(util.inspect('settings:'+settings));  
+  debug('settings:'+util.inspect(settings));  
  
   var appSettings = settings.app || {}; 
-  debug(util.inspect('appSettings:'+appSettings));
+  debug('appSettings:'+util.inspect(appSettings));
   
   var modelSettings = settings.model || {}; 
   var modelOptions = {
@@ -398,14 +398,14 @@ function createTestApp(testToken, settings, done) {
     ]
   };
   Object.keys(modelSettings).forEach(function(key) { modelOptions[key] = modelSettings[key];});
-  debug(util.inspect('modelSettings:'+modelSettings));
+  debug('modelSettings:'+util.inspect(modelSettings));
   
   var tokenSettings = settings.token || {
     defaultTokenKeys : true,
     model: Token,
     currentUserLiteral: 'me'
   }; 
-  debug(util.inspect('tokenSettings:'+tokenSettings));
+  debug('tokenSettings:'+util.inspect(tokenSettings));
 
   // The order of app.somethings is important
   var app = loopback();
