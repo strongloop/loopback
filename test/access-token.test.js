@@ -18,7 +18,7 @@ describe('loopback.token(options)', function() {
         .end(done);
     });
 
-    it('an authorization header', function(done) {
+    it('an authorization header 1of2', function(done) {
       createTestAppAndRequest(this.token, done)
         .get('/')
         .set('authorization', this.token.id)
@@ -34,7 +34,7 @@ describe('loopback.token(options)', function() {
         .end(done);
     });
 
-    it('an authorization header', function(done) {
+    it('an authorization header 2of2', function(done) {
       var token = this.token.id;
       token = 'Bearer ' + new Buffer(token).toString('base64');
       createTestAppAndRequest(this.token, done)
