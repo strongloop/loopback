@@ -1,32 +1,44 @@
-var loopback = require('../');
-var extend = require('util')._extend;
-var util = require('util'); 
-var debug = require('debug')('AccessToken.app'); 
-var Token = loopback.AccessToken.extend('MyToken');
-var ds = loopback.createDataSource({connector: loopback.Memory});
-Token.attachTo(ds);
-var ACL = loopback.ACL;
+'use strict';
+/*
+* An app for access-token tests
+* - note 'request' seems to come from test/support.js
+*/
+module.exports = {
+  createTokenId: createTokenId,
+  createAppAndRequest: createAppAndRequest
+}
+var 
+  debug = require('debug')('AccessToken.app'),
+  inspect = require('util').inspect;
+var  
+  loopback = require('../'),
+  extend = require('util')._extend, //WHY: the _
+  Token = loopback.AccessToken.extend('MyToken'),
+  createToken = {userId: '123'},
+  lbDataSource = loopback.createDataSource({connector: loopback.Memory}),
+  ACL = loopback.ACL;
 
+Token.attachTo(lbDataSource);
 
-module.exports = function createTestingToken(done) { //TODO: why repeat for all tests ...?
-  var test = this;
-  Token.create({userId: '123'}, function(err, token) {
-    if (err) return done(err);
-    test.token = token;
+function createTokenId(done) {
+  var
+    test = this; // FIXME: I hate this
+  Token.create(createToken, function(err, token) {
+    if (err) {
+      debug('createTokenId err:\n'+inspect(err)+'\n');
+      return done(err);
+    }
+    debug('createTokenId tokenId:\n'+inspect(token.id)+'\n');
+    test.tokenId = token.id;
     done();
   });
 }
 
-module.exports = function createTestAppAndRequest(testToken, settings, done) {
-  var app = createTestApp(testToken, settings, done);
-  return request(app);
+function createAppAndRequest(tokenId, settings, done) {
+  return request(createApp(tokenId, settings, done));
 }
 
-module.exports = function createTestApp(testToken, settings, done) {
-  done = arguments[arguments.length - 1]; // TODO: are these 3 lines "good"?
-  if (settings == done) settings = {};
-  settings = settings || {};
- 
+function createApp(tokenId, settings, done) {
   var appSettings = settings.app || {}; 
   
   var modelSettings = settings.model || {}; 
@@ -58,7 +70,7 @@ module.exports = function createTestApp(testToken, settings, done) {
     var send = '200';
     try { // TODO: this is a bad test for defaultTokenKey = false and no options for placement of token
       assert(req.accessToken, 'req should have accessToken'); // this fails the defaultTokenKeys=false test
-      assert(req.accessToken.id === testToken.id);
+      assert(req.accessToken.id === tokenId);
     } catch (e) {
       debug('app.get e:'+e);
       send = '401'
