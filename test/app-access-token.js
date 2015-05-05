@@ -1,7 +1,7 @@
 var loopback = require('../');
 var extend = require('util')._extend;
 var util = require('util'); 
-var debug = require('debug')('AccessToken.test'); 
+var debug = require('debug')('AccessToken.app'); 
 var Token = loopback.AccessToken.extend('MyToken');
 var ds = loopback.createDataSource({connector: loopback.Memory});
 Token.attachTo(ds);

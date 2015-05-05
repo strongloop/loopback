@@ -1,9 +1,20 @@
 var util = require('util'); 
-var debug = require('debug')('AccessToken.test');
-var accessTokenApp = require('./app-access-token'); 
+var debug = require('debug')('AccessToken.defaultTokenKeys');
+var createTestingToken = require('./app-access-token').createTestingToken;
+var createTestAppAndRequest = require('./app-access-token').createTestAppAndRequest;
+
+/*
+The above means that the below means that the tests are tests with very little code
+There was too much app in the previous test(s) which meant debug/test of an app in a test
+
+The rather large files are now getting broken into managable sizes
+
+Maybe now I have a chance :)
+*/
+
 
 describe('API:loopback.token(options)', function() {
-  beforeEach(accessTokenApp.createTestingToken);
+  before(createTestingToken); // TODO make token only once instead of beforeEach is "better"
   describe('option defaultTokenKeys true or false', function(){
     describe('header authorization', function(){
       var
