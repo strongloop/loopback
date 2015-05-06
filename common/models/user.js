@@ -391,15 +391,16 @@ module.exports = function(User) {
 
       options.text = options.text.replace('{href}', options.verifyHref);
 
+      options.to = options.to || user.email;
+
+      options.subject = options.subject || 'Thanks for Registering';
+
+      options.headers = options.headers || {};
+
       var template = loopback.template(options.template);
-      Email.send({
-        to: options.to || user.email,
-        from: options.from,
-        subject: options.subject || 'Thanks for Registering',
-        text: options.text,
-        html: template(options),
-        headers: options.headers || {}
-      }, function(err, email) {
+      options.html = template(options);
+
+      Email.send(options, function(err, email) {
         if (err) {
           fn(err);
         } else {
