@@ -1,35 +1,32 @@
 'use strict';
-var
-  debug = require('debug')('AccessToken.test'),
-  inspect = require('util').inspect;
+var debug = require('debug')('AccessToken.test');
+var inspect = require('util').inspect;
 /*
 * API:Middleware:loopback.token(options)
 */
-var
-  api = {
-    loopback: {
-      token: {
-        searchDefaultTokenKeys: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.searchDefaultTokenKeys
-      }
+var api = {
+  loopback: {
+    token: {
+      searchDefaultTokenKeys: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.searchDefaultTokenKeys
     }
   }
+};
 
 describe('API:Middleware:loopback.token(options)', function() {
   describe('options.searchDefaultTokenKeys: [true|false]', function() {
-    var
-      itTxt,
-      expect = 200,
-      searchDefaultTokenKeys = false,
-      header = 'authorization',
-      testOptions = {
-        expect: expect,
-        header: header,
-      },
-      headers = ['header'],
-      tokenOptions = {
-        searchDefaultTokenKeys: searchDefaultTokenKeys,
-        headers: headers,
-      };
+    var itTxt;
+    var expect = 200;
+    var searchDefaultTokenKeys = false;
+    var header = 'authorization';
+    var testOptions = {
+      expect: expect,
+      header: header,
+    };
+    var headers = ['header'];
+    var tokenOptions = {
+      searchDefaultTokenKeys: searchDefaultTokenKeys,
+      headers: headers,
+    };
 
     // describe('The normal use case for searchDefaultTokenKeys')
     itTxt = 'Test header=' + header + ' searchDefaultTokenKeys=' + searchDefaultTokenKeys + ' and expect ' + expect;
