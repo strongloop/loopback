@@ -52,6 +52,16 @@ describe('API:Middleware:loopback.token(options)', function() {
       api.loopback.token.options.searchDefaultTokenKeys(testOptions, tokenOptions);
     });
 
+    // describe('Specific enabelment of searchDefaultTokenKeys')
+    searchDefaultTokenKeys = true;
+    headers = [];
+    itTxt = 'Test header=' + header + ' searchDefaultTokenKeys=' + searchDefaultTokenKeys + ' and expect ' + expect;
+    it(itTxt, function(done) {
+      testOptions['done'] = done;
+      testOptions['headers'] = headers;
+      api.loopback.token.options.searchDefaultTokenKeys(testOptions, tokenOptions);
+    });
+
     // describe('A test case for regression')
     searchDefaultTokenKeys = undefined;
     headers = [];

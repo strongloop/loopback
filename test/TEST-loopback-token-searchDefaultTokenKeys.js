@@ -85,7 +85,7 @@ function createApp(testOptions, tokenOptions) {
   app.model(TestModel);
   app.use(loopback.token(tokenOptions));
   app.get(get, appGet);
-  app.use(loopback.rest()); 
+  app.use(loopback.rest());
   app.enableAuth();
   return app;
 }
