@@ -9,7 +9,10 @@ module.exports = {
   api : {
     loopback: {
       token: {
-        searchDefaultTokenKeys: searchDefaultTokenKeys
+        noOptions: function() {throw 'Implement';},
+        options: {
+          searchDefaultTokenKeys: searchDefaultTokenKeys,
+        }
       }
     }
   }

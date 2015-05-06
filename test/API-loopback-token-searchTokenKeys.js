@@ -7,12 +7,29 @@ var inspect = require('util').inspect;
 var api = {
   loopback: {
     token: {
-      searchDefaultTokenKeys: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.searchDefaultTokenKeys
+      noOptions: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.noOptions,
+      options:{
+        searchDefaultTokenKeys: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.options.searchDefaultTokenKeys
+      }
     }
   }
 };
 
 describe('API:Middleware:loopback.token(options)', function() {
+  describe('options = {} --- DEMO --- DEMO ---', function() {
+    var itTxt;
+    var expect = 200;
+    var header = 'authorization';
+    var testOptions = {
+      expect: expect,
+      header: header,
+    };
+    // describe('A normal use case, where a well-known header is used with no other options needed');
+    itTxt = 'Test header=' + header + ' and expect ' + expect;
+    it(itTxt, function(done) {
+      done(); // TODO: implement in api.loopback.token.noOptions(testOptions)
+    });
+  });
   describe('options.searchDefaultTokenKeys: [true|false]', function() {
     var itTxt;
     var expect = 200;
@@ -32,7 +49,7 @@ describe('API:Middleware:loopback.token(options)', function() {
     itTxt = 'Test header=' + header + ' searchDefaultTokenKeys=' + searchDefaultTokenKeys + ' and expect ' + expect;
     it(itTxt, function(done) {
       testOptions['done'] = done;
-      api.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+      api.loopback.token.options.searchDefaultTokenKeys(testOptions, tokenOptions);
     });
 
     // describe('A test case for regression')
@@ -43,7 +60,7 @@ describe('API:Middleware:loopback.token(options)', function() {
       testOptions['searchDefaultTokenKeys'] = undefined; //FIXME: is this a good way
       testOptions['headers'] = headers;
       testOptions['done'] = done;
-      api.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+      api.loopback.token.options.searchDefaultTokenKeys(testOptions, tokenOptions);
     });
 
     /*
