@@ -9,7 +9,7 @@ var
   api = {
     loopback: {
       token: {
-        defaultTokenKeys: require('./app-access-token').api.loopback.token.defaultTokenKeys
+        defaultTokenKeys: require('./TEST-loopback-token-defaultTokenKeys').api.loopback.token.defaultTokenKeys
       }
     }
   }
