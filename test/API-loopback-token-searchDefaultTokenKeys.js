@@ -7,7 +7,7 @@ var inspect = require('util').inspect;
 var api = {
   loopback: {
     token: {
-      noOptions: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.noOptions,
+      optionsUndefined: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.optionsUndefined,
       options:{
         searchDefaultTokenKeys: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.options.searchDefaultTokenKeys
       }
@@ -27,7 +27,7 @@ describe('API:Middleware:loopback.token(options)', function() {
     // describe('A normal use case, where a well-known header is used with no other options needed');
     itTxt = 'Test header=' + header + ' and expect ' + expect;
     it(itTxt, function(done) {
-      done(); // TODO: implement in api.loopback.token.noOptions(testOptions)
+      done(); // TODO: implement in api.loopback.token.optionsUndefined(testOptions)
     });
   });
   describe('options.searchDefaultTokenKeys: [true|false]', function() {

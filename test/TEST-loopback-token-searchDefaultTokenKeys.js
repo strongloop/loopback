@@ -9,7 +9,7 @@ module.exports = {
   api : {
     loopback: {
       token: {
-        noOptions: function() {throw 'Implement';},
+        optionsUndefined: function() {throw 'Implement';},
         options: {
           searchDefaultTokenKeys: searchDefaultTokenKeys,
         }
@@ -78,16 +78,14 @@ function createApp(testOptions, tokenOptions) {
     property: 'deleteById'
   };
   var modelOptions = {acls: [acl]};
+  var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
   var get = testOptions.get;
 
-  app.use(loopback.token(tokenOptions));
-  app.get(get, appGet);
-  app.use(loopback.rest()); //WHY: here
-  app.enableAuth(); //WHY: here
-
-  var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions); //WHY: here
   TestModel.attachTo(loopback.memory());
   app.model(TestModel);
-
+  app.use(loopback.token(tokenOptions));
+  app.get(get, appGet);
+  app.use(loopback.rest()); 
+  app.enableAuth();
   return app;
 }
