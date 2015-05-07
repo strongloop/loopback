@@ -21,6 +21,7 @@ module.exports = {
 var loopback = require('../');
 var tokenId;  //FIXME: another way than this 'global'
 
+
 function optionsUndefined(testOptions) {
   debug('optionsUndefined testOptions:\n' + inspect(testOptions) + '\n');
   var tokenOptions = {};
@@ -52,7 +53,7 @@ function createTokenStartApp(testOptions, tokenOptions) {
   Token.attachTo(tokenDataSource);
   tokenOptions['model'] = Token;
   tokenOptions['currentUserLiteral'] = 'me';
-
+  
   Token.create(tokenCreate, function(err, token) {
     if (err) return done(err);
     testOptions['tokenId'] = token.id;
@@ -68,7 +69,7 @@ function attachAndReturnModel() {
     principalId: '$everyone',
     accessType: ACL.ALL,
     permission: ACL.DENY,
-    property: 'deleteById'
+    property: '*'
   };
   var modelOptions = {acls: [acl]};
   var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
@@ -78,14 +79,19 @@ function attachAndReturnModel() {
 
 // FIXME: try/catch does not support searchDefaultTokenKeys = false and headers = []
 function appGet(req, res) {
+  debug('appeget req:\n' + inspect(req) + '\n' );
+  debug('appeget res:\n' + inspect(res) + '\n' );
+/*
   debug('appGet req.headers:\n' + inspect(req.headers) + '\n');
   debug('appGet req.accessToken:\n' + inspect(req.accessToken) + '\n');
   debug('appGet tokenId:\n' + tokenId + '\n');
+ */  
   var send = '200';
   try {
     assert(req.accessToken, 'req should have accessToken');
     assert(req.accessToken.id === tokenId); //FIXME: another way than this 'global'
-    // FIXME: ok the req HAS accessToken.id but if loopback is not 'looking' for it === 401
+    // FIXME: ok the req HAS accessToken.id but this is not a good test
+    
   } catch (error) {
     debug('app.get error:\n' + error + '\n');
     send = '401';

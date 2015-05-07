@@ -169,7 +169,7 @@ module.exports = function(AccessToken) {
     var id;
 
     // https://github.com/strongloop/loopback/issues/1326
-    if (options.searchDefaultTokenKeys === undefined || options.searchDefaultTokenKeys === true) {
+    if (options.searchDefaultTokenKeys !== false) {
       params = params.concat(['access_token']);
       headers = headers.concat(['X-Access-Token', 'authorization']);
       cookies = cookies.concat(['access_token', 'authorization']);
