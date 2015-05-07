@@ -4,19 +4,22 @@ var inspect = require('util').inspect;
 /*
 * API:Middleware:loopback.token(options)
 */
+var S = {
+  TEST_REQUIRE_FILE: './TEST-loopback-token-searchDefaultTokenKeys',
+};
 var api = {
   loopback: {
     token: {
-      optionsUndefined: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.optionsUndefined,
+      optionsUndefined: require(S.TEST_REQUIRE_FILE).api.loopback.token.optionsUndefined,
       options:{
-        searchDefaultTokenKeys: require('./TEST-loopback-token-searchDefaultTokenKeys').api.loopback.token.options.searchDefaultTokenKeys
+        searchDefaultTokenKeys: require(S.TEST_REQUIRE_FILE).api.loopback.token.options.searchDefaultTokenKeys
       }
     }
   }
 };
 
 describe('API:Middleware:loopback.token(options)', function() {
-  describe('options = {} --- DEMO --- DEMO ---', function() {
+  describe('options = {}', function() {
     var itTxt;
     var expect = 200;
     var header = 'authorization';
@@ -27,7 +30,8 @@ describe('API:Middleware:loopback.token(options)', function() {
     // describe('A normal use case, where a well-known header is used with no other options needed');
     itTxt = 'Test header=' + header + ' and expect ' + expect;
     it(itTxt, function(done) {
-      done(); // TODO: implement in api.loopback.token.optionsUndefined(testOptions)
+      testOptions['done'] = done;
+      api.loopback.token.optionsUndefined(testOptions);
     });
   });
   describe('options.searchDefaultTokenKeys: [true|false]', function() {
