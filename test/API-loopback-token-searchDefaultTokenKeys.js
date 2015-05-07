@@ -5,14 +5,22 @@ var inspect = require('util').inspect;
 * API:Middleware:loopback.token(options)
 */
 var S = {
-  TEST_REQUIRE_FILE: './TEST-loopback-token-searchDefaultTokenKeys',
+  REQUIRE:{
+    FILE: {
+      TEST: {
+        LOOPBACK: {
+          TOKEN: './TEST-loopback-token-searchDefaultTokenKeys',
+        }
+      }
+    }
+  }
 };
 var api = {
   loopback: {
     token: {
-      optionsUndefined: require(S.TEST_REQUIRE_FILE).api.loopback.token.optionsUndefined,
+      optionsUndefined: require(S.REQUIRE.FILE.TEST.LOOPBACK.TOKEN).api.loopback.token.optionsUndefined,
       options:{
-        searchDefaultTokenKeys: require(S.TEST_REQUIRE_FILE).api.loopback.token.options.searchDefaultTokenKeys
+        searchDefaultTokenKeys: require(S.REQUIRE.FILE.TEST.LOOPBACK.TOKEN).api.loopback.token.options.searchDefaultTokenKeys
       }
     }
   }

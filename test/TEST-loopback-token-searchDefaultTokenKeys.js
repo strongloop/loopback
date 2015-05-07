@@ -17,16 +17,28 @@ module.exports = {
     }
   }
 };
+
 var loopback = require('../');
-var tokenId; // FIXME: a 'global' until some other method is found
+var tokenId;  //FIXME: another way than this 'global'
 
 function optionsUndefined(testOptions) {
-  var done = testOptions.done;
+  debug('optionsUndefined testOptions:\n' + inspect(testOptions) + '\n');
   var tokenOptions = {};
-  createTokenStartApp(testOptions, tokenOptions);
+  var app = createTokenStartApp(testOptions, tokenOptions);
 }
+
 function searchDefaultTokenKeys(testOptions, tokenOptions) {
-  createTokenStartApp(testOptions, tokenOptions);
+  debug('optionsUndefined searchDefaultTokenKeys:\n' + inspect(testOptions) + '\n');
+  var app = createTokenStartApp(testOptions, tokenOptions);
+}
+
+function sendRequest(app, testOptions) {
+  debug('sendRequest testOptions.tokenId:\n' + inspect(testOptions.tokenId) + '\n');
+  request(app)
+    .get(testOptions.get)
+    .set(testOptions.header, testOptions.tokenId)
+    .expect(testOptions.expect)
+    .end(testOptions.done);
 }
 
 function createTokenStartApp(testOptions, tokenOptions) {
@@ -34,6 +46,9 @@ function createTokenStartApp(testOptions, tokenOptions) {
   var Token = loopback.AccessToken.extend('MyToken');
   var tokenDataSource = loopback.createDataSource({connector: loopback.Memory});
   var tokenCreate = {userId: '123'};
+  var done = testOptions.done;
+  testOptions['get'] = '/';
+
   Token.attachTo(tokenDataSource);
   tokenOptions['model'] = Token;
   tokenOptions['currentUserLiteral'] = 'me';
@@ -41,19 +56,8 @@ function createTokenStartApp(testOptions, tokenOptions) {
   Token.create(tokenCreate, function(err, token) {
     if (err) return done(err);
     testOptions['tokenId'] = token.id;
-    tokenId = testOptions['tokenId']; //FIXME: another way than 'global'?
-    testOptions['get'] = '/';
-    var done = testOptions.done;
-    var expect = testOptions.expect;
-    var header = testOptions.header;
-    var get = testOptions.get;
-    var tokendId = testOptions.tokenId;
     var app = startApp(testOptions, tokenOptions);
-    request(app)
-      .get(get)
-      .set(header, tokenId)
-      .expect(expect)
-      .end(done);
+    sendRequest(app, testOptions);
   });
 }
 
@@ -80,7 +84,7 @@ function appGet(req, res) {
   var send = '200';
   try {
     assert(req.accessToken, 'req should have accessToken');
-    assert(req.accessToken.id === tokenId);
+    assert(req.accessToken.id === tokenId); //FIXME: another way than this 'global'
     // FIXME: ok the req HAS accessToken.id but if loopback is not 'looking' for it === 401
   } catch (error) {
     debug('app.get error:\n' + error + '\n');
@@ -91,7 +95,6 @@ function appGet(req, res) {
 }
 
 function startApp(testOptions, tokenOptions) {
-  debug('createApp tokenOptions.headers:\n' + inspect(tokenOptions.headers));
   var get = testOptions.get;
   var app = loopback();
   var TestModel = attachAndReturnModel();
