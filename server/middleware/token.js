@@ -57,6 +57,8 @@ function escapeRegExp(str) {
  * }));
  * ```
  *
+ * FIXME: What should be written to add the options.searchDefaultTokenKeys
+ *
  * @options {Object} [options] Each option array is used to add additional keys to find an `accessToken` for a `request`.
  * @property {Array} [cookies] Array of cookie names.
  * @property {Array} [headers] Array of header names.
@@ -77,6 +79,12 @@ function token(options) {
   }
   if (typeof currentUserLiteral === 'string') {
     currentUserLiteral = escapeRegExp(currentUserLiteral);
+  }
+
+  if (options.searchDefaultTokenKeys === true) {
+    debug('FIXME: Why not create the DefaultTokenKeys here instead of on each req in tokenIdForRequest');
+  }else if (options.searchDefaultTokenKeys === false) {
+    debug('FIXME: check that there is a definition for a Token Key, otherwise Warn?');
   }
 
   return function(req, res, next) {
