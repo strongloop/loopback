@@ -27,7 +27,6 @@ function optionsUndefined(testOptions) {
 function searchDefaultTokenKeys(testOptions, tokenOptions) {
   debug(inspect(testOptions));
   var done = testOptions['done'];
-  done();
   debug('optionsUndefined searchDefaultTokenKeys:\n' + inspect(testOptions) + '\n');
   var app = createTokenStartApp(testOptions, tokenOptions);
 }

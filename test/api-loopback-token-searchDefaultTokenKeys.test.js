@@ -6,7 +6,15 @@ var test = require(SEARCHDEFAULTKEYS_LIB);
 var testOptions = {};
 var tokenOptions = {};
 
-describe('AccessToken api:loopback:middleware:token', function() {
+describe('AccessToken api:loopback:middleware:token(options)', function() {
+  describe.skip('loopback.token({})', function() {
+    testOptions['expect'] = 200;
+    it('header authorization', function(done) {
+      testOptions['done'] = done;
+      testOptions['header'] = 'authorization';
+      test.lib.loopback.token.optionsUndefined(testOptions);
+    });
+  });
   describe('options.searchDefaultTokenKeys:[true|false]', function() {
     testOptions['expect'] = 200;
     testOptions['header'] = 'authorization';
@@ -18,20 +26,20 @@ describe('AccessToken api:loopback:middleware:token', function() {
         testOptions['done'] = done;
         test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
       });
-      it('header, headers is empty, searchDefaultTokenKeys is true', function(done) {
+      it.skip('header, headers is empty, searchDefaultTokenKeys is true', function(done) {
         testOptions['done'] = done;
         tokenOptions['searchDefaultTokenKeys'] = true;
         test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
       });
     });
-    describe('normal usage when not using options.searchDefaultTokenKeys', function() {
+    describe.skip('normal usage when not using options.searchDefaultTokenKeys', function() {
       it('header, headers is empty, searchDefaultTokenKeys is undefined', function(done) {
         testOptions['done'] = done;
         tokenOptions['searchDefaultTokenKeys'] = undefined;
         test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
       });
     });
-    describe('unnormal usage: for testing purposes, or other strange usages', function() {
+    describe.skip('unnormal usage: for testing purposes, or other strange usages', function() {
       it('header, headers is empty, searchDefaultTokenKeys is false', function(done) {
         testOptions['done'] = done;
         testOptions['expect'] = 401;
