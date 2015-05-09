@@ -9,13 +9,13 @@
 
   AccessToken api:loopback:middleware:token(options)
     loopback.token({})
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
 /
 authorization
-eUeMZvPfdtLhuUg7muppzYTTY8tkSoi0YK1A8MsSRg02ogFzCIVq9OrkOAz2dm8Z
+XBNJpChTpaSwiuK6EUlYzFXdQpdQAO914rPnHqs8Hr5lgDJAFK1XCtl0VhXO8pqE
 200
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget tokenOptions:
 { model: 
    { [Function: ModelConstructor]
      setMaxListeners: [Function],
@@ -277,7 +277,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      updateLastChange: [Function],
      ANONYMOUS: 
       { id: '$anonymous',
-        created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+        created: Sat May 09 2015 16:34:23 GMT+0200 (Romance Daylight Time),
         ttl: 1209600 },
      createAccessTokenId: [Function],
      findForRequest: [Function],
@@ -398,7 +398,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      _mixins: [ [Object], [Object], [Object] ] },
   currentUserLiteral: 'me' }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget req:
 { _readableState: 
    { objectMode: false,
      highWaterMark: 16384,
@@ -514,7 +514,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleTimeout: 120000,
      _idleNext: { _idleNext: [Circular], _idlePrev: [Circular] },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Circular] },
-     _idleStart: 1035105,
+     _idleStart: 2985400,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -645,7 +645,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleTimeout: 120000,
      _idleNext: { _idleNext: [Circular], _idlePrev: [Circular] },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Circular] },
-     _idleStart: 1035105,
+     _idleStart: 2985400,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -691,20 +691,20 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
   httpVersion: '1.1',
   complete: true,
   headers: 
-   { host: '127.0.0.1:1346',
+   { host: '127.0.0.1:1722',
      'accept-encoding': 'gzip, deflate',
      'user-agent': 'node-superagent/0.21.0',
-     authorization: 'eUeMZvPfdtLhuUg7muppzYTTY8tkSoi0YK1A8MsSRg02ogFzCIVq9OrkOAz2dm8Z',
+     authorization: 'XBNJpChTpaSwiuK6EUlYzFXdQpdQAO914rPnHqs8Hr5lgDJAFK1XCtl0VhXO8pqE',
      connection: 'close' },
   rawHeaders: 
    [ 'Host',
-     '127.0.0.1:1346',
+     '127.0.0.1:1722',
      'Accept-Encoding',
      'gzip, deflate',
      'User-Agent',
      'node-superagent/0.21.0',
      'authorization',
-     'eUeMZvPfdtLhuUg7muppzYTTY8tkSoi0YK1A8MsSRg02ogFzCIVq9OrkOAz2dm8Z',
+     'XBNJpChTpaSwiuK6EUlYzFXdQpdQAO914rPnHqs8Hr5lgDJAFK1XCtl0VhXO8pqE',
      'Connection',
      'close' ],
   trailers: {},
@@ -806,7 +806,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleTimeout: 120000,
      _idleNext: { _idleNext: [Circular], _idlePrev: [Circular] },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Circular] },
-     _idleStart: 1035105,
+     _idleStart: 2985400,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -909,7 +909,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035105,
+        _idleStart: 2985400,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -937,7 +937,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035105,
+        _idleStart: 2985400,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -949,29 +949,29 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      req: [Circular],
      locals: {} },
   accessToken: 
-   { id: 'eUeMZvPfdtLhuUg7muppzYTTY8tkSoi0YK1A8MsSRg02ogFzCIVq9OrkOAz2dm8Z',
+   { id: 'XBNJpChTpaSwiuK6EUlYzFXdQpdQAO914rPnHqs8Hr5lgDJAFK1XCtl0VhXO8pqE',
      ttl: 1209600,
-     created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+     created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
      userId: 123 },
   route: { path: '/', stack: [ [Object] ], methods: { get: true } } }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appGet token:
-{ id: 'eUeMZvPfdtLhuUg7muppzYTTY8tkSoi0YK1A8MsSRg02ogFzCIVq9OrkOAz2dm8Z',
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appGet token:
+{ id: 'XBNJpChTpaSwiuK6EUlYzFXdQpdQAO914rPnHqs8Hr5lgDJAFK1XCtl0VhXO8pqE',
   ttl: 1209600,
-  created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+  created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
   userId: 123 }
 
       √ header authorization (47ms)
     options.searchDefaultTokenKeys:[true|false]
       normal usage for options.searchDefaultTokenKeys
-Sat, 09 May 2015 14:01:53 GMT loopback:middleware:token token FIXME: check that there is a definition for a Token Key, otherwise Warn?
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+Sat, 09 May 2015 14:34:24 GMT loopback:middleware:token token FIXME: check that there is a definition for a Token Key, otherwise Warn?
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
 /
 authorization
-Qxss498fJ8sihUWJbcr2acyfAUxwADo1CwFH7Jx0HbjlkW2tegOHPu5nFw4YTH0K
+3HPJpAf06pcJLvthIkUYr4zWvE8uWlosZbGUFGylxo2xJC8VTerkixxUCLv21a3D
 200
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget tokenOptions:
 { searchDefaultTokenKeys: false,
   headers: [ 'authorization' ],
   model: 
@@ -1235,7 +1235,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      updateLastChange: [Function],
      ANONYMOUS: 
       { id: '$anonymous',
-        created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+        created: Sat May 09 2015 16:34:23 GMT+0200 (Romance Daylight Time),
         ttl: 1209600 },
      createAccessTokenId: [Function],
      findForRequest: [Function],
@@ -1356,7 +1356,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      _mixins: [ [Object], [Object], [Object] ] },
   currentUserLiteral: 'me' }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget req:
 { _readableState: 
    { objectMode: false,
      highWaterMark: 16384,
@@ -1473,12 +1473,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035137,
+     _idleStart: 2985434,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -1610,12 +1610,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035137,
+     _idleStart: 2985434,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -1661,20 +1661,20 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
   httpVersion: '1.1',
   complete: true,
   headers: 
-   { host: '127.0.0.1:1348',
+   { host: '127.0.0.1:1724',
      'accept-encoding': 'gzip, deflate',
      'user-agent': 'node-superagent/0.21.0',
-     authorization: 'Qxss498fJ8sihUWJbcr2acyfAUxwADo1CwFH7Jx0HbjlkW2tegOHPu5nFw4YTH0K',
+     authorization: '3HPJpAf06pcJLvthIkUYr4zWvE8uWlosZbGUFGylxo2xJC8VTerkixxUCLv21a3D',
      connection: 'close' },
   rawHeaders: 
    [ 'Host',
-     '127.0.0.1:1348',
+     '127.0.0.1:1724',
      'Accept-Encoding',
      'gzip, deflate',
      'User-Agent',
      'node-superagent/0.21.0',
      'authorization',
-     'Qxss498fJ8sihUWJbcr2acyfAUxwADo1CwFH7Jx0HbjlkW2tegOHPu5nFw4YTH0K',
+     '3HPJpAf06pcJLvthIkUYr4zWvE8uWlosZbGUFGylxo2xJC8VTerkixxUCLv21a3D',
      'Connection',
      'close' ],
   trailers: {},
@@ -1777,12 +1777,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035137,
+     _idleStart: 2985434,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -1885,7 +1885,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035137,
+        _idleStart: 2985434,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -1913,7 +1913,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035137,
+        _idleStart: 2985434,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -1925,27 +1925,27 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      req: [Circular],
      locals: {} },
   accessToken: 
-   { id: 'Qxss498fJ8sihUWJbcr2acyfAUxwADo1CwFH7Jx0HbjlkW2tegOHPu5nFw4YTH0K',
+   { id: '3HPJpAf06pcJLvthIkUYr4zWvE8uWlosZbGUFGylxo2xJC8VTerkixxUCLv21a3D',
      ttl: 1209600,
-     created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+     created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
      userId: 123 },
   route: { path: '/', stack: [ [Object] ], methods: { get: true } } }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appGet token:
-{ id: 'Qxss498fJ8sihUWJbcr2acyfAUxwADo1CwFH7Jx0HbjlkW2tegOHPu5nFw4YTH0K',
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appGet token:
+{ id: '3HPJpAf06pcJLvthIkUYr4zWvE8uWlosZbGUFGylxo2xJC8VTerkixxUCLv21a3D',
   ttl: 1209600,
-  created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+  created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
   userId: 123 }
 
         √ header, headers has header, searchDefaultTokenKeys is false
-Sat, 09 May 2015 14:01:53 GMT loopback:middleware:token token FIXME: Why not create the DefaultTokenKeys here instead of on each req in tokenIdForRequest
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+Sat, 09 May 2015 14:34:24 GMT loopback:middleware:token token FIXME: Why not create the DefaultTokenKeys here instead of on each req in tokenIdForRequest
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
 /
 authorization
-OBHikrJt37vSuEGeOm39rRCAW2ObHdKsNv7Mz335EJUlHbEKIXHm5H1oNZFec3wa
+Hfpop8dSVKJ6Cm7Ee2LHzCf3JGbmvsUNaAeYwGGHo2yF6M5fn1mPX1gdX5Uk68d2
 200
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget tokenOptions:
 { searchDefaultTokenKeys: true,
   headers: [ 'authorization' ],
   model: 
@@ -2209,7 +2209,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      updateLastChange: [Function],
      ANONYMOUS: 
       { id: '$anonymous',
-        created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+        created: Sat May 09 2015 16:34:23 GMT+0200 (Romance Daylight Time),
         ttl: 1209600 },
      createAccessTokenId: [Function],
      findForRequest: [Function],
@@ -2330,7 +2330,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      _mixins: [ [Object], [Object], [Object] ] },
   currentUserLiteral: 'me' }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget req:
 { _readableState: 
    { objectMode: false,
      highWaterMark: 16384,
@@ -2447,12 +2447,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035153,
+     _idleStart: 2985451,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -2584,12 +2584,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035153,
+     _idleStart: 2985451,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -2635,20 +2635,20 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
   httpVersion: '1.1',
   complete: true,
   headers: 
-   { host: '127.0.0.1:1350',
+   { host: '127.0.0.1:1726',
      'accept-encoding': 'gzip, deflate',
      'user-agent': 'node-superagent/0.21.0',
-     authorization: 'OBHikrJt37vSuEGeOm39rRCAW2ObHdKsNv7Mz335EJUlHbEKIXHm5H1oNZFec3wa',
+     authorization: 'Hfpop8dSVKJ6Cm7Ee2LHzCf3JGbmvsUNaAeYwGGHo2yF6M5fn1mPX1gdX5Uk68d2',
      connection: 'close' },
   rawHeaders: 
    [ 'Host',
-     '127.0.0.1:1350',
+     '127.0.0.1:1726',
      'Accept-Encoding',
      'gzip, deflate',
      'User-Agent',
      'node-superagent/0.21.0',
      'authorization',
-     'OBHikrJt37vSuEGeOm39rRCAW2ObHdKsNv7Mz335EJUlHbEKIXHm5H1oNZFec3wa',
+     'Hfpop8dSVKJ6Cm7Ee2LHzCf3JGbmvsUNaAeYwGGHo2yF6M5fn1mPX1gdX5Uk68d2',
      'Connection',
      'close' ],
   trailers: {},
@@ -2751,12 +2751,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035153,
+     _idleStart: 2985451,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -2859,7 +2859,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035153,
+        _idleStart: 2985451,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -2887,7 +2887,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035153,
+        _idleStart: 2985451,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -2899,27 +2899,27 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      req: [Circular],
      locals: {} },
   accessToken: 
-   { id: 'OBHikrJt37vSuEGeOm39rRCAW2ObHdKsNv7Mz335EJUlHbEKIXHm5H1oNZFec3wa',
+   { id: 'Hfpop8dSVKJ6Cm7Ee2LHzCf3JGbmvsUNaAeYwGGHo2yF6M5fn1mPX1gdX5Uk68d2',
      ttl: 1209600,
-     created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+     created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
      userId: 123 },
   route: { path: '/', stack: [ [Object] ], methods: { get: true } } }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appGet token:
-{ id: 'OBHikrJt37vSuEGeOm39rRCAW2ObHdKsNv7Mz335EJUlHbEKIXHm5H1oNZFec3wa',
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appGet token:
+{ id: 'Hfpop8dSVKJ6Cm7Ee2LHzCf3JGbmvsUNaAeYwGGHo2yF6M5fn1mPX1gdX5Uk68d2',
   ttl: 1209600,
-  created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+  created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
   userId: 123 }
 
         √ header, headers is empty, searchDefaultTokenKeys is true
       normal usage when not using options.searchDefaultTokenKeys
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
 /
 authorization
-J9aQ7YeUrDGfMP8vUByjcDF6LC4nibUhoRBECEsJzXC23QJWCA3NPyKHwPUWqvEN
+N1Yw5prnw4hIqV3oQMc3n36in7wBPaQlvbAb8D4w2Gq48XZvWuChPxyvDrN8QwCK
 200
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget tokenOptions:
 { searchDefaultTokenKeys: undefined,
   headers: [ 'authorization' ],
   model: 
@@ -3183,7 +3183,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      updateLastChange: [Function],
      ANONYMOUS: 
       { id: '$anonymous',
-        created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+        created: Sat May 09 2015 16:34:23 GMT+0200 (Romance Daylight Time),
         ttl: 1209600 },
      createAccessTokenId: [Function],
      findForRequest: [Function],
@@ -3304,7 +3304,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      _mixins: [ [Object], [Object], [Object] ] },
   currentUserLiteral: 'me' }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget req:
 { _readableState: 
    { objectMode: false,
      highWaterMark: 16384,
@@ -3421,12 +3421,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035166,
+     _idleStart: 2985468,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -3558,12 +3558,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035166,
+     _idleStart: 2985468,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -3609,20 +3609,20 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
   httpVersion: '1.1',
   complete: true,
   headers: 
-   { host: '127.0.0.1:1352',
+   { host: '127.0.0.1:1728',
      'accept-encoding': 'gzip, deflate',
      'user-agent': 'node-superagent/0.21.0',
-     authorization: 'J9aQ7YeUrDGfMP8vUByjcDF6LC4nibUhoRBECEsJzXC23QJWCA3NPyKHwPUWqvEN',
+     authorization: 'N1Yw5prnw4hIqV3oQMc3n36in7wBPaQlvbAb8D4w2Gq48XZvWuChPxyvDrN8QwCK',
      connection: 'close' },
   rawHeaders: 
    [ 'Host',
-     '127.0.0.1:1352',
+     '127.0.0.1:1728',
      'Accept-Encoding',
      'gzip, deflate',
      'User-Agent',
      'node-superagent/0.21.0',
      'authorization',
-     'J9aQ7YeUrDGfMP8vUByjcDF6LC4nibUhoRBECEsJzXC23QJWCA3NPyKHwPUWqvEN',
+     'N1Yw5prnw4hIqV3oQMc3n36in7wBPaQlvbAb8D4w2Gq48XZvWuChPxyvDrN8QwCK',
      'Connection',
      'close' ],
   trailers: {},
@@ -3725,12 +3725,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035166,
+     _idleStart: 2985468,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -3833,7 +3833,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035166,
+        _idleStart: 2985468,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -3861,7 +3861,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035166,
+        _idleStart: 2985468,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -3873,29 +3873,29 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      req: [Circular],
      locals: {} },
   accessToken: 
-   { id: 'J9aQ7YeUrDGfMP8vUByjcDF6LC4nibUhoRBECEsJzXC23QJWCA3NPyKHwPUWqvEN',
+   { id: 'N1Yw5prnw4hIqV3oQMc3n36in7wBPaQlvbAb8D4w2Gq48XZvWuChPxyvDrN8QwCK',
      ttl: 1209600,
-     created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+     created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
      userId: 123 },
   route: { path: '/', stack: [ [Object] ], methods: { get: true } } }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appGet token:
-{ id: 'J9aQ7YeUrDGfMP8vUByjcDF6LC4nibUhoRBECEsJzXC23QJWCA3NPyKHwPUWqvEN',
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appGet token:
+{ id: 'N1Yw5prnw4hIqV3oQMc3n36in7wBPaQlvbAb8D4w2Gq48XZvWuChPxyvDrN8QwCK',
   ttl: 1209600,
-  created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+  created: Sat May 09 2015 16:34:24 GMT+0200 (Romance Daylight Time),
   userId: 123 }
 
         √ header, headers is empty, searchDefaultTokenKeys is undefined
       unnormal usage: for testing purposes, or other strange usages
         BUG: AccessToken.findForRequest FIXME for cb() expect 500 for now
-Sat, 09 May 2015 14:01:53 GMT loopback:middleware:token token FIXME: check that there is a definition for a Token Key, otherwise Warn?
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+Sat, 09 May 2015 14:34:24 GMT loopback:middleware:token token FIXME: check that there is a definition for a Token Key, otherwise Warn?
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
 /
 authorization
-0UhvXKDSJICs5riBR0EUWbZNaqiq8dCE32AeSuogDXI7PDpuVtBAEY9zd2abjnAM
+OdlSyEoLuFjpMXQJE8pFUu7pZQSwVod8ebl932lrGUKFUVEYhYHrrBYPtvohCzyX
 500
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget tokenOptions:
 { searchDefaultTokenKeys: false,
   headers: [],
   model: 
@@ -4159,7 +4159,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      updateLastChange: [Function],
      ANONYMOUS: 
       { id: '$anonymous',
-        created: Sat May 09 2015 16:01:53 GMT+0200 (Romance Daylight Time),
+        created: Sat May 09 2015 16:34:23 GMT+0200 (Romance Daylight Time),
         ttl: 1209600 },
      createAccessTokenId: [Function],
      findForRequest: [Function],
@@ -4280,7 +4280,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget tokenOptions:
      _mixins: [ [Object], [Object], [Object] ] },
   currentUserLiteral: 'me' }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appget req:
 { _readableState: 
    { objectMode: false,
      highWaterMark: 16384,
@@ -4397,12 +4397,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035179,
+     _idleStart: 2985486,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -4534,12 +4534,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035179,
+     _idleStart: 2985486,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -4585,20 +4585,20 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
   httpVersion: '1.1',
   complete: true,
   headers: 
-   { host: '127.0.0.1:1354',
+   { host: '127.0.0.1:1730',
      'accept-encoding': 'gzip, deflate',
      'user-agent': 'node-superagent/0.21.0',
-     authorization: '0UhvXKDSJICs5riBR0EUWbZNaqiq8dCE32AeSuogDXI7PDpuVtBAEY9zd2abjnAM',
+     authorization: 'OdlSyEoLuFjpMXQJE8pFUu7pZQSwVod8ebl932lrGUKFUVEYhYHrrBYPtvohCzyX',
      connection: 'close' },
   rawHeaders: 
    [ 'Host',
-     '127.0.0.1:1354',
+     '127.0.0.1:1730',
      'Accept-Encoding',
      'gzip, deflate',
      'User-Agent',
      'node-superagent/0.21.0',
      'authorization',
-     '0UhvXKDSJICs5riBR0EUWbZNaqiq8dCE32AeSuogDXI7PDpuVtBAEY9zd2abjnAM',
+     'OdlSyEoLuFjpMXQJE8pFUu7pZQSwVod8ebl932lrGUKFUVEYhYHrrBYPtvohCzyX',
      'Connection',
      'close' ],
   trailers: {},
@@ -4701,12 +4701,12 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
      _idleNext: 
       { [Function: utcDate]
         _onTimeout: [Function],
-        _idleTimeout: 181,
+        _idleTimeout: 871,
         _idleNext: [Object],
         _idlePrev: [Circular],
-        _idleStart: 1035123 },
+        _idleStart: 2985421 },
      _idlePrev: { _idleNext: [Circular], _idlePrev: [Object] },
-     _idleStart: 1035179,
+     _idleStart: 2985486,
      parser: 
       { '0': [Function: parserOnHeaders],
         '1': [Function: parserOnHeadersComplete],
@@ -4809,7 +4809,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035179,
+        _idleStart: 2985486,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -4837,7 +4837,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
         _idleTimeout: 120000,
         _idleNext: [Object],
         _idlePrev: [Object],
-        _idleStart: 1035179,
+        _idleStart: 2985486,
         parser: [Object],
         _paused: false,
         read: [Function],
@@ -4851,7 +4851,7 @@ Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appget req:
   accessToken: null,
   route: { path: '/', stack: [ [Object] ], methods: { get: true } } }
 
-Sat, 09 May 2015 14:01:53 GMT api:loopback:middleware:token appGet token:
+Sat, 09 May 2015 14:34:24 GMT api:loopback:middleware:token appGet token:
 FIXME ???? ERROR ????
 
           √ header, headers is empty, searchDefaultTokenKeys is false
@@ -4864,5 +4864,5 @@ FIXME ???? ERROR ????
       √ exports default AccessToken model
 
 
-  12 passing (172ms)
+  12 passing (187ms)
 
