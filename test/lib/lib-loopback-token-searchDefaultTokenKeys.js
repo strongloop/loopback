@@ -13,41 +13,40 @@ module.exports = {
 };
 
 var loopback = require('../../');
-var tokenId;  //FIXME: another way than these 'global's
 var testOptions;
 var tokenOptions;
-var TestModel; //BROKEN:FIXME: TypeError prototype of undefined
+var app;
+var tokenId;  //FIXME: ??? heavy use of these 'global's
+var TestModel; //FIXME: TypeError prototype of undefined for TestModel.findForRequest
 
 function optionsUndefined(theTestOptions) {
   testOptions = theTestOptions;
-  debug('optionsUndefined testOptions:\n' + inspect(testOptions) + '\n');
   tokenOptions = {};
-  var app = createTokenStartApp(testOptions, tokenOptions);
+  debug('optionsUndefined:\n' + inspect(testOptions) + '\n' + inspect(tokenOptions) + '\n');  
+  createTokenModleStartAppSendReq();
 }
 
 function searchDefaultTokenKeys(theTestOptions, theTokenOptions) {
   testOptions = theTestOptions;
   tokenOptions = theTokenOptions;
-  debug('optionsUndefined searchDefaultTokenKeys:\n' + inspect(testOptions) + '\n');
-  var done = testOptions['done'];
-  var app = createTokenStartApp(testOptions, tokenOptions);
+  debug('options.searchDefaultTokenKeys:\n' + inspect(testOptions) + '\n' + inspect(tokenOptions) + '\n');
+  createTokenModleStartAppSendReq();
 }
 
-function sendRequest(app, testOptions) {
-  debug('sendRequest testOptions.tokenId:\n' + inspect(testOptions.tokenId) + '\n');
+function sendRequest() {
+  debug('sendRequest get header tokenId expect:\n' + testOptions.get + '\n' + testOptions.header + '\n' + tokenId + '\n' + testOptions.expect + '\n');
   request(app)
     .get(testOptions.get)
-    .set(testOptions.header, testOptions.tokenId)
+    .set(testOptions.header, tokenId)
     .expect(testOptions.expect)
     .end(testOptions.done);
 }
 
-function createTokenStartApp(testOptions, tokenOptions) {
+function createTokenModleStartAppSendReq() {
   var extend = require('util')._extend;
   var Token = loopback.AccessToken.extend('MyToken');
   var tokenDataSource = loopback.createDataSource({connector: loopback.Memory});
   var tokenCreate = {userId: '123'};
-  var done = testOptions.done;
   testOptions['get'] = '/';
 
   Token.attachTo(tokenDataSource);
@@ -56,10 +55,9 @@ function createTokenStartApp(testOptions, tokenOptions) {
 
   Token.create(tokenCreate, function(err, token) {
     if (err) return done(err);
-    testOptions['tokenId'] = token.id;
-    createTestModel();
-    var app = startApp(testOptions, tokenOptions);
-    sendRequest(app, testOptions);
+    tokenId = token.id;
+    startApp();
+    sendRequest();      
   });
 }
 
@@ -78,9 +76,11 @@ function createTestModel() {
 }
 
 function appGet(req, res) {
-  // NOTE: we do not use assert for the presence of a token but findForRequest
+  // NOTE: The appGet should used .findForRequest and not just check if there is a req with token
   // FIXME: TypeError undefined is not a function: Work in progress, IT has to happen
-  debug('appget testOptions tokenOptions TestModel.findForRequest:\n' + '\n' + inspect(TestModel.findForRequest) + '\n');
+  // debug('appget FIXME TypeError undefined for TestModel.findForRequest:\n' + '\n' + inspect(TestModel) + '\n');
+  // debug('appget tokenOptions:\n' + tokenOptions + '\n');
+  // debug('appget req:\n' + req + '\n');
   TestModel.findForRequest(req, tokenOptions, function(err, token) {
     if (token) {
       res.send(200);
@@ -91,13 +91,12 @@ function appGet(req, res) {
   });
 }
 
-function startApp(testOptions, tokenOptions) {
-  var get = testOptions.get;
-  var app = loopback();
+function startApp() {
+  app = loopback();
+  createTestModel(); //IS: this placed at the correct place: can it be done before startApp
   app.model(TestModel);
   app.use(loopback.token(tokenOptions)); // The subject of all this work
-  app.get(get, appGet);
+  app.get(testOptions['get'], appGet);
   app.use(loopback.rest());
   app.enableAuth();
-  return app;
 }
