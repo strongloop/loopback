@@ -7,7 +7,7 @@ var testOptions = {};
 var tokenOptions = {};
 
 describe('AccessToken api:loopback:middleware:token(options)', function() {
-  describe.skip('loopback.token({})', function() {
+  describe('loopback.token({})', function() {
     testOptions['expect'] = 200;
     it('header authorization', function(done) {
       testOptions['done'] = done;
@@ -26,20 +26,20 @@ describe('AccessToken api:loopback:middleware:token(options)', function() {
         testOptions['done'] = done;
         test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
       });
-      it.skip('header, headers is empty, searchDefaultTokenKeys is true', function(done) {
+      it('header, headers is empty, searchDefaultTokenKeys is true', function(done) {
         testOptions['done'] = done;
         tokenOptions['searchDefaultTokenKeys'] = true;
         test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
       });
     });
-    describe.skip('normal usage when not using options.searchDefaultTokenKeys', function() {
+    describe('normal usage when not using options.searchDefaultTokenKeys', function() {
       it('header, headers is empty, searchDefaultTokenKeys is undefined', function(done) {
         testOptions['done'] = done;
         tokenOptions['searchDefaultTokenKeys'] = undefined;
         test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
       });
     });
-    describe.skip('unnormal usage: for testing purposes, or other strange usages', function() {
+    describe('unnormal usage: for testing purposes, or other strange usages', function() {
       it('header, headers is empty, searchDefaultTokenKeys is false', function(done) {
         testOptions['done'] = done;
         testOptions['expect'] = 401;

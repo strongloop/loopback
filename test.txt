@@ -9,44 +9,81 @@
 
   AccessToken api:loopback:middleware:token(options)
     loopback.token({})
-      - header authorization
-    options.searchDefaultTokenKeys:[true|false]
-      normal usage for options.searchDefaultTokenKeys
-Sat, 09 May 2015 09:16:49 GMT api:loopback:middleware:token options.searchDefaultTokenKeys:
-{ expect: 200, header: 'authorization', done: [Function] }
-{ searchDefaultTokenKeys: false, headers: [ 'authorization' ] }
-
-Sat, 09 May 2015 09:16:49 GMT loopback:middleware:token FIXME: check that there is a definition for a Token Key, otherwise Warn?
-Sat, 09 May 2015 09:16:49 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
 /
 authorization
-NbLtwHaMYPTzsnMkREi8z5EgjJExyj5lEY4PvfJ43LsSWFLQjIgs5e0LC7PxG5x5
+svQCqcUvQ3wRwqtPunI2FnNAN3b1CAKb0rn20N8uLq7Y239DDE03CqBYdxX1hZGa
 200
 
-TypeError: undefined is not a function
-    at appGet (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:84:13)
-    at Layer.handle [as handle_request] (c:\Users\ob_000\loopback\node_modules\express\lib\router\layer.js:82:5)
-    at next (c:\Users\ob_000\loopback\node_modules\express\lib\router\route.js:110:13)
-    at Route.dispatch (c:\Users\ob_000\loopback\node_modules\express\lib\router\route.js:91:3)
-    at Layer.handle [as handle_request] (c:\Users\ob_000\loopback\node_modules\express\lib\router\layer.js:82:5)
-    at c:\Users\ob_000\loopback\node_modules\express\lib\router\index.js:267:22
-    at Function.proto.process_params (c:\Users\ob_000\loopback\node_modules\express\lib\router\index.js:321:12)
-    at next (c:\Users\ob_000\loopback\node_modules\express\lib\router\index.js:261:10)
-    at c:\Users\ob_000\loopback\server\middleware\token.js:115:7
-    at c:\Users\ob_000\loopback\common\models\access-token.js:108:15
-    at ModelConstructor.AccessToken.validate (c:\Users\ob_000\loopback\common\models\access-token.js:152:9)
-    at c:\Users\ob_000\loopback\common\models\access-token.js:104:17
-    at c:\Users\ob_000\loopback\node_modules\loopback-datasource-juggler\lib\dao.js:1358:5
-    at allCb (c:\Users\ob_000\loopback\node_modules\loopback-datasource-juggler\lib\dao.js:1297:7)
-    at c:\Users\ob_000\loopback\node_modules\loopback-datasource-juggler\lib\connectors\memory.js:371:7
-    at process._tickDomainCallback (node.js:381:11)
-    at process.<anonymous> (c:\Users\ob_000\loopback\node_modules\continuation-local-storage\node_modules\async-listener\index.js:18:15)
-        1) header, headers has header, searchDefaultTokenKeys is false
-        - header, headers is empty, searchDefaultTokenKeys is true
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget tokenOptions:
+[object Object]
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget req:
+[object Object]
+
+      √ header authorization (125ms)
+    options.searchDefaultTokenKeys:[true|false]
+      normal usage for options.searchDefaultTokenKeys
+Sat, 09 May 2015 10:12:48 GMT loopback:middleware:token FIXME: check that there is a definition for a Token Key, otherwise Warn?
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+/
+authorization
+j0NVstqMAOWTWKggVTihQvHF71HJhM770aE0mCkAmUEesp445WQKDBiUbNie6828
+200
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget tokenOptions:
+[object Object]
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget req:
+[object Object]
+
+        √ header, headers has header, searchDefaultTokenKeys is false (46ms)
+Sat, 09 May 2015 10:12:48 GMT loopback:middleware:token FIXME: Why not create the DefaultTokenKeys here instead of on each req in tokenIdForRequest
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+/
+authorization
+ZNq8Xdrda54Dd9l7s7OS7Bw3i58G1b9OrcrLPFI4VibxykZMJYeLpyEfMGkEcKFz
+200
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget tokenOptions:
+[object Object]
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget req:
+[object Object]
+
+        √ header, headers is empty, searchDefaultTokenKeys is true
       normal usage when not using options.searchDefaultTokenKeys
-        - header, headers is empty, searchDefaultTokenKeys is undefined
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+/
+authorization
+KkHiJC9Qikx5J9yhqByrEj0rRe1CihMlO1BFvZ772K3WpaLWQPoe9bOBdwfvTzW4
+200
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget tokenOptions:
+[object Object]
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget req:
+[object Object]
+
+        √ header, headers is empty, searchDefaultTokenKeys is undefined
       unnormal usage: for testing purposes, or other strange usages
-        - header, headers is empty, searchDefaultTokenKeys is false
+Sat, 09 May 2015 10:12:48 GMT loopback:middleware:token FIXME: check that there is a definition for a Token Key, otherwise Warn?
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token sendRequest get header tokenId expect:
+/
+authorization
+GK1iWOxEm0ZNsnV6Ij1sHiLtZogqSNfbAdcHLGyg5t0EOYa4K9bzeyqFQZynNXQE
+401
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget tokenOptions:
+[object Object]
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appget req:
+[object Object]
+
+Sat, 09 May 2015 10:12:48 GMT api:loopback:middleware:token appGet err:
+undefined
+
+        √ header, headers is empty, searchDefaultTokenKeys is false
 
   User
     User.login
@@ -56,13 +93,5 @@ TypeError: undefined is not a function
       √ exports default AccessToken model
 
 
-  7 passing (328ms)
-  4 pending
-  1 failing
-
-  1) AccessToken api:loopback:middleware:token(options) options.searchDefaultTokenKeys:[true|false] normal usage for options.searchDefaultTokenKeys header, headers has header, searchDefaultTokenKeys is false:
-     Error: expected 200 "OK", got 500 "Internal Server Error"
-      at net.js:1392:10
-
-
+  12 passing (422ms)
 
