@@ -13,21 +13,23 @@ module.exports = {
 };
 
 var loopback = require('../../');
-var tokenId;  //FIXME: another way than this 'global'
+var tokenId;  //FIXME: another way than these 'global's
 var testOptions;
 var tokenOptions;
-var TestModel;
+var TestModel; //BROKEN:FIXME: TypeError prototype of undefined
 
-function optionsUndefined(testOptions) {
+function optionsUndefined(theTestOptions) {
+  testOptions = theTestOptions;
   debug('optionsUndefined testOptions:\n' + inspect(testOptions) + '\n');
   tokenOptions = {};
   var app = createTokenStartApp(testOptions, tokenOptions);
 }
 
-function searchDefaultTokenKeys(testOptions, tokenOptions) {
-  debug(inspect(testOptions));
-  var done = testOptions['done'];
+function searchDefaultTokenKeys(theTestOptions, theTokenOptions) {
+  testOptions = theTestOptions;
+  tokenOptions = theTokenOptions;
   debug('optionsUndefined searchDefaultTokenKeys:\n' + inspect(testOptions) + '\n');
+  var done = testOptions['done'];
   var app = createTokenStartApp(testOptions, tokenOptions);
 }
 
@@ -55,12 +57,13 @@ function createTokenStartApp(testOptions, tokenOptions) {
   Token.create(tokenCreate, function(err, token) {
     if (err) return done(err);
     testOptions['tokenId'] = token.id;
+    createTestModel();
     var app = startApp(testOptions, tokenOptions);
     sendRequest(app, testOptions);
   });
 }
 
-function attachAndReturnModel() {
+function createTestModel() {
   var ACL = loopback.ACL;
   var acl = {
     principalType: 'ROLE',
@@ -76,6 +79,8 @@ function attachAndReturnModel() {
 
 function appGet(req, res) {
   // NOTE: we do not use assert for the presence of a token but findForRequest
+  // FIXME: TypeError undefined is not a function: Work in progress, IT has to happen
+  debug('appget testOptions tokenOptions TestModel.findForRequest:\n' + '\n' + inspect(TestModel.findForRequest) + '\n');
   TestModel.findForRequest(req, tokenOptions, function(err, token) {
     if (token) {
       res.send(200);
@@ -89,7 +94,6 @@ function appGet(req, res) {
 function startApp(testOptions, tokenOptions) {
   var get = testOptions.get;
   var app = loopback();
-  TestModel = attachAndReturnModel();
   app.model(TestModel);
   app.use(loopback.token(tokenOptions)); // The subject of all this work
   app.get(get, appGet);
