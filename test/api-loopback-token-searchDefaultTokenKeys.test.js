@@ -8,10 +8,11 @@ var tokenOptions = {};
 
 describe('AccessToken api:loopback:middleware:token', function() {
   describe('options.searchDefaultTokenKeys:[true|false]', function() {
-        testOptions['expect'] = 200;
-        testOptions['header'] = 'authorization';
-        tokenOptions['searchDefaultTokenKeys'] = false;
-        tokenOptions['headers'] = [testOptions['header']];
+    testOptions['expect'] = 200;
+    testOptions['header'] = 'authorization';
+    tokenOptions['searchDefaultTokenKeys'] = false;
+    tokenOptions['headers'] = [testOptions['header']];
+
     describe('normal usage for options.searchDefaultTokenKeys', function() {
       it('header, headers has header, searchDefaultTokenKeys is false', function(done) {
         testOptions['done'] = done;
