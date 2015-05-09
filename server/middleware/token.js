@@ -57,12 +57,11 @@ function escapeRegExp(str) {
  * }));
  * ```
  *
- * FIXME: What should be written to add the options.searchDefaultTokenKeys
- *
  * @options {Object} [options] Each option array is used to add additional keys to find an `accessToken` for a `request`.
  * @property {Array} [cookies] Array of cookie names.
  * @property {Array} [headers] Array of header names.
  * @property {Array} [params] Array of param names.
+ * @property {Boolean} [searchDefaultTokenKeys] Use the default search locations for Token in request
  * @property {Function|String} [model] AccessToken model name or class to use.
  * @property {String} [currentUserLiteral] String literal for the current user.
  * @header loopback.token([options])
