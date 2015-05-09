@@ -1,15 +1,12 @@
 'use strict';
-
-var debug = require('debug')('loopback.token');
+var debug = require('debug')('api:loopback:middleware:token');
 var inspect = require('util').inspect;
-/*
-  lib::middleware::loopback.token:searchDefaultTokenKeys
-*/
 module.exports = {
   lib: {
     loopback: {
       token: {
         searchDefaultTokenKeys: searchDefaultTokenKeys,
+        optionsUndefined: optionsUndefined,
       }
     }
   }
@@ -79,6 +76,7 @@ function attachAndReturnModel() {
 }
 
 function appGet(req, res) {
+  // NOTE: we do not use assert for the presence of a token but findForRequest
   TestModel.findForRequest(req, tokenOptions, function(err, token) {
     if (token) {
       res.send(200);
