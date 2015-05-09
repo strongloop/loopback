@@ -18,7 +18,6 @@ var testOptions; //FIXME: ??? heavy use of these 'global's
 var tokenOptions;
 var app;
 var Token;
-var tokenId;
 var TestModel;
 
 function optionsUndefined(theTestOptions) {
@@ -34,10 +33,10 @@ function searchDefaultTokenKeys(theTestOptions, theTokenOptions) {
 }
 
 function sendRequest() {
-  debug('sendRequest get header tokenId expect:\n' + testOptions.get + '\n' + testOptions.header + '\n' + tokenId + '\n' + testOptions.expect + '\n');
+  debug('sendRequest testOptions:\n' + inspect(testOptions) + '\n');
   request(app)
     .get(testOptions.get)
-    .set(testOptions.header, tokenId)
+    .set(testOptions.header, testOptions.tokenId)
     .expect(testOptions.expect)
     .end(testOptions.done);
 }
@@ -54,7 +53,7 @@ function createTokenModleStartAppSendReq() {
 
   Token.create(tokenCreate, function(err, token) {
     if (err) return testOptions.done(err);
-    tokenId = token.id;
+    testOptions['tokenId'] = token.id;
     createTestModel();
     startApp();
     sendRequest();
@@ -77,7 +76,6 @@ function createTestModel() {
 
 function appGet(req, res) {
   // NOTE: The appGet should use Token.findForRequest and not just check if there is a req with a token
-  debug('appget tokenOptions:\n' + inspect(tokenOptions) + '\n');
   debug('appget req:\n' + inspect(req) + '\n');
   Token.findForRequest(req, tokenOptions, function(err, token) { // the test of all this work
     if (err) {
@@ -87,8 +85,8 @@ function appGet(req, res) {
       debug('appGet token:\n' + inspect(token) + '\n');
       res.sendStatus(200);
     }else {
-      debug('appGet token:\nerr === token === no error and no token found ...?\n'); // FIXME: is findForRequest working as expected?
-      res.sendStatus(401);
+      debug('appGet err token:\n' + inspect(err) + '\n' + inspect(token) + '\n');
+      res.sendStatus(401); // iff Token.findForRequest
     }
   });
 }

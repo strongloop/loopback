@@ -6,7 +6,7 @@ var test = require(SEARCHDEFAULTKEYS_LIB);
 var testOptions = {}; //TODO: cleaner usage
 var tokenOptions = {}; //TODO: cleaner usage
 
-describe('AccessToken api:loopback:middleware:token(options)', function() {
+describe('api:loopback:middleware:token(options)', function() {
   describe('loopback.token({})', function() {
     it('header authorization', function(done) {
       testOptions = {};
@@ -29,50 +29,52 @@ describe('AccessToken api:loopback:middleware:token(options)', function() {
       testOptions['cookie'] = 'access_token';
       test.lib.loopback.token.optionsUndefined(testOptions);
     });
-  });
-  describe('options.searchDefaultTokenKeys:[true|false]', function() {
-    describe('normal usage for options.searchDefaultTokenKeys', function() {
-      it('header, headers has header, searchDefaultTokenKeys is false', function(done) {
-        testOptions = {};
-        testOptions['expect'] = 200;
-        testOptions['done'] = done;
-        testOptions['header'] = 'authorization';
-        tokenOptions = {};
-        tokenOptions['searchDefaultTokenKeys'] = false;
-        tokenOptions['headers'] = [testOptions['header']];
-        test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
-      });
-      it('header, headers is empty, searchDefaultTokenKeys is true', function(done) {
-        testOptions = {};
-        testOptions['expect'] = 200;
-        testOptions['done'] = done;
-        testOptions['header'] = 'authorization';
-        tokenOptions = {};
-        tokenOptions['searchDefaultTokenKeys'] = true;
-        tokenOptions['headers'] = [testOptions['header']];
-        test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
-      });
-    });
-    describe('normal usage when not using options.searchDefaultTokenKeys', function() {
-      it('header, headers is empty, searchDefaultTokenKeys is undefined', function(done) {
-        testOptions = {};
-        testOptions['expect'] = 200;
-        testOptions['done'] = done;
-        testOptions['header'] = 'authorization';
-        tokenOptions = {};
-        tokenOptions['searchDefaultTokenKeys'] = undefined;
-        tokenOptions['headers'] = [testOptions['header']];
-        test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
-      });
-    });
-    describe('unnormal usage: for testing purposes, or other strange usages', function() {
-      it('header, headers is empty, searchDefaultTokenKeys is false', function(done) {
-        testOptions['done'] = done;
-        testOptions['expect'] = 401;
-        testOptions['header'] = 'authorization';
-        tokenOptions['searchDefaultTokenKeys'] = undefined;
-        tokenOptions['headers'] = [];
-        test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+    describe('options', function() {
+      describe('searchDefaultTokenKeys:[true|false]', function() {
+        describe('normal usage', function() {
+          it('header, headers has header, false', function(done) {
+            testOptions = {};
+            testOptions['expect'] = 200;
+            testOptions['done'] = done;
+            testOptions['header'] = 'authorization';
+            tokenOptions = {};
+            tokenOptions['searchDefaultTokenKeys'] = false;
+            tokenOptions['headers'] = [testOptions['header']];
+            test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+          });
+          it('header, headers is empty, true', function(done) {
+            testOptions = {};
+            testOptions['expect'] = 200;
+            testOptions['done'] = done;
+            testOptions['header'] = 'authorization';
+            tokenOptions = {};
+            tokenOptions['searchDefaultTokenKeys'] = true;
+            tokenOptions['headers'] = [testOptions['header']];
+            test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+          });
+          /* Not necessary
+          it('header, headers is empty, undefined', function(done) {
+            testOptions = {};
+            testOptions['expect'] = 200;
+            testOptions['done'] = done;
+            testOptions['header'] = 'authorization';
+            tokenOptions = {};
+            tokenOptions['searchDefaultTokenKeys'] = undefined;
+            tokenOptions['headers'] = [testOptions['header']];
+            test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+          });
+          */
+        });
+        describe('unnormal usage: for testing, or other strange usages', function() {
+          it('header, headers is empty, false', function(done) {
+            testOptions['done'] = done;
+            testOptions['expect'] = 401;
+            testOptions['header'] = 'authorization';
+            tokenOptions['searchDefaultTokenKeys'] = false;
+            tokenOptions['headers'] = [];
+            test.lib.loopback.token.searchDefaultTokenKeys(testOptions, tokenOptions);
+          });
+        });
       });
     });
   });
