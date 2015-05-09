@@ -114,12 +114,12 @@ module.exports = function(AccessToken) {
             }
           });
         } else {
-          cb();
+          cb(); // FIXME: Why no error or token ???
         }
       });
     } else {
       process.nextTick(function() {
-        cb();
+        cb();  // FIXME: Why no error or token ???
       });
     }
   };

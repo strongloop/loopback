@@ -82,9 +82,17 @@ function token(options) {
   }
 
   if (options.searchDefaultTokenKeys === true) {
-    debug('FIXME: Why not create the DefaultTokenKeys here instead of on each req in tokenIdForRequest');
+    debug('token FIXME: Why not create the DefaultTokenKeys here instead of on each req in tokenIdForRequest');
+    /*
+      options.params = options.params || [];
+      options.params = options.params.concat(['access_token']);
+      options.headers = options.headers || [];
+      options.headers = options.headers.concat(['X-Access-Token', 'authorization']);
+      options.cookies = options.cookies || [];
+      options.cookies = options.cookies.concat(['access_token', 'authorization']);
+    */
   }else if (options.searchDefaultTokenKeys === false) {
-    debug('FIXME: check that there is a definition for a Token Key, otherwise Warn?');
+    debug('token FIXME: check that there is a definition for a Token Key, otherwise Warn?');
   }
 
   return function(req, res, next) {

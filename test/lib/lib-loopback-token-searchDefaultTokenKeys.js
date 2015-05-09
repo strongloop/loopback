@@ -77,14 +77,18 @@ function createTestModel() {
 
 function appGet(req, res) {
   // NOTE: The appGet should used .findForRequest and not just check if there is a req with token
-  debug('appget tokenOptions:\n' + tokenOptions + '\n');
-  debug('appget req:\n' + req + '\n');
+  debug('appget tokenOptions:\n' + inspect(tokenOptions) + '\n');
+  debug('appget req:\n' + inspect(req) + '\n');
   Token.findForRequest(req, tokenOptions, function(err, token) { // the test of all this work
-    if (token) {
-      res.sendStatus(200);
-    } else {
-      debug('appGet err:\n' + err + '\n');
+    if (err) {
+      debug('appGet err:\n' + inspect(err) + '\n');
       res.sendStatus(401);
+    } else if (token) {
+      debug('appGet token:\n' + inspect(token) + '\n');
+      res.sendStatus(200);
+    }else {
+      debug('appGet token:\nFIXME ???? ERROR ????\n'); // FIXME: is findForRequest working as expected?
+      res.sendStatus(500);
     }
   });
 }
