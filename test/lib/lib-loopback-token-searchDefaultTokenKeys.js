@@ -86,7 +86,7 @@ function appGet(req, res) {
       res.sendStatus(200);
     }else {
       debug('appGet err token:\n' + inspect(err) + '\n' + inspect(token) + '\n');
-      res.sendStatus(401); // iff Token.findForRequest
+      res.sendStatus(401);
     }
   });
 }
