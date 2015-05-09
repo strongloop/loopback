@@ -7,13 +7,28 @@ var testOptions = {};
 var tokenOptions = {};
 
 describe('AccessToken api:loopback:middleware:token(options)', function() {
-  describe('loopback.token({})', function() {
-    testOptions['expect'] = 200;
+  describe('loopback.token({})', function() {    
     it('header authorization', function(done) {
+      testOptions = {};
+      testOptions['expect'] = 200;
       testOptions['done'] = done;
       testOptions['header'] = 'authorization';
       test.lib.loopback.token.optionsUndefined(testOptions);
     });
+    it.skip('query access_token', function(done) {
+      testOptions = {};
+      testOptions['expect'] = 200;
+      testOptions['done'] = done;
+      testOptions['query'] = 'access_token';
+      test.lib.loopback.token.optionsUndefined(testOptions);
+    });    
+    it.skip('cookie access_token', function(done) {
+      testOptions = {};
+      testOptions['expect'] = 200;
+      testOptions['done'] = done;
+      testOptions['cookie'] = 'access_token';
+      test.lib.loopback.token.optionsUndefined(testOptions);
+    });    
   });
   describe('options.searchDefaultTokenKeys:[true|false]', function() {
     testOptions['expect'] = 200;
