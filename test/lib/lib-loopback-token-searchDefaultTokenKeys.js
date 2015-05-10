@@ -1,7 +1,6 @@
 'use strict';
 var debug = require('debug')('api:loopback:middleware:token');
 var inspect = require('util').inspect;
-var extend = require('util')._extend;
 module.exports = {
   lib: {
     loopback: {
@@ -14,22 +13,21 @@ module.exports = {
 };
 
 var loopback = require('../../');
-var testOptions; //FIXME: ??? heavy use of these 'global's
-var tokenOptions;
+var testOptions; //FIXME: ??? heavy use of these 'global's ?==>Object's
+var tokenOptions; 
 var app;
-var Token;
-var TestModel;
+var AccessToken;
 
 function optionsUndefined(theTestOptions) {
-  testOptions = theTestOptions;
+  testOptions = theTestOptions; // FIXME : go to Objects and this and new
   tokenOptions = {};
-  createTokenModleStartAppSendReq();
+  createToken(startAppSendRequest);
 }
 
 function searchDefaultTokenKeys(theTestOptions, theTokenOptions) {
-  testOptions = theTestOptions;
+  testOptions = theTestOptions; // FIXME : go to Objects and this and new
   tokenOptions = theTokenOptions;
-  createTokenModleStartAppSendReq();
+  createToken(startAppSendRequest);
 }
 
 function sendRequest() {
@@ -41,43 +39,24 @@ function sendRequest() {
     .end(testOptions.done);
 }
 
-function createTokenModleStartAppSendReq() {
-  Token = loopback.AccessToken.extend('MyToken');
+function createToken(cb) {
+  AccessToken = loopback.AccessToken;
   var tokenDataSource = loopback.createDataSource({connector: loopback.Memory});
-  var tokenCreate = {userId: '123'};
-  testOptions['get'] = '/';
-
-  Token.attachTo(tokenDataSource);
-  tokenOptions['model'] = Token;
-  tokenOptions['currentUserLiteral'] = 'me';
-
-  Token.create(tokenCreate, function(err, token) {
-    if (err) return testOptions.done(err);
-    testOptions['tokenId'] = token.id;
-    createTestModel();
-    startApp();
-    sendRequest();
-  });
+  AccessToken.attachTo(tokenDataSource);
+  AccessToken.create({}, cb);
 }
 
-function createTestModel() {
-  var ACL = loopback.ACL;
-  var acl = {
-    principalType: 'ROLE',
-    principalId: '$everyone',
-    accessType: ACL.ALL,
-    permission: ACL.DENY,
-    property: '*'
-  };
-  var modelOptions = {acls: [acl]};
-  TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
-  TestModel.attachTo(loopback.memory());
+function startAppSendRequest(err, token){
+  if (err) return testOptions.done(err);
+  testOptions['tokenId'] = token.id;
+  testOptions['get'] = '/';
+  startApp();
+  sendRequest();  
 }
 
 function appGet(req, res) {
-  // NOTE: The appGet should use Token.findForRequest and not just check if there is a req with a token
   debug('appget req:\n' + inspect(req) + '\n');
-  Token.findForRequest(req, tokenOptions, function(err, token) { // the test of all this work
+  AccessToken.findForRequest(req, tokenOptions, function(err, token) { // the test of all this work
     if (err) {
       debug('appGet err:\n' + inspect(err) + '\n');
       res.sendStatus(500);
@@ -93,7 +72,6 @@ function appGet(req, res) {
 
 function startApp() {
   app = loopback();
-  app.model(TestModel);
   app.use(loopback.token(tokenOptions)); // The subject of all this work
   app.get(testOptions['get'], appGet);
   app.use(loopback.rest());
