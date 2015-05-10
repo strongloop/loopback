@@ -74,6 +74,4 @@ function startApp() {
   app = loopback();
   app.use(loopback.token(tokenOptions)); // The subject of all this work
   app.get(testOptions['get'], appGet);
-  app.use(loopback.rest());
-  app.enableAuth();
 }
