@@ -5,6 +5,7 @@ module.exports = {
   lib: {
     loopback: {
       token: {
+        loopbackToken: loopbackToken,
         searchDefaultTokenKeys: loopbackToken,
         optionsUndefined: loopbackToken,
       }
@@ -14,11 +15,11 @@ module.exports = {
 
 var loopback = require('../../');
 var testOptions; //FIXME: ??? heavy use of these 'global's ?==>Object's
-var tokenOptions; 
+var tokenOptions;
 var app;
 var AccessToken;
 
-function loopbackToken(theTestOptions, theTokenOptions){
+function loopbackToken(theTestOptions, theTokenOptions) {
   testOptions = theTestOptions || {};
   tokenOptions = theTokenOptions || {};
   createToken(startAppSendRequest);
@@ -40,12 +41,12 @@ function createToken(cb) {
   AccessToken.create({}, cb);
 }
 
-function startAppSendRequest(err, token){
+function startAppSendRequest(err, token) {
   if (err) return testOptions.done(err);
   testOptions['tokenId'] = token.id;
   testOptions['get'] = '/';
   startApp();
-  sendRequest();  
+  sendRequest();
 }
 
 function appGet(req, res) {
