@@ -5,8 +5,8 @@ module.exports = {
   lib: {
     loopback: {
       token: {
-        searchDefaultTokenKeys: searchDefaultTokenKeys,
-        optionsUndefined: optionsUndefined,
+        searchDefaultTokenKeys: loopbackToken,
+        optionsUndefined: loopbackToken,
       }
     }
   }
@@ -18,15 +18,9 @@ var tokenOptions;
 var app;
 var AccessToken;
 
-function optionsUndefined(theTestOptions) {
-  testOptions = theTestOptions; // FIXME : go to Objects and this and new
-  tokenOptions = {};
-  createToken(startAppSendRequest);
-}
-
-function searchDefaultTokenKeys(theTestOptions, theTokenOptions) {
-  testOptions = theTestOptions; // FIXME : go to Objects and this and new
-  tokenOptions = theTokenOptions;
+function loopbackToken(theTestOptions, theTokenOptions){
+  testOptions = theTestOptions || {};
+  tokenOptions = theTokenOptions || {};
   createToken(startAppSendRequest);
 }
 
