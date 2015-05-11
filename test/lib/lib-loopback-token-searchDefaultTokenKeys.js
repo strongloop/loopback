@@ -3,21 +3,22 @@ var debug = require('debug')('api:loopback:middleware:token');
 var inspect = require('util').inspect;
 var LOOPBACK_REQURE = '../../';
 var loopback = require(LOOPBACK_REQURE);
-
 module.exports = TestEnvironment;
 
-var defTokenOptions = {};
-var header = 'authorization';
-var defTestOptions = {expect: 200, header: header, get: '/'}; 
-
 function TestEnvironment(testOptions, tokenOptions){
-  testOptions = testOptions || defTestOptions;
+  testOptions = testOptions || {};
+  debug('TestEnvironment testOptions:\n' + inspect(testOptions));
+  var header = 'authorization';
+  testOptions.expect = testOptions.expect || 200;
+  testOptions.header = testOptions.header || header;
+  testOptions.get = testOptions.get || '/';
   this.testOptions = testOptions;
-  debug('TestEnvironment testOptions:\n' + inspect(this.testOptions));
+  debug('TestEnvironment this.testOptions:\n' + inspect(this.testOptions));
   
-  tokenOptions = tokenOptions || defTokenOptions;
+  tokenOptions = tokenOptions || {};
+  debug('TestEnvironment tokenOptions:\n' + inspect(tokenOptions));
   this.tokenOptions = tokenOptions;
-  debug('TestEnvironment tokenOptions:\n' + inspect(this.tokenOptions));
+  debug('TestEnvironment this.tokenOptions:\n' + inspect(this.tokenOptions));
   
   this.testOptions.app = this.testOptions.app || null;
   if (this.testOptions.app === null){
@@ -29,13 +30,13 @@ function TestEnvironment(testOptions, tokenOptions){
 TestEnvironment.prototype.runTest = function(done){
   var that = this;
   this.testOptions.done = done;
-  if (! this.testOptions.tokenId){
+  this.testOptions.tokenId = this.testOptions.tokenId || null; 
+  if (this.testOptions.tokenId === null){
     debug('runTest createTokenId sendReq');
     this.createTokenId(function(){
-      debug('runTest createTokenId:\n' + inspect(that.testOptions.tokenId));
+      debug('runTest createTokenId tokenId:\n' + inspect(that.testOptions.tokenId));
       that.sendReq();
-      //that.testOptions.done();
-    }); // createToken will call done iff error
+    }); 
   }else{
     debug('runTest sendReq for tokenId\n' + inspect(that.testOptions.tokenId));
     this.sendReq();
@@ -76,7 +77,6 @@ TestEnvironment.prototype.startApp = function(){
  var get = this.testOptions.get;
  var getFn = this.testOptions.getFn;
  app.use(loopback.token(tokenOptions));
- debug("FIXME FIXME: dies after this");
  app.get(get, function(req, res){
   debug('appget req.headers:\n' + inspect(req.headers));
   var testOptions = that.testOptions;
