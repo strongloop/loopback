@@ -1,72 +1,99 @@
 'use strict';
 var debug = require('debug')('api:loopback:middleware:token');
 var inspect = require('util').inspect;
-module.exports = {
-  lib: {
-    loopback: {
-      token: {
-        loopbackToken: loopbackToken,
-        searchDefaultTokenKeys: loopbackToken,
-        optionsUndefined: loopbackToken,
-      }
-    }
+var LOOPBACK_REQURE = '../../';
+var loopback = require(LOOPBACK_REQURE);
+
+module.exports = TestEnvironment;
+
+var defTokenOptions = {};
+var header = 'authorization';
+var defTestOptions = {expect: 200, header: header, get: '/'}; 
+
+function TestEnvironment(testOptions, tokenOptions){
+  testOptions = testOptions || defTestOptions;
+  this.testOptions = testOptions;
+  debug('TestEnvironment testOptions:\n' + inspect(this.testOptions));
+  
+  tokenOptions = tokenOptions || defTokenOptions;
+  this.tokenOptions = tokenOptions;
+  debug('TestEnvironment tokenOptions:\n' + inspect(this.tokenOptions));
+  
+  this.testOptions.app = this.testOptions.app || null;
+  if (this.testOptions.app === null){
+    debug('TestEnvironment startApp');
+    this.startApp();
   }
 };
 
-var loopback = require('../../');
-var testOptions; //FIXME: ??? heavy use of these 'global's ?==>Object's
-var tokenOptions;
-var app;
-var AccessToken;
-
-function loopbackToken(theTestOptions, theTokenOptions) {
-  testOptions = theTestOptions || {};
-  tokenOptions = theTokenOptions || {};
-  createToken(startAppSendRequest);
+TestEnvironment.prototype.runTest = function(done){
+  var that = this;
+  this.testOptions.done = done;
+  if (! this.testOptions.tokenId){
+    debug('runTest createTokenId sendReq');
+    this.createTokenId(function(){
+      debug('runTest createTokenId:\n' + inspect(that.testOptions.tokenId));
+      that.sendReq();
+      //that.testOptions.done();
+    }); // createToken will call done iff error
+  }else{
+    debug('runTest sendReq for tokenId\n' + inspect(that.testOptions.tokenId));
+    this.sendReq();
+  } 
 }
 
-function sendRequest() {
-  debug('sendRequest testOptions:\n' + inspect(testOptions) + '\n');
-  request(app)
+TestEnvironment.prototype.sendReq = function (testOptions){
+  var testOptions = testOptions || this.testOptions; 
+  debug('sendReq header tokenId:\n' + inspect(testOptions.header) + '\n' + inspect(testOptions.tokenId));
+  request(testOptions.app)
     .get(testOptions.get)
     .set(testOptions.header, testOptions.tokenId)
     .expect(testOptions.expect)
     .end(testOptions.done);
 }
 
-function createToken(cb) {
-  AccessToken = loopback.AccessToken;
+TestEnvironment.prototype.createTokenId = function(cb) {
+  var that = this;
+  var accessToken = loopback.AccessToken;
+  this.testOptions.accessToken = accessToken;
   var tokenDataSource = loopback.createDataSource({connector: loopback.Memory});
-  AccessToken.attachTo(tokenDataSource);
-  AccessToken.create({}, cb);
-}
-
-function startAppSendRequest(err, token) {
-  if (err) return testOptions.done(err);
-  testOptions['tokenId'] = token.id;
-  testOptions['get'] = '/';
-  startApp();
-  sendRequest();
-}
-
-function appGet(req, res) {
-  debug('appget req:\n' + inspect(req) + '\n');
-  AccessToken.findForRequest(req, tokenOptions, function(err, token) { // the test of all this work
-    if (err) {
-      debug('appGet err:\n' + inspect(err) + '\n');
-      res.sendStatus(500);
-    } else if (token) {
-      debug('appGet token:\n' + inspect(token) + '\n');
-      res.sendStatus(200);
-    }else {
-      debug('appGet err token:\n' + inspect(err) + '\n' + inspect(token) + '\n');
-      res.sendStatus(401);
-    }
+  accessToken.attachTo(tokenDataSource);
+  accessToken.create({}, function(err, token){
+    if (err) return that.testOptions.done(err); // TODO: review if done or cb is best
+    that.testOptions.token = token;
+    that.testOptions.tokenId = token.id;
+    if (cb && typeof cb === 'function') {
+      cb();
+    } // TODO: else how would one return tokenId to the caller...
   });
 }
 
-function startApp() {
-  app = loopback();
-  app.use(loopback.token(tokenOptions)); // The subject of all this work
-  app.get(testOptions['get'], appGet);
+TestEnvironment.prototype.startApp = function(){
+ var that = this;
+ var app = loopback();
+ this.testOptions.app = app;
+ var tokenOptions = this.tokenOptions;
+ var get = this.testOptions.get;
+ var getFn = this.testOptions.getFn;
+ app.use(loopback.token(tokenOptions));
+ debug("FIXME FIXME: dies after this");
+ app.get(get, function(req, res){
+  debug('appget req.headers:\n' + inspect(req.headers));
+  var testOptions = that.testOptions;
+  var tokenOptions = that.tokenOptions;
+  testOptions.accessToken.findForRequest(req, tokenOptions, function(err, token){
+    if (err) {
+      debug('appGet 500 err:\n' + inspect(err));
+      res.sendStatus(500);
+    } else if (token) {
+      debug('appGet 200 token:\n' + inspect(token));
+      res.sendStatus(200);
+    }else {
+      debug('appGet 401 err token:\n' + inspect(err) + '\n' + inspect(token));
+      res.sendStatus(401);
+    }    
+  });
+ });
+ debug('startApp started');
 }
+

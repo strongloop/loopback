@@ -1,0 +1,81 @@
+
+
+  api:loopback:middleware:token(options)
+    loopback.token({})
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment testOptions:
+{ expect: 200, header: 'authorization', get: '/' }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment tokenOptions:
+{}
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment startApp
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token herer
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token startApp started
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token runTest createTokenId sendReq
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token runTest createTokenId:
+'9hPbyoJAs3hpD5ERwFa5jLo0eL1OD26hI79sNYKOQqhmjBgYphCNiz84PSpNzBro'
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token sendReq header tokenId:
+'authorization'
+'9hPbyoJAs3hpD5ERwFa5jLo0eL1OD26hI79sNYKOQqhmjBgYphCNiz84PSpNzBro'
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token appget req.headers:
+{ host: '127.0.0.1:21234',
+  'accept-encoding': 'gzip, deflate',
+  'user-agent': 'node-superagent/0.21.0',
+  authorization: '9hPbyoJAs3hpD5ERwFa5jLo0eL1OD26hI79sNYKOQqhmjBgYphCNiz84PSpNzBro',
+  connection: 'close' }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token appGet 200 token:
+{ id: '9hPbyoJAs3hpD5ERwFa5jLo0eL1OD26hI79sNYKOQqhmjBgYphCNiz84PSpNzBro',
+  ttl: 1209600,
+  created: Mon May 11 2015 22:38:52 GMT+0200 (Romance Daylight Time) }
+      √ header (47ms)
+    options
+      searchDefaultTokenKeys:[true|false]
+        normal usage
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment testOptions:
+{ expect: 200, header: 'authorization' }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment tokenOptions:
+{ searchDefaultTokenKeys: true, headers: [] }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment startApp
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token herer
+          1) header, headers is empty, true
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment testOptions:
+{ expect: 200, header: 'authorization' }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment tokenOptions:
+{ searchDefaultTokenKeys: false, headers: [ 'authorization' ] }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment startApp
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token herer
+          2) header, headers has header, false
+        unormal usage: testing or unknown usage
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment testOptions:
+{ expect: 401, header: 'authorization' }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment tokenOptions:
+{ searchDefaultTokenKeys: false, headers: [] }
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token TestEnvironment startApp
+Mon, 11 May 2015 20:38:52 GMT api:loopback:middleware:token herer
+          3) header, headers is empty, false
+
+
+  1 passing (63ms)
+  3 failing
+
+  1) api:loopback:middleware:token(options) options searchDefaultTokenKeys:[true|false] normal usage header, headers is empty, true:
+     TypeError: Cannot read property 'length' of undefined
+      at Function.routeAndSort (c:\Users\ob_000\loopback\lib\server-app.js:233:38)
+      at TestEnvironment.startApp (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:80:6)
+      at new TestEnvironment (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:25:10)
+      at Context.<anonymous> (c:\Users\ob_000\loopback\test\api-loopback-token-searchDefaultTokenKeys.test.js:21:24)
+
+  2) api:loopback:middleware:token(options) options searchDefaultTokenKeys:[true|false] normal usage header, headers has header, false:
+     TypeError: Cannot read property 'length' of undefined
+      at Function.routeAndSort (c:\Users\ob_000\loopback\lib\server-app.js:233:38)
+      at TestEnvironment.startApp (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:80:6)
+      at new TestEnvironment (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:25:10)
+      at Context.<anonymous> (c:\Users\ob_000\loopback\test\api-loopback-token-searchDefaultTokenKeys.test.js:28:24)
+
+  3) api:loopback:middleware:token(options) options searchDefaultTokenKeys:[true|false] unormal usage: testing or unknown usage header, headers is empty, false:
+     TypeError: Cannot read property 'length' of undefined
+      at Function.routeAndSort (c:\Users\ob_000\loopback\lib\server-app.js:233:38)
+      at TestEnvironment.startApp (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:80:6)
+      at new TestEnvironment (c:\Users\ob_000\loopback\test\lib\lib-loopback-token-searchDefaultTokenKeys.js:25:10)
+      at Context.<anonymous> (c:\Users\ob_000\loopback\test\api-loopback-token-searchDefaultTokenKeys.test.js:37:24)
+
+
+
