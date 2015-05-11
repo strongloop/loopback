@@ -11,33 +11,33 @@ describe('api:loopback:middleware:token(options)', function() {
       tstEnv.runTest(done);
     });
   });
-  describe('options', function(){
+  describe('options', function() {
     describe('searchDefaultTokenKeys:[true|false]', function() {
-      describe('normal usage', function(){
-        it('header, headers is empty, true', function(done) {          
+      describe('normal usage', function() {
+        it('header, headers is empty, true', function(done) {
           var header = 'authorization';
-          var testOptions = {expect: 200, header: header,};              
+          var testOptions = {expect: 200, header: header};
           var tokenOptions = {searchDefaultTokenKeys: true, headers: []};
           var tstEnv = new TestEnvironment(testOptions, tokenOptions);
-          tstEnv.runTest(done);          
-        });        
-        it('header, headers has header, false', function(done) {          
+          tstEnv.runTest(done);
+        });
+        it('header, headers has header, false', function(done) {
           var header = 'authorization';
-          var testOptions = {expect: 200, header: header,};              
+          var testOptions = {expect: 200, header: header};
           var tokenOptions = {searchDefaultTokenKeys: false, headers: [header]};
           var tstEnv = new TestEnvironment(testOptions, tokenOptions);
           tstEnv.runTest(done);
-        });        
+        });
       });
-      describe('unormal usage: testing or unknown usage', function(){
-        it('header, headers is empty, false', function(done) {                  
+      describe('unormal usage: testing or unknown usage', function() {
+        it('header, headers is empty, false', function(done) {
           var header = 'authorization';
-          var testOptions = {expect: 401, header: header,};              
+          var testOptions = {expect: 401, header: header};
           var tokenOptions = {searchDefaultTokenKeys: false, headers: []};
           var tstEnv = new TestEnvironment(testOptions, tokenOptions);
           tstEnv.runTest(done);
         });
       });
-    });  
+    });
   });
 });
