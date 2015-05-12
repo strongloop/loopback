@@ -1,9 +1,11 @@
 'use strict';
-var debug = require('debug')('api:loopback:middleware:token');
-var inspect = require('util').inspect;
-
+var DEBUG = 'api:loopback:middleware:token';
 var LOOPBACK_REQURE = '../../';
+
+var debug = require('debug')(DEBUG);
+var inspect = require('util').inspect;
 var loopback = require(LOOPBACK_REQURE);
+
 module.exports = TestEnvironment;
 
 function TestEnvironment(testOptions, tokenOptions) {
@@ -71,7 +73,7 @@ TestEnvironment.prototype.createTokenId = function(cb) {
 };
 
 TestEnvironment.prototype.startApp = function() {
-  debug('startApp starting'); 
+  debug('startApp starting');
   var that = this;
   var app = loopback();
   this.testOptions.app = app;
