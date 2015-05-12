@@ -72,6 +72,24 @@ TestEnvironment.prototype.createTokenId = function(cb) {
   });
 };
 
+TestEnvironment.prototype.appGet = function(req, res, that) {
+  debug('appGet req.headers:\n' + inspect(req.headers));
+  var testOptions = that.testOptions;
+  var tokenOptions = that.tokenOptions;
+  testOptions.accessToken.findForRequest(req, tokenOptions, function(err, token) {
+    if (err) {
+      debug('appGet 500 err:\n' + inspect(err));
+      res.sendStatus(500);
+    } else if (token) {
+      debug('appGet 200 token:\n' + inspect(token));
+      res.sendStatus(200);
+    }else {
+      debug('appGet 401 err token:\n' + inspect(err) + '\n' + inspect(token));
+      res.sendStatus(401);
+    }
+  });  
+};
+
 TestEnvironment.prototype.startApp = function() {
   debug('startApp starting');
   var that = this;
@@ -81,21 +99,7 @@ TestEnvironment.prototype.startApp = function() {
   var get = this.testOptions.get;
   app.use(loopback.token(tokenOptions));
   app.get(get, function(req, res) {
-    debug('appget req.headers:\n' + inspect(req.headers));
-    var testOptions = that.testOptions;
-    var tokenOptions = that.tokenOptions;
-    testOptions.accessToken.findForRequest(req, tokenOptions, function(err, token) {
-      if (err) {
-        debug('appGet 500 err:\n' + inspect(err));
-        res.sendStatus(500);
-      } else if (token) {
-        debug('appGet 200 token:\n' + inspect(token));
-        res.sendStatus(200);
-      }else {
-        debug('appGet 401 err token:\n' + inspect(err) + '\n' + inspect(token));
-        res.sendStatus(401);
-      }
-    });
+    that.appGet(req, res, that);
   });
   debug('startApp started');
 };
