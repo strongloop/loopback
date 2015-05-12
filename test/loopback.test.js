@@ -249,6 +249,30 @@ describe('loopback', function() {
           .to.throw(Error, new RegExp('Model not found: ' + uniqueModelName));
       });
     });
+
+    it('configures remote methods', function() {
+      var TestModel = loopback.createModel(uniqueModelName, {}, {
+        methods: {
+          staticMethod: {
+            isStatic: true,
+            http: { path: '/static' }
+          },
+          instanceMethod: {
+            isStatic: false,
+            http: { path: '/instance' }
+          }
+        }
+      });
+
+      var methodNames = TestModel.sharedClass.methods().map(function(m) {
+        return m.stringName.replace(/^[^.]+\./, ''); // drop the class name
+      });
+
+      expect(methodNames).to.include.members([
+        'staticMethod',
+        'prototype.instanceMethod'
+      ]);
+    });
   });
 
   describe('loopback.createModel(config)', function() {
@@ -448,6 +472,32 @@ describe('loopback', function() {
 
       // configureModel MUST NOT change Model's base class
       expect(model.settings.base.name).to.equal(baseName);
+    });
+
+    it('configures remote methods', function() {
+      var TestModel = loopback.createModel(uniqueModelName);
+      loopback.configureModel(TestModel, {
+        dataSource: null,
+        methods: {
+          staticMethod: {
+            isStatic: true,
+            http: { path: '/static' }
+          },
+          instanceMethod: {
+            isStatic: false,
+            http: { path: '/instance' }
+          }
+        }
+      });
+
+      var methodNames = TestModel.sharedClass.methods().map(function(m) {
+        return m.stringName.replace(/^[^.]+\./, ''); // drop the class name
+      });
+
+      expect(methodNames).to.include.members([
+        'staticMethod',
+        'prototype.instanceMethod'
+      ]);
     });
   });
 
