@@ -10,31 +10,32 @@ module.exports = TestEnvironment;
 
 function TestEnvironment(testOptions, tokenOptions) {
   testOptions = testOptions || {};
+  this.testOptions = testOptions;
   debug('TestEnvironment testOptions:\n' + inspect(testOptions));
   var header = 'authorization';
   testOptions.expect = testOptions.expect || 200;
   testOptions.header = testOptions.header || header;
   testOptions.get = testOptions.get || '/';
-  this.testOptions = testOptions;
-  debug('TestEnvironment this.testOptions:\n' + inspect(this.testOptions));
+  debug('TestEnvironment testOptions:\n' + inspect(testOptions));
 
   tokenOptions = tokenOptions || {};
-  debug('TestEnvironment tokenOptions:\n' + inspect(tokenOptions));
   this.tokenOptions = tokenOptions;
-  debug('TestEnvironment this.tokenOptions:\n' + inspect(this.tokenOptions));
+  debug('TestEnvironment tokenOptions:\n' + inspect(tokenOptions));
+  debug('TestEnvironment tokenOptions:\n' + inspect(tokenOptions));
 
-  this.testOptions.app = this.testOptions.app || null;
-  if (this.testOptions.app === null) {
+  testOptions.app = testOptions.app || null;
+  if (testOptions.app === null) {
     debug('TestEnvironment startApp');
-    this.startApp();
+    this.startApp(); //TODO: there has to be a better way than this.function(): it just does not right
   }
 }
 
 TestEnvironment.prototype.runTest = function(done) {
   var that = this;
-  this.testOptions.done = done;
-  this.testOptions.tokenId = this.testOptions.tokenId || null;
-  if (this.testOptions.tokenId === null) {
+  var testOptions = this.testOptions;
+  testOptions.done = done;
+  testOptions.tokenId = testOptions.tokenId || null;
+  if (testOptions.tokenId === null) {
     debug('runTest createTokenId sendReq');
     this.createTokenId(function() {
       debug('runTest createTokenId tokenId:\n' + inspect(that.testOptions.tokenId));
