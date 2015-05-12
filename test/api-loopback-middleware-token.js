@@ -1,7 +1,7 @@
 'use strict';
 var debug = require('debug')('api:loopback:middleware:token');
 var inspect = require('util').inspect;
-var SEARCHDEFAULTKEYS_LIB = './lib/lib-loopback-token-searchDefaultTokenKeys';
+var SEARCHDEFAULTKEYS_LIB = './lib/lib-loopback-middleware-token';
 var TestEnvironment = require(SEARCHDEFAULTKEYS_LIB);
 
 describe('api:loopback:middleware:token(options)', function() {
