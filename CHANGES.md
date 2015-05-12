@@ -1,3 +1,23 @@
+2015-05-12, Version 2.17.3
+==========================
+
+ * Use the new remoting.authorization hook for check access (Ritchie Martori)
+
+ * Define remote methods via model settings/config (Miroslav Bajtoš)
+
+ * Pass the full options object to the email send method in user verification process. (Alexandru Savin)
+
+ * un-document _findLayerByHandler (Rand McKinney)
+
+ * Gruntfile: disable debug & watch for CI builds (Miroslav Bajtoš)
+
+ * Update devDependencies to the latest versions (Miroslav Bajtoš)
+
+ * Remove trailing whitespace added by 242bcec (Miroslav Bajtoš)
+
+ * Update model.js (Rand McKinney)
+
+
 2015-04-28, Version 2.17.2
 ==========================
 
