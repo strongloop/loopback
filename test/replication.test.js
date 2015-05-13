@@ -294,11 +294,22 @@ describe('Replication / Change APIs', function() {
           },
           function replicateWith3rdPartyModifyingData(next) {
             setupRaceConditionInReplication(function(cb) {
-              TargetModel.dataSource.connector.updateAttributes(
-                TargetModel.modelName,
-                '1',
-                { name: '3rd-party' },
-                cb);
+              var connector = TargetModel.dataSource.connector;
+              if (connector.updateAttributes.length <= 4) {
+                connector.updateAttributes(
+                  TargetModel.modelName,
+                  '1',
+                  {name: '3rd-party'},
+                  cb);
+              } else {
+                // 2.x connectors require `options`
+                connector.updateAttributes(
+                  TargetModel.modelName,
+                  '1',
+                  {name: '3rd-party'},
+                  {}, // options
+                  cb);
+              }
             });
 
             SourceModel.replicate(
@@ -325,11 +336,21 @@ describe('Replication / Change APIs', function() {
           // of UPDATE is fixed to correctly remove properties
           createModel(SourceModel, { id: '1', name: 'source' }),
           function replicateWith3rdPartyModifyingData(next) {
+            var connector = TargetModel.dataSource.connector;
             setupRaceConditionInReplication(function(cb) {
-              TargetModel.dataSource.connector.create(
-                TargetModel.modelName,
-                { id: '1', name: '3rd-party' },
-                cb);
+              if (connector.create.length <= 3) {
+                connector.create(
+                  TargetModel.modelName,
+                  {id: '1', name: '3rd-party'},
+                  cb);
+              } else {
+                // 2.x connectors require `options`
+                connector.create(
+                  TargetModel.modelName,
+                  {id: '1', name: '3rd-party'},
+                  {}, // options
+                  cb);
+              }
             });
 
             SourceModel.replicate(
@@ -359,11 +380,22 @@ describe('Replication / Change APIs', function() {
           },
           function replicateWith3rdPartyModifyingData(next) {
             setupRaceConditionInReplication(function(cb) {
-              TargetModel.dataSource.connector.updateAttributes(
-                TargetModel.modelName,
-                '1',
-                { name: '3rd-party' },
-                cb);
+              var connector = TargetModel.dataSource.connector;
+              if (connector.updateAttributes.length <= 4) {
+                connector.updateAttributes(
+                  TargetModel.modelName,
+                  '1',
+                  {name: '3rd-party'},
+                  cb);
+              } else {
+                // 2.x connectors require `options`
+                connector.updateAttributes(
+                  TargetModel.modelName,
+                  '1',
+                  {name: '3rd-party'},
+                  {}, // options
+                  cb);
+              }
             });
 
             SourceModel.replicate(
@@ -392,11 +424,21 @@ describe('Replication / Change APIs', function() {
             SourceModel.deleteById('1', next);
           },
           function setup3rdPartyModifyingData(next) {
+            var connector = TargetModel.dataSource.connector;
             setupRaceConditionInReplication(function(cb) {
-              TargetModel.dataSource.connector.destroy(
-                TargetModel.modelName,
-                '1',
-                cb);
+              if (connector.destroy.length <= 3) {
+                connector.destroy(
+                  TargetModel.modelName,
+                  '1',
+                  cb);
+              } else {
+                // 2.x connectors require `options`
+                connector.destroy(
+                  TargetModel.modelName,
+                  '1',
+                  {}, // options
+                  cb);
+              }
             });
             next();
           },
@@ -681,13 +723,24 @@ describe('Replication / Change APIs', function() {
       // make sure we bypass find+create and call the connector directly
       SourceModel.dataSource.connector.findOrCreate =
         function(model, query, data, callback) {
-          this.all(model, query, function(err, list) {
-            if (err || (list && list[0]))
-              return callback(err, list && list[0], false);
-            this.create(model, data, function(err) {
-              callback(err, data, true);
-            });
-          }.bind(this));
+          if (this.all.length <= 3) {
+            this.all(model, query, function(err, list) {
+              if (err || (list && list[0]))
+                return callback(err, list && list[0], false);
+              this.create(model, data, function(err) {
+                callback(err, data, true);
+              });
+            }.bind(this));
+          } else {
+            // 2.x connectors requires `options`
+            this.all(model, query, {}, function(err, list) {
+              if (err || (list && list[0]))
+                return callback(err, list && list[0], false);
+              this.create(model, data, {}, function(err) {
+                callback(err, data, true);
+              });
+            }.bind(this));
+          }
         };
 
       SourceModel.findOrCreate(
