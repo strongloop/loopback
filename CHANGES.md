@@ -1,3 +1,9 @@
+2015-05-13, Version 2.18.0
+==========================
+
+ * Make the test compatible with latest juggler (Raymond Feng)
+
+
 2015-05-12, Version 2.17.3
 ==========================
 
