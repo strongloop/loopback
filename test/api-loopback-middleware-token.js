@@ -2,8 +2,12 @@
 var DESCRIBE = 'api:loopback:middleware:token(options)';
 var DEBUG = 'api:loopback:middleware:token';
 
+module.exports = TestEnvironment;
+
 var debug = require('debug')('DEBUG');
 var inspect = require('util').inspect;
+var LOOPBACK_REQUIRE = '../';
+var loopback = require(LOOPBACK_REQUIRE);
 
 describe(DESCRIBE, function() {
   describe('loopback.token({})', function() {
@@ -57,11 +61,6 @@ describe(DESCRIBE, function() {
   });
 });
 
-var LOOPBACK_REQUIRE = '../';
-var loopback = require(LOOPBACK_REQUIRE);
-
-module.exports = TestEnvironment;
-
 function TestEnvironment(testOptions, tokenOptions) {
   testOptions = testOptions || {};
   this.testOptions = testOptions;
@@ -80,7 +79,7 @@ function TestEnvironment(testOptions, tokenOptions) {
   testOptions.app = testOptions.app || null;
   if (testOptions.app === null) {
     debug('TestEnvironment startApp');
-    this.startApp(); //TODO: there has to be a better way than this.function(): it just does not look right
+    this.startApp();
   }
 }
 
@@ -118,12 +117,12 @@ TestEnvironment.prototype.createTokenId = function(cb) {
   var tokenDataSource = loopback.createDataSource({connector: loopback.Memory});
   accessToken.attachTo(tokenDataSource);
   accessToken.create({}, function(err, token) {
-    if (err) return that.testOptions.done(err); // TODO: review if done or cb is best
+    if (err) return that.testOptions.done(err);
     that.testOptions.token = token;
     that.testOptions.tokenId = token.id;
     if (cb && typeof cb === 'function') {
       cb();
-    } // TODO: else how would one return tokenId to the caller...
+    }
   });
 };
 
@@ -142,7 +141,7 @@ TestEnvironment.prototype.appGet = function(req, res, that) {
       debug('appGet 401 err token:\n' + inspect(err) + '\n' + inspect(token));
       res.sendStatus(401);
     }
-  });  
+  });
 };
 
 TestEnvironment.prototype.startApp = function() {
@@ -158,4 +157,3 @@ TestEnvironment.prototype.startApp = function() {
   });
   debug('startApp started');
 };
-
