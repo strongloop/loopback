@@ -27,6 +27,109 @@ describe('relations - integration', function() {
     this.app.models.widget.destroyAll(done);
   });
 
+  describe.only('polymorphicHasMany', function() {
+
+    before(function defineProductAndCategoryModels() {
+      var Group = app.model(
+        'Group',
+        { properties: { name: 'string' },
+          dataSource: 'db'
+        }
+      );
+      var Reader = app.model(
+        'Reader',
+        { properties: { name: 'string' },
+          dataSource: 'db'
+        }
+      );
+      var Picture = app.model(
+        'Picture',
+        { properties: { name: 'string', imageableId: 'number', imageableType: 'string'},
+          dataSource: 'db'
+        }
+      );
+
+      Reader.hasMany(Picture, { polymorphic: { // alternative syntax
+        as: 'imageable', // if not set, default to: reference
+        foreignKey: 'imageableId', // defaults to 'as + Id'
+        discriminator: 'imageableType' // defaults to 'as + Type'
+      } });
+
+      Picture.belongsTo('imageable', { polymorphic: {
+        foreignKey: 'imageableId',
+        discriminator: 'imageableType'
+      } });
+
+      Reader.belongsTo(Group);
+    });
+
+    before(function createEvent(done) {
+      var test = this;
+      app.models.Group.create({ name: 'Group 1' },
+        function(err, group) {
+        if (err) return done(err);
+        test.group = group;
+        app.models.Reader.create({ name: 'Reader 1' },
+          function(err, reader) {
+            if (err) return done(err);
+            test.reader = reader;
+            reader.pictures.create({ name: 'Picture 1' });
+            reader.pictures.create({ name: 'Picture 2' });
+            reader.group = test.group;
+            reader.save(done);
+          });
+        }
+      )
+    });
+
+    after(function(done) {
+      this.app.models.Reader.destroyAll(done);
+    });
+
+    it('includes the related child model', function(done) {
+      var url = '/api/readers/' + this.reader.id;
+      this.get(url)
+        .query({'filter': {'include' : 'pictures'}})
+        .expect(200, function(err, res) {
+          // console.log(res.body);
+          expect(res.body.name).to.be.equal('Reader 1');
+          expect(res.body.pictures).to.be.eql([
+            { name: 'Picture 1', id: 1, imageableId: 1, imageableType: 'Reader'},
+            { name: 'Picture 2', id: 2, imageableId: 1, imageableType: 'Reader'},
+          ]);
+          done();
+        });
+    });
+
+    it('includes the related parent model', function(done) {
+      var url = '/api/pictures';
+      this.get(url)
+        .query({'filter': {'include' : 'imageable'}})
+        .expect(200, function(err, res) {
+          // console.log(res.body);
+          expect(res.body[0].name).to.be.equal('Picture 1');
+          expect(res.body[1].name).to.be.equal('Picture 2');
+          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1});
+          done();
+        });
+    });
+
+    it('includes related models scoped to the related parent model', function(done) {
+      var url = '/api/pictures';
+      this.get(url)
+        .query({'filter': {'include' : {'relation': 'imageable', 'scope': { 'include' : 'group'}}}})
+        .expect(200, function(err, res) {
+          console.log(res.body);
+          expect(res.body[0].name).to.be.equal('Picture 1');
+          expect(res.body[1].name).to.be.equal('Picture 2');
+          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1});
+          expect(res.body[0].imageable.group).to.be.eql({ name: 'Group 1', id: 1});
+          done();
+        });
+    });
+
+  });
+
   describe('/store/superStores', function() {
     it('should invoke scoped methods remotely', function(done) {
       this.get('/api/stores/superStores')
