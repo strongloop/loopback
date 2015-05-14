@@ -67,9 +67,9 @@ describe('relations - integration', function() {
       var test = this;
       app.models.Group.create({ name: 'Group 1' },
         function(err, group) {
-        if (err) return done(err);
-        test.group = group;
-        app.models.Reader.create({ name: 'Reader 1' },
+          if (err) return done(err);
+          test.group = group;
+          app.models.Reader.create({ name: 'Reader 1' },
           function(err, reader) {
             if (err) return done(err);
             test.reader = reader;
@@ -79,7 +79,7 @@ describe('relations - integration', function() {
             reader.save(done);
           });
         }
-      )
+      );
     });
 
     after(function(done) {
