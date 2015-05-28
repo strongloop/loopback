@@ -27,11 +27,11 @@ describe('relations - integration', function() {
     this.app.models.widget.destroyAll(done);
   });
 
-  describe.only('polymorphicHasMany', function() {
+  describe('polymorphicHasMany', function() {
 
     before(function defineProductAndCategoryModels() {
-      var Group = app.model(
-        'Group',
+      var Team = app.model(
+        'Team',
         { properties: { name: 'string' },
           dataSource: 'db'
         }
@@ -60,22 +60,22 @@ describe('relations - integration', function() {
         discriminator: 'imageableType'
       } });
 
-      Reader.belongsTo(Group);
+      Reader.belongsTo(Team);
     });
 
     before(function createEvent(done) {
       var test = this;
-      app.models.Group.create({ name: 'Group 1' },
-        function(err, group) {
+      app.models.Team.create({ name: 'Team 1' },
+        function(err, team) {
           if (err) return done(err);
-          test.group = group;
+          test.team = team;
           app.models.Reader.create({ name: 'Reader 1' },
           function(err, reader) {
             if (err) return done(err);
             test.reader = reader;
             reader.pictures.create({ name: 'Picture 1' });
             reader.pictures.create({ name: 'Picture 2' });
-            reader.group = test.group;
+            reader.team(test.team);
             reader.save(done);
           });
         }
@@ -109,7 +109,7 @@ describe('relations - integration', function() {
           // console.log(res.body);
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
-          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1});
+          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1, teamId: 1});
           done();
         });
     });
@@ -117,13 +117,12 @@ describe('relations - integration', function() {
     it('includes related models scoped to the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({'filter': {'include' : {'relation': 'imageable', 'scope': { 'include' : 'group'}}}})
+        .query({'filter': {'include' : {'relation': 'imageable', 'scope': { 'include' : 'team'}}}})
         .expect(200, function(err, res) {
-          console.log(res.body);
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
-          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1});
-          expect(res.body[0].imageable.group).to.be.eql({ name: 'Group 1', id: 1});
+          expect(res.body[0].imageable.name).to.be.eql('Reader 1');
+          expect(res.body[0].imageable.team).to.be.eql({ name: 'Team 1', id: 1});
           done();
         });
     });
