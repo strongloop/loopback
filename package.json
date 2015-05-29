@@ -40,6 +40,7 @@
     "debug": "^2.1.2",
     "depd": "^1.0.0",
     "ejs": "^2.3.1",
+    "email-templates": "^1.2.1",
     "express": "^4.12.2",
     "inflection": "^1.6.0",
     "loopback-connector-remote": "^1.0.3",
@@ -96,6 +97,7 @@
     "./server/current-context.js": "./browser/current-context.js",
     "connect": false,
     "nodemailer": false,
+    "email-templates": false,
     "supertest": false,
     "depd": "loopback-datasource-juggler/lib/browser.depd.js",
     "bcrypt": false

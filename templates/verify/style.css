@@ -1,0 +1,8 @@
+/* these styles are 'juiced' into inline styles for the email */
+h1 {
+  color: #0066dd;
+}
+
+p {
+  margin: 1em auto;
+}

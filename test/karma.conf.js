@@ -91,6 +91,7 @@ module.exports = function(config) {
       // extensions: ['.coffee'],
       ignore: [
         'nodemailer',
+        'email-templates',
         'passport',
         'passport-local',
         'superagent',

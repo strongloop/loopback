@@ -77,7 +77,7 @@ module.exports = function(grunt) {
           'dist/loopback.js': ['index.js'],
         },
         options: {
-          ignore: ['nodemailer', 'passport', 'bcrypt'],
+          ignore: ['nodemailer', 'email-templates', 'passport', 'bcrypt'],
           standalone: 'loopback'
         }
       }
@@ -186,6 +186,7 @@ module.exports = function(grunt) {
             // extensions: ['.coffee'],
             ignore: [
               'nodemailer',
+              'email-templates',
               'passport',
               'passport-local',
               'superagent',
