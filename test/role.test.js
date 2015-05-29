@@ -1,8 +1,10 @@
 var assert = require('assert');
+var sinon = require('sinon');
 var loopback = require('../index');
 var Role = loopback.Role;
 var RoleMapping = loopback.RoleMapping;
 var User = loopback.User;
+var Application = loopback.Application;
 var ACL = loopback.ACL;
 
 function checkResult(err, result) {
@@ -67,8 +69,7 @@ describe('role model', function() {
           role.users(function(err, users) {
             assert(!err);
             assert.equal(users.length, 1);
-            assert.equal(users[0].principalType, RoleMapping.USER);
-            assert.equal(users[0].principalId, user.id);
+            assert.equal(users[0].id, user.id);
           });
         });
       });
@@ -100,8 +101,7 @@ describe('role model', function() {
           role.users(function(err, users) {
             assert(!err);
             assert.equal(users.length, 1);
-            assert.equal(users[0].principalType, RoleMapping.USER);
-            assert.equal(users[0].principalId, user.id);
+            assert.equal(users[0].id, user.id);
           });
         });
       });
@@ -206,6 +206,66 @@ describe('role model', function() {
       });
     });
 
+  });
+
+  describe('listByPrincipalType', function() {
+    var sandbox;
+
+    beforeEach(function() {
+      sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(function() {
+      sandbox.restore();
+    });
+
+    it('should fetch all models assigned to the role', function(done) {
+      var principalTypesToModels = {};
+      var runs = 0;
+      var mappings;
+
+      principalTypesToModels[RoleMapping.USER] = User;
+      principalTypesToModels[RoleMapping.APPLICATION] = Application;
+      principalTypesToModels[RoleMapping.ROLE] = Role;
+
+      mappings = Object.keys(principalTypesToModels);
+
+      mappings.forEach(function(principalType) {
+        var Model = principalTypesToModels[principalType];
+        Model.create({name:'test', email:'x@y.com', password: 'foobar'}, function(err, model) {
+          Role.create({name:'testRole'}, function(err, role) {
+            role.principals.create({principalType: principalType, principalId: model.id}, function(err, p) {
+              var pluralName = Model.pluralModelName.toLowerCase();
+              role[pluralName](function(err, models) {
+                assert(!err);
+                assert.equal(models.length, 1);
+                if (++runs === mappings.length) {
+                  done();
+                }
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it('should apply query', function(done) {
+      User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
+        Role.create({name: 'userRole'}, function(err, role) {
+          role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
+            var query = {fields:['id', 'name']};
+            sandbox.spy(User, 'find');
+            role.users(query, function(err, users) {
+              assert(!err);
+              assert.equal(users.length, 1);
+              assert.equal(users[0].id, user.id);
+              assert(User.find.calledWith(query));
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 
 });
