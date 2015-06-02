@@ -115,6 +115,24 @@ describe('loopback', function() {
     });
   });
 
+  describe('loopback(options)', function() {
+    it('supports localRegistry:true', function() {
+      var app = loopback({ localRegistry: true });
+      expect(app.registry).to.not.equal(loopback.registry);
+    });
+
+    it('does not load builtin models into the local registry', function() {
+      var app = loopback({ localRegistry: true });
+      expect(app.registry.findModel('User')).to.equal(undefined);
+    });
+
+    it('supports loadBuiltinModels:true', function() {
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      expect(app.registry.findModel('User'))
+        .to.have.property('modelName', 'User');
+    });
+  });
+
   describe('loopback.createDataSource(options)', function() {
     it('Create a data source with a connector.', function() {
       var dataSource = loopback.createDataSource({
