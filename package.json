@@ -81,7 +81,7 @@
     "karma-script-launcher": "^0.1.0",
     "loopback-boot": "^2.7.0",
     "loopback-datasource-juggler": "^2.19.1",
-    "loopback-testing": "^1.1.0",
+    "loopback-testing": "~1.1.0",
     "mocha": "^2.1.0",
     "sinon": "^1.13.0",
     "strong-task-emitter": "^0.0.6",
