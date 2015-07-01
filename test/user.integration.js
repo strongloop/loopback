@@ -106,6 +106,17 @@ describe('users - integration', function() {
             .expect(200, done);
         });
     });
+
+    it('returns 401 on logout with no access token', function(done) {
+      this.post('/api/users/logout')
+        .expect(401, done);
+    });
+
+    it('returns 401 on logout with invalid access token', function(done) {
+      this.post('/api/users/logout')
+        .set('Authorization', 'unknown-token')
+        .expect(401, done);
+    });
   });
 
   describe('sub-user', function() {
