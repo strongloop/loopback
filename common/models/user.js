@@ -293,13 +293,23 @@ module.exports = function(User) {
 
   User.logout = function(tokenId, fn) {
     fn = fn || utils.createPromiseCallback();
-    this.relations.accessTokens.modelTo.findById(tokenId, function(err, accessToken) {
+
+    if (!tokenId) {
+      var err = new Error(g.f('{{accessToken}} is required to logout'));
+      err.status = 401;
+      process.nextTick(function() { fn(err); });
+      return fn.promise;
+    }
+
+    this.relations.accessTokens.modelTo.destroyById(tokenId, function(err, info) {
       if (err) {
         fn(err);
-      } else if (accessToken) {
-        accessToken.destroy(fn);
+      } else if ('count' in info && info.count === 0) {
+        err = new Error(g.f('Could not find {{accessToken}}'));
+        err.status = 401;
+        fn(err);
       } else {
-        fn(new Error(g.f('could not find {{accessToken}}')));
+        fn();
       }
     });
     return fn.promise;
@@ -743,10 +753,10 @@ module.exports = function(User) {
       {
         description: 'Logout a user with access token.',
         accepts: [
-          {arg: 'access_token', type: 'string', required: true, http: function(ctx) {
+          {arg: 'access_token', type: 'string', http: function(ctx) {
               var req = ctx && ctx.req;
               var accessToken = req && req.accessToken;
-              var tokenID = accessToken && accessToken.id;
+              var tokenID = accessToken ? accessToken.id : undefined;
               return tokenID;
             }, description: 'Do not supply this argument, it is automatically extracted ' +
             'from request headers.',
