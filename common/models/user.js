@@ -3,6 +3,7 @@
  */
 
 var loopback = require('../../lib/loopback');
+var utils = require('../../lib/utils');
 var path = require('path');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
@@ -80,6 +81,9 @@ module.exports = function(User) {
       cb = options;
       options = undefined;
     }
+
+    cb = cb || utils.createPromiseCallback();
+
     if (typeof ttl === 'object' && !options) {
       // createAccessToken(options, cb)
       options = ttl;
@@ -91,6 +95,7 @@ module.exports = function(User) {
     this.accessTokens.create({
       ttl: ttl
     }, cb);
+    return cb.promise;
   };
 
   function splitPrincipal(name, realmDelimiter) {
@@ -168,6 +173,8 @@ module.exports = function(User) {
       include = undefined;
     }
 
+    fn = fn || utils.createPromiseCallback();
+
     include = (include || '');
     if (Array.isArray(include)) {
       include = include.map(function(val) {
@@ -191,13 +198,15 @@ module.exports = function(User) {
       var err1 = new Error('realm is required');
       err1.statusCode = 400;
       err1.code = 'REALM_REQUIRED';
-      return fn(err1);
+      fn(err1);
+      return fn.promise;
     }
     if (!query.email && !query.username) {
       var err2 = new Error('username or email is required');
       err2.statusCode = 400;
       err2.code = 'USERNAME_EMAIL_REQUIRED';
-      return fn(err2);
+      fn(err2);
+      return fn.promise;
     }
 
     self.findOne({where: query}, function(err, user) {
@@ -234,7 +243,7 @@ module.exports = function(User) {
               err = new Error('login failed as the email has not been verified');
               err.statusCode = 401;
               err.code = 'LOGIN_FAILED_EMAIL_NOT_VERIFIED';
-              return fn(err);
+              fn(err);
             } else {
               if (user.createAccessToken.length === 2) {
                 user.createAccessToken(credentials.ttl, tokenHandler);
@@ -252,6 +261,7 @@ module.exports = function(User) {
         fn(defaultError);
       }
     });
+    return fn.promise;
   };
 
   /**
@@ -269,6 +279,7 @@ module.exports = function(User) {
    */
 
   User.logout = function(tokenId, fn) {
+    fn = fn || utils.createPromiseCallback();
     this.relations.accessTokens.modelTo.findById(tokenId, function(err, accessToken) {
       if (err) {
         fn(err);
@@ -278,6 +289,7 @@ module.exports = function(User) {
         fn(new Error('could not find accessToken'));
       }
     });
+    return fn.promise;
   };
 
   /**
@@ -288,6 +300,7 @@ module.exports = function(User) {
    */
 
   User.prototype.hasPassword = function(plain, fn) {
+    fn = fn || utils.createPromiseCallback();
     if (this.password && plain) {
       bcrypt.compare(plain, this.password, function(err, isMatch) {
         if (err) return fn(err);
@@ -296,6 +309,7 @@ module.exports = function(User) {
     } else {
       fn(null, false);
     }
+    return fn.promise;
   };
 
   /**
@@ -332,6 +346,8 @@ module.exports = function(User) {
    */
 
   User.prototype.verify = function(options, fn) {
+    fn = fn || utils.createPromiseCallback();
+
     var user = this;
     var userModel = this.constructor;
     var registry = userModel.registry;
@@ -408,6 +424,7 @@ module.exports = function(User) {
         }
       });
     }
+    return fn.promise;
   };
 
   /**
@@ -436,6 +453,7 @@ module.exports = function(User) {
    * @param {Error} err
    */
   User.confirm = function(uid, token, redirect, fn) {
+    fn = fn || utils.createPromiseCallback();
     this.findById(uid, function(err, user) {
       if (err) {
         fn(err);
@@ -464,6 +482,7 @@ module.exports = function(User) {
         }
       }
     });
+    return fn.promise;
   };
 
   /**
@@ -477,6 +496,7 @@ module.exports = function(User) {
    */
 
   User.resetPassword = function(options, cb) {
+    cb = cb || utils.createPromiseCallback();
     var UserModel = this;
     var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
@@ -510,6 +530,7 @@ module.exports = function(User) {
       err.code = 'EMAIL_REQUIRED';
       cb(err);
     }
+    return cb.promise;
   };
 
   /*!

@@ -234,6 +234,44 @@ describe('User', function() {
       });
     });
 
+    it('honors default `createAccessToken` implementation', function(done) {
+      User.login(validCredentialsWithTTL, function(err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+
+        User.findById(accessToken.userId, function(err, user) {
+          user.createAccessToken(120, function(err, accessToken) {
+            assert(accessToken.userId);
+            assert(accessToken.id);
+            assert.equal(accessToken.ttl, 120);
+            assert.equal(accessToken.id.length, 64);
+            done();
+          });
+        });
+      });
+    });
+
+    it('honors default `createAccessToken` implementation - promise variant', function(done) {
+      User.login(validCredentialsWithTTL, function(err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+
+        User.findById(accessToken.userId, function(err, user) {
+          user.createAccessToken(120)
+            .then(function(accessToken) {
+              assert(accessToken.userId);
+              assert(accessToken.id);
+              assert.equal(accessToken.ttl, 120);
+              assert.equal(accessToken.id.length, 64);
+              done();
+            })
+            .catch(function(err) {
+              done(err);
+            });
+        });
+      });
+    });
+
     it('Login a user using a custom createAccessToken', function(done) {
       var createToken = User.prototype.createAccessToken; // Save the original method
       // Override createAccessToken
@@ -300,12 +338,38 @@ describe('User', function() {
       });
     });
 
+    it('Login should only allow correct credentials - promise variant', function(done) {
+      User.login(invalidCredentials)
+        .then(function(accessToken) {
+          assert(!accessToken);
+          done();
+        })
+        .catch(function(err) {
+          assert(err);
+          assert.equal(err.code, 'LOGIN_FAILED');
+          done();
+        });
+    });
+
     it('Login a user providing incomplete credentials', function(done) {
       User.login(incompleteCredentials, function(err, accessToken) {
         assert(err);
         assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
         done();
       });
+    });
+
+    it('Login a user providing incomplete credentials - promise variant', function(done) {
+      User.login(incompleteCredentials)
+        .then(function(accessToken) {
+          assert(!accessToken);
+          done();
+        })
+        .catch(function(err) {
+          assert(err);
+          assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
+          done();
+        });
     });
 
     it('Login a user over REST by providing credentials', function(done) {
@@ -441,6 +505,20 @@ describe('User', function() {
       });
     });
 
+    it('Require valid and complete credentials for email verification error - promise variant', function(done) {
+      User.login({ email: validCredentialsEmail })
+        .then(function(accessToken) {
+        done();
+      })
+      .catch(function(err) {
+        // strongloop/loopback#931
+        // error message should be "login failed" and not "login failed as the email has not been verified"
+        assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
+        assert.equal(err.code, 'LOGIN_FAILED');
+        done();
+      });
+    });
+
     it('Login a user by without email verification', function(done) {
       User.login(validCredentials, function(err, accessToken) {
         assert(err);
@@ -449,11 +527,34 @@ describe('User', function() {
       });
     });
 
+    it('Login a user by without email verification - promise variant', function(done) {
+      User.login(validCredentials)
+        .then(function(err, accessToken) {
+          done();
+        })
+        .catch(function(err) {
+          assert(err);
+          assert.equal(err.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
+          done();
+        });
+    });
+
     it('Login a user by with email verification', function(done) {
       User.login(validCredentialsEmailVerified, function(err, accessToken) {
         assertGoodToken(accessToken);
         done();
       });
+    });
+
+    it('Login a user by with email verification - promise variant', function(done) {
+      User.login(validCredentialsEmailVerified)
+        .then(function(accessToken) {
+          assertGoodToken(accessToken);
+          done();
+        })
+        .catch(function(err) {
+          done(err);
+        });
     });
 
     it('Login a user over REST when email verification is required', function(done) {
@@ -690,6 +791,22 @@ describe('User', function() {
       }
     });
 
+    it('Logout a user by providing the current accessToken id (using node) - promise variant', function(done) {
+      login(logout);
+
+      function login(fn) {
+        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+      }
+
+      function logout(err, accessToken) {
+        User.logout(accessToken.id)
+          .then(function() {
+            verify(accessToken.id, done);
+          })
+          .catch(done(err));
+      }
+    });
+
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
       function login(fn) {
@@ -743,6 +860,18 @@ describe('User', function() {
         assert(isMatch, 'password doesnt match');
         done();
       });
+    });
+
+    it('Determine if the password matches the stored password - promise variant', function(done) {
+      var u = new User({username: 'foo', password: 'bar'});
+      u.hasPassword('bar')
+        .then(function(isMatch) {
+          assert(isMatch, 'password doesnt match');
+          done();
+        })
+        .catch(function(err) {
+          done(err);
+        });
     });
 
     it('should match a password when saved', function(done) {
@@ -814,6 +943,47 @@ describe('User', function() {
           .expect('Content-Type', /json/)
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
+          .end(function(err, res) {
+            if (err) {
+              return done(err);
+            }
+          });
+      });
+
+      it('Verify a user\'s email address - promise variant', function(done) {
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(user, 'afterRemote should include result');
+
+          var options = {
+            type: 'email',
+            to: user.email,
+            from: 'noreply@myapp.org',
+            redirect: '/',
+            protocol: ctx.req.protocol,
+            host: ctx.req.get('host')
+          };
+
+          user.verify(options)
+            .then(function(result) {
+              console.log('here in then function');
+              assert(result.email);
+              assert(result.email.response);
+              assert(result.token);
+              var msg = result.email.response.toString('utf-8');
+              assert(~msg.indexOf('/api/test-users/confirm'));
+              assert(~msg.indexOf('To: bar@bat.com'));
+              done();
+            })
+            .catch(function(err) {
+              done(err);
+            });
+        });
+
+        request(app)
+          .post('/test-users')
+          .send({email: 'bar@bat.com', password: 'bar'})
+          .expect('Content-Type', /json/)
+          .expect(200)
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -1065,6 +1235,18 @@ describe('User', function() {
           assert.equal(err.code, 'EMAIL_REQUIRED');
           done();
         });
+      });
+
+      it('Requires email address to reset password - promise variant', function(done) {
+        User.resetPassword({ })
+          .then(function() {
+            throw new Error('Error should NOT be thrown');
+          })
+          .catch(function(err) {
+            assert(err);
+            assert.equal(err.code, 'EMAIL_REQUIRED');
+            done();
+          });
       });
 
       it('Creates a temp accessToken to allow a user to change password', function(done) {
