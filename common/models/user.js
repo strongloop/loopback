@@ -587,7 +587,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'logout',
       {
-        description: 'Logout a user with access token',
+        description: 'Logout a user with access token.',
         accepts: [
           {arg: 'access_token', type: 'string', required: true, http: function(ctx) {
             var req = ctx && ctx.req;
@@ -606,7 +606,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'confirm',
       {
-        description: 'Confirm a user registration with email verification token',
+        description: 'Confirm a user registration with email verification token.',
         accepts: [
           {arg: 'uid', type: 'string', required: true},
           {arg: 'token', type: 'string', required: true},
@@ -619,7 +619,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'resetPassword',
       {
-        description: 'Reset password for a user with email',
+        description: 'Reset password for a user with email.',
         accepts: [
           {arg: 'options', type: 'object', required: true, http: {source: 'body'}}
         ],
