@@ -41,6 +41,17 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
+  it('should populate req.token from an authorization header with an unencoded base64 bearer token', function(done) {
+    var token = this.token.id;
+    token = 'Bearer ' + token;
+    createTestAppAndRequest(this.token, {unencodedTokenReferers: ['localhost:3000']}, done)
+      .get('/')
+      .set('authorization', token)
+      .set('referrer', 'http://localhost:3000/')
+      .expect(200)
+      .end(done);
+  });
+
   describe('populating req.toen from HTTP Basic Auth formatted authorization header', function() {
     it('parses "standalone-token"', function(done) {
       var token = this.token.id;
@@ -354,7 +365,12 @@ function createTestApp(testToken, settings, done) {
   var app = loopback();
 
   app.use(loopback.cookieParser('secret'));
-  app.use(loopback.token({model: Token, currentUserLiteral: 'me'}));
+  app.use(loopback.token({
+    model: Token,
+    currentUserLiteral: 'me',
+    unencodedTokenReferers: settings.unencodedTokenReferers
+  }));
+
   app.get('/token', function(req, res) {
     res.cookie('authorization', testToken.id, {signed: true});
     res.end();
