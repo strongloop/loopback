@@ -4,7 +4,7 @@ expressErrorHandler.title = 'Loopback';
 module.exports = errorHandler;
 
 function errorHandler(options) {
-  if (options.includeStack !== false) {
+  if (!options || options.includeStack !== false) {
     return expressErrorHandler();
   } else {
     return function errorHandler(err, req, res, next) {
