@@ -1,3 +1,41 @@
+2015-07-09, Version 2.19.0
+==========================
+
+ * Add PersistedModel.createChangeStream() (Ritchie Martori)
+
+ * Remove trailing whitespace from jsdoc (Ritchie Martori)
+
+ * Update model.js (Rand McKinney)
+
+ * Downgrade version of loopback-testing (Ritchie Martori)
+
+ * Auto-configure models required by `app.enableAuth` (Miroslav Bajtoš)
+
+ * Add loadBuiltinModels flag to loopback(options) (Miroslav Bajtoš)
+
+ * Add a unit-test for searchDefaultTokenKeys (Miroslav Bajtoš)
+
+ * access-token: add option "searchDefaultTokenKeys" (Owen Brotherwood)
+
+ * Fix the test case (Raymond Feng)
+
+ * Fix code standards issues (Tom Kirkpatrick)
+
+ * Add test case to highlight fatal error when trying to include a scoped relationship through a polymorphic relationship (Tom Kirkpatrick)
+
+ * add callback args for listByPrincipalType to jsdoc comment, pass explicit arguments to callback (Esco Obong)
+
+ * mark utiltiy function as private (Esco Obong)
+
+ * fix linting errors (Esco Obong)
+
+ * fix lint erros (Esco Obong)
+
+ * consolidate Role methods roles, applications, and users into one, add query param to allow for pagination and restricting fields (Esco Obong)
+
+ * fix implementation of Role methods: users,roles, and applications (Esco Obong)
+
+
 2015-05-13, Version 2.18.0
 ==========================
 
