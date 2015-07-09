@@ -614,7 +614,8 @@ describe.onServer('Remote Methods', function() {
         'destroyById',
         'removeById',
         'count',
-        'prototype.updateAttributes'
+        'prototype.updateAttributes',
+        'createChangeStream'
       ]);
     });
   });
