@@ -5,6 +5,7 @@
 var loopback = require('../../lib/loopback');
 var assert = require('assert');
 var uid = require('uid2');
+var url = require('url');
 var DEFAULT_TOKEN_LEN = 64;
 
 /**
@@ -193,9 +194,11 @@ module.exports = function(AccessToken) {
         // http://tools.ietf.org/html/rfc6750
         if (id.indexOf('Bearer ') === 0) {
           id = id.substring(7);
-          // Decode from base64
-          var buf = new Buffer(id, 'base64');
-          id = buf.toString('utf8');
+          if (tokenIdIsEncoded(options, req)) {
+            // Decode from base64
+            var buf = new Buffer(id, 'base64');
+            id = buf.toString('utf8');
+          }
         } else if (/^Basic /i.test(id)) {
           id = id.substring(6);
           id = (new Buffer(id, 'base64')).toString('utf8');
@@ -225,5 +228,18 @@ module.exports = function(AccessToken) {
       }
     }
     return null;
+  }
+
+  function tokenIdIsEncoded(options, req) {
+    var tokenIsEncoded = true;
+    var unencodedRefs = options.unencodedTokenReferers || [];
+    var requestReferer = req.get('Referer') || '';
+    var hostReferer = url.parse(requestReferer).host;
+    for (var i = 0, length = unencodedRefs.length; i < length; i++) {
+      // If the current referer in the incoming request is part of the
+      // unencodedTokenReferers array, the token is not encoded.
+      if (unencodedRefs[i] === hostReferer) { tokenIsEncoded = false;}
+    }
+    return tokenIsEncoded;
   }
 };
