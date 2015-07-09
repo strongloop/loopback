@@ -31,6 +31,30 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
+  it('should not search default keys when searchDefaultTokenKeys is false',
+  function(done) {
+    var tokenId = this.token.id;
+    var app = createTestApp(
+      this.token,
+      { token: { searchDefaultTokenKeys: false } },
+      done);
+    var agent = request.agent(app);
+
+    // Set the token cookie
+    agent.get('/token').expect(200).end(function(err, res) {
+      if (err) return done(err);
+
+      // Make a request that sets the token in all places searched by default
+      agent.get('/check-access?access_token=' + tokenId)
+        .set('X-Access-Token', tokenId)
+        .set('authorization', tokenId)
+        // Expect 401 because there is no (non-default) place configured where
+        // the middleware should load the token from
+        .expect(401)
+        .end(done);
+    });
+  });
+
   it('should populate req.token from an authorization header with bearer token', function(done) {
     var token = this.token.id;
     token = 'Bearer ' + new Buffer(token).toString('base64');
@@ -350,13 +374,18 @@ function createTestApp(testToken, settings, done) {
 
   var appSettings = settings.app || {};
   var modelSettings = settings.model || {};
+  var tokenSettings = extend({
+    model: Token,
+    currentUserLiteral: 'me'
+  }, settings.token);
 
   var app = loopback();
 
   app.use(loopback.cookieParser('secret'));
-  app.use(loopback.token({model: Token, currentUserLiteral: 'me'}));
+  app.use(loopback.token(tokenSettings));
   app.get('/token', function(req, res) {
     res.cookie('authorization', testToken.id, {signed: true});
+    res.cookie('access_token', testToken.id, {signed: true});
     res.end();
   });
   app.get('/', function(req, res) {
@@ -367,6 +396,9 @@ function createTestApp(testToken, settings, done) {
       return done(e);
     }
     res.send('ok');
+  });
+  app.get('/check-access', function(req, res) {
+    res.status(req.accessToken ? 200 : 401).end();
   });
   app.use('/users/:uid', function(req, res) {
     var result = {userId: req.params.uid};
