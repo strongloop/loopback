@@ -6,6 +6,7 @@ var loopback = require('../../lib/loopback');
 var path = require('path');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
+var extend = require('util')._extend;
 
 var bcrypt;
 try {
@@ -342,7 +343,10 @@ module.exports = function(User) {
     assert(options.from, 'Must include options.from when calling user.verify() or the user must have an email property');
 
     options.redirect = options.redirect || '/';
-    options.template = path.resolve(options.template || path.join(__dirname, '..', '..', 'templates', 'verify.ejs'));
+    if (typeof options.template === 'string') {
+      // load template from file only if filename is provided, template could be also object with name to support external mandrill templates
+      options.template = path.resolve(options.template || path.join(__dirname, '..', '..', 'templates', 'verify.ejs'));
+    }
     options.user = this;
     options.protocol = options.protocol || 'http';
 
@@ -400,9 +404,13 @@ module.exports = function(User) {
       if (options.template) {
         // only if template is defined
         if (options.template.name) {
-          // if template is object with name attribute then is expected that email transport connector is converting it to html itselfs, e.g. nodemailer-mandrill-transport
-          // template content should have reference to all attributes already filled in the options object 
-          options.template.content = options; 
+          // if template is object with name attribute then is expected that email transport connector is converting template to html itselfs
+          // Following code is adapted to use options attributes (e.g. verifyHref) in mandrill templates via nodemailer-mandrill-transport
+          var options_clone = extend({}, options);
+          options.global_merge_vars = [{
+            name: 'options',
+            content: options_clone
+          }]; 
         } else {
           var template = loopback.template(options.template);
           options.html = template(options);
