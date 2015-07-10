@@ -406,7 +406,8 @@ module.exports = function(User) {
         if (options.template.name) {
           // if template is object with name attribute then is expected that email transport connector is converting template to html itselfs
           // Following code is adapted to use options attributes (e.g. verifyHref) in mandrill templates via nodemailer-mandrill-transport
-          var options_clone = extend({}, options);
+          // NOTE: all atribute names in options in camelCase format will be converted to lowercase format, i.e. options.verifyHref to options.verifyhref
+          var options_clone = JSON.parse(JSON.stringify(options)); // to prevent error "converting circular structure to JSON"
           options.global_merge_vars = [{
             name: 'options',
             content: options_clone
