@@ -397,8 +397,19 @@ module.exports = function(User) {
 
       options.headers = options.headers || {};
 
-      var template = loopback.template(options.template);
-      options.html = template(options);
+      if (options.template) {
+        // only if template is defined
+        if (options.template.name) {
+          // if template is object with name attribute then is expected that email transport connector is converting it to html itselfs, e.g. nodemailer-mandrill-transport
+          // template content should have reference to all attributes already filled in the options object 
+          options.template.content = options; 
+        } else {
+          var template = loopback.template(options.template);
+          options.html = template(options);
+          // due to nodemailer-mandrill-transport, which use template different way, attribute template is removed if template was already locally converted to html
+          delete options.template;
+        }
+      }
 
       Email.send(options, function(err, email) {
         if (err) {
