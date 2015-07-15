@@ -544,6 +544,10 @@ module.exports = function(User) {
     this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
     UserModel.setter.password = function(plain) {
+      //change password to string if it is a number
+      if ((typeof plain) == 'number') {
+        plain = plain.toString();
+      }
       if (plain.indexOf('$2a$') === 0 && plain.length === 60) {
         // The password is already hashed. It can be the case
         // when the instance is loaded from DB
