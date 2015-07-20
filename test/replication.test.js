@@ -82,40 +82,67 @@ describe('Replication / Change APIs', function() {
   });
 
   describe('Model.replicate(since, targetModel, options, callback)', function() {
+
+    function assertTargetModelEqualsSourceModel(conflicts, sourceModel,
+      targetModel, done) {
+      var sourceData;
+      var targetData;
+
+      assert(conflicts.length === 0);
+      async.parallel([
+        function(cb) {
+          sourceModel.find(function(err, result) {
+            if (err) return cb(err);
+            sourceData = result;
+            cb();
+          });
+        },
+        function(cb) {
+          targetModel.find(function(err, result) {
+            if (err) return cb(err);
+            targetData = result;
+            cb();
+          });
+        }
+      ], function(err) {
+        if (err) return done(err);
+
+        assert.deepEqual(sourceData, targetData);
+        done();
+      });
+    }
+
     it('Replicate data using the target model', function(done) {
       var test = this;
       var options = {};
-      var sourceData;
-      var targetData;
 
       this.SourceModel.create({name: 'foo'}, function(err) {
         if (err) return done(err);
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
           if (err) return done(err);
-          assert(conflicts.length === 0);
-          async.parallel([
-            function(cb) {
-              test.SourceModel.find(function(err, result) {
-                if (err) return cb(err);
-                sourceData = result;
-                cb();
-              });
-            },
-            function(cb) {
-              test.TargetModel.find(function(err, result) {
-                if (err) return cb(err);
-                targetData = result;
-                cb();
-              });
-            }
-          ], function(err) {
-            if (err) return done(err);
 
-            assert.deepEqual(sourceData, targetData);
-            done();
-          });
+          assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
+            test.TargetModel, done);
         });
+      });
+    });
+
+    it('Replicate data using the target model - promise variant', function(done) {
+      var test = this;
+      var options = {};
+
+      this.SourceModel.create({name: 'foo'}, function(err) {
+        if (err) return done(err);
+        test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
+        options)
+          .then(function(conflicts) {
+            assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
+              test.TargetModel, done);
+          })
+          .catch(function(err) {
+            done(err);
+          });
       });
     });
 
@@ -147,6 +174,38 @@ describe('Replication / Change APIs', function() {
       ], done);
     });
 
+    it('applies "since" filter on source changes - promise variant', function(done) {
+      async.series([
+        function createModelInSourceCp1(next) {
+          SourceModel.create({ id: '1' }, next);
+        },
+        function checkpoint(next) {
+          SourceModel.checkpoint(next);
+        },
+        function createModelInSourceCp2(next) {
+          SourceModel.create({ id: '2' }, next);
+        },
+        function replicateLastChangeOnly(next) {
+          SourceModel.currentCheckpoint(function(err, cp) {
+            if (err) return done(err);
+            SourceModel.replicate(cp, TargetModel, {})
+              .then(function(next) {
+                done();
+              })
+              .catch(err);
+          });
+        },
+        function verify(next) {
+          TargetModel.find(function(err, list) {
+            if (err) return done(err);
+            // '1' should be skipped by replication
+            expect(getIds(list)).to.eql(['2']);
+            next();
+          });
+        }
+      ], done);
+    });
+
     it('applies "since" filter on target changes', function(done) {
       // Because the "since" filter is just an optimization,
       // there isn't really any observable behaviour we could
@@ -159,6 +218,23 @@ describe('Replication / Change APIs', function() {
         expect(diffSince).to.eql([10]);
         done();
       });
+    });
+
+    it('applies "since" filter on target changes - promise variant', function(done) {
+      // Because the "since" filter is just an optimization,
+      // there isn't really any observable behaviour we could
+      // check to assert correct implementation.
+      var diffSince = [];
+      spyAndStoreSinceArg(TargetModel, 'diff', diffSince);
+
+      SourceModel.replicate(10, TargetModel, {})
+        .then(function() {
+          expect(diffSince).to.eql([10]);
+          done();
+        })
+        .catch(function(err) {
+          done(err);
+        });
     });
 
     it('uses different "since" value for source and target', function(done) {
@@ -175,6 +251,25 @@ describe('Replication / Change APIs', function() {
         expect(targetSince).to.eql([2]);
         done();
       });
+    });
+
+    it('uses different "since" value for source and target - promise variant', function(done) {
+      var sourceSince = [];
+      var targetSince = [];
+
+      spyAndStoreSinceArg(SourceModel, 'changes', sourceSince);
+      spyAndStoreSinceArg(TargetModel, 'diff', targetSince);
+
+      var since = { source: 1, target: 2 };
+      SourceModel.replicate(since, TargetModel, {})
+        .then(function() {
+          expect(sourceSince).to.eql([1]);
+          expect(targetSince).to.eql([2]);
+          done();
+        })
+        .catch(function(err) {
+          done(err);
+        });
     });
 
     it('picks up changes made during replication', function(done) {
