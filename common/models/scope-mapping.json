@@ -1,0 +1,23 @@
+{
+  "name": "ScopeMapping",
+  "description": "Map protected resources to scopes",
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true,
+      "generated": true
+    },
+    "resourceType": {
+      "type": "string",
+      "description": "The resource type, such as Route or ModelOperation"
+    },
+    "resourceId": "string"
+  },
+  "relations": {
+    "role": {
+      "type": "belongsTo",
+      "model": "Scope",
+      "foreignKey": "scopeId"
+    }
+  }
+}

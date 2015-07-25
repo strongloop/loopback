@@ -52,6 +52,7 @@ describe('loopback', function() {
         'Scope',
         'User',
         'ValidationError',
+        'acl',
         'application',
         'arguments',
         'autoAttach',
