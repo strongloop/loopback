@@ -413,13 +413,9 @@ module.exports = function(ACL) {
     var staticACLs = this.getStaticACLs(model.modelName, property);
 
     var self = this;
-    var roleModel = registry.getModelByType(Role);
-    this.find({where: {model: model.modelName, property: propertyQuery,
-      accessType: accessTypeQuery}}, function(err, acls) {
-      if (err) {
-        if (callback) callback(err);
-        return;
-      }
+
+    function checkACLs(acls, callback) {
+      var roleModel = registry.getModelByType(Role);
       var inRoleTasks = [];
 
       acls = acls.concat(staticACLs);
@@ -464,7 +460,25 @@ module.exports = function(ACL) {
         resolved.debug();
         if (callback) callback(null, resolved);
       });
-    });
+    }
+
+    var ignoreACLsFromDB = self.settings && self.settings.ignoreACLsFromDB;
+    if (ignoreACLsFromDB) {
+      return checkACLs([], callback);
+    } else {
+      self.find({
+        where: {
+          model: model.modelName, property: propertyQuery,
+          accessType: accessTypeQuery
+        }
+      }, function(err, acls) {
+        if (err) {
+          if (callback) callback(err);
+          return;
+        }
+        checkACLs(acls, callback);
+      });
+    }
   };
 
   /**
