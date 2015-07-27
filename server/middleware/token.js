@@ -12,8 +12,9 @@ var debug = require('debug')('loopback:middleware:token');
 
 module.exports = token;
 
-/*
+/**
  * Rewrite the url to replace current user literal with the logged in user id
+ * @private
  */
 function rewriteUserLiteral(req, currentUserLiteral) {
   if (req.accessToken && req.accessToken.userId && currentUserLiteral) {
