@@ -1,3 +1,4 @@
+var expect = require('chai').expect;
 var routeAcl = require('../server/middleware/acl');
 var loopback = require('../index');
 
@@ -138,10 +139,9 @@ describe('route based ACLs', function() {
     };
     var res = {};
     handler(req, res, function(err) {
-      if (err) return done();
-      else {
-        return done(new Error('The request should be denied'));
-      }
+      expect(err).to.be.instanceof(Error);
+      expect(err.statusCode).to.equal(403);
+      done();
     });
   });
 
@@ -177,10 +177,9 @@ describe('route based ACLs', function() {
     };
     var res = {};
     handler(req, res, function(err) {
-      if (err) return done();
-      else {
-        return done(new Error('The request should be denied'));
-      }
+      expect(err).to.be.instanceof(Error);
+      expect(err.statusCode).to.equal(403);
+      done();
     });
   });
 

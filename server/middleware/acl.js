@@ -19,6 +19,7 @@ module.exports = acl;
  * Normalize the http verb to lower case
  * @param {String} verb HTTP verb/method
  * @returns {String|*}
+ * @private
  */
 function normalizeVerb(verb) {
   verb = verb.toLowerCase();
@@ -32,6 +33,7 @@ function normalizeVerb(verb) {
  * Normalize items to string[]
  * @param {String|String[]} items
  * @returns {String[]}
+ * @private
  */
 function normalizeList(items) {
   if (!items) {
@@ -65,6 +67,7 @@ function toLowerCase(m) {
  *
  * @param {Object} scopes Scope mappings
  * @returns {Array}
+ * @private
  */
 function normalizeScopeMappings(scopes) {
   var routes = [];
@@ -98,6 +101,7 @@ function normalizeScopeMappings(scopes) {
  * Normalize and sort ACL entries
  * @param {Object[]} acls An array of ACLs
  * @returns {*|Array}
+ * @private
  */
 function normalizeACLs(acls) {
   acls = acls || [];
@@ -118,6 +122,7 @@ function normalizeACLs(acls) {
  * @param {Object[]} acls An array of acl entries
  * @param {Object[]} scopes An array of scopes
  * @returns {Object[]} ACLs matching one of the scopes
+ * @private
  */
 function matchACLs(acls, scopes) {
   var matchedACLs = [];
@@ -146,6 +151,7 @@ function matchACLs(acls, scopes) {
  * @param {Request} req loopback Request
  * @param {Function} cb Callback function
  * @returns {*}
+ * @private
  */
 function identifyScopes(req, scopes, cb) {
   var routes = normalizeScopeMappings(scopes);
@@ -159,6 +165,7 @@ function identifyScopes(req, scopes, cb) {
 /**
  * Try to find out the principals for the given request
  * @param {Request} req HTTP request object
+ * @private
  */
 function identifyPrincipals(req) {
   var principals = [{
@@ -198,6 +205,7 @@ function identifyPrincipals(req) {
  * @param {Request} req HTTP request object
  * @param {Object[]} routes An array of routes (methods, path)
  * @returns {Array} Scopes matching the request
+ * @private
  */
 function findMatchedScopes(req, routes) {
   var matchedScopes = [];
@@ -223,9 +231,11 @@ function findMatchedScopes(req, routes) {
 }
 
 /**
- * Calculate the ACL score based its specifics of principalType and permission
+ * Calculate the ACL score based on its specifics of principalType and
+ * permission
  * @param {Object} acl ACL rule
  * @returns {number}
+ * @private
  */
 function getACLScore(acl) {
   var score = 0;
@@ -281,11 +291,12 @@ function sortACLs(acl1, acl2) {
   return a === b ? 0 : (a > b ? 1 : -1);
 }
 
-/*!
+/**
  * Compare two routes
  * @param {Object} a The first route {verb: 'get', path: '/:id'}
  * @param [Object} b The second route {verb: 'get', path: '/findOne'}
  * @returns {number} 1: r1 comes after 2, -1: r1 comes before r2, 0: equal
+ * @private
  */
 function sortRoutes(a, b) {
 
