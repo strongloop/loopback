@@ -1,3 +1,13 @@
+2015-07-28, Version 2.19.1
+==========================
+
+ * Disable application model test for karma (Raymond Feng)
+
+ * Fix jsdocs for methods with where argument (Raymond Feng)
+
+ * Add link to createChangeStream docs (Ritchie Martori)
+
+
 2015-07-09, Version 2.19.0
 ==========================
 
