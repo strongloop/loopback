@@ -47,3 +47,7 @@ assert.isFunc = function(obj, name) {
   assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');
   assert(typeof obj[name] === 'function', name + ' is not a function');
 };
+
+if (!('Promise' in global)) {
+  global.Promise = require('bluebird');
+}
