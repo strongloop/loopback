@@ -438,12 +438,29 @@ describe('app', function() {
         params: null
       });
 
+      // This should be triggered with matching verbs
+      app.middlewareFromConfig(handlerFactory, {
+        enabled: true,
+        phase: 'routes:before',
+        methods: ['get', 'head'],
+        params: {x: 1}
+      });
+
+      // This should be skipped as the verb doesn't match
+      app.middlewareFromConfig(handlerFactory, {
+        enabled: true,
+        phase: 'routes:before',
+        methods: ['post'],
+        params: {x: 2}
+      });
+
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
         expect(steps).to.eql([
           ['before'],
           [expectedConfig],
-          ['after', 2]
+          ['after', 2],
+          [{x: 1}]
         ]);
         done();
       });
