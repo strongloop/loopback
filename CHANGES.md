@@ -1,3 +1,17 @@
+2015-08-06, Version 2.20.0
+==========================
+
+ * Allow methods filter for middleware config (Raymond Feng)
+
+ * Don't load Bluebird for createPromiseCallback (Miroslav Bajtoš)
+
+ * fix exit early when password is non-string closes #1437 (Berkeley Martinez)
+
+ * Promisify User model (Pradnya Baviskar)
+
+ * Add missing . to user model property descriptions (Richard Walker)
+
+
 2015-07-28, Version 2.19.1
 ==========================
 
