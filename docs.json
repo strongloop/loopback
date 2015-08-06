@@ -11,6 +11,7 @@
     "lib/model.js",
     "lib/persisted-model.js",
 { "title": "Middleware", "depth": 2 },
+    "server/middleware/acl.js",
     "server/middleware/context.js",
     "server/middleware/favicon.js",
     "server/middleware/rest.js",

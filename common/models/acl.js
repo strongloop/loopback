@@ -413,13 +413,9 @@ module.exports = function(ACL) {
     var staticACLs = this.getStaticACLs(model.modelName, property);
 
     var self = this;
-    var roleModel = registry.getModelByType(Role);
-    this.find({where: {model: model.modelName, property: propertyQuery,
-      accessType: accessTypeQuery}}, function(err, acls) {
-      if (err) {
-        if (callback) callback(err);
-        return;
-      }
+
+    function checkACLs(acls, callback) {
+      var roleModel = registry.getModelByType(Role);
       var inRoleTasks = [];
 
       acls = acls.concat(staticACLs);
@@ -464,7 +460,25 @@ module.exports = function(ACL) {
         resolved.debug();
         if (callback) callback(null, resolved);
       });
-    });
+    }
+
+    var ignoreACLsFromDB = self.settings && self.settings.ignoreACLsFromDB;
+    if (ignoreACLsFromDB) {
+      return checkACLs([], callback);
+    } else {
+      self.find({
+        where: {
+          model: model.modelName, property: propertyQuery,
+          accessType: accessTypeQuery
+        }
+      }, function(err, acls) {
+        if (err) {
+          if (callback) callback(err);
+          return;
+        }
+        checkACLs(acls, callback);
+      });
+    }
   };
 
   /**
@@ -495,5 +509,77 @@ module.exports = function(ACL) {
       }
       if (callback) callback(null, access.permission !== ACL.DENY);
     });
+  };
+
+  ACL.getRelatedModels = function() {
+    if (!this.roleModel) {
+      var reg = this.registry;
+      this.roleModel = reg.getModelByType(loopback.Role);
+      this.roleMappingModel = reg.getModelByType(loopback.RoleMapping);
+      this.userModel = reg.getModelByType(loopback.User);
+      this.applicationModel = reg.getModelByType(loopback.Application);
+    }
+  };
+
+  /**
+   * Resolve a principal by type/id
+   * @param {String} type Principal type - ROLE/APP/USER
+   * @param {String|Number} id Principal id or name
+   * @param {Function} cb Callback function
+   */
+  ACL.resolvePrincipal = function(type, id, cb) {
+    type = type || ACL.ROLE;
+    this.getRelatedModels();
+    switch (type) {
+      case ACL.ROLE:
+        this.roleModel.findOne({where: {or: [{name: id}, {id: id}]}}, cb);
+        break;
+      case ACL.USER:
+        this.userModel.findOne(
+          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb);
+        break;
+      case ACL.APP:
+        this.applicationModel.findOne(
+          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb);
+        break;
+      default:
+        process.nextTick(function() {
+          var err = new Error('Invalid principal type: ' + type);
+          err.statusCode = 400;
+          cb(err);
+        });
+    }
+  };
+
+  /**
+   * Check if the given principal is mapped to the role
+   * @param {String} principalType Principal type
+   * @param {String|*} principalId Principal id/name
+   * @param {String|*} role Role id/name
+   * @param {Function} cb Callback function
+   */
+  ACL.isMappedToRole = function(principalType, principalId, role, cb) {
+    var self = this;
+    this.resolvePrincipal(principalType, principalId,
+      function(err, principal) {
+        if (err) return cb(err);
+        if (principal != null) {
+          principalId = principal.id;
+        }
+        principalType = principalType || 'ROLE';
+        self.resolvePrincipal('ROLE', role, function(err, role) {
+          if (err || !role) return cb(err, role);
+          self.roleMappingModel.findOne({
+            where: {
+              roleId: role.id,
+              principalType: principalType,
+              principalId: String(principalId)
+            }
+          }, function(err, result) {
+            if (err) return cb(err);
+            return cb(null, !!result);
+          });
+        });
+      });
   };
 };
