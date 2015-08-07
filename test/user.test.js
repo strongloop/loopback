@@ -613,185 +613,173 @@ describe('User', function() {
 
   });
 
-  describe('User.login requiring realm', function() {
-    var User;
-    var AccessToken;
-
-    before(function() {
-      User = loopback.User.extend('RealmUser', {},
-        {realmRequired: true, realmDelimiter: ':'});
-      AccessToken = loopback.AccessToken.extend('RealmAccessToken');
-
-      loopback.autoAttach();
-
-      // Update the AccessToken relation to use the subclass of User
-      AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
-      User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
-
-      // allow many User.afterRemote's to be called
-      User.setMaxListeners(0);
-    });
-
-    var realm1User = {
-      realm: 'realm1',
-      username: 'foo100',
-      email: 'foo100@bar.com',
-      password: 'pass100'
-    };
-
-    var realm2User = {
-      realm: 'realm2',
-      username: 'foo100',
-      email: 'foo100@bar.com',
-      password: 'pass200'
-    };
-
-    var credentialWithoutRealm = {
-      username: 'foo100',
-      email: 'foo100@bar.com',
-      password: 'pass100'
-    };
-
-    var credentialWithBadPass = {
-      realm: 'realm1',
-      username: 'foo100',
-      email: 'foo100@bar.com',
-      password: 'pass001'
-    };
-
-    var credentialWithBadRealm = {
-      realm: 'realm3',
-      username: 'foo100',
-      email: 'foo100@bar.com',
-      password: 'pass100'
-    };
-
-    var credentialWithRealm = {
-      realm: 'realm1',
-      username: 'foo100',
-      password: 'pass100'
-    };
-
-    var credentialRealmInUsername = {
-      username: 'realm1:foo100',
-      password: 'pass100'
-    };
-
-    var credentialRealmInEmail = {
-      email: 'realm1:foo100@bar.com',
-      password: 'pass100'
-    };
-
-    var user1;
-    beforeEach(function(done) {
-      User.create(realm1User, function(err, u) {
-        if (err) {
-          return done(err);
-        }
-        user1 = u;
-        User.create(realm2User, done);
-      });
-    });
-
-    afterEach(function(done) {
-      User.deleteAll({realm: 'realm1'}, function(err) {
-        if (err) {
-          return done(err);
-        }
-        User.deleteAll({realm: 'realm2'}, done);
-      });
-    });
-
-    it('rejects a user by without realm', function(done) {
-      User.login(credentialWithoutRealm, function(err, accessToken) {
-        assert(err);
-        assert.equal(err.code, 'REALM_REQUIRED');
-        done();
-      });
-    });
-
-    it('rejects a user by with bad realm', function(done) {
-      User.login(credentialWithBadRealm, function(err, accessToken) {
-        assert(err);
-        assert.equal(err.code, 'LOGIN_FAILED');
-        done();
-      });
-    });
-
-    it('rejects a user by with bad pass', function(done) {
-      User.login(credentialWithBadPass, function(err, accessToken) {
-        assert(err);
-        assert.equal(err.code, 'LOGIN_FAILED');
-        done();
-      });
-    });
-
-    it('logs in a user by with realm', function(done) {
-      User.login(credentialWithRealm, function(err, accessToken) {
-        assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.id);
-        done();
-      });
-    });
-
-    it('logs in a user by with realm in username', function(done) {
-      User.login(credentialRealmInUsername, function(err, accessToken) {
-        assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.id);
-        done();
-      });
-    });
-
-    it('logs in a user by with realm in email', function(done) {
-      User.login(credentialRealmInEmail, function(err, accessToken) {
-        assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.id);
-        done();
-      });
-    });
-
-    describe('User.login with realmRequired but no realmDelimiter', function() {
-      before(function() {
-        User.settings.realmDelimiter = undefined;
-      });
-
-      after(function() {
-        User.settings.realmDelimiter = ':';
-      });
-
-      it('logs in a user by with realm', function(done) {
-        User.login(credentialWithRealm, function(err, accessToken) {
-          assertGoodToken(accessToken);
-          assert.equal(accessToken.userId, user1.id);
-          done();
-        });
-      });
-
-      it('rejects a user by with realm in email if realmDelimiter is not set',
-        function(done) {
-          User.login(credentialRealmInEmail, function(err, accessToken) {
-            assert(err);
-            assert.equal(err.code, 'REALM_REQUIRED');
-            done();
-          });
-        });
-    });
-  });
+  // describe('User.login requiring realm', function() {
+  //   var User;
+  //   var AccessToken;
+  //
+  //   before(function() {
+  //     User = loopback.User.extend('RealmUser', {},
+  //       {realmRequired: true, realmDelimiter: ':'});
+  //     AccessToken = loopback.AccessToken.extend('RealmAccessToken');
+  //
+  //     loopback.autoAttach();
+  //
+  //     // Update the AccessToken relation to use the subclass of User
+  //     AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
+  //     User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
+  //
+  //     // allow many User.afterRemote's to be called
+  //     User.setMaxListeners(0);
+  //   });
+  //
+  //   var realm1User = {
+  //     realm: 'realm1',
+  //     username: 'foo100',
+  //     email: 'foo100@bar.com',
+  //     password: 'pass100'
+  //   };
+  //
+  //   var realm2User = {
+  //     realm: 'realm2',
+  //     username: 'foo100',
+  //     email: 'foo100@bar.com',
+  //     password: 'pass200'
+  //   };
+  //
+  //   var credentialWithoutRealm = {
+  //     username: 'foo100',
+  //     email: 'foo100@bar.com',
+  //     password: 'pass100'
+  //   };
+  //
+  //   var credentialWithBadPass = {
+  //     realm: 'realm1',
+  //     username: 'foo100',
+  //     email: 'foo100@bar.com',
+  //     password: 'pass001'
+  //   };
+  //
+  //   var credentialWithBadRealm = {
+  //     realm: 'realm3',
+  //     username: 'foo100',
+  //     email: 'foo100@bar.com',
+  //     password: 'pass100'
+  //   };
+  //
+  //   var credentialWithRealm = {
+  //     realm: 'realm1',
+  //     username: 'foo100',
+  //     password: 'pass100'
+  //   };
+  //
+  //   var credentialRealmInUsername = {
+  //     username: 'realm1:foo100',
+  //     password: 'pass100'
+  //   };
+  //
+  //   var credentialRealmInEmail = {
+  //     email: 'realm1:foo100@bar.com',
+  //     password: 'pass100'
+  //   };
+  //
+  //   var user1;
+  //   beforeEach(function(done) {
+  //     User.create(realm1User, function(err, u) {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       user1 = u;
+  //       User.create(realm2User, done);
+  //     });
+  //   });
+  //
+  //   afterEach(function(done) {
+  //     User.deleteAll({realm: 'realm1'}, function(err) {
+  //       if (err) {
+  //         return done(err);
+  //       }
+  //       User.deleteAll({realm: 'realm2'}, done);
+  //     });
+  //   });
+  //
+  //   it('rejects a user by without realm', function(done) {
+  //     User.login(credentialWithoutRealm, function(err, accessToken) {
+  //       assert(err);
+  //       assert.equal(err.code, 'REALM_REQUIRED');
+  //       done();
+  //     });
+  //   });
+  //
+  //   it('rejects a user by with bad realm', function(done) {
+  //     User.login(credentialWithBadRealm, function(err, accessToken) {
+  //       assert(err);
+  //       assert.equal(err.code, 'LOGIN_FAILED');
+  //       done();
+  //     });
+  //   });
+  //
+  //   it('rejects a user by with bad pass', function(done) {
+  //     User.login(credentialWithBadPass, function(err, accessToken) {
+  //       assert(err);
+  //       assert.equal(err.code, 'LOGIN_FAILED');
+  //       done();
+  //     });
+  //   });
+  //
+  //   it('logs in a user by with realm', function(done) {
+  //     User.login(credentialWithRealm, function(err, accessToken) {
+  //       assertGoodToken(accessToken);
+  //       assert.equal(accessToken.userId, user1.id);
+  //       done();
+  //     });
+  //   });
+  //
+  //   it('logs in a user by with realm in username', function(done) {
+  //     User.login(credentialRealmInUsername, function(err, accessToken) {
+  //       assertGoodToken(accessToken);
+  //       assert.equal(accessToken.userId, user1.id);
+  //       done();
+  //     });
+  //   });
+  //
+  //   it('logs in a user by with realm in email', function(done) {
+  //     User.login(credentialRealmInEmail, function(err, accessToken) {
+  //       assertGoodToken(accessToken);
+  //       assert.equal(accessToken.userId, user1.id);
+  //       done();
+  //     });
+  //   });
+  //
+  //   describe('User.login with realmRequired but no realmDelimiter', function() {
+  //     before(function() {
+  //       User.settings.realmDelimiter = undefined;
+  //     });
+  //
+  //     after(function() {
+  //       User.settings.realmDelimiter = ':';
+  //     });
+  //
+  //     it('logs in a user by with realm', function(done) {
+  //       User.login(credentialWithRealm, function(err, accessToken) {
+  //         assertGoodToken(accessToken);
+  //         assert.equal(accessToken.userId, user1.id);
+  //         done();
+  //       });
+  //     });
+  //
+  //     it('rejects a user by with realm in email if realmDelimiter is not set',
+  //       function(done) {
+  //         User.login(credentialRealmInEmail, function(err, accessToken) {
+  //           assert(err);
+  //           assert.equal(err.code, 'REALM_REQUIRED');
+  //           done();
+  //         });
+  //       });
+  //   });
+  // });
 
   describe('User.logout', function() {
     it('Logout a user by providing the current accessToken id (using node)', function(done) {
-      login(logout);
-
-      function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
-      }
-
-      function logout(err, accessToken) {
-        User.logout(accessToken.id, verify(accessToken.id, done));
-      }
-    });
-
-    it('Logout a user by providing the current accessToken id (using node) - promise variant', function(done) {
       login(logout);
 
       function login(fn) {
