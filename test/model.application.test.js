@@ -5,6 +5,32 @@ var Application = loopback.Application;
 describe('Application', function() {
   var registeredApp = null;
 
+  it('honors `application.register` - promise variant', function(done) {
+    Application.register('rfeng', 'MyTestApp',
+      {description: 'My test application'}, function(err, result) {
+        var app = result;
+        assert.equal(app.owner, 'rfeng');
+        assert.equal(app.name, 'MyTestApp');
+        assert.equal(app.description, 'My test application');
+        done(err, result);
+      });
+  });
+
+  it('honors `application.register` - promise variant', function(done) {
+    Application.register('rfeng', 'MyTestApp',
+      {description: 'My test application'})
+      .then(function(result) {
+        var app = result;
+        assert.equal(app.owner, 'rfeng');
+        assert.equal(app.name, 'MyTestApp');
+        assert.equal(app.description, 'My test application');
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
+  });
+
   it('Create a new application', function(done) {
     Application.create({owner: 'rfeng',
       name: 'MyApp1',
@@ -119,6 +145,35 @@ describe('Application', function() {
     });
   });
 
+  it('Reset keys - promise variant', function(done) {
+    Application.resetKeys(registeredApp.id)
+    .then(function(result) {
+      var app = result;
+      assert.equal(app.owner, 'rfeng');
+      assert.equal(app.name, 'MyApp2');
+      assert.equal(app.description, 'My second mobile application');
+      assert(app.clientKey);
+      assert(app.javaScriptKey);
+      assert(app.restApiKey);
+      assert(app.windowsKey);
+      assert(app.masterKey);
+
+      assert(app.clientKey !== registeredApp.clientKey);
+      assert(app.javaScriptKey !== registeredApp.javaScriptKey);
+      assert(app.restApiKey !== registeredApp.restApiKey);
+      assert(app.windowsKey !== registeredApp.windowsKey);
+      assert(app.masterKey !== registeredApp.masterKey);
+
+      assert(app.created);
+      assert(app.modified);
+      registeredApp = app;
+      done();
+    })
+    .catch(function(err) {
+      done(err);
+    });
+  });
+
   it('Authenticate with application id & clientKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.clientKey,
       function(err, result) {
@@ -127,6 +182,19 @@ describe('Application', function() {
         done(err, result);
       });
   });
+
+  it('Authenticate with application id & clientKey - promise variant',
+    function(done) {
+      Application.authenticate(registeredApp.id, registeredApp.clientKey)
+      .then(function(result) {
+          assert.equal(result.application.id, registeredApp.id);
+          assert.equal(result.keyType, 'clientKey');
+          done();
+        })
+      .catch(function(err) {
+        done(err);
+      });
+    });
 
   it('Authenticate with application id & javaScriptKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.javaScriptKey,
@@ -170,6 +238,18 @@ describe('Application', function() {
         assert(!result);
         done(err, result);
       });
+  });
+
+  it('Fail to authenticate with application id - promise variant', function(done) {
+    Application.authenticate(registeredApp.id, 'invalid-key')
+    .then(function(result) {
+      assert(!result);
+      done();
+    })
+    .catch(function(err) {
+      done(err);
+      throw new Error('Error should NOT be thrown');
+    });
   });
 });
 
