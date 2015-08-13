@@ -6,6 +6,8 @@ var RoleMapping = loopback.RoleMapping;
 var User = loopback.User;
 var Application = loopback.Application;
 var ACL = loopback.ACL;
+var async = require('async');
+var expect = require('chai').expect;
 
 function checkResult(err, result) {
   // console.log(err, result);
@@ -19,9 +21,18 @@ describe('role model', function() {
     ds = loopback.createDataSource({connector: 'memory'});
     // Re-attach the models so that they can have isolated store to avoid
     // pollutions from other tests
+    ACL.attachTo(ds);
     User.attachTo(ds);
     Role.attachTo(ds);
     RoleMapping.attachTo(ds);
+    Application.attachTo(ds);
+    ACL.roleModel = Role;
+    ACL.roleMappingModel = RoleMapping;
+    ACL.userModel = User;
+    ACL.applicationModel = Application;
+    Role.roleMappingModel = RoleMapping;
+    Role.userModel = User;
+    Role.applicationModel = Application;
   });
 
   it('should define role/role relations', function() {
@@ -203,6 +214,134 @@ describe('role model', function() {
             assert(!err && !yes);
           });
         });
+      });
+    });
+  });
+
+  describe('isMappedToRole', function() {
+    var user, app, role;
+
+    beforeEach(function(done) {
+      User.create({
+        username: 'john',
+        email: 'john@gmail.com',
+        password: 'jpass'
+      }, function(err, u) {
+        if (err) return done(err);
+        user = u;
+        User.create({
+          username: 'mary',
+          email: 'mary@gmail.com',
+          password: 'mpass'
+        }, function(err, u) {
+          if (err) return done(err);
+          Application.create({
+            name: 'demo'
+          }, function(err, a) {
+            if (err) return done(err);
+            app = a;
+            Role.create({
+              name: 'admin'
+            }, function(err, r) {
+              if (err) return done(err);
+              role = r;
+              var principals = [
+                {
+                  principalType: ACL.USER,
+                  principalId: user.id
+                },
+                {
+                  principalType: ACL.APP,
+                  principalId: app.id
+                }
+              ];
+              async.each(principals, function(p, done) {
+                role.principals.create(p, done);
+              }, done);
+            });
+          });
+        });
+      });
+    });
+
+    it('should resolve user by id', function(done) {
+      ACL.resolvePrincipal(ACL.USER, user.id, function(err, u) {
+        if (err) return done(err);
+        expect(u.id).to.eql(user.id);
+        done();
+      });
+    });
+
+    it('should resolve user by username', function(done) {
+      ACL.resolvePrincipal(ACL.USER, user.username, function(err, u) {
+        if (err) return done(err);
+        expect(u.username).to.eql(user.username);
+        done();
+      });
+    });
+
+    it('should resolve user by email', function(done) {
+      ACL.resolvePrincipal(ACL.USER, user.email, function(err, u) {
+        if (err) return done(err);
+        expect(u.email).to.eql(user.email);
+        done();
+      });
+    });
+
+    it('should resolve app by id', function(done) {
+      ACL.resolvePrincipal(ACL.APP, app.id, function(err, a) {
+        if (err) return done(err);
+        expect(a.id).to.eql(app.id);
+        done();
+      });
+    });
+
+    it('should resolve app by name', function(done) {
+      ACL.resolvePrincipal(ACL.APP, app.name, function(err, a) {
+        if (err) return done(err);
+        expect(a.name).to.eql(app.name);
+        done();
+      });
+    });
+
+    it('should report isMappedToRole by user.username', function(done) {
+      ACL.isMappedToRole(ACL.USER, user.username, 'admin', function(err, flag) {
+        if (err) return done(err);
+        expect(flag).to.eql(true);
+        done();
+      });
+    });
+
+    it('should report isMappedToRole by user.email', function(done) {
+      ACL.isMappedToRole(ACL.USER, user.email, 'admin', function(err, flag) {
+        if (err) return done(err);
+        expect(flag).to.eql(true);
+        done();
+      });
+    });
+
+    it('should report isMappedToRole by user.username for mismatch',
+      function(done) {
+        ACL.isMappedToRole(ACL.USER, 'mary', 'admin', function(err, flag) {
+          if (err) return done(err);
+          expect(flag).to.eql(false);
+          done();
+        });
+      });
+
+    it('should report isMappedToRole by app.name', function(done) {
+      ACL.isMappedToRole(ACL.APP, app.name, 'admin', function(err, flag) {
+        if (err) return done(err);
+        expect(flag).to.eql(true);
+        done();
+      });
+    });
+
+    it('should report isMappedToRole by app.name', function(done) {
+      ACL.isMappedToRole(ACL.APP, app.name, 'admin', function(err, flag) {
+        if (err) return done(err);
+        expect(flag).to.eql(true);
+        done();
       });
     });
 
