@@ -17,6 +17,15 @@ module.exports = function(RoleMapping) {
   RoleMapping.APP = RoleMapping.APPLICATION = 'APP';
   RoleMapping.ROLE = 'ROLE';
 
+  RoleMapping.resolveRelatedModels = function() {
+    if (!this.userModel) {
+      var reg = this.registry;
+      this.roleModel = reg.getModelByType(loopback.Role);
+      this.userModel = reg.getModelByType(loopback.User);
+      this.applicationModel = reg.getModelByType(loopback.Application);
+    }
+  };
+
   /**
    * Get the application principal
    * @callback {Function} callback
@@ -24,11 +33,10 @@ module.exports = function(RoleMapping) {
    * @param {Application} application
    */
   RoleMapping.prototype.application = function(callback) {
-    var registry = this.constructor.registry;
+    this.constructor.resolveRelatedModels();
 
     if (this.principalType === RoleMapping.APPLICATION) {
-      var applicationModel = this.constructor.Application ||
-        registry.getModelByType('Application');
+      var applicationModel = this.constructor.applicationModel;
       applicationModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
@@ -44,10 +52,9 @@ module.exports = function(RoleMapping) {
    * @param {User} user
    */
   RoleMapping.prototype.user = function(callback) {
-    var RoleMapping = this.constructor;
+    this.constructor.resolveRelatedModels();
     if (this.principalType === RoleMapping.USER) {
-      var userModel = RoleMapping.User ||
-        RoleMapping.registry.getModelByType('User');
+      var userModel = this.constructor.userModel;
       userModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
@@ -63,11 +70,10 @@ module.exports = function(RoleMapping) {
    * @param {User} childUser
    */
   RoleMapping.prototype.childRole = function(callback) {
-    var registry = this.constructor.registry;
+    this.constructor.resolveRelatedModels();
 
     if (this.principalType === RoleMapping.ROLE) {
-      var roleModel = this.constructor.Role ||
-        registry.getModelByType(loopback.Role);
+      var roleModel = this.constructor.roleModel;
       roleModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {

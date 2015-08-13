@@ -13,6 +13,13 @@ var loopback = require('../../lib/loopback');
  */
 
 module.exports = function(Scope) {
+  Scope.resolveRelatedModels = function() {
+    if (!this.aclModel) {
+      var reg = this.registry;
+      this.aclModel = reg.getModelByType(loopback.ACL);
+    }
+  };
+
   /**
    * Check if the given scope is allowed to access the model/property
    * @param {String} scope The scope name
@@ -24,17 +31,17 @@ module.exports = function(Scope) {
    * @param {AccessRequest} result The access permission
    */
   Scope.checkPermission = function(scope, model, property, accessType, callback) {
-    var ACL = loopback.ACL;
-    var registry = this.registry;
-    assert(ACL,
+    this.resolveRelatedModels();
+    var aclModel = this.aclModel;
+    assert(aclModel,
       'ACL model must be defined before Scope.checkPermission is called');
 
     this.findOne({where: {name: scope}}, function(err, scope) {
       if (err) {
         if (callback) callback(err);
       } else {
-        var aclModel = registry.getModelByType(ACL);
-        aclModel.checkPermission(ACL.SCOPE, scope.id, model, property, accessType, callback);
+        aclModel.checkPermission(
+          aclModel.SCOPE, scope.id, model, property, accessType, callback);
       }
     });
   };

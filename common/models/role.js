@@ -6,9 +6,6 @@ var async = require('async');
 var AccessContext = require('../../lib/access-context').AccessContext;
 
 var RoleMapping = loopback.RoleMapping;
-var Role = loopback.Role;
-var User = loopback.User;
-var Application = loopback.Application;
 
 assert(RoleMapping, 'RoleMapping model must be defined before Role model');
 
@@ -31,19 +28,19 @@ module.exports = function(Role) {
     return new Date();
   };
 
+  Role.resolveRelatedModels = function() {
+    if (!this.userModel) {
+      var reg = this.registry;
+      this.roleMappingModel = reg.getModelByType(loopback.RoleMapping);
+      this.userModel = reg.getModelByType(loopback.User);
+      this.applicationModel = reg.getModelByType(loopback.Application);
+    }
+  };
+
   // Set up the connection to users/applications/roles once the model
-  Role.once('dataSourceAttached', function() {
-    var registry = Role.registry;
-    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
-    var principalTypesToModels = {};
+  Role.once('dataSourceAttached', function(roleModel) {
 
-    principalTypesToModels[RoleMapping.USER] = User;
-    principalTypesToModels[RoleMapping.APPLICATION] = Application;
-    principalTypesToModels[RoleMapping.ROLE] = Role;
-
-    Object.keys(principalTypesToModels).forEach(function(principalType) {
-      var model = principalTypesToModels[principalType];
-      var pluralName = model.pluralModelName.toLowerCase();
+    ['users', 'applications', 'roles'].forEach(function(rel) {
       /**
        * Fetch all users assigned to this role
        * @function Role.prototype#users
@@ -62,8 +59,23 @@ module.exports = function(Role) {
        * @param {object} [query] query object passed to model find call
        * @param {Function} [callback]
        */
-      Role.prototype[pluralName] = function(query, callback) {
-        listByPrincipalType(model, principalType, query, callback);
+      Role.prototype[rel] = function(query, callback) {
+        roleModel.resolveRelatedModels();
+        var relsToModels = {
+          users: roleModel.userModel,
+          applications: roleModel.applicationModel,
+          roles: roleModel
+        };
+
+        var ACL = loopback.ACL;
+        var relsToTypes = {
+          users: ACL.USER,
+          applications: ACL.APP,
+          roles: ACL.ROLE
+        };
+
+        var model = relsToModels[rel];
+        listByPrincipalType(model, relsToTypes[rel], query, callback);
       };
     });
 
@@ -81,7 +93,7 @@ module.exports = function(Role) {
         query = {};
       }
 
-      roleMappingModel.find({
+      roleModel.roleMappingModel.find({
         where: {roleId: this.id, principalType: principalType}
       }, function(err, mappings) {
         var ids;
@@ -272,7 +284,7 @@ module.exports = function(Role) {
       context = new AccessContext(context);
     }
 
-    var registry = this.registry;
+    this.resolveRelatedModels();
 
     debug('isInRole(): %s', role);
     context.debug();
@@ -309,7 +321,7 @@ module.exports = function(Role) {
       return;
     }
 
-    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
+    var roleMappingModel = this.roleMappingModel;
     this.findOne({where: {name: role}}, function(err, result) {
       if (err) {
         if (callback) callback(err);
@@ -364,7 +376,7 @@ module.exports = function(Role) {
       context = new AccessContext(context);
     }
     var roles = [];
-    var registry = this.registry;
+    this.resolveRelatedModels();
 
     var addRole = function(role) {
       if (role && roles.indexOf(role) === -1) {
@@ -391,7 +403,7 @@ module.exports = function(Role) {
       });
     });
 
-    var roleMappingModel = this.RoleMapping || registry.getModelByType(RoleMapping);
+    var roleMappingModel = this.roleMappingModel;
     context.principals.forEach(function(p) {
       // Check against the role mappings
       var principalType = p.type || undefined;
