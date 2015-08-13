@@ -1,3 +1,13 @@
+2015-08-13, Version 2.21.0
+==========================
+
+ * Add util methods to ACL and clean up related model resolutions (Raymond Feng)
+
+ * Promisify 'PersistedModel - replication' (Pradnya Baviskar)
+
+ * Promisify 'Application' model (Pradnya Baviskar)
+
+
 2015-08-06, Version 2.20.0
 ==========================
 
