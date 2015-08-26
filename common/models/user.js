@@ -355,7 +355,7 @@ module.exports = function(User) {
     assert(options.type, 'You must supply a verification type (options.type)');
     assert(options.type === 'email', 'Unsupported verification type');
     assert(options.to || this.email, 'Must include options.to when calling user.verify() or the user must have an email property');
-    assert(options.from, 'Must include options.from when calling user.verify() or the user must have an email property');
+    assert(options.from, 'Must include options.from when calling user.verify()');
 
     options.redirect = options.redirect || '/';
     options.template = path.resolve(options.template || path.join(__dirname, '..', '..', 'templates', 'verify.ejs'));
