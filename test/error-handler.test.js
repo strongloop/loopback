@@ -1,43 +1,39 @@
 var loopback = require('../');
 var app;
-var MockReq = require('mock-req');
-var MockRes = require('mock-res');
 var assert = require('assert');
+var request = require('supertest');
 
 describe('loopback.errorHandler(options)', function() {
 
-  it('should return default middleware when options object is not present', function() {
+  it('should return default middleware when options object is not present', function(done) {
 
     //arrange
     var app = loopback();
-    var err = new Error();
-    err.statusCode = 401;
-    err.stack = 'Dummy error stack';
-    var req = new MockReq();
-    var res = new MockRes();
+    app.use(loopback.urlNotFound());
+    app.use(loopback.errorHandler());
 
     //act
-    loopback.errorHandler()(err, req, res, function(err) {});
-
-    //assert
-    assert(err.stack);
-    assert(err.stack === 'Dummy error stack');
+    request(app)
+      .get('/url-does-not-exist')
+      .end(function(err, res) {
+        assert.ok(res.error.text.match(/<ul id="stacktrace"><li> &nbsp; &nbsp;at raiseUrlNotFoundError/));
+        done();
+      });
   });
 
-  it('should delete stack when options.includeStack is false', function() {
+  it('should delete stack when options.includeStack is false', function(done) {
 
     //arrange
     var app = loopback();
-    var err = new Error();
-    err.statusCode = 401;
-    err.stack = 'Dummy error stack';
-    var req = new MockReq();
-    var res = new MockRes();
+    app.use(loopback.urlNotFound());
+    app.use(loopback.errorHandler({ includeStack: false }));
 
     //act
-    loopback.errorHandler({ includeStack: false })(err, req, res, function(err) {});
-
-    //assert
-    assert(!err.stack);
+    request(app)
+      .get('/url-does-not-exist')
+      .end(function(err, res) {
+        assert.ok(res.error.text.match(/<ul id="stacktrace"><\/ul>/));
+        done();
+      });
   });
 });

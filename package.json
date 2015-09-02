@@ -84,8 +84,6 @@
     "loopback-datasource-juggler": "^2.19.1",
     "loopback-testing": "~1.1.0",
     "mocha": "^2.1.0",
-    "mock-req": "^0.2.0",
-    "mock-res": "^0.2.1",
     "sinon": "^1.13.0",
     "strong-task-emitter": "^0.0.6",
     "supertest": "^0.15.0"
