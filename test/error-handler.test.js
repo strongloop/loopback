@@ -12,7 +12,7 @@ describe('loopback.errorHandler(options)', function() {
     app.use(loopback.urlNotFound());
     app.use(loopback.errorHandler({ log: false }));
 
-    //act
+    //act/assert
     request(app)
       .get('/url-does-not-exist')
       .end(function(err, res) {
@@ -28,12 +28,28 @@ describe('loopback.errorHandler(options)', function() {
     app.use(loopback.urlNotFound());
     app.use(loopback.errorHandler({ includeStack: false, log: false }));
 
-    //act
+    //act/assert
     request(app)
       .get('/url-does-not-exist')
       .end(function(err, res) {
         assert.ok(res.error.text.match(/<ul id="stacktrace"><\/ul>/));
         done();
       });
+  });
+
+  it('should pass options on to error handler module', function(done) {
+    //arrange
+    var app = loopback();
+    app.use(loopback.urlNotFound());
+    app.use(loopback.errorHandler({ includeStack: false, log: customLogger }));
+
+    //act
+    request(app).get('/url-does-not-exist').end();
+
+    //assert
+    function customLogger(err, str, req) {
+      assert.ok(err.message === 'Cannot GET /url-does-not-exist');
+      done();
+    }
   });
 });
