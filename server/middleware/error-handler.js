@@ -5,11 +5,11 @@ module.exports = errorHandler;
 
 function errorHandler(options) {
   if (!options || options.includeStack !== false) {
-    return expressErrorHandler();
+    return expressErrorHandler(options);
   } else {
     return function errorHandler(err, req, res, next) {
       delete err.stack;
-      return expressErrorHandler()(err, req, res, next);
+      return expressErrorHandler(options)(err, req, res, next);
     };
   }
 }
