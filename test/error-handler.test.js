@@ -10,7 +10,7 @@ describe('loopback.errorHandler(options)', function() {
     //arrange
     var app = loopback();
     app.use(loopback.urlNotFound());
-    app.use(loopback.errorHandler());
+    app.use(loopback.errorHandler({ log: false }));
 
     //act
     request(app)
@@ -26,7 +26,7 @@ describe('loopback.errorHandler(options)', function() {
     //arrange
     var app = loopback();
     app.use(loopback.urlNotFound());
-    app.use(loopback.errorHandler({ includeStack: false }));
+    app.use(loopback.errorHandler({ includeStack: false, log: false }));
 
     //act
     request(app)
