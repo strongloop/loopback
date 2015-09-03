@@ -1,3 +1,19 @@
+2015-09-03, Version 2.22.0
+==========================
+
+ * Create stack-removing errorhandler middleware (Richard Walker)
+
+ * Update README.md (Rand McKinney)
+
+ * Allow EJS templates to use includes (Samuel Gaus)
+
+ * Fix options.to assertion message in user.verify (Farid Nouri Neshat)
+
+ * Upgrade Travis to container-based infrastructure (Miroslav Bajtoš)
+
+ * fix typo "PeristedModel" (Christoph)
+
+
 2015-08-13, Version 2.21.0
 ==========================
 
