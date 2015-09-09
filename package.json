@@ -102,10 +102,7 @@
     "depd": "loopback-datasource-juggler/lib/browser.depd.js",
     "bcrypt": false
   },
-  "license": {
-    "name": "Dual MIT/StrongLoop",
-    "url": "https://github.com/strongloop/loopback/blob/master/LICENSE"
-  },
+  "license": "SEE LICENSE IN LICENSE",
   "optionalDependencies": {
     "sl-blip": "http://blip.strongloop.com/loopback@2.22.0"
   }
