@@ -39,7 +39,7 @@ var debug = require('debug')('loopback:user');
  * - ALLOW OWNER `deleteById`
  * - ALLOW EVERYONE `login`
  * - ALLOW EVERYONE `logout`
- * - ALLOW EVERYONE `findById`
+ * - ALLOW OWNER `findById`
  * - ALLOW OWNER `updateAttributes`
  *
  * @property {String} username Must be unique
