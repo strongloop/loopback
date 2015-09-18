@@ -1,3 +1,13 @@
+2015-09-18, Version 2.22.1
+==========================
+
+ * Fix perf of rectification after updateAttributes (Miroslav Bajtoš)
+
+ * Update persisted-model.js (Rand McKinney)
+
+ * Stop NPM license warning (Simon Ho)
+
+
 2015-09-03, Version 2.22.0
 ==========================
 
