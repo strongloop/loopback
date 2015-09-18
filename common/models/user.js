@@ -366,12 +366,17 @@ module.exports = function(User) {
     options.host = options.host || (app && app.get('host')) || 'localhost';
     options.port = options.port || (app && app.get('port')) || 3000;
     options.restApiRoot = options.restApiRoot || (app && app.get('restApiRoot')) || '/api';
+
+    var displayPort = (
+      (options.protocol === 'http' && options.port == '80') ||
+      (options.protocol === 'https' && options.port == '443')
+    ) ? '' : ':' + options.port;
+
     options.verifyHref = options.verifyHref ||
       options.protocol +
       '://' +
       options.host +
-      ':' +
-      options.port +
+      displayPort +
       options.restApiRoot +
       userModel.http.path +
       userModel.sharedClass.find('confirm', true).http.path +
