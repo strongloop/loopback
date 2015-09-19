@@ -1,3 +1,5 @@
+var path = require('path');
+
 describe('loopback.rest', function() {
   var MyModel;
   beforeEach(function() {
@@ -12,6 +14,20 @@ describe('loopback.rest', function() {
     request(app).get('/mymodels')
       .expect(200)
       .end(done);
+  });
+
+  it('should report 200 for DELETE /:id found', function(done) {
+    app.set('legacyExplorer', false);
+    app.model(MyModel);
+    app.use(loopback.rest());
+    MyModel.create({name: 'm1'}, function(err, inst) {
+      request(app)
+        .del('/mymodels/' + inst.id)
+        .expect(200, function(err, res) {
+          expect(res.body.count).to.equal(1);
+          done();
+        });
+    });
   });
 
   it('should report 404 for GET /:id not found', function(done) {
@@ -337,4 +353,124 @@ describe('loopback.rest', function() {
         User.login(credentials, cb);
       });
   }
+
+  describe('shared methods', function() {
+    function getFixturePath(dirName) {
+      return path.join(__dirname, 'fixtures/shared-methods/' + dirName +
+          '/server/server.js');
+    }
+
+    describe('with specific definitions in model-config.json', function() {
+      it('should not be exposed when the definition value is false',
+          function(done) {
+        var app = require(getFixturePath('model-config-defined-false'));
+        request(app)
+          .get('/todos')
+          .expect(404, done);
+      });
+
+      it('should be exposed when the definition value is true', function(done) {
+        var app = require(getFixturePath('model-config-defined-true'));
+        request(app)
+          .get('/todos')
+          .expect(200, done);
+      });
+    });
+
+    describe('with default definitions in model-config.json', function() {
+      it('should not be exposed when the definition value is false',
+          function(done) {
+        var app = require(getFixturePath('model-config-default-false'));
+        request(app)
+          .get('/todos')
+          .expect(404, done);
+      });
+
+      it('should be exposed when the definition value is true', function(done) {
+        var app = require(getFixturePath('model-config-default-true'));
+        app.models.Todo.create([
+          {content: 'a'},
+          {content: 'b'},
+          {content: 'c'}
+        ], function() {
+          request(app)
+            .del('/todos')
+            .expect(200)
+            .end(function(err, res) {
+              if (err) return done(err);
+              expect(res.body.count).to.equal(3);
+              done();
+            });
+        });
+      });
+    });
+
+    describe('with specific definitions in config.json', function() {
+      it('should not be exposed when the definition value is false',
+          function(done) {
+        var app = require(getFixturePath('config-defined-false'));
+        request(app)
+          .get('/todos')
+          .expect(404, done);
+      });
+
+      it('should be exposed when the definition value is true',
+          function(done) {
+        var app = require(getFixturePath('config-defined-true'));
+        request(app)
+          .get('/todos')
+          .expect(200, done);
+      });
+    });
+
+    describe('with default definitions in config.json', function() {
+      it('should not be exposed when the definition value is false',
+          function(done) {
+        var app = require(getFixturePath('config-default-false'));
+        request(app)
+          .get('/todos')
+          .expect(404, done);
+      });
+
+      it('should be exposed when the definition value is true', function(done) {
+        var app = require(getFixturePath('config-default-true'));
+        app.models.Todo.create([
+          {content: 'a'},
+          {content: 'b'},
+          {content: 'c'}
+        ], function() {
+          request(app)
+            .del('/todos')
+            .expect(200)
+            .end(function(err, res) {
+              if (err) return done(err);
+              expect(res.body.count).to.equal(3);
+              done();
+            });
+        });
+      });
+    });
+
+    // The fixture in `shared-method/both-configs-set/config.json` has `*:false`
+    // set which disables the REST endpoints for built-in models such as User as
+    // a side effect since tests share the same loopback instance. As a
+    // consequence, this causes the tests in user.integration to fail.
+    describe.skip('with definitions in both config.json and model-config.json',
+        function() {
+      it('should prioritize the settings in model-config.json', function(done) {
+        var app = require(getFixturePath('both-configs-set'));
+        request(app)
+          .del('/todos')
+          .expect(404, done);
+      });
+
+      it('should fall back to config.json settings if setting is not found in' +
+          'model-config.json', function(done) {
+        var app = require(getFixturePath('both-configs-set'));
+        request(app)
+          .get('/todos')
+          .expect(404, done);
+      });
+    });
+  });
 });
