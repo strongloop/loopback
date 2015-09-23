@@ -1,3 +1,11 @@
+2015-09-23, Version 2.22.2
+==========================
+
+ * Use strongloop conventions for licensing (Sam Roberts)
+
+ * Set package license to MIT (Sam Roberts)
+
+
 2015-09-18, Version 2.22.1
 ==========================
 
