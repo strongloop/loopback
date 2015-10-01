@@ -117,14 +117,15 @@ describe('remoting - integration', function() {
         'findById(id:any,filter:object):store GET /stores/:id',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
-        'updateAll(where:object,data:object) POST /stores/update',
-        'deleteById(id:any) DELETE /stores/:id',
+        'updateAll(where:object,data:object):object POST /stores/update',
+        'deleteById(id:any):object DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
-        'prototype.updateAttributes(data:object):store PUT /stores/:id'
+        'prototype.updateAttributes(data:object):store PUT /stores/:id',
+        'createChangeStream(options:object):ReadableStream POST /stores/change-stream'
       ];
 
       // The list of methods is from docs:
-      // http://docs.strongloop.com/display/LB/Exposing+models+over+a+REST+API
+      // https://docs.strongloop.com/display/public/LB/Exposing+models+over+REST
       expect(methods).to.include.members(expectedMethods);
     });
 

@@ -34,14 +34,10 @@ describe('users - integration', function() {
     var accessToken;
 
     it('should create a new user', function(done) {
-      var url = '/api/users';
-
-      this.post(url)
+      this.post('/api/users')
         .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
           expect(res.body.id).to.exist;
           userId = res.body.id;
           done();
