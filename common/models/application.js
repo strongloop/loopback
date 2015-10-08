@@ -92,7 +92,9 @@ module.exports = function(Application) {
 
     var app = ctx.instance;
     app.created = app.modified = new Date();
-    app.id = generateKey('id', 'md5');
+    if (!app.id) {
+      app.id = generateKey('id', 'md5');
+    }
     app.clientKey = generateKey('client');
     app.javaScriptKey = generateKey('javaScript');
     app.restApiKey = generateKey('restApi');
