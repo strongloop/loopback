@@ -1109,7 +1109,7 @@ describe('User', function() {
           });
       });
 
-      describe('Verification link port-squashing', function () {
+      describe('Verification link port-squashing', function() {
         it('Do not squash non-80 ports for HTTP links', function(done) {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
