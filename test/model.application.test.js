@@ -174,6 +174,30 @@ describe('Application', function() {
     });
   });
 
+  it('Reset keys without create a new instance', function(done) {
+    Application.resetKeys(registeredApp.id, function(err, result) {
+      var app = result;
+      assert(app.id);
+      assert(app.id === registeredApp.id);
+      registeredApp = app;
+      done(err, result);
+    });
+  });
+
+  it('Reset keys without create a new instance - promise variant', function(done) {
+    Application.resetKeys(registeredApp.id)
+    .then(function(result) {
+      var app = result;
+      assert(app.id);
+      assert(app.id === registeredApp.id);
+      registeredApp = app;
+      done();
+    })
+    .catch(function(err) {
+      done(err);
+    });
+  });
+
   it('Authenticate with application id & clientKey', function(done) {
     Application.authenticate(registeredApp.id, registeredApp.clientKey,
       function(err, result) {
