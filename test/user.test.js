@@ -1109,6 +1109,140 @@ describe('User', function() {
           });
       });
 
+      describe('Verification link port-squashing', function() {
+        it('Do not squash non-80 ports for HTTP links', function(done) {
+          User.afterRemote('create', function(ctx, user, next) {
+            assert(user, 'afterRemote should include result');
+
+            var options = {
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '/',
+              protocol: 'http',
+              host: 'myapp.org',
+              port: 3000
+            };
+
+            user.verify(options, function(err, result) {
+              var msg = result.email.response.toString('utf-8');
+              assert(~msg.indexOf('http://myapp.org:3000/'));
+              done();
+            });
+          });
+
+          request(app)
+            .post('/test-users')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .send({email: 'bar@bat.com', password: 'bar'})
+            .end(function(err, res) {
+              if (err) {
+                return done(err);
+              }
+            });
+        });
+
+        it('Squash port 80 for HTTP links', function(done) {
+          User.afterRemote('create', function(ctx, user, next) {
+            assert(user, 'afterRemote should include result');
+
+            var options = {
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '/',
+              protocol: 'http',
+              host: 'myapp.org',
+              port: 80
+            };
+
+            user.verify(options, function(err, result) {
+              var msg = result.email.response.toString('utf-8');
+              assert(~msg.indexOf('http://myapp.org/'));
+              done();
+            });
+          });
+
+          request(app)
+            .post('/test-users')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .send({email: 'bar@bat.com', password: 'bar'})
+            .end(function(err, res) {
+              if (err) {
+                return done(err);
+              }
+            });
+        });
+
+        it('Do not squash non-443 ports for HTTPS links', function(done) {
+          User.afterRemote('create', function(ctx, user, next) {
+            assert(user, 'afterRemote should include result');
+
+            var options = {
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '/',
+              protocol: 'https',
+              host: 'myapp.org',
+              port: 3000
+            };
+
+            user.verify(options, function(err, result) {
+              var msg = result.email.response.toString('utf-8');
+              assert(~msg.indexOf('https://myapp.org:3000/'));
+              done();
+            });
+          });
+
+          request(app)
+            .post('/test-users')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .send({email: 'bar@bat.com', password: 'bar'})
+            .end(function(err, res) {
+              if (err) {
+                return done(err);
+              }
+            });
+        });
+
+        it('Squash port 443 for HTTPS links', function(done) {
+          User.afterRemote('create', function(ctx, user, next) {
+            assert(user, 'afterRemote should include result');
+
+            var options = {
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '/',
+              protocol: 'https',
+              host: 'myapp.org',
+              port: 443
+            };
+
+            user.verify(options, function(err, result) {
+              var msg = result.email.response.toString('utf-8');
+              assert(~msg.indexOf('https://myapp.org/'));
+              done();
+            });
+          });
+
+          request(app)
+            .post('/test-users')
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .send({email: 'bar@bat.com', password: 'bar'})
+            .end(function(err, res) {
+              if (err) {
+                return done(err);
+              }
+            });
+        });
+      });
+
     });
 
     describe('User.confirm(options, fn)', function() {
