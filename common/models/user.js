@@ -370,13 +370,12 @@ module.exports = function(User) {
     var displayPort = (
       (options.protocol === 'http' && options.port == '80') ||
       (options.protocol === 'https' && options.port == '443')
-    ) ? '' : options.port;
+    ) ? '' : ':' + options.port;
 
     options.verifyHref = options.verifyHref ||
       options.protocol +
       '://' +
       options.host +
-      ':' +
       displayPort +
       options.restApiRoot +
       userModel.http.path +
