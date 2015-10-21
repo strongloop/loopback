@@ -508,9 +508,9 @@ module.exports = function(User) {
     options = options || {};
     if (typeof options.email === 'string') {
       UserModel.findOne({ where: {email: options.email} }, function(err, user) {
-        if (err) {
+        if (err)
           cb(err);
-        } else if (user) {
+        else if (user) {
           // create a short lived access token for temp login to change password
           // TODO(ritch) - eventually this should only allow password change
           user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
@@ -526,7 +526,10 @@ module.exports = function(User) {
             }
           });
         } else {
-          cb();
+          var err = new Error('email not found.');
+          err.statusCode = 404;
+          err.code = 'EMAIL_NOT_FOUND';
+          cb(err);
         }
       });
     } else {
