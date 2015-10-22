@@ -526,7 +526,7 @@ module.exports = function(User) {
             }
           });
         } else {
-          var err = new Error('email not found.');
+          err = new Error('email not found.');
           err.statusCode = 404;
           err.code = 'EMAIL_NOT_FOUND';
           cb(err);
