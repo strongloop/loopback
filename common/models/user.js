@@ -507,6 +507,12 @@ module.exports = function(User) {
 
     options = options || {};
     if (typeof options.email === 'string') {
+      if( !User.validateEmail(options.email)){
+        var err = new Error('Must provide a valid email');
+        err.statusCode = 400;
+        err.code = 'INVALID_EMAIL';
+        return cb(err);
+      }
       UserModel.findOne({ where: {email: options.email} }, function(err, user) {
         if (err) {
           cb(err);
@@ -676,8 +682,12 @@ module.exports = function(User) {
 
     // email validation regex
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
+    
     UserModel.validatesFormatOf('email', {with: re, message: 'Must provide a valid email'});
+    
+    UserModel.validateEmail = function(email) {
+      return re.test(email);
+    };
 
     // FIXME: We need to add support for uniqueness of composite keys in juggler
     if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
