@@ -101,6 +101,11 @@ module.exports = function(AccessToken) {
         if (err) {
           cb(err);
         } else if (token) {
+          var possibleDate = new Date(token.created);
+          var isAValidDate = !isNaN(possibleDate.getTime());
+          if(isAValidDate){
+            token.created = new Date(token.created);
+          }
           AccessToken.validate(token, function(err, isValid) {
             if (err) {
               cb(err);
