@@ -101,7 +101,7 @@ module.exports = function(AccessToken) {
         if (err) {
           cb(err);
         } else if (token) {
-          token.validate(function(err, isValid) {
+          AccessToken.validate(token, function(err, isValid) {
             if (err) {
               cb(err);
             } else if (isValid) {
@@ -132,26 +132,26 @@ module.exports = function(AccessToken) {
    * @param {Boolean} isValid
    */
 
-  AccessToken.prototype.validate = function(cb) {
+  AccessToken.validate = function(token, cb) {
     try {
       assert(
-          this.created && typeof this.created.getTime === 'function',
+          token.created && typeof token.created.getTime === 'function',
         'token.created must be a valid Date'
       );
-      assert(this.ttl !== 0, 'token.ttl must be not be 0');
-      assert(this.ttl, 'token.ttl must exist');
-      assert(this.ttl >= -1, 'token.ttl must be >= -1');
+      assert(token.ttl !== 0, 'token.ttl must be not be 0');
+      assert(token.ttl, 'token.ttl must exist');
+      assert(token.ttl >= -1, 'token.ttl must be >= -1');
 
       var now = Date.now();
-      var created = this.created.getTime();
+      var created = token.created.getTime();
       var elapsedSeconds = (now - created) / 1000;
-      var secondsToLive = this.ttl;
+      var secondsToLive = token.ttl;
       var isValid = elapsedSeconds < secondsToLive;
 
       if (isValid) {
         cb(null, isValid);
       } else {
-        this.destroy(function(err) {
+        token.destroy(function(err) {
           cb(err, isValid);
         });
       }
