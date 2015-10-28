@@ -44,6 +44,7 @@
     "errorhandler": "^1.3.4",
     "express": "^4.12.2",
     "inflection": "^1.6.0",
+    "isemail": "^1.2.0",
     "loopback-connector-remote": "^1.0.3",
     "loopback-phase": "^1.2.0",
     "nodemailer": "^1.3.1",
