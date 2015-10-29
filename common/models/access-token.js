@@ -103,7 +103,7 @@ module.exports = function(AccessToken) {
         } else if (token) {
           var possibleDate = new Date(token.created);
           var isAValidDate = !isNaN(possibleDate.getTime());
-          if(isAValidDate){
+          if (isAValidDate) {
             token.created = new Date(token.created);
           }
           AccessToken.validate(token, function(err, isValid) {
