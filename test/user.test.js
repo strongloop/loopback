@@ -1383,6 +1383,15 @@ describe('User', function() {
           });
       });
 
+      it('Reports when email is not found', function(done) {
+        User.resetPassword({ email: 'unknown@email.com' }, function(err) {
+          assert(err);
+          assert.equal(err.code, 'EMAIL_NOT_FOUND');
+          assert.equal(err.statusCode, 404);
+          done();
+        });
+      });
+
       it('Creates a temp accessToken to allow a user to change password', function(done) {
         var calledBack = false;
 

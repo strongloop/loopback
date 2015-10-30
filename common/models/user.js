@@ -521,7 +521,7 @@ module.exports = function(User) {
       if (!user) {
         err = new Error('Email not found');
         err.statusCode = 404;
-        err.code = 'EMAIL_NOT_FOUD';
+        err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
       // create a short lived access token for temp login to change password
