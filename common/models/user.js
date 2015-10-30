@@ -506,35 +506,39 @@ module.exports = function(User) {
     var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
     options = options || {};
-    if (typeof options.email === 'string') {
-      UserModel.findOne({ where: {email: options.email} }, function(err, user) {
-        if (err) {
-          cb(err);
-        } else if (user) {
-          // create a short lived access token for temp login to change password
-          // TODO(ritch) - eventually this should only allow password change
-          user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
-            if (err) {
-              cb(err);
-            } else {
-              cb();
-              UserModel.emit('resetPasswordRequest', {
-                email: options.email,
-                accessToken: accessToken,
-                user: user
-              });
-            }
-          });
-        } else {
-          cb();
-        }
-      });
-    } else {
+    if (typeof options.email !== 'string') {
       var err = new Error('email is required');
       err.statusCode = 400;
       err.code = 'EMAIL_REQUIRED';
       cb(err);
+      return cb.promise;
     }
+
+    UserModel.findOne({ where: {email: options.email} }, function(err, user) {
+      if (err) {
+        return cb(err);
+      }
+      if (!user) {
+        err = new Error('Email not found');
+        err.statusCode = 404;
+        err.code = 'EMAIL_NOT_FOUND';
+        return cb(err);
+      }
+      // create a short lived access token for temp login to change password
+      // TODO(ritch) - eventually this should only allow password change
+      user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
+        if (err) {
+          return cb(err);
+        }
+        cb();
+        UserModel.emit('resetPasswordRequest', {
+          email: options.email,
+          accessToken: accessToken,
+          user: user
+        });
+      });
+    });
+
     return cb.promise;
   };
 
