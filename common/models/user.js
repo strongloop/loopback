@@ -58,6 +58,7 @@ var debug = require('debug')('loopback:user');
  * @property {String} settings.realmDelimiter When set a realm is required.
  * @property {Number} settings.resetPasswordTokenTTL Time to live for password reset `AccessToken`. Default is `900` (15 minutes).
  * @property {Number} settings.saltWorkFactor The `bcrypt` salt work factor. Default is `10`.
+ * @property {Boolean} settings.caseSensitiveEmail Enable case sensitive email.
  *
  * @class User
  * @inherits {PersistedModel}
@@ -573,6 +574,14 @@ module.exports = function(User) {
     this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
     this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
+    UserModel.setter.email = function(value) {
+      if (!UserModel.settings.caseSensitiveEmail) {
+        this.$email = value.toLowerCase();
+      } else {
+        this.$email = value;
+      }
+    };
+
     UserModel.setter.password = function(plain) {
       if (typeof plain !== 'string') {
         return;
@@ -585,6 +594,14 @@ module.exports = function(User) {
         this.$password = this.constructor.hashPassword(plain);
       }
     };
+
+    // Access token to normalize email credentials
+    UserModel.observe('access', function normalizeEmailCase(ctx, next) {
+      if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where && ctx.query.where.email) {
+        ctx.query.where.email = ctx.query.where.email.toLowerCase();
+      }
+      next();
+    });
 
     // Make sure emailVerified is not set by creation
     UserModel.beforeRemote('create', function(ctx, user, next) {
