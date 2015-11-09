@@ -1,3 +1,27 @@
+2015-11-09, Version 2.23.0
+==========================
+
+ * lib/registry: fix findModel for model ctor (Miroslav Bajtoš)
+
+ * Refer to licenses with a link (Sam Roberts)
+
+ * Fix user.resetPassword to fail on email not found (Simo Moujami)
+
+ * Fix typo in doc comment (Rand McKinney)
+
+ * Do not include redundant ports in verify links (Samuel Gaus)
+
+ * Set application's id property only if it's empty. (wusuopu)
+
+ * Check configs for shared method settings (Simon Ho)
+
+ * Add test fixtures for shared methods (Simon Ho)
+
+ * Clean up .jshintrc (Simon Ho)
+
+ * Update comment about user ACL to reflect implementation (Felipe Oliveira Carvalho)
+
+
 2015-09-23, Version 2.22.2
 ==========================
 
