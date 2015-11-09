@@ -245,6 +245,7 @@ describe('loopback', function() {
         assert(loopback.getModel('MyModel') === MyModel);
         assert(loopback.getModel('MyCustomModel') === MyCustomModel);
         assert(loopback.findModel('Invalid') === undefined);
+        assert(loopback.getModel(MyModel) === MyModel);
       });
       it('should be able to get model by type', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
