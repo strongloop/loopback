@@ -1,4 +1,10 @@
-2015-11-10, Version 2.24.0
+2015-11-13, Version 2.25.0
+==========================
+
+ * Fix typo in description of persistedModel.updateAttributes() (Richard Pringle)
+
+
+2015-11-09, Version 2.24.0
 ==========================
 
  * Fix cookie-parser error (Simon Ho)
