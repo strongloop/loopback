@@ -1,0 +1,9 @@
+# Site settings
+title: "Previously, on LoopBack..."
+description: "Generated summary of changes made in LoopBack."
+baseurl: "/loopback" # the subpath of your site, e.g. /blog/
+twitter_username: strongloop
+github_username:  strongloop
+exclude: ["*.rb", "Gemfile*", ".gitignore", ".bundle", "vendor"]
+# Build settings
+#markdown: kramdown
