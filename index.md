@@ -13,6 +13,8 @@ layout: page
 
 
 ### Connectors
+ * loopback-connector-mysql
+   * [PR#134](https://github.com/strongloop/loopback-connector-mysql/pull/134) Add mysql CI host ([cgole](https://github.com/cgole))
  * loopback-connector-postgresql
    * [PR#119](https://github.com/strongloop/loopback-connector-postgresql/pull/119) add CI DB server ([cgole](https://github.com/cgole))
  * loopback-connector-mssql
