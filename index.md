@@ -8,6 +8,7 @@ layout: page
 
 ### Core
  * loopback-datasource-juggler
+   * [PR#770](https://github.com/strongloop/loopback-datasource-juggler/pull/770) Correction of a regression introduced by commit 632898b ([MichaelDiguet](https://github.com/MichaelDiguet))
    * **Released 2.41.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [@d7bbd7e](https://github.com/strongloop/loopback-datasource-juggler/commit/d7bbd7e215073f6d484ebe06c132d19ba2aa4d72) Fix the typo ([Raymond Feng](https://github.com/raymondfeng))
 
