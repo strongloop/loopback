@@ -8,12 +8,16 @@ layout: page
 
 ### Core
  * loopback-datasource-juggler
+   * **Released 2.42.0** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#770](https://github.com/strongloop/loopback-datasource-juggler/pull/770) Correction of a regression introduced by commit 632898b ([MichaelDiguet](https://github.com/MichaelDiguet))
    * **Released 2.41.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [@d7bbd7e](https://github.com/strongloop/loopback-datasource-juggler/commit/d7bbd7e215073f6d484ebe06c132d19ba2aa4d72) Fix the typo ([Raymond Feng](https://github.com/raymondfeng))
 
 
 ### Connectors
+ * loopback-connector-mongodb
+   * **Released 1.13.1** ([Raymond Feng](https://github.com/raymondfeng))
+   * [@15b360c](https://github.com/strongloop/loopback-connector-mongodb/commit/15b360ca304fed503cb3a7e77918e50ca99ac1d4) Fix the test set up ([Raymond Feng](https://github.com/raymondfeng))
  * loopback-connector-mysql
    * [PR#134](https://github.com/strongloop/loopback-connector-mysql/pull/134) Add mysql CI host ([cgole](https://github.com/cgole))
  * loopback-connector-postgresql
@@ -120,6 +124,9 @@ layout: page
  * loopback
    * [@3208547](https://github.com/strongloop/loopback/commit/32085475ed027f5a225e8023a69c98f1950cb7b9) Fix typo in doc comment ([Rand McKinney](https://github.com/crandmck))
  * loopback-datasource-juggler
+   * [@d9918d5](https://github.com/strongloop/loopback-datasource-juggler/commit/d9918d526a7a59dbc610295b5727311be4ef0359) dropped unused functions and tests fixed ([Wert_Lex](https://github.com/wertlex))
+   * [@2f31701](https://github.com/strongloop/loopback-datasource-juggler/commit/2f31701655840acb86b6e2d62aa2ab81e60f8b2d) One more comment ([Wert_Lex](https://github.com/wertlex))
+   * [@638002b](https://github.com/strongloop/loopback-datasource-juggler/commit/638002bc59b148896f7ee38b08ee89b874d842e1) Looks better now ([Wert_Lex](https://github.com/wertlex))
    * **Released 2.41.1** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#739](https://github.com/strongloop/loopback-datasource-juggler/pull/739) Fix filtering relations of a model with an order specified ([mdartic](https://github.com/mdartic))
    * [PR#746](https://github.com/strongloop/loopback-datasource-juggler/pull/746) Added missing callback when results are filtered ([framp](https://github.com/framp))
@@ -158,6 +165,9 @@ layout: page
    * [@ce48521](https://github.com/strongloop/loopback/commit/ce48521efbc17255905cb8d1b6d1464782070711) Set application's id property only if it's empty. ([wusuopu](https://github.com/wusuopu))
    * [PR#1668](https://github.com/strongloop/loopback/pull/1668) Update comment about user ACL to reflect implementation ([philix](https://github.com/philix))
  * loopback-datasource-juggler
+   * [@1cab016](https://github.com/strongloop/loopback-datasource-juggler/commit/1cab0164c24bf767a6373d7bff8d099c80819f3e) home-written map extended with proper .set() method ([Wert_Lex](https://github.com/wertlex))
+   * [@a5dd9c1](https://github.com/strongloop/loopback-datasource-juggler/commit/a5dd9c181a538454e5b768fb5d191806cf0720a1) on the halfway to keeping original keys ([Wert_Lex](https://github.com/wertlex))
+   * [@0864bf7](https://github.com/strongloop/loopback-datasource-juggler/commit/0864bf7154aa42298400de9b26bdfb294a162403) with updated map which stores original key and tests for them ([Wert_Lex](https://github.com/wertlex))
    * **Released 2.41.0** ([Miroslav Bajtoš](https://github.com/bajtos))
    * [PR#725](https://github.com/strongloop/loopback-datasource-juggler/pull/725) Ability to define normalization of undefined query ([jrschumacher](https://github.com/jrschumacher))
    * [@94c3f9a](https://github.com/strongloop/loopback-datasource-juggler/commit/94c3f9a4320fd3654c369f22bfeb0d3c3d6c707e) Ability to define normalization of undefined query ([Ryan Schumacher](https://github.com/jrschumacher))
