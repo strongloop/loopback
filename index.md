@@ -44,6 +44,8 @@ layout: page
  * loopback-sdk-ios
    * [PR#77](https://github.com/strongloop/loopback-sdk-ios/pull/77) test-server: fix Container's base class to Model ([bajtos](https://github.com/bajtos))
    * [PR#75](https://github.com/strongloop/loopback-sdk-ios/pull/75) Fix framework's exposure of non-public headers and clean-up headers for unit tests ([hideya](https://github.com/hideya))
+ * loopback-sdk-angular
+   * [PR#191](https://github.com/strongloop/loopback-sdk-angular/pull/191) WIP : Add description from model meta to docs template ([davidcheung](https://github.com/davidcheung))
 
 ----
 
