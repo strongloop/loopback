@@ -15,6 +15,9 @@ layout: page
    * [PR#770](https://github.com/strongloop/loopback-datasource-juggler/pull/770) Correction of a regression introduced by commit 632898b ([MichaelDiguet](https://github.com/MichaelDiguet))
    * **Released 2.41.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [@d7bbd7e](https://github.com/strongloop/loopback-datasource-juggler/commit/d7bbd7e215073f6d484ebe06c132d19ba2aa4d72) Fix the typo ([Raymond Feng](https://github.com/raymondfeng))
+ * loopback-boot
+   * **Released 2.14.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+   * [PR#162](https://github.com/strongloop/loopback-boot/pull/162) Warn about missing main json config file ([Amir-61](https://github.com/Amir-61))
 
 
 ### Connectors
@@ -32,6 +35,7 @@ layout: page
 
 ### SDKs
  * loopback-sdk-ios
+   * [PR#77](https://github.com/strongloop/loopback-sdk-ios/pull/77) test-server: fix Container's base class to Model ([bajtos](https://github.com/bajtos))
    * [PR#75](https://github.com/strongloop/loopback-sdk-ios/pull/75) Fix framework's exposure of non-public headers and clean-up headers for unit tests ([hideya](https://github.com/hideya))
 
 ----
