@@ -4,6 +4,9 @@ layout: page
 ## Sprint 84 (2015-11-17 to 2015-11-30) so far
 
 ### Components
+ * loopback-component-storage
+   * **Released 1.6.0** ([Raymond Feng](https://github.com/raymondfeng))
+   * [@fdb4c04](https://github.com/strongloop/loopback-component-storage/commit/fdb4c0464e774e512acfa39ff3847df456378e91) Add range support ([Raymond Feng](https://github.com/raymondfeng))
 
 
 ### Core
