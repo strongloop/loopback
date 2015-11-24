@@ -18,8 +18,13 @@ layout: page
  * generator-loopback
    * [PR#120](https://github.com/strongloop/generator-loopback/pull/120) Make sure relation name different from property name ([jannyHou](https://github.com/jannyHou))
  * loopback-boot
+   * **Released 2.14.2** ([Miroslav Bajtoš](https://github.com/bajtos))
+   * [PR#159](https://github.com/strongloop/loopback-boot/pull/159) executor: preserve RegExps in middleware paths ([bajtos](https://github.com/bajtos))
    * **Released 2.14.1** ([Miroslav Bajtoš](https://github.com/bajtos))
    * [PR#162](https://github.com/strongloop/loopback-boot/pull/162) Warn about missing main json config file ([Amir-61](https://github.com/Amir-61))
+ * loopback-swagger
+   * **Released 2.2.2** ([Miroslav Bajtoš](https://github.com/bajtos))
+   * [PR#17](https://github.com/strongloop/loopback-swagger/pull/17) specgen: ensure operation ids are unique ([bajtos](https://github.com/bajtos))
 
 
 ### Connectors
