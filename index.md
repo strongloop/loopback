@@ -15,6 +15,8 @@ layout: page
    * [PR#770](https://github.com/strongloop/loopback-datasource-juggler/pull/770) Correction of a regression introduced by commit 632898b ([MichaelDiguet](https://github.com/MichaelDiguet))
    * **Released 2.41.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [@d7bbd7e](https://github.com/strongloop/loopback-datasource-juggler/commit/d7bbd7e215073f6d484ebe06c132d19ba2aa4d72) Fix the typo ([Raymond Feng](https://github.com/raymondfeng))
+ * generator-loopback
+   * [PR#120](https://github.com/strongloop/generator-loopback/pull/120) Make sure relation name different from property name ([jannyHou](https://github.com/jannyHou))
  * loopback-boot
    * **Released 2.14.1** ([Miroslav Bajtoš](https://github.com/bajtos))
    * [PR#162](https://github.com/strongloop/loopback-boot/pull/162) Warn about missing main json config file ([Amir-61](https://github.com/Amir-61))
