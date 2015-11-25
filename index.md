@@ -23,6 +23,7 @@ layout: page
    * **Released 2.14.1** ([Miroslav Bajtoš](https://github.com/bajtos))
    * [PR#162](https://github.com/strongloop/loopback-boot/pull/162) Warn about missing main json config file ([Amir-61](https://github.com/Amir-61))
  * loopback-swagger
+   * [PR#20](https://github.com/strongloop/loopback-swagger/pull/20) Add GeoPoint support to explorer. ([0candy](https://github.com/0candy))
    * **Released 2.2.2** ([Miroslav Bajtoš](https://github.com/bajtos))
    * [PR#17](https://github.com/strongloop/loopback-swagger/pull/17) specgen: ensure operation ids are unique ([bajtos](https://github.com/bajtos))
 
