@@ -38,6 +38,8 @@ layout: page
  * loopback-connector-mssql
    * **Released 2.3.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#61](https://github.com/strongloop/loopback-connector-mssql/pull/61) Add PARTITION BY to T-SQL query for include filter(to replace pull request #60) ([eugene-frb](https://github.com/eugene-frb))
+ * loopback-connector-remote
+   * [PR#27](https://github.com/strongloop/loopback-connector-remote/pull/27) test: load the correct Remote instance ([bajtos](https://github.com/bajtos))
 
 
 ### SDKs
