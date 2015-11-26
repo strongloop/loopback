@@ -11,10 +11,17 @@ layout: page
 
 ### Core
  * loopback-datasource-juggler
+   * [PR#755](https://github.com/strongloop/loopback-datasource-juggler/pull/755) fixes #753 ([zmijevik](https://github.com/zmijevik))
+   * [PR#775](https://github.com/strongloop/loopback-datasource-juggler/pull/775) Fix for issue #774 ([pktippa](https://github.com/pktippa))
+   * [PR#764](https://github.com/strongloop/loopback-datasource-juggler/pull/764) Capture includeHasMany() as a find()'s caller by findCaller option ([eugene-frb](https://github.com/eugene-frb))
+   * [PR#772](https://github.com/strongloop/loopback-datasource-juggler/pull/772) Ignored Error ([Abebw](https://github.com/Abebw))
+   * [PR#715](https://github.com/strongloop/loopback-datasource-juggler/pull/715) foreignKey dataLength fix ([nennad](https://github.com/nennad))
+   * [PR#773](https://github.com/strongloop/loopback-datasource-juggler/pull/773) silence a warning that introduced in bluebird 3.0.x ([clarkorz](https://github.com/clarkorz))
    * **Released 2.42.0** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#770](https://github.com/strongloop/loopback-datasource-juggler/pull/770) Correction of a regression introduced by commit 632898b ([MichaelDiguet](https://github.com/MichaelDiguet))
    * **Released 2.41.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [@d7bbd7e](https://github.com/strongloop/loopback-datasource-juggler/commit/d7bbd7e215073f6d484ebe06c132d19ba2aa4d72) Fix the typo ([Raymond Feng](https://github.com/raymondfeng))
+   * [@c26b857](https://github.com/strongloop/loopback-datasource-juggler/commit/c26b857a87b3431e5e9fe43a697ee67bb2566fb4) UpdateAttributes: Raises an error if database fails ([Wilson Júnior](https://github.com/wpjunior))
  * generator-loopback
    * [PR#120](https://github.com/strongloop/generator-loopback/pull/120) Make sure relation name different from property name ([jannyHou](https://github.com/jannyHou))
  * loopback-boot
@@ -37,6 +44,7 @@ layout: page
  * loopback-connector-postgresql
    * [PR#119](https://github.com/strongloop/loopback-connector-postgresql/pull/119) add CI DB server ([cgole](https://github.com/cgole))
  * loopback-connector-mssql
+   * [PR#62](https://github.com/strongloop/loopback-connector-mssql/pull/62) Fixed buildPartitionByFirst's 'where' argument. ([eugene-frb](https://github.com/eugene-frb))
    * **Released 2.3.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#61](https://github.com/strongloop/loopback-connector-mssql/pull/61) Add PARTITION BY to T-SQL query for include filter(to replace pull request #60) ([eugene-frb](https://github.com/eugene-frb))
  * loopback-connector-remote
