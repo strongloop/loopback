@@ -11,6 +11,7 @@ layout: page
 
 ### Core
  * loopback-datasource-juggler
+   * **Released 2.43.0** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#755](https://github.com/strongloop/loopback-datasource-juggler/pull/755) fixes #753 ([zmijevik](https://github.com/zmijevik))
    * [PR#775](https://github.com/strongloop/loopback-datasource-juggler/pull/775) Fix for issue #774 ([pktippa](https://github.com/pktippa))
    * [PR#764](https://github.com/strongloop/loopback-datasource-juggler/pull/764) Capture includeHasMany() as a find()'s caller by findCaller option ([eugene-frb](https://github.com/eugene-frb))
@@ -44,6 +45,7 @@ layout: page
  * loopback-connector-postgresql
    * [PR#119](https://github.com/strongloop/loopback-connector-postgresql/pull/119) add CI DB server ([cgole](https://github.com/cgole))
  * loopback-connector-mssql
+   * **Released 2.3.3** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#62](https://github.com/strongloop/loopback-connector-mssql/pull/62) Fixed buildPartitionByFirst's 'where' argument. ([eugene-frb](https://github.com/eugene-frb))
    * **Released 2.3.2** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#61](https://github.com/strongloop/loopback-connector-mssql/pull/61) Add PARTITION BY to T-SQL query for include filter(to replace pull request #60) ([eugene-frb](https://github.com/eugene-frb))
