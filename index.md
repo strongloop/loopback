@@ -11,6 +11,7 @@ layout: page
 
 ### Core
  * loopback-datasource-juggler
+   * [PR#776](https://github.com/strongloop/loopback-datasource-juggler/pull/776) Update helper scripts ([superkhau](https://github.com/superkhau))
    * **Released 2.43.0** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#755](https://github.com/strongloop/loopback-datasource-juggler/pull/755) fixes #753 ([zmijevik](https://github.com/zmijevik))
    * [PR#775](https://github.com/strongloop/loopback-datasource-juggler/pull/775) Fix for issue #774 ([pktippa](https://github.com/pktippa))
