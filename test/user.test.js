@@ -1450,7 +1450,7 @@ describe('User', function() {
 
     describe('User.prototype.requestPasswordReset(options, cb)', function() {
       it('Creates a temp accessToken using options.generateVerificationToken', function(done) {
-        User.create({email: 'foo@bar.com', password: 'bar'}, function(err, u) {
+        User.create({email: 'bar@foo.com', password: 'bar'}, function(err, u) {
           var calledBack = false;
 
           var token = 'token';
@@ -1465,7 +1465,6 @@ describe('User', function() {
           });
 
           User.once('resetPasswordRequest', function(info) {
-            console.dir(info);
             assert(info.email);
             assert(info.accessToken);
             assert.equal(info.accessToken.id, token);

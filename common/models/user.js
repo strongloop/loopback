@@ -463,7 +463,6 @@ module.exports = function(User) {
 
     // Set the email to the user if it is not set
     options.to = options.to || user.email;
-    console.log('Email: ' + options.to);
 
     // Set default token generator function if one is not provided
     var tokenGenerator = options.generateVerificationToken || userModel.generateVerificationToken;
@@ -474,8 +473,6 @@ module.exports = function(User) {
       }
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
-      console.log('User:');
-      console.dir(user.accessTokens);
       user.accessTokens.create({
         id: token,
         ttl: ttl
@@ -586,7 +583,6 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      console.dir(user.accessTokens);
       user.requestPasswordReset({
         to: options.email
       }, cb);
