@@ -1,7 +1,7 @@
 ---
 layout: page
 ---
-## Sprint 84 (2015-11-17 to 2015-11-30) so far
+## Sprint 84 (2015-11-17 to 2015-11-30)
 
 ### Components
  * loopback-component-storage
