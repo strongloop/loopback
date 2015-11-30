@@ -433,6 +433,68 @@ module.exports = function(User) {
   };
 
   /**
+   * Generates a temporary passoword reset access token and triggers the requestPasswordReset event.
+   *
+   * ```js
+   *    var options = {
+   *      to: user.email,
+   *      generateVerificationToken: function (user, cb) { cb(err , "random-token"); }
+   *    };
+   *
+   *    user.requestPasswordReset(options, next);
+   * ```
+   *
+   * @options {Object} options
+   * @property {String} to Email address to which verification email is sent.
+   * @property {Function} generateVerificationToken A function to be used to
+   *  generate the verification token. It must accept the user object and a
+   *  callback function. This function should NOT add the token to the user
+   *  object, instead simply execute the callback with the token! User saving
+   *  and email sending will be handled in the `verify()` method.
+   */
+
+  User.prototype.requestPasswordReset = function(options, fn) {
+    fn = fn || utils.createPromiseCallback();
+    options = options || {};
+
+    var user = this;
+    var userModel = this.constructor;
+    var ttl = userModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
+
+    // Set the email to the user if it is not set
+    options.to = options.to || user.email;
+    console.log('Email: ' + options.to);
+
+    // Set default token generator function if one is not provided
+    var tokenGenerator = options.generateVerificationToken || userModel.generateVerificationToken;
+
+    tokenGenerator(user, function(err, token) {
+      if (err) {
+        return fn(err);
+      }
+      // create a short lived access token for temp login to change password
+      // TODO(ritch) - eventually this should only allow password change
+      console.log('User:');
+      console.dir(user.accessTokens);
+      user.accessTokens.create({
+        id: token,
+        ttl: ttl
+      }, function(err, accessToken) {
+        if (err) {
+          return fn(err);
+        }
+        fn();
+        userModel.emit('resetPasswordRequest', {
+          email: options.to,
+          accessToken: accessToken,
+          user: user
+        });
+      });
+    });
+    return fn.promise;
+  };
+
+  /**
    * A default verification token generator which accepts the user the token is
    * being generated for and a callback function to indicate completion.
    * This one uses the crypto library and 64 random bytes (converted to hex)
@@ -503,7 +565,6 @@ module.exports = function(User) {
   User.resetPassword = function(options, cb) {
     cb = cb || utils.createPromiseCallback();
     var UserModel = this;
-    var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
 
     options = options || {};
     if (typeof options.email !== 'string') {
@@ -524,19 +585,11 @@ module.exports = function(User) {
         err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
-      // create a short lived access token for temp login to change password
-      // TODO(ritch) - eventually this should only allow password change
-      user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
-        if (err) {
-          return cb(err);
-        }
-        cb();
-        UserModel.emit('resetPasswordRequest', {
-          email: options.email,
-          accessToken: accessToken,
-          user: user
-        });
-      });
+
+      console.dir(user.accessTokens);
+      user.requestPasswordReset({
+        to: options.email
+      }, cb);
     });
 
     return cb.promise;
