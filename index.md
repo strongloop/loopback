@@ -13,6 +13,8 @@ layout: page
 
 
 ### SDKs
+ * loopback-sdk-angular
+   * [PR#193](https://github.com/strongloop/loopback-sdk-angular/pull/193) Persisting rememberMe in localStorage ([davidcheung](https://github.com/davidcheung))
 
 ----
 
