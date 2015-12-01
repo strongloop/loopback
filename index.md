@@ -1,6 +1,21 @@
 ---
 layout: page
 ---
+## Sprint 85 (2015-12-01 to 2015-12-14) so far
+
+### Components
+
+
+### Core
+
+
+### Connectors
+
+
+### SDKs
+
+----
+
 ## Sprint 84 (2015-11-17 to 2015-11-30)
 
 ### Components
@@ -61,6 +76,9 @@ layout: page
    * [PR#75](https://github.com/strongloop/loopback-sdk-ios/pull/75) Fix framework's exposure of non-public headers and clean-up headers for unit tests ([hideya](https://github.com/hideya))
  * loopback-sdk-angular
    * [PR#191](https://github.com/strongloop/loopback-sdk-angular/pull/191) WIP : Add description from model meta to docs template ([davidcheung](https://github.com/davidcheung))
+ * loopback-sdk-angular-cli
+   * [PR#33](https://github.com/strongloop/loopback-sdk-angular-cli/pull/33) lb-ng support for async booting apps ([doublemarked](https://github.com/doublemarked))
+   * [@b2eb640](https://github.com/strongloop/loopback-sdk-angular-cli/commit/b2eb640410ccfdd76c149bc42ab45c275cb17fbb) Support async booting apps (Heath Morrison)
 
 ----
 
@@ -81,6 +99,8 @@ layout: page
 
 
 ### Core
+ * strong-task-emitter
+   * [@ce2cf61](https://github.com/strongloop/strong-task-emitter/commit/ce2cf6102d3ae77998bfabded3d606b01b9d9a70) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
  * loopback
    * **Released 2.25.0** ([Raymond Feng](https://github.com/raymondfeng))
    * [PR#1811](https://github.com/strongloop/loopback/pull/1811) Fix typo in description of persistedModel.updateAttributes() ([richardpringle](https://github.com/richardpringle))
@@ -89,6 +109,12 @@ layout: page
    * **Released 2.23.0** ([Miroslav Bajtoš](https://github.com/bajtos))
    * [PR#1802](https://github.com/strongloop/loopback/pull/1802) lib/registry: fix findModel for model ctor ([bajtos](https://github.com/bajtos))
    * [@e633617](https://github.com/strongloop/loopback/commit/e633617b8fb2c47f340b8337dd40a78f98704277) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
+ * strong-remoting
+   * [PR#255](https://github.com/strongloop/strong-remoting/pull/255) WIP : Add sharedClass access inside restClass ([davidcheung](https://github.com/davidcheung))
+   * [@fd6d8e1](https://github.com/strongloop/strong-remoting/commit/fd6d8e1386ca4362a073149e826f066d61256ffe) Test case for sharedClass property in restClass ([David Cheung](https://github.com/davidcheung))
+   * **Released 2.22.2** ([Miroslav Bajtoš](https://github.com/bajtos))
+   * [PR#252](https://github.com/strongloop/strong-remoting/pull/252) Fix issue #251, now default responses are application/json ([jaime-franco](https://github.com/jaime-franco))
+   * [@950c6cf](https://github.com/strongloop/strong-remoting/commit/950c6cf240770689f303ebd3ab08ec716f57aa23) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
  * loopback-datasource-juggler
    * [PR#751](https://github.com/strongloop/loopback-datasource-juggler/pull/751) fix a global leak and two typo ([clarkorz](https://github.com/clarkorz))
    * [@a27047a](https://github.com/strongloop/loopback-datasource-juggler/commit/a27047a9669935f607f0485241bdda64f064a2dc) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
@@ -143,6 +169,8 @@ layout: page
    * [PR#68](https://github.com/strongloop/loopback-sdk-ios/pull/68) Necessary changes to support PersistedModel.updateAll ([hideya](https://github.com/hideya))
  * loopback-sdk-angular
    * [@d170fd9](https://github.com/strongloop/loopback-sdk-angular/commit/d170fd94e4a4fd3a36ec03e653c35ded5270a9f1) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
+ * loopback-sdk-angular-cli
+   * [@23dae87](https://github.com/strongloop/loopback-sdk-angular-cli/commit/23dae878218cad2b86f1f248b0dff840b0e18326) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
 
 ----
 
@@ -154,6 +182,11 @@ layout: page
 ### Core
  * loopback
    * [@3208547](https://github.com/strongloop/loopback/commit/32085475ed027f5a225e8023a69c98f1950cb7b9) Fix typo in doc comment ([Rand McKinney](https://github.com/crandmck))
+ * strong-remoting
+   * **Released 2.22.1** ([Ritchie Martori](https://github.com/ritch))
+   * [PR#249](https://github.com/strongloop/strong-remoting/pull/249) Support application/vnd.api+json media type ([digitalsadhu](https://github.com/digitalsadhu))
+   * **Released 2.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+   * [PR#248](https://github.com/strongloop/strong-remoting/pull/248) Modify RestAdapter to allow disabling errorHandler ([digitalsadhu](https://github.com/digitalsadhu))
  * loopback-datasource-juggler
    * [@d9918d5](https://github.com/strongloop/loopback-datasource-juggler/commit/d9918d526a7a59dbc610295b5727311be4ef0359) dropped unused functions and tests fixed ([Wert_Lex](https://github.com/wertlex))
    * [@2f31701](https://github.com/strongloop/loopback-datasource-juggler/commit/2f31701655840acb86b6e2d62aa2ab81e60f8b2d) One more comment ([Wert_Lex](https://github.com/wertlex))
@@ -176,52 +209,6 @@ layout: page
 ### SDKs
  * loopback-sdk-ios
    * [PR#67](https://github.com/strongloop/loopback-sdk-ios/pull/67) Clean-up [<model-repository> repository] implementations and other minor improvements ([hideya](https://github.com/hideya))
-
-----
-
-## Sprint 81 (2015-10-06 to 2015-10-19)
-
-### Components
- * loopback-component-push
-   * [PR#101](https://github.com/strongloop/loopback-component-push/pull/101) Upgrade LB Explorer and related changes ([crandmck](https://github.com/crandmck))
- * loopback-component-storage
-   * [PR#92](https://github.com/strongloop/loopback-component-storage/pull/92) Upgrade LB Explorer and related changes ([crandmck](https://github.com/crandmck))
-
-
-### Core
- * loopback
-   * [PR#1684](https://github.com/strongloop/loopback/pull/1684) Do not include redundant ports in verify links ([gausie](https://github.com/gausie))
-   * [@351b802](https://github.com/strongloop/loopback/commit/351b8026a0f01f6bf59c944f8244ec6f4f12963d) Do not include redundant ports in verify links ([Samuel Gaus](https://github.com/gausie))
-   * [PR#1716](https://github.com/strongloop/loopback/pull/1716) Set application's id property only if it's empty. ([wusuopu](https://github.com/wusuopu))
-   * [@ce48521](https://github.com/strongloop/loopback/commit/ce48521efbc17255905cb8d1b6d1464782070711) Set application's id property only if it's empty. ([wusuopu](https://github.com/wusuopu))
-   * [PR#1668](https://github.com/strongloop/loopback/pull/1668) Update comment about user ACL to reflect implementation ([philix](https://github.com/philix))
- * loopback-datasource-juggler
-   * [@1cab016](https://github.com/strongloop/loopback-datasource-juggler/commit/1cab0164c24bf767a6373d7bff8d099c80819f3e) home-written map extended with proper .set() method ([Wert_Lex](https://github.com/wertlex))
-   * [@a5dd9c1](https://github.com/strongloop/loopback-datasource-juggler/commit/a5dd9c181a538454e5b768fb5d191806cf0720a1) on the halfway to keeping original keys ([Wert_Lex](https://github.com/wertlex))
-   * [@0864bf7](https://github.com/strongloop/loopback-datasource-juggler/commit/0864bf7154aa42298400de9b26bdfb294a162403) with updated map which stores original key and tests for them ([Wert_Lex](https://github.com/wertlex))
-   * **Released 2.41.0** ([Miroslav Bajtoš](https://github.com/bajtos))
-   * [PR#725](https://github.com/strongloop/loopback-datasource-juggler/pull/725) Ability to define normalization of undefined query ([jrschumacher](https://github.com/jrschumacher))
-   * [@94c3f9a](https://github.com/strongloop/loopback-datasource-juggler/commit/94c3f9a4320fd3654c369f22bfeb0d3c3d6c707e) Ability to define normalization of undefined query ([Ryan Schumacher](https://github.com/jrschumacher))
- * generator-loopback
-   * **Released 1.12.1** ([Raymond Feng](https://github.com/raymondfeng))
-   * [@52e4111](https://github.com/strongloop/generator-loopback/commit/52e4111b9b83fe8c6eb388d14e5e8bba8e4a9304) Skip non-object model types ([Raymond Feng](https://github.com/raymondfeng))
- * loopback-boot
-   * **Released 2.14.0** ([Miroslav Bajtoš](https://github.com/bajtos))
-   * [PR#156](https://github.com/strongloop/loopback-boot/pull/156) Support bluemix environment variables for host and port ([bajtos](https://github.com/bajtos))
- * loopback-swagger
-   * **Released 2.2.0** ([Raymond Feng](https://github.com/raymondfeng))
-   * [PR#11](https://github.com/strongloop/loopback-swagger/pull/11) Feature/add ref support ([raymondfeng](https://github.com/raymondfeng))
-
-
-### Connectors
- * loopback-connector-soap
-   * **Released 2.2.0** ([Raymond Feng](https://github.com/raymondfeng))
-   * [PR#26](https://github.com/strongloop/loopback-connector-soap/pull/26) Add support for request options ([raymondfeng](https://github.com/raymondfeng))
- * loopback-connector-mysql
-   * [PR#128](https://github.com/strongloop/loopback-connector-mysql/pull/128) Fix database transactions not working with upsert() ([devuo](https://github.com/devuo))
-
-
-### SDKs
 
 ----
 
