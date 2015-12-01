@@ -173,7 +173,7 @@ REPOS = [
   'loopback-datasource-juggler',
   'loopback-sdk-angular',
   'loopback-sdk-ios',
-  'loopback-sdk-angular',
+  'loopback-sdk-angular-cli',
   'loopback-sdk-xamarin',
   'generator-loopback',
   'loopback-connector-*',
@@ -181,6 +181,8 @@ REPOS = [
   'loopback-component-*',
   'loopback-phase',
   'loopback-filters',
+  'strong-remoting',
+  'strong-task-emitter',
 ]
 
 repos = repo_types
