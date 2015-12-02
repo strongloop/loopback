@@ -7,6 +7,11 @@ layout: page
 
 
 ### Core
+ * loopback-boot
+   * [PR#164](https://github.com/strongloop/loopback-boot/pull/164) Set app env if it is supplied in options object ([Amir-61](https://github.com/Amir-61))
+ * loopback-swagger
+   * **Released 2.2.3** ([Miroslav Bajtoš](https://github.com/bajtos))
+   * [PR#21](https://github.com/strongloop/loopback-swagger/pull/21) Fix unused models + GeoPoint definition ([bajtos](https://github.com/bajtos))
 
 
 ### Connectors
