@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-07 to 2015-12-02)
+since: (from 2015-10-08 to 2015-12-03)
 ---
 
 ## Core
@@ -27,7 +27,7 @@ since: (from 2015-10-07 to 2015-12-02)
 
 
 ### loopback-boot
- * [@2574c9d](https://github.com/strongloop/loopback-boot/commit/2574c9dbb6f5b1105445a570414e86b7440d2d8e) Set app env if it is supplied in options object (Amir Jafarian)
+ * [PR#164](https://github.com/strongloop/loopback-boot/pull/164) Set app env if it is supplied in options object ([Amir-61](https://github.com/Amir-61))
  * **Released 2.14.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#159](https://github.com/strongloop/loopback-boot/pull/159) executor: preserve RegExps in middleware paths ([bajtos](https://github.com/bajtos))
  * **Released 2.14.1** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -68,8 +68,8 @@ since: (from 2015-10-07 to 2015-12-02)
 
 
 ### loopback-swagger
- * [@178a097](https://github.com/strongloop/loopback-swagger/commit/178a09761b2d90769f521518091d06fdf32d2e83) specgen: fix the definition of GeoPoint type ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@89f584f](https://github.com/strongloop/loopback-swagger/commit/89f584f0ebbfd9d2559a3be5537af7d7cb01d752) Fix: hidden models referenced by hidden models ([Miroslav Bajtoš](https://github.com/bajtos))
+ * **Released 2.2.3** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#21](https://github.com/strongloop/loopback-swagger/pull/21) Fix unused models + GeoPoint definition ([bajtos](https://github.com/bajtos))
  * [PR#20](https://github.com/strongloop/loopback-swagger/pull/20) Add GeoPoint support to explorer. ([0candy](https://github.com/0candy))
  * **Released 2.2.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#17](https://github.com/strongloop/loopback-swagger/pull/17) specgen: ensure operation ids are unique ([bajtos](https://github.com/bajtos))
