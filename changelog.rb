@@ -125,17 +125,17 @@ end
 def pp_week(gh, week, repos)
   repos.group_by { |r|
     if r.name =~ /connector/
-      'Connectors'
+      [1, 'Connectors']
     elsif r.name =~ /component/
-      'Components'
+      [3, 'Components']
     elsif r.name =~ /-sdk-/
-      'SDKs'
+      [2, 'SDKs']
     else
-      'Core'
+      [0, 'Core']
     end
-  }.each do |group, repos|
-    puts "\n### #{group}\n"
-    repos.each do |repo|
+  }.sort.each do |group, repos|
+    puts "\n## #{group[1]}\n"
+    repos.sort_by(&:name).each do |repo|
       commits = repo.commits.reject { |c|
                   c.commit.message =~ /\AMerge (branch|tag)/
                 }.reject { |c|
@@ -152,16 +152,17 @@ def pp_week(gh, week, repos)
       #else
       #  heading << " #{downloads_badge(repo)}"
       #end
-      puts " * #{heading}"
+      puts "\n### #{heading}\n"
       # puts "#### v.Next"
       commits.each do |c|
         if c =~ /\A#+/
           puts
           puts c
         else
-          puts "   * #{c}"
+          puts " * #{c}"
         end
       end
+      puts
     end
     puts
   end
@@ -215,22 +216,28 @@ repos = repo_types
   }
 STDERR.puts "gathering repos used: #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
 
+weeks = []
+dates = [Date.current - 8.weeks, Date.current]
+
 # Frontmatter for Jekyll
 puts '---'
 puts 'layout: page'
+puts "since: (from #{dates[0]} to #{dates[1]})"
 puts '---'
-
 
 weeks.each do |week|
   heading = "Sprint #{week[2]} (#{week[0]} to #{week[1]})"
   if week[1].future?
     heading << ' so far'
   end
-  puts "## #{heading}"
+  puts "## #{heading}\n"
   pp_week(gh, week, repos)
   STDERR.puts "post pp_week(#{week[0]}) used: #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
   puts '----'
   puts
 end
+
+pp_week(gh, dates, repos)
+STDERR.puts "post pp_week(#{dates[0]}) used: #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
 
 STDERR.puts "Used #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
