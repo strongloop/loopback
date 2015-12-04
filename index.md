@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-08 to 2015-12-03)
+since: (from 2015-10-09 to 2015-12-04)
 ---
 
 ## Core
@@ -174,6 +174,7 @@ since: (from 2015-10-08 to 2015-12-03)
 
 
 ### loopback-sdk-ios
+ * [@a4aaaf1](https://github.com/strongloop/loopback-sdk-ios/commit/a4aaaf19aec953fdaad50006a3079b7406df66bb) Update Subclassing.md ([Aleksandar Kex Trpeski](https://github.com/kexoth))
  * [PR#76](https://github.com/strongloop/loopback-sdk-ios/pull/76) Define module for the framework (Fix Issue #72) ([hideya](https://github.com/hideya))
  * [PR#77](https://github.com/strongloop/loopback-sdk-ios/pull/77) test-server: fix Container's base class to Model ([bajtos](https://github.com/bajtos))
  * [PR#75](https://github.com/strongloop/loopback-sdk-ios/pull/75) Fix framework's exposure of non-public headers and clean-up headers for unit tests ([hideya](https://github.com/hideya))
