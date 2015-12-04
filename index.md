@@ -27,6 +27,7 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-boot
+ * [@de6ebf6](https://github.com/strongloop/loopback-boot/commit/de6ebf65ee3a4baa0b1dfa8e9196c3a359a15ed9) Bluemix prefers HOST/PORT over VCAP_APP_XXXX (Sai Vennam)
  * [PR#164](https://github.com/strongloop/loopback-boot/pull/164) Set app env if it is supplied in options object ([Amir-61](https://github.com/Amir-61))
  * **Released 2.14.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#159](https://github.com/strongloop/loopback-boot/pull/159) executor: preserve RegExps in middleware paths ([bajtos](https://github.com/bajtos))
@@ -36,6 +37,7 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-datasource-juggler
+ * [@0f3f27a](https://github.com/strongloop/loopback-datasource-juggler/commit/0f3f27af513fd1332d5e5de11591e237d3dcb273) Make automatic validation optional ([Bert Casier](https://github.com/ernie58))
  * [PR#776](https://github.com/strongloop/loopback-datasource-juggler/pull/776) Update helper scripts ([superkhau](https://github.com/superkhau))
  * **Released 2.43.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#755](https://github.com/strongloop/loopback-datasource-juggler/pull/755) fixes #753 ([zmijevik](https://github.com/zmijevik))
@@ -139,6 +141,7 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-connector-remote
+ * [@dbe0607](https://github.com/strongloop/loopback-connector-remote/commit/dbe06078fba134756ac35ef810fb1bb836d7f9ed) Add test for custom http.path configuration. ([Richard Pringle](https://github.com/richardpringle))
  * [PR#27](https://github.com/strongloop/loopback-connector-remote/pull/27) test: load the correct Remote instance ([bajtos](https://github.com/bajtos))
  * [@9fce179](https://github.com/strongloop/loopback-connector-remote/commit/9fce179932ebc47a5cf53f314b08407763f33747) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
 
