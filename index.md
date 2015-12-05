@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-09 to 2015-12-04)
+since: (from 2015-10-10 to 2015-12-05)
 ---
 
 ## Core
@@ -27,7 +27,8 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-boot
- * [@de6ebf6](https://github.com/strongloop/loopback-boot/commit/de6ebf65ee3a4baa0b1dfa8e9196c3a359a15ed9) Bluemix prefers HOST/PORT over VCAP_APP_XXXX (Sai Vennam)
+ * **Released 2.15.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#158](https://github.com/strongloop/loopback-boot/pull/158) Bluemix favors PORT over VCAP_APP_PORT ([svennam92](https://github.com/svennam92))
  * [PR#164](https://github.com/strongloop/loopback-boot/pull/164) Set app env if it is supplied in options object ([Amir-61](https://github.com/Amir-61))
  * **Released 2.14.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#159](https://github.com/strongloop/loopback-boot/pull/159) executor: preserve RegExps in middleware paths ([bajtos](https://github.com/bajtos))
@@ -37,7 +38,7 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-datasource-juggler
- * [@0f3f27a](https://github.com/strongloop/loopback-datasource-juggler/commit/0f3f27af513fd1332d5e5de11591e237d3dcb273) Make automatic validation optional ([Bert Casier](https://github.com/ernie58))
+ * [PR#752](https://github.com/strongloop/loopback-datasource-juggler/pull/752) make automatic validation optional ([ernie58](https://github.com/ernie58))
  * [PR#776](https://github.com/strongloop/loopback-datasource-juggler/pull/776) Update helper scripts ([superkhau](https://github.com/superkhau))
  * **Released 2.43.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#755](https://github.com/strongloop/loopback-datasource-juggler/pull/755) fixes #753 ([zmijevik](https://github.com/zmijevik))
@@ -127,6 +128,8 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-connector-oracle
+ * **Released 2.3.0** ([Raymond Feng](https://github.com/raymondfeng))
+ * [@e7b5a69](https://github.com/strongloop/loopback-connector-oracle/commit/e7b5a6992afd87a12e0e903c7ecac868100fe958) Upgrade oracle driver version ([Raymond Feng](https://github.com/raymondfeng))
  * [@a4b4856](https://github.com/strongloop/loopback-connector-oracle/commit/a4b4856300d7f372a99a44d642f257bad209b8a4) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
 
 
@@ -141,7 +144,7 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-connector-remote
- * [@dbe0607](https://github.com/strongloop/loopback-connector-remote/commit/dbe06078fba134756ac35ef810fb1bb836d7f9ed) Add test for custom http.path configuration. ([Richard Pringle](https://github.com/richardpringle))
+ * [PR#28](https://github.com/strongloop/loopback-connector-remote/pull/28) Add test for custom http.path configuration. ([richardpringle](https://github.com/richardpringle))
  * [PR#27](https://github.com/strongloop/loopback-connector-remote/pull/27) test: load the correct Remote instance ([bajtos](https://github.com/bajtos))
  * [@9fce179](https://github.com/strongloop/loopback-connector-remote/commit/9fce179932ebc47a5cf53f314b08407763f33747) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
 
@@ -177,7 +180,8 @@ since: (from 2015-10-09 to 2015-12-04)
 
 
 ### loopback-sdk-ios
- * [@a4aaaf1](https://github.com/strongloop/loopback-sdk-ios/commit/a4aaaf19aec953fdaad50006a3079b7406df66bb) Update Subclassing.md ([Aleksandar Kex Trpeski](https://github.com/kexoth))
+ * [PR#80](https://github.com/strongloop/loopback-sdk-ios/pull/80) Update Subclassing.md ([kexoth](https://github.com/kexoth))
+ * [PR#70](https://github.com/strongloop/loopback-sdk-ios/pull/70) Remove redundant declarations of `+ (instancetype)repository` ([hideya](https://github.com/hideya))
  * [PR#76](https://github.com/strongloop/loopback-sdk-ios/pull/76) Define module for the framework (Fix Issue #72) ([hideya](https://github.com/hideya))
  * [PR#77](https://github.com/strongloop/loopback-sdk-ios/pull/77) test-server: fix Container's base class to Model ([bajtos](https://github.com/bajtos))
  * [PR#75](https://github.com/strongloop/loopback-sdk-ios/pull/75) Fix framework's exposure of non-public headers and clean-up headers for unit tests ([hideya](https://github.com/hideya))
