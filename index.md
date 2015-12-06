@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-10-10 to 2015-12-05)
+since: (from 2015-10-11 to 2015-12-06)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#127](https://github.com/strongloop/generator-loopback/pull/127) fix assumptions about dependency locations ([rmg](https://github.com/rmg))
  * [PR#120](https://github.com/strongloop/generator-loopback/pull/120) Make sure relation name different from property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.13.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#119](https://github.com/strongloop/generator-loopback/pull/119) Fix spawn-sync warning ([superkhau](https://github.com/superkhau))
