@@ -192,7 +192,8 @@ module.exports = function(Change) {
       if (rev) {
         // avoid setting rev and prev to the same value
         if (currentRev === rev) {
-          change.debug('rev and prev are equal (not updating rev)');
+          change.debug('rev and prev are equal (not updating anything)');
+          return cb(null, change);
         } else {
           change.rev = rev;
           change.debug('updated revision (was ' + currentRev + ')');

@@ -200,6 +200,23 @@ describe('Change', function() {
         });
       }
     });
+
+    it('should not change checkpoint when rev is the same', function(done) {
+      var test = this;
+      var originalCheckpoint = change.checkpoint;
+      var originalRev = change.rev;
+
+      TestModel.checkpoint(function(err, inst) {
+        if (err) return done(err);
+
+        change.rectify(function(err, c) {
+          if (err) return done(err);
+          expect(c.rev, 'rev').to.equal(originalRev); // sanity check
+          expect(c.checkpoint, 'checkpoint').to.equal(originalCheckpoint);
+          done();
+        });
+      });
+    });
   });
 
   describe('change.currentRevision(callback)', function() {
