@@ -175,24 +175,32 @@ module.exports = function(Change) {
       if (err) throw new Error(err);
     };
 
-    async.parallel([
-      function getCurrentCheckpoint(next) {
-        change.constructor.getCheckpointModel().current(next);
-      },
-      function getCurrentRevision(next) {
-        change.currentRevision(next);
-      }
-    ], doRectify);
-
-    function doRectify(err, results) {
+    change.currentRevision(function(err, rev) {
       if (err) return cb(err);
-      var checkpoint = results[0];
-      var rev = results[1];
 
+      // avoid setting rev and prev to the same value
+      if (currentRev === rev) {
+        change.debug('rev and prev are equal (not updating anything)');
+        return cb(null, change);
+      }
+
+      // FIXME(@bajtos) Allo callers to pass in the checkpoint value
+      // (or even better - a memoized async function to get the cp value)
+      // That will enable `rectifyAll` to cache the checkpoint value
+      change.constructor.getCheckpointModel().current(
+        function(err, checkpoint) {
+          if (err) return cb(err);
+          doRectify(checkpoint, rev);
+        }
+      );
+    });
+
+    function doRectify(checkpoint, rev) {
       if (rev) {
-        // avoid setting rev and prev to the same value
         if (currentRev === rev) {
-          change.debug('rev and prev are equal (not updating rev)');
+          change.debug('ASSERTION FAILED: Change currentRev==rev ' +
+            'should have been already handled');
+          return cb(null, change);
         } else {
           change.rev = rev;
           change.debug('updated revision (was ' + currentRev + ')');
