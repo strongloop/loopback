@@ -16,6 +16,7 @@ since: (from 2015-10-13 to 2015-12-08)
 
 ### loopback
  * [PR#1847](https://github.com/strongloop/loopback/pull/1847) Update model.js ([crandmck](https://github.com/crandmck))
+ * [@d2aaca7](https://github.com/strongloop/loopback/commit/d2aaca74600ea6f8c748c033f57f7961ee63bb6d) Change: correctly rectify no-change ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@c491781](https://github.com/strongloop/loopback/commit/c4917819af01f56cfeabfeb16d7bfd4e5cfbd4e0) Adding properties description for User Model ([David Cheung](https://github.com/davidcheung))
  * [@2cca83c](https://github.com/strongloop/loopback/commit/2cca83c4fff718a7fbf0f69e009d985eb9be7c16) Add case-sensitve email option for User model. ([Richard Pringle](https://github.com/richardpringle))
  * **Released 2.25.0** ([Raymond Feng](https://github.com/raymondfeng))
