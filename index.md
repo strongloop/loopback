@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-12 to 2015-12-07)
+since: (from 2015-10-13 to 2015-12-08)
 ---
 
 ## Core
@@ -15,7 +15,7 @@ since: (from 2015-10-12 to 2015-12-07)
 
 
 ### loopback
- * [@17abd8a](https://github.com/strongloop/loopback/commit/17abd8ac767623c0ee6f6a80592032ff1f20112d) Update model.js ([Rand McKinney](https://github.com/crandmck))
+ * [PR#1847](https://github.com/strongloop/loopback/pull/1847) Update model.js ([crandmck](https://github.com/crandmck))
  * **Released 2.25.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#1811](https://github.com/strongloop/loopback/pull/1811) Fix typo in description of persistedModel.updateAttributes() ([richardpringle](https://github.com/richardpringle))
  * **Released 2.24.0** (Simon Ho)
