@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-13 to 2015-12-08)
+since: (from 2015-10-14 to 2015-12-09)
 ---
 
 ## Core
@@ -15,10 +15,10 @@ since: (from 2015-10-13 to 2015-12-08)
 
 
 ### loopback
+ * [PR#1860](https://github.com/strongloop/loopback/pull/1860) Fix replication performance ([bajtos](https://github.com/bajtos))
+ * [PR#1804](https://github.com/strongloop/loopback/pull/1804) Add case-sensitive email option for User model ([richardpringle](https://github.com/richardpringle))
+ * [PR#1855](https://github.com/strongloop/loopback/pull/1855) Adding properties description for User Model ([davidcheung](https://github.com/davidcheung))
  * [PR#1847](https://github.com/strongloop/loopback/pull/1847) Update model.js ([crandmck](https://github.com/crandmck))
- * [@d2aaca7](https://github.com/strongloop/loopback/commit/d2aaca74600ea6f8c748c033f57f7961ee63bb6d) Change: correctly rectify no-change ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@c491781](https://github.com/strongloop/loopback/commit/c4917819af01f56cfeabfeb16d7bfd4e5cfbd4e0) Adding properties description for User Model ([David Cheung](https://github.com/davidcheung))
- * [@2cca83c](https://github.com/strongloop/loopback/commit/2cca83c4fff718a7fbf0f69e009d985eb9be7c16) Add case-sensitve email option for User model. ([Richard Pringle](https://github.com/richardpringle))
  * **Released 2.25.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#1811](https://github.com/strongloop/loopback/pull/1811) Fix typo in description of persistedModel.updateAttributes() ([richardpringle](https://github.com/richardpringle))
  * **Released 2.24.0** (Simon Ho)
@@ -172,6 +172,9 @@ since: (from 2015-10-13 to 2015-12-08)
 ## SDKs
 
 ### loopback-sdk-angular
+ * **Released 1.6.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#184](https://github.com/strongloop/loopback-sdk-angular/pull/184) Fix request interceptor to process all requests on same host as urlBase ([partap](https://github.com/partap))
+ * [@6a24f4d](https://github.com/strongloop/loopback-sdk-angular/commit/6a24f4d9892d44335cbea8ec7a10055fc9b78168) Send auth header to all URLs on the same host ([Partap Davis](https://github.com/partap))
  * [PR#193](https://github.com/strongloop/loopback-sdk-angular/pull/193) Persisting rememberMe in localStorage ([davidcheung](https://github.com/davidcheung))
  * [PR#191](https://github.com/strongloop/loopback-sdk-angular/pull/191) WIP : Add description from model meta to docs template ([davidcheung](https://github.com/davidcheung))
  * [@d170fd9](https://github.com/strongloop/loopback-sdk-angular/commit/d170fd94e4a4fd3a36ec03e653c35ded5270a9f1) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
