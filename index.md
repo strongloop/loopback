@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-14 to 2015-12-09)
+since: (from 2015-10-15 to 2015-12-10)
 ---
 
 ## Core
@@ -15,6 +15,7 @@ since: (from 2015-10-14 to 2015-12-09)
 
 
 ### loopback
+ * **Released 2.26.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1860](https://github.com/strongloop/loopback/pull/1860) Fix replication performance ([bajtos](https://github.com/bajtos))
  * [PR#1804](https://github.com/strongloop/loopback/pull/1804) Add case-sensitive email option for User model ([richardpringle](https://github.com/richardpringle))
  * [PR#1855](https://github.com/strongloop/loopback/pull/1855) Adding properties description for User Model ([davidcheung](https://github.com/davidcheung))
@@ -113,6 +114,8 @@ since: (from 2015-10-14 to 2015-12-09)
 
 
 ### loopback-connector-mongodb
+ * [PR#203](https://github.com/strongloop/loopback-connector-mongodb/pull/203) Allow runtime configurable test environment ([superkhau](https://github.com/superkhau))
+ * [@de7258a](https://github.com/strongloop/loopback-connector-mongodb/commit/de7258a44dd66d40418e51dae86be1d419d3c206) changed env variable fortest servers ([cgole](https://github.com/cgole))
  * **Released 1.13.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [@15b360c](https://github.com/strongloop/loopback-connector-mongodb/commit/15b360ca304fed503cb3a7e77918e50ca99ac1d4) Fix the test set up ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#190](https://github.com/strongloop/loopback-connector-mongodb/pull/190) Add env variable for mongodb server ([cgole](https://github.com/cgole))
