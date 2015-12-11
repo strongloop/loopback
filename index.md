@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-15 to 2015-12-10)
+since: (from 2015-10-16 to 2015-12-11)
 ---
 
 ## Core
@@ -44,7 +44,7 @@ since: (from 2015-10-15 to 2015-12-10)
 
 
 ### loopback-datasource-juggler
- * [@9cfda16](https://github.com/strongloop/loopback-datasource-juggler/commit/9cfda161947a505e1b60c7826052e758d84a3949) Fix failing test for MongoDB connector (Simon Ho)
+ * [PR#789](https://github.com/strongloop/loopback-datasource-juggler/pull/789) Fix failing test for MongoDB connector ([superkhau](https://github.com/superkhau))
  * [PR#752](https://github.com/strongloop/loopback-datasource-juggler/pull/752) make automatic validation optional ([ernie58](https://github.com/ernie58))
  * [PR#776](https://github.com/strongloop/loopback-datasource-juggler/pull/776) Update helper scripts ([superkhau](https://github.com/superkhau))
  * **Released 2.43.0** ([Raymond Feng](https://github.com/raymondfeng))
@@ -192,6 +192,8 @@ since: (from 2015-10-15 to 2015-12-10)
 
 
 ### loopback-sdk-ios
+ * [@67b4204](https://github.com/strongloop/loopback-sdk-ios/commit/67b4204a1496ae3977336b739e352a200e7a8fd2) Enable unit test execution from 'npm test' ([hideya kawahara](https://github.com/hideya))
+ * [@a39ea87](https://github.com/strongloop/loopback-sdk-ios/commit/a39ea87c8f1ec97443513b9fcba8d5e32bb254c4) Fix a regression introduced by PR #68 ([hideya kawahara](https://github.com/hideya))
  * [PR#80](https://github.com/strongloop/loopback-sdk-ios/pull/80) Update Subclassing.md ([kexoth](https://github.com/kexoth))
  * [PR#70](https://github.com/strongloop/loopback-sdk-ios/pull/70) Remove redundant declarations of `+ (instancetype)repository` ([hideya](https://github.com/hideya))
  * [PR#76](https://github.com/strongloop/loopback-sdk-ios/pull/76) Define module for the framework (Fix Issue #72) ([hideya](https://github.com/hideya))
