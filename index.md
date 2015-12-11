@@ -44,6 +44,7 @@ since: (from 2015-10-15 to 2015-12-10)
 
 
 ### loopback-datasource-juggler
+ * [@9cfda16](https://github.com/strongloop/loopback-datasource-juggler/commit/9cfda161947a505e1b60c7826052e758d84a3949) Fix failing test for MongoDB connector (Simon Ho)
  * [PR#752](https://github.com/strongloop/loopback-datasource-juggler/pull/752) make automatic validation optional ([ernie58](https://github.com/ernie58))
  * [PR#776](https://github.com/strongloop/loopback-datasource-juggler/pull/776) Update helper scripts ([superkhau](https://github.com/superkhau))
  * **Released 2.43.0** ([Raymond Feng](https://github.com/raymondfeng))
