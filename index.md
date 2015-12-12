@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-10-16 to 2015-12-11)
+since: (from 2015-10-17 to 2015-12-12)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#124](https://github.com/strongloop/generator-loopback/pull/124) Remote method generator ([jannyHou](https://github.com/jannyHou))
  * [PR#127](https://github.com/strongloop/generator-loopback/pull/127) fix assumptions about dependency locations ([rmg](https://github.com/rmg))
  * [PR#120](https://github.com/strongloop/generator-loopback/pull/120) Make sure relation name different from property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.13.0** ([Simon Ho](https://github.com/superkhau))
@@ -192,8 +193,7 @@ since: (from 2015-10-16 to 2015-12-11)
 
 
 ### loopback-sdk-ios
- * [@67b4204](https://github.com/strongloop/loopback-sdk-ios/commit/67b4204a1496ae3977336b739e352a200e7a8fd2) Enable unit test execution from 'npm test' ([hideya kawahara](https://github.com/hideya))
- * [@a39ea87](https://github.com/strongloop/loopback-sdk-ios/commit/a39ea87c8f1ec97443513b9fcba8d5e32bb254c4) Fix a regression introduced by PR #68 ([hideya kawahara](https://github.com/hideya))
+ * [PR#79](https://github.com/strongloop/loopback-sdk-ios/pull/79) Enable unit test execution from `npm test` ([hideya](https://github.com/hideya))
  * [PR#80](https://github.com/strongloop/loopback-sdk-ios/pull/80) Update Subclassing.md ([kexoth](https://github.com/kexoth))
  * [PR#70](https://github.com/strongloop/loopback-sdk-ios/pull/70) Remove redundant declarations of `+ (instancetype)repository` ([hideya](https://github.com/hideya))
  * [PR#76](https://github.com/strongloop/loopback-sdk-ios/pull/76) Define module for the framework (Fix Issue #72) ([hideya](https://github.com/hideya))
