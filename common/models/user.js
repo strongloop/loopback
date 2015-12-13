@@ -42,11 +42,15 @@ var debug = require('debug')('loopback:user');
  * - ALLOW OWNER `findById`
  * - ALLOW OWNER `updateAttributes`
  *
- * @property {String} username Must be unique
- * @property {String} password Hidden from remote clients
- * @property {String} email Must be valid email
- * @property {Boolean} emailVerified Set when a user's email has been verified via `confirm()`
- * @property {String} verificationToken Set when `verify()` is called
+ * @property {String} username Must be unique.
+ * @property {String} password Hidden from remote clients.
+ * @property {String} email Must be valid email.
+ * @property {Boolean} emailVerified Set when a user's email has been verified via `confirm()`.
+ * @property {String} verificationToken Set when `verify()` is called.
+ * @property {String} realm The namespace the user belongs to. See [Partitioning users with realms](https://docs.strongloop.com/display/public/LB/Partitioning+users+with+realms) for details.
+ * @property {Date} created The property is not used by LoopBack, you are free to use it for your own purposes.
+ * @property {Date} lastUpdated The property is not used by LoopBack, you are free to use it for your own purposes.
+ * @property {String} status The property is not used by LoopBack, you are free to use it for your own purposes.
  * @property {Object} settings Extends the `Model.settings` object.
  * @property {Boolean} settings.emailVerificationRequired Require the email verification
  * process before allowing a login.
@@ -58,6 +62,7 @@ var debug = require('debug')('loopback:user');
  * @property {String} settings.realmDelimiter When set a realm is required.
  * @property {Number} settings.resetPasswordTokenTTL Time to live for password reset `AccessToken`. Default is `900` (15 minutes).
  * @property {Number} settings.saltWorkFactor The `bcrypt` salt work factor. Default is `10`.
+ * @property {Boolean} settings.caseSensitiveEmail Enable case sensitive email.
  *
  * @class User
  * @inherits {PersistedModel}
@@ -622,6 +627,14 @@ module.exports = function(User) {
     this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
     this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
+    UserModel.setter.email = function(value) {
+      if (!UserModel.settings.caseSensitiveEmail) {
+        this.$email = value.toLowerCase();
+      } else {
+        this.$email = value;
+      }
+    };
+
     UserModel.setter.password = function(plain) {
       if (typeof plain !== 'string') {
         return;
@@ -634,6 +647,14 @@ module.exports = function(User) {
         this.$password = this.constructor.hashPassword(plain);
       }
     };
+
+    // Access token to normalize email credentials
+    UserModel.observe('access', function normalizeEmailCase(ctx, next) {
+      if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where && ctx.query.where.email) {
+        ctx.query.where.email = ctx.query.where.email.toLowerCase();
+      }
+      next();
+    });
 
     // Make sure emailVerified is not set by creation
     UserModel.beforeRemote('create', function(ctx, user, next) {

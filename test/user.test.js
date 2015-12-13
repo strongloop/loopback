@@ -15,6 +15,7 @@ describe('User', function() {
   var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
   var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
   var validCredentialsWithTTLAndScope = {email: 'foo@bar.com', password: 'bar', ttl: 3600, scope: 'all'};
+  var validMixedCaseEmailCredentials = {email: 'Foo@bar.com', password: 'bar'};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
   var incompleteCredentials = {password: 'bar1'};
 
@@ -63,6 +64,26 @@ describe('User', function() {
         assert(!err);
         assert(user.id);
         assert(user.email);
+        done();
+      });
+    });
+
+    it('Create a new user (email case-sensitivity off)', function(done) {
+      User.settings.caseSensitiveEmail = false;
+      User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
+        if (err) return done(err);
+        assert(user.id);
+        assert.equal(user.email, user.email.toLowerCase());
+        done();
+      });
+    });
+
+    it('Create a new user (email case-sensitive)', function(done) {
+      User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
+        if (err) return done(err);
+        assert(user.id);
+        assert(user.email);
+        assert.notEqual(user.email, user.email.toLowerCase());
         done();
       });
     });
@@ -119,6 +140,27 @@ describe('User', function() {
       User.create({email: 'a@b.com', password: 'foobar'}, function() {
         User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
           assert(err, 'should error because the email is not unique!');
+          done();
+        });
+      });
+    });
+
+    it('Requires a unique email (email case-sensitivity off)', function(done) {
+      User.settings.caseSensitiveEmail = false;
+      User.create({email: 'A@b.com', password: 'foobar'}, function(err) {
+        if (err) return done(err);
+        User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
+          assert(err, 'should error because the email is not unique!');
+          done();
+        });
+      });
+    });
+
+    it('Requires a unique email (email case-sensitive)', function(done) {
+      User.create({email: 'A@b.com', password: 'foobar'}, function(err, user1) {
+        User.create({email: 'a@b.com', password: 'batbaz'}, function(err, user2) {
+          if (err) return done(err);
+          assert.notEqual(user1.email, user2.email);
           done();
         });
       });
@@ -212,6 +254,25 @@ describe('User', function() {
     });
   });
 
+  describe('Access-hook for queries with email NOT case-sensitive', function() {
+    it('Should not throw an error if the query does not contain {where: }', function(done) {
+      User.find({}, function(err) {
+        if (err) done(err);
+        done();
+      });
+    });
+
+    it('Should be able to find lowercase email with mixed-case email query', function(done) {
+      User.settings.caseSensitiveEmail = false;
+      User.find({where:{email: validMixedCaseEmailCredentials.email}}, function(err, result) {
+        if (err) done(err);
+        assert(result[0], 'The query did not find the user');
+        assert.equal(result[0].email, validCredentialsEmail);
+        done();
+      });
+    });
+  });
+
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
       User.login(validCredentials, function(err, accessToken) {
@@ -219,6 +280,23 @@ describe('User', function() {
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
 
+        done();
+      });
+    });
+
+    it('Login a user by providing email credentials (email case-sensitivity off)', function(done) {
+      User.settings.caseSensitiveEmail = false;
+      User.login(validMixedCaseEmailCredentials, function(err, accessToken) {
+        assert(accessToken.userId);
+        assert(accessToken.id);
+        assert.equal(accessToken.id.length, 64);
+        done();
+      });
+    });
+
+    it('Try to login with invalid email case', function(done) {
+      User.login(validMixedCaseEmailCredentials, function(err, accessToken) {
+        assert(err);
         done();
       });
     });
@@ -477,7 +555,6 @@ describe('User', function() {
           done();
         });
     });
-
   });
 
   function assertGoodToken(accessToken) {
