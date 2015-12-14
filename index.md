@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-18 to 2015-12-13)
+since: (from 2015-10-19 to 2015-12-14)
 ---
 
 ## Core
@@ -45,6 +45,7 @@ since: (from 2015-10-18 to 2015-12-13)
 
 
 ### loopback-datasource-juggler
+ * **Released 2.44.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#789](https://github.com/strongloop/loopback-datasource-juggler/pull/789) Fix failing test for MongoDB connector ([superkhau](https://github.com/superkhau))
  * [PR#752](https://github.com/strongloop/loopback-datasource-juggler/pull/752) make automatic validation optional ([ernie58](https://github.com/ernie58))
  * [PR#776](https://github.com/strongloop/loopback-datasource-juggler/pull/776) Update helper scripts ([superkhau](https://github.com/superkhau))
@@ -116,6 +117,8 @@ since: (from 2015-10-18 to 2015-12-13)
 
 
 ### loopback-connector-mongodb
+ * **Released 1.13.2** ([Raymond Feng](https://github.com/raymondfeng))
+ * [@cf53567](https://github.com/strongloop/loopback-connector-mongodb/commit/cf53567142f9500f250aeefc1c61ad4271c8ba20) Make sure null/undefined id is not coerced ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#203](https://github.com/strongloop/loopback-connector-mongodb/pull/203) Allow runtime configurable test environment ([superkhau](https://github.com/superkhau))
  * [@de7258a](https://github.com/strongloop/loopback-connector-mongodb/commit/de7258a44dd66d40418e51dae86be1d419d3c206) changed env variable fortest servers ([cgole](https://github.com/cgole))
  * **Released 1.13.1** ([Raymond Feng](https://github.com/raymondfeng))
