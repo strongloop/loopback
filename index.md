@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-20 to 2015-12-15)
+since: (from 2015-10-21 to 2015-12-16)
 ---
 
 ## Core
@@ -154,6 +154,7 @@ since: (from 2015-10-20 to 2015-12-15)
 
 
 ### loopback-connector-soap
+ * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
  * [@056ff7c](https://github.com/strongloop/loopback-connector-soap/commit/056ff7c38559fbd8a19c2e270166e5bf915cd6cd) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
 
 
