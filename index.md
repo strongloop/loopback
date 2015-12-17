@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-21 to 2015-12-16)
+since: (from 2015-10-22 to 2015-12-17)
 ---
 
 ## Core
@@ -41,6 +41,7 @@ since: (from 2015-10-21 to 2015-12-16)
 
 
 ### loopback-datasource-juggler
+ * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
  * **Released 2.44.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#789](https://github.com/strongloop/loopback-datasource-juggler/pull/789) Fix failing test for MongoDB connector ([superkhau](https://github.com/superkhau))
  * [PR#752](https://github.com/strongloop/loopback-datasource-juggler/pull/752) make automatic validation optional ([ernie58](https://github.com/ernie58))
@@ -83,6 +84,8 @@ since: (from 2015-10-21 to 2015-12-16)
 
 
 ### strong-remoting
+ * **Released 2.23.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#269](https://github.com/strongloop/strong-remoting/pull/269) Revert "Refactor and rework http coercion." ([bajtos](https://github.com/bajtos))
  * **Released 2.23.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#265](https://github.com/strongloop/strong-remoting/pull/265) Refactor and rework http coercion. ([bajtos](https://github.com/bajtos))
  * [PR#255](https://github.com/strongloop/strong-remoting/pull/255) WIP : Add sharedClass access inside restClass ([davidcheung](https://github.com/davidcheung))
@@ -104,6 +107,8 @@ since: (from 2015-10-21 to 2015-12-16)
 
 
 ### loopback-connector-mongodb
+ * [PR#209](https://github.com/strongloop/loopback-connector-mongodb/pull/209) test: fix order of semver arguments ([rmg](https://github.com/rmg))
+ * [@42f951c](https://github.com/strongloop/loopback-connector-mongodb/commit/42f951cdfd258c35b9488fe8bf232042b7d1150a) Add more tests for id coercion ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.13.2** ([Raymond Feng](https://github.com/raymondfeng))
  * [@cf53567](https://github.com/strongloop/loopback-connector-mongodb/commit/cf53567142f9500f250aeefc1c61ad4271c8ba20) Make sure null/undefined id is not coerced ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#203](https://github.com/strongloop/loopback-connector-mongodb/pull/203) Allow runtime configurable test environment ([superkhau](https://github.com/superkhau))
