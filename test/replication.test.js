@@ -52,6 +52,115 @@ describe('Replication / Change APIs', function() {
     };
   });
 
+  describe('optimization check rectifyChange Vs rectifyAllChanges', function() {
+    beforeEach(function initialData(done) {
+      var data = [{name: 'John', surname: 'Doe'}, {name: 'Jane', surname: 'Roe'}];
+      async.waterfall([
+        function(callback) {
+          SourceModel.create(data, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+        }], function(err, result) {
+        done(err);
+      });
+    });
+
+    it('should call rectifyAllChanges if no id is passed for rectifyOnDelete', function(done) {
+      SourceModel.rectifyChange = function() {
+        return done(new Error('Should not call rectifyChange'));
+      };
+      SourceModel.rectifyAllChanges = function() {
+        return done();
+      };
+      SourceModel.destroyAll({name: 'John'}, function(err, data) {
+        if (err)
+          return done(err);
+      });
+    });
+
+    it('should call rectifyAllChanges if no id is passed for rectifyOnSave', function(done) {
+      SourceModel.rectifyChange = function() {
+        return done(new Error('Should not call rectifyChange'));
+      };
+      SourceModel.rectifyAllChanges = function() {
+        return done();
+      };
+      var newData = {'name': 'Janie'};
+      SourceModel.update({name: 'Jane'}, newData, function(err, data) {
+        if (err)
+          return done(err);
+      });
+    });
+
+    it('rectifyOnDelete for Delete should call rectifyChange instead of rectifyAllChanges', function(done) {
+      TargetModel.rectifyChange = function() {
+        return done();
+      };
+      TargetModel.rectifyAllChanges = function() {
+        return done(new Error('Should not call rectifyAllChanges'));
+      };
+
+      async.waterfall([
+        function(callback) {
+          SourceModel.destroyAll({name: 'John'}, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
+        }
+      ], function(err, results) {
+        if (err)
+          return done(err);
+      });
+    });
+
+    it('rectifyOnSave for Update should call rectifyChange instead of rectifyAllChanges', function(done) {
+      TargetModel.rectifyChange = function() {
+        return done();
+      };
+      TargetModel.rectifyAllChanges = function() {
+        return done(new Error('Should not call rectifyAllChanges'));
+      };
+
+      var newData = {'name': 'Janie'};
+      async.waterfall([
+        function(callback) {
+          SourceModel.update({name: 'Jane'}, newData, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
+        }], function(err, result) {
+        if (err)
+          return done(err);
+      });
+    });
+
+    it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges', function(done) {
+      TargetModel.rectifyChange = function() {
+        return done();
+      };
+      TargetModel.rectifyAllChanges = function() {
+        return done(new Error('Should not call rectifyAllChanges'));
+      };
+
+      var newData = [{name: 'Janie', surname: 'Doe'}];
+      async.waterfall([
+        function(callback) {
+          SourceModel.create(newData, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
+        }
+      ], function(err, result) {
+        if (err)
+          return done(err);
+      });
+    });
+  });
+
   describe('Model.changes(since, filter, callback)', function() {
     it('Get changes since the given checkpoint', function(done) {
       var test = this;
