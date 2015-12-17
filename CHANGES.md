@@ -1,3 +1,9 @@
+2015-12-17, Version 2.26.1
+==========================
+
+ * PersistedModel: log rectify/rectifyAll triggers (Miroslav Bajtoš)
+
+
 2015-12-09, Version 2.26.0
 ==========================
 
