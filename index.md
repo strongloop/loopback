@@ -181,6 +181,7 @@ since: (from 2015-10-22 to 2015-12-17)
 
 
 ### loopback-sdk-angular-cli
+ * [@676e6ed](https://github.com/strongloop/loopback-sdk-angular-cli/commit/676e6ed2be2f88eeb96d03dd63414cc22acb669a) Remove lb-ng-doc and docular dependency ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 1.2.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#33](https://github.com/strongloop/loopback-sdk-angular-cli/pull/33) lb-ng support for async booting apps ([doublemarked](https://github.com/doublemarked))
  * [@b2eb640](https://github.com/strongloop/loopback-sdk-angular-cli/commit/b2eb640410ccfdd76c149bc42ab45c275cb17fbb) Support async booting apps (Heath Morrison)
