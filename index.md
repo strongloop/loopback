@@ -84,6 +84,7 @@ since: (from 2015-10-22 to 2015-12-17)
 
 
 ### strong-remoting
+ * [@ebab785](https://github.com/strongloop/strong-remoting/commit/ebab785e6ee38828765627891fbb457e90d0699f) Fix incorrect boolean logic on shared-method's `documented` flag. ([Samuel Reed](https://github.com/STRML))
  * **Released 2.23.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#269](https://github.com/strongloop/strong-remoting/pull/269) Revert "Refactor and rework http coercion." ([bajtos](https://github.com/bajtos))
  * **Released 2.23.0** ([Miroslav Bajtoš](https://github.com/bajtos))
