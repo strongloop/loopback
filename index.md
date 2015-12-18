@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-10-22 to 2015-12-17)
+since: (from 2015-10-23 to 2015-12-18)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#130](https://github.com/strongloop/generator-loopback/pull/130) Remove slc:loopback-example ([0candy](https://github.com/0candy))
  * [PR#124](https://github.com/strongloop/generator-loopback/pull/124) Remote method generator ([jannyHou](https://github.com/jannyHou))
  * [PR#127](https://github.com/strongloop/generator-loopback/pull/127) fix assumptions about dependency locations ([rmg](https://github.com/rmg))
  * [PR#120](https://github.com/strongloop/generator-loopback/pull/120) Make sure relation name different from property name ([jannyHou](https://github.com/jannyHou))
@@ -15,6 +16,8 @@ since: (from 2015-10-22 to 2015-12-17)
 
 
 ### loopback
+ * **Released 2.26.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#1894](https://github.com/strongloop/loopback/pull/1894) PersistedModel: log rectify/rectifyAll triggers ([bajtos](https://github.com/bajtos))
  * **Released 2.26.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1860](https://github.com/strongloop/loopback/pull/1860) Fix replication performance ([bajtos](https://github.com/bajtos))
  * [PR#1804](https://github.com/strongloop/loopback/pull/1804) Add case-sensitive email option for User model ([richardpringle](https://github.com/richardpringle))
@@ -84,7 +87,7 @@ since: (from 2015-10-22 to 2015-12-17)
 
 
 ### strong-remoting
- * [@ebab785](https://github.com/strongloop/strong-remoting/commit/ebab785e6ee38828765627891fbb457e90d0699f) Fix incorrect boolean logic on shared-method's `documented` flag. ([Samuel Reed](https://github.com/STRML))
+ * [PR#261](https://github.com/strongloop/strong-remoting/pull/261) Fix incorrect boolean logic on shared-method's `documented` flag. ([STRML](https://github.com/STRML))
  * **Released 2.23.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#269](https://github.com/strongloop/strong-remoting/pull/269) Revert "Refactor and rework http coercion." ([bajtos](https://github.com/bajtos))
  * **Released 2.23.0** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -181,7 +184,8 @@ since: (from 2015-10-22 to 2015-12-17)
 
 
 ### loopback-sdk-angular-cli
- * [@676e6ed](https://github.com/strongloop/loopback-sdk-angular-cli/commit/676e6ed2be2f88eeb96d03dd63414cc22acb669a) Remove lb-ng-doc and docular dependency ([Miroslav Bajtoš](https://github.com/bajtos))
+ * **Released 2.0.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#36](https://github.com/strongloop/loopback-sdk-angular-cli/pull/36) [SEMVER-MAJOR] Remove lb-ng-doc and docular dependency ([bajtos](https://github.com/bajtos))
  * **Released 1.2.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#33](https://github.com/strongloop/loopback-sdk-angular-cli/pull/33) lb-ng support for async booting apps ([doublemarked](https://github.com/doublemarked))
  * [@b2eb640](https://github.com/strongloop/loopback-sdk-angular-cli/commit/b2eb640410ccfdd76c149bc42ab45c275cb17fbb) Support async booting apps (Heath Morrison)
