@@ -240,7 +240,7 @@ module.exports = function(User) {
         user.hasPassword(credentials.password, function(err, isMatch) {
           if (err) {
             debug('An error is reported from User.hasPassword: %j', err);
-            fn(defaultError);
+            fn(err);
           } else if (isMatch) {
             if (self.settings.emailVerificationRequired && !user.emailVerified) {
               // Fail to log in if email verification is not done yet
