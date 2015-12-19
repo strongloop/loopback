@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-23 to 2015-12-18)
+since: (from 2015-10-24 to 2015-12-19)
 ---
 
 ## Core
@@ -184,6 +184,8 @@ since: (from 2015-10-23 to 2015-12-18)
 
 
 ### loopback-sdk-angular-cli
+ * **Released 2.0.1** ([Ryan Graham](https://github.com/rmg))
+ * [@8e1fde3](https://github.com/strongloop/loopback-sdk-angular-cli/commit/8e1fde3b0254f93ad30cc3cf724b82c983d3edd9) remove ref to removed lb-ng-doc bin ([Ryan Graham](https://github.com/rmg))
  * **Released 2.0.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#36](https://github.com/strongloop/loopback-sdk-angular-cli/pull/36) [SEMVER-MAJOR] Remove lb-ng-doc and docular dependency ([bajtos](https://github.com/bajtos))
  * **Released 1.2.0** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -225,6 +227,8 @@ since: (from 2015-10-23 to 2015-12-18)
 
 
 ### loopback-component-storage
+ * [@24cd1a6](https://github.com/strongloop/loopback-component-storage/commit/24cd1a619e33ed1882f6ea818e3e2bd450d51d62) Remove test file ([Raymond Feng](https://github.com/raymondfeng))
+ * [@685db48](https://github.com/strongloop/loopback-component-storage/commit/685db4819d972c07c45d58a1774f76dbdf95554d) Replace image ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.6.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [@fdb4c04](https://github.com/strongloop/loopback-component-storage/commit/fdb4c0464e774e512acfa39ff3847df456378e91) Add range support ([Raymond Feng](https://github.com/raymondfeng))
  * [@a204980](https://github.com/strongloop/loopback-component-storage/commit/a204980c824b288347eca13295cfaf58bdd3e5d5) Refer to licenses with a link ([Sam Roberts](https://github.com/sam-github))
