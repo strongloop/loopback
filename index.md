@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-24 to 2015-12-19)
+since: (from 2015-10-25 to 2015-12-20)
 ---
 
 ## Core
@@ -111,6 +111,11 @@ since: (from 2015-10-24 to 2015-12-19)
 
 
 ### loopback-connector-mongodb
+ * [PR#215](https://github.com/strongloop/loopback-connector-mongodb/pull/215) Remove email from AUTHORS ([superkhau](https://github.com/superkhau))
+ * [PR#214](https://github.com/strongloop/loopback-connector-mongodb/pull/214) Update description in README.md ([superkhau](https://github.com/superkhau))
+ * [PR#211](https://github.com/strongloop/loopback-connector-mongodb/pull/211) Clean up package.json ([superkhau](https://github.com/superkhau))
+ * [PR#213](https://github.com/strongloop/loopback-connector-mongodb/pull/213) Update AUTHORS ([superkhau](https://github.com/superkhau))
+ * [PR#212](https://github.com/strongloop/loopback-connector-mongodb/pull/212) Add AUTHORS file ([superkhau](https://github.com/superkhau))
  * [PR#209](https://github.com/strongloop/loopback-connector-mongodb/pull/209) test: fix order of semver arguments ([rmg](https://github.com/rmg))
  * [@42f951c](https://github.com/strongloop/loopback-connector-mongodb/commit/42f951cdfd258c35b9488fe8bf232042b7d1150a) Add more tests for id coercion ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.13.2** ([Raymond Feng](https://github.com/raymondfeng))
