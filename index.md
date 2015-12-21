@@ -87,6 +87,7 @@ since: (from 2015-10-26 to 2015-12-21)
 
 
 ### strong-remoting
+ * [@5d21f05](https://github.com/strongloop/strong-remoting/commit/5d21f05201778a3cfd5fd1e9dfae74e9efeac4aa) Retain accepted content-type with no-content ([David Cheung](https://github.com/davidcheung))
  * [PR#261](https://github.com/strongloop/strong-remoting/pull/261) Fix incorrect boolean logic on shared-method's `documented` flag. ([STRML](https://github.com/STRML))
  * **Released 2.23.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#269](https://github.com/strongloop/strong-remoting/pull/269) Revert "Refactor and rework http coercion." ([bajtos](https://github.com/bajtos))
