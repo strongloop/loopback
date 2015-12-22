@@ -1,6 +1,7 @@
 {
   "name": "loopback",
-  "version": "2.26.2",
+  "version": "3.0.0-alpha.1",
+  "pubishConfig": { "tag": "next" },
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
