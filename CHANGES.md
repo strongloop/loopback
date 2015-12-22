@@ -1,3 +1,9 @@
+2015-12-22, Version 2.26.2
+==========================
+
+ * Fix bulkUpdate to not trigger rectifyAll (Amir Jafarian)
+
+
 2015-12-17, Version 2.26.1
 ==========================
 
