@@ -56,7 +56,7 @@
     "underscore.string": "^3.0.3"
   },
   "peerDependencies": {
-    "loopback-datasource-juggler": "^2.19.0"
+    "loopback-datasource-juggler": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "bluebird": "^2.9.9",
@@ -82,7 +82,7 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-script-launcher": "^0.1.0",
     "loopback-boot": "^2.7.0",
-    "loopback-datasource-juggler": "^2.19.1",
+    "loopback-datasource-juggler": "^3.0.0-alpha.1",
     "loopback-testing": "~1.1.0",
     "mocha": "^2.1.0",
     "sinon": "^1.13.0",
