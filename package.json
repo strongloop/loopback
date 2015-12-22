@@ -1,7 +1,9 @@
 {
   "name": "loopback",
   "version": "3.0.0-alpha.1",
-  "pubishConfig": { "tag": "next" },
+  "pubishConfig": {
+    "tag": "next"
+  },
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
@@ -105,6 +107,6 @@
   },
   "license": "MIT",
   "optionalDependencies": {
-    "sl-blip": "http://blip.strongloop.com/loopback@2.26.2"
+    "sl-blip": "http://blip.strongloop.com/loopback@3.0.0-alpha.1"
   }
 }

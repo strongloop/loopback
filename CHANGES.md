@@ -1,3 +1,11 @@
+2015-12-22, Version 3.0.0-alpha.1
+=================================
+
+ * Update juggler to ^3.0.0-alpha.1 (Miroslav Bajtoš)
+
+ * Start development of 3.0 (Miroslav Bajtoš)
+
+
 2015-12-22, Version 2.26.2
 ==========================
 
