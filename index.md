@@ -202,6 +202,7 @@ since: (from 2015-10-27 to 2015-12-22)
 
 
 ### loopback-sdk-ios
+ * [@d5355e4](https://github.com/strongloop/loopback-sdk-ios/commit/d5355e49714b20c4da3f8d71f5981a9977a99647) Fix swift compatibility issue when init'ing repo ([hideya kawahara](https://github.com/hideya))
  * [PR#79](https://github.com/strongloop/loopback-sdk-ios/pull/79) Enable unit test execution from `npm test` ([hideya](https://github.com/hideya))
  * [PR#80](https://github.com/strongloop/loopback-sdk-ios/pull/80) Update Subclassing.md ([kexoth](https://github.com/kexoth))
  * [PR#70](https://github.com/strongloop/loopback-sdk-ios/pull/70) Remove redundant declarations of `+ (instancetype)repository` ([hideya](https://github.com/hideya))
