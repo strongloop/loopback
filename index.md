@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-27 to 2015-12-22)
+since: (from 2015-10-28 to 2015-12-23)
 ---
 
 ## Core
@@ -16,6 +16,10 @@ since: (from 2015-10-27 to 2015-12-22)
 
 
 ### loopback
+ * [@b0a6242](https://github.com/strongloop/loopback/commit/b0a62422c1d83c9b748bb97b7100e8dd8d2220e0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#1909](https://github.com/strongloop/loopback/pull/1909) Start development of 3.0 ([bajtos](https://github.com/bajtos))
+ * **Released 2.26.2** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#1899](https://github.com/strongloop/loopback/pull/1899) Fix bulkUpdate to not trigger rectifyAll  ([Amir-61](https://github.com/Amir-61))
  * **Released 2.26.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1894](https://github.com/strongloop/loopback/pull/1894) PersistedModel: log rectify/rectifyAll triggers ([bajtos](https://github.com/bajtos))
  * **Released 2.26.0** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -33,6 +37,8 @@ since: (from 2015-10-27 to 2015-12-22)
 
 
 ### loopback-boot
+ * **Released 2.16.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#165](https://github.com/strongloop/loopback-boot/pull/165) executor: allow loopback versions >= 3.0.0-alpha ([bajtos](https://github.com/bajtos))
  * **Released 2.15.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#158](https://github.com/strongloop/loopback-boot/pull/158) Bluemix favors PORT over VCAP_APP_PORT ([svennam92](https://github.com/svennam92))
  * [PR#164](https://github.com/strongloop/loopback-boot/pull/164) Set app env if it is supplied in options object ([Amir-61](https://github.com/Amir-61))
@@ -44,6 +50,8 @@ since: (from 2015-10-27 to 2015-12-22)
 
 
 ### loopback-datasource-juggler
+ * [@990307f](https://github.com/strongloop/loopback-datasource-juggler/commit/990307f3d5a5b08a49ae88b505205384312daec0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#801](https://github.com/strongloop/loopback-datasource-juggler/pull/801) Start development of 3.0 ([bajtos](https://github.com/bajtos))
  * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
  * **Released 2.44.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#789](https://github.com/strongloop/loopback-datasource-juggler/pull/789) Fix failing test for MongoDB connector ([superkhau](https://github.com/superkhau))
@@ -202,7 +210,7 @@ since: (from 2015-10-27 to 2015-12-22)
 
 
 ### loopback-sdk-ios
- * [@d5355e4](https://github.com/strongloop/loopback-sdk-ios/commit/d5355e49714b20c4da3f8d71f5981a9977a99647) Fix swift compatibility issue when init'ing repo ([hideya kawahara](https://github.com/hideya))
+ * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
  * [PR#79](https://github.com/strongloop/loopback-sdk-ios/pull/79) Enable unit test execution from `npm test` ([hideya](https://github.com/hideya))
  * [PR#80](https://github.com/strongloop/loopback-sdk-ios/pull/80) Update Subclassing.md ([kexoth](https://github.com/kexoth))
  * [PR#70](https://github.com/strongloop/loopback-sdk-ios/pull/70) Remove redundant declarations of `+ (instancetype)repository` ([hideya](https://github.com/hideya))
