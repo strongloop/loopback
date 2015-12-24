@@ -50,6 +50,8 @@ since: (from 2015-10-28 to 2015-12-23)
 
 
 ### loopback-datasource-juggler
+ * [@b63133d](https://github.com/strongloop/loopback-datasource-juggler/commit/b63133d1d6c41a327175206bb54ee775b59de007) Fix test for shouldjs 8.0.2 upgrade (Simon Ho)
+ * [@edd2d30](https://github.com/strongloop/loopback-datasource-juggler/commit/edd2d301e5b16bad4b5edcb36d605dfe05fe1f44) Upgrade shouldjs to 8.0.2 (Simon Ho)
  * [@990307f](https://github.com/strongloop/loopback-datasource-juggler/commit/990307f3d5a5b08a49ae88b505205384312daec0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#801](https://github.com/strongloop/loopback-datasource-juggler/pull/801) Start development of 3.0 ([bajtos](https://github.com/bajtos))
  * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
