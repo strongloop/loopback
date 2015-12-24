@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-28 to 2015-12-23)
+since: (from 2015-10-29 to 2015-12-24)
 ---
 
 ## Core
@@ -16,6 +16,7 @@ since: (from 2015-10-28 to 2015-12-23)
 
 
 ### loopback
+ * [PR#1910](https://github.com/strongloop/loopback/pull/1910) Update persisted-model.js ([crandmck](https://github.com/crandmck))
  * [@b0a6242](https://github.com/strongloop/loopback/commit/b0a62422c1d83c9b748bb97b7100e8dd8d2220e0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1909](https://github.com/strongloop/loopback/pull/1909) Start development of 3.0 ([bajtos](https://github.com/bajtos))
  * **Released 2.26.2** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -50,8 +51,8 @@ since: (from 2015-10-28 to 2015-12-23)
 
 
 ### loopback-datasource-juggler
- * [@b63133d](https://github.com/strongloop/loopback-datasource-juggler/commit/b63133d1d6c41a327175206bb54ee775b59de007) Fix test for shouldjs 8.0.2 upgrade (Simon Ho)
- * [@edd2d30](https://github.com/strongloop/loopback-datasource-juggler/commit/edd2d301e5b16bad4b5edcb36d605dfe05fe1f44) Upgrade shouldjs to 8.0.2 (Simon Ho)
+ * [@5d453b5](https://github.com/strongloop/loopback-datasource-juggler/commit/5d453b503811062d1dec3dcda932aa2c6285b88a) Revert "Correct syntax for should and more" (Simon Ho)
+ * [PR#804](https://github.com/strongloop/loopback-datasource-juggler/pull/804) Upgrade shouldjs to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [@990307f](https://github.com/strongloop/loopback-datasource-juggler/commit/990307f3d5a5b08a49ae88b505205384312daec0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#801](https://github.com/strongloop/loopback-datasource-juggler/pull/801) Start development of 3.0 ([bajtos](https://github.com/bajtos))
  * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
