@@ -214,6 +214,7 @@ since: (from 2015-10-29 to 2015-12-24)
 
 ### loopback-sdk-ios
  * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
+ * [@097dc9e](https://github.com/strongloop/loopback-sdk-ios/commit/097dc9ed4b220581077f3a4b580a0e7d7280bc55) Added resetPasswordWithEmail to trigger reset of the users password ([Kevin Gödecke](https://github.com/kgoedecke))
  * [PR#79](https://github.com/strongloop/loopback-sdk-ios/pull/79) Enable unit test execution from `npm test` ([hideya](https://github.com/hideya))
  * [PR#80](https://github.com/strongloop/loopback-sdk-ios/pull/80) Update Subclassing.md ([kexoth](https://github.com/kexoth))
  * [PR#70](https://github.com/strongloop/loopback-sdk-ios/pull/70) Remove redundant declarations of `+ (instancetype)repository` ([hideya](https://github.com/hideya))
