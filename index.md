@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-10-29 to 2015-12-24)
+since: (from 2015-10-30 to 2015-12-25)
 ---
 
 ## Core
@@ -51,7 +51,7 @@ since: (from 2015-10-29 to 2015-12-24)
 
 
 ### loopback-datasource-juggler
- * [@5d453b5](https://github.com/strongloop/loopback-datasource-juggler/commit/5d453b503811062d1dec3dcda932aa2c6285b88a) Revert "Correct syntax for should and more" (Simon Ho)
+ * [PR#806](https://github.com/strongloop/loopback-datasource-juggler/pull/806) Revert "Correct syntax for should and more" ([superkhau](https://github.com/superkhau))
  * [PR#804](https://github.com/strongloop/loopback-datasource-juggler/pull/804) Upgrade shouldjs to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [@990307f](https://github.com/strongloop/loopback-datasource-juggler/commit/990307f3d5a5b08a49ae88b505205384312daec0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#801](https://github.com/strongloop/loopback-datasource-juggler/pull/801) Start development of 3.0 ([bajtos](https://github.com/bajtos))
