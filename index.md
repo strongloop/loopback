@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-04 to 2015-12-30)
+since: (from 2015-11-05 to 2015-12-31)
 ---
 
 ## Core
@@ -167,6 +167,11 @@ since: (from 2015-11-04 to 2015-12-30)
 
 ### loopback-component-passport
  * [PR#110](https://github.com/strongloop/loopback-component-passport/pull/110) Enforce email verification for local accounts ([loay](https://github.com/loay))
+
+
+### loopback-component-push
+ * **Released 1.5.2** (Simon Ho)
+ * [PR#108](https://github.com/strongloop/loopback-component-push/pull/108) Remove example dir ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-component-storage
