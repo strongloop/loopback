@@ -7,6 +7,12 @@ var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var expect = require('chai').expect;
 
 describe('users - integration', function() {
+  before(function(done) {
+    if (app.booting) {
+      return app.once('booted', done);
+    }
+    done();
+  });
 
   lt.beforeEach.withApp(app);
 
