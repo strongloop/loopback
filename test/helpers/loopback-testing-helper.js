@@ -18,13 +18,18 @@ _beforeEach.withApp = function(app) {
     app.models.User.settings.saltWorkFactor = 4;
   }
 
-  beforeEach(function() {
+  beforeEach(function(done) {
     this.app = app;
     var _request = this.request = request(app);
     this.post = _request.post;
     this.get = _request.get;
     this.put = _request.put;
     this.del = _request.del;
+
+    if (app.booting) {
+      return app.once('booted', done);
+    }
+    done();
   });
 };
 
