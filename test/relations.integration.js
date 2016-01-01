@@ -11,6 +11,12 @@ var debug = require('debug')('loopback:test:relations.integration');
 var async = require('async');
 
 describe('relations - integration', function() {
+  before(function(done) {
+    if (app.booting) {
+      return app.once('booted', done);
+    }
+    done();
+  });
 
   lt.beforeEach.withApp(app);
 
