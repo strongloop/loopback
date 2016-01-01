@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-05 to 2015-12-31)
+since: (from 2015-11-06 to 2016-01-01)
 ---
 
 ## Core
@@ -13,6 +13,8 @@ since: (from 2015-11-05 to 2015-12-31)
 
 
 ### loopback
+ * [@186e3e8](https://github.com/strongloop/loopback/commit/186e3e8f924bbb324b66f46ed8ea4e10f2647319) Remove dependency on loopback-testing (Simon Ho)
+ * [PR#1934](https://github.com/strongloop/loopback/pull/1934) Fix failing tests ([superkhau](https://github.com/superkhau))
  * [PR#1910](https://github.com/strongloop/loopback/pull/1910) Update persisted-model.js ([crandmck](https://github.com/crandmck))
  * [@b0a6242](https://github.com/strongloop/loopback/commit/b0a62422c1d83c9b748bb97b7100e8dd8d2220e0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1909](https://github.com/strongloop/loopback/pull/1909) Start development of 3.0 ([bajtos](https://github.com/bajtos))
@@ -170,6 +172,7 @@ since: (from 2015-11-05 to 2015-12-31)
 
 
 ### loopback-component-push
+ * [PR#109](https://github.com/strongloop/loopback-component-push/pull/109) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
  * **Released 1.5.2** (Simon Ho)
  * [PR#108](https://github.com/strongloop/loopback-component-push/pull/108) Remove example dir ([superkhau](https://github.com/superkhau))
 
