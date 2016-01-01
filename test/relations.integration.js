@@ -97,6 +97,7 @@ describe('relations - integration', function() {
       this.get(url)
         .query({'filter': {'include' : 'pictures'}})
         .expect(200, function(err, res) {
+          if (err) return done(err);
           // console.log(res.body);
           expect(res.body.name).to.be.equal('Reader 1');
           expect(res.body.pictures).to.be.eql([
@@ -112,6 +113,7 @@ describe('relations - integration', function() {
       this.get(url)
         .query({'filter': {'include' : 'imageable'}})
         .expect(200, function(err, res) {
+          if (err) return done(err);
           // console.log(res.body);
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
@@ -125,6 +127,7 @@ describe('relations - integration', function() {
       this.get(url)
         .query({'filter': {'include' : {'relation': 'imageable', 'scope': { 'include' : 'team'}}}})
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
           expect(res.body[0].imageable.name).to.be.eql('Reader 1');
@@ -139,6 +142,7 @@ describe('relations - integration', function() {
     it('should invoke scoped methods remotely', function(done) {
       this.get('/api/stores/superStores')
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.array;
           done();
         });
@@ -375,7 +379,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -414,7 +418,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -459,7 +463,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -479,7 +483,7 @@ describe('relations - integration', function() {
             '/patients/rel/' + '999';
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -498,7 +502,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -553,7 +557,7 @@ describe('relations - integration', function() {
             '/patients/' + root.patient.id;
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -574,7 +578,7 @@ describe('relations - integration', function() {
             '/patients/' + root.patient.id;
           self.patient = root.patient;
           self.physician = root.physician;
-          done();
+          done(err);
         });
       });
 
@@ -690,6 +694,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.have.property('products');
           expect(res.body.products).to.eql([
             {
@@ -709,6 +714,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.have.property('products');
           expect(res.body.products).to.eql([
             {
@@ -770,6 +776,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body.name).to.be.equal('Group 1');
           expect(res.body.poster).to.be.eql(
             { url: 'http://image.url' }
@@ -783,6 +790,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql(
             { url: 'http://image.url' }
           );
@@ -806,6 +814,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql(
             { url: 'http://changed.url' }
           );
@@ -863,6 +872,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body.name).to.be.equal('List A');
           expect(res.body.todoItems).to.be.eql([
             { content: 'Todo 1', id: 1 },
@@ -877,6 +887,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 2', id: 2 }
@@ -891,6 +902,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { content: 'Todo 2', id: 2 }
           ]);
@@ -916,6 +928,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 2', id: 2 },
@@ -930,6 +943,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql(
             { content: 'Todo 3', id: 3 }
           );
@@ -952,6 +966,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 3', id: 3 }
@@ -963,6 +978,7 @@ describe('relations - integration', function() {
     it('returns a 404 response when embedded model is not found', function(done) {
       var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
       this.get(url).expect(404, function(err, res) {
+        if (err) return done(err);
         expect(res.body.error.status).to.be.equal(404);
         expect(res.body.error.message).to.be.equal('Unknown "todoItem" id "2".');
         expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
@@ -1050,6 +1066,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body.ingredientIds).to.eql([test.ingredient1]);
           expect(res.body).to.not.have.property('ingredients');
           done();
@@ -1075,6 +1092,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 },
@@ -1090,6 +1108,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Butter', id: test.ingredient3 }
@@ -1105,6 +1124,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Butter', id: test.ingredient3 }
           ]);
@@ -1119,6 +1139,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body.ingredientIds).to.eql([
             test.ingredient1, test.ingredient3
           ]);
@@ -1137,6 +1158,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql(
             { name: 'Butter', id: test.ingredient3 }
           );
@@ -1152,6 +1174,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body.ingredientIds).to.eql(expected);
           expect(res.body).to.not.have.property('ingredients');
           done();
@@ -1175,6 +1198,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 }
@@ -1189,6 +1213,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 }
           ]);
@@ -1216,6 +1241,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 }
@@ -1241,6 +1267,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Sugar', id: test.ingredient2 }
           ]);
@@ -1254,6 +1281,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 }
@@ -1267,6 +1295,7 @@ describe('relations - integration', function() {
 
       this.get(url)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(err).to.not.exist;
           expect(res.body.name).to.equal('Photo 1');
           done();
@@ -1401,6 +1430,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages')
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
@@ -1412,6 +1442,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.headers['x-before']).to.equal('before');
           expect(res.headers['x-after']).to.equal('after');
           expect(res.body).to.be.an.object;
@@ -1424,6 +1455,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/unknown/pages/' + test.page.id + '/notes')
         .expect(404, function(err, res) {
+          if (err) return done(err);
           expect(res.body.error).to.be.an.object;
           var expected = 'could not find a model with id unknown';
           expect(res.body.error.message).to.equal(expected);
@@ -1436,6 +1468,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/images/' + test.image.id + '/book/pages')
         .end(function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
@@ -1447,6 +1480,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/images/' + test.image.id + '/book/pages/' + test.page.id)
         .end(function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.an.object;
           expect(res.body.name).to.equal('Page 1');
           done();
@@ -1457,6 +1491,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes')
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].text).to.equal('Page Note 1');
@@ -1468,6 +1503,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.headers['x-before']).to.equal('before');
           expect(res.headers['x-after']).to.equal('after');
           expect(res.body).to.be.an.object;
@@ -1480,6 +1516,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/' + test.book.id + '/chapters/' + test.chapter.id + '/notes/' + test.cnote.id)
         .expect(200, function(err, res) {
+          if (err) return done(err);
           expect(res.headers['x-before']).to.empty;
           expect(res.headers['x-after']).to.empty;
           done();
@@ -1503,6 +1540,7 @@ describe('relations - integration', function() {
       var test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + this.page.id + '/throws')
         .end(function(err, res) {
+          if (err) return done(err);
           expect(res.body).to.be.an('object');
           expect(res.body.error).to.be.an('object');
           expect(res.body.error.name).to.equal('Error');
