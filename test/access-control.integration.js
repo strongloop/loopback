@@ -1,7 +1,7 @@
 /*jshint -W030 */
 
 var loopback = require('../');
-var lt = require('loopback-testing');
+var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
 var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
 var app = require(path.join(ACCESS_CONTROL_APP, 'server/server.js'));

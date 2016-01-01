@@ -1,7 +1,7 @@
 /*jshint -W030 */
 
 var loopback = require('../');
-var lt = require('loopback-testing');
+var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
