@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-11-10 to 2016-01-05)
+since: (from 2015-11-11 to 2016-01-06)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#132](https://github.com/strongloop/generator-loopback/pull/132) Use shared function ([jannyHou](https://github.com/jannyHou))
  * [PR#130](https://github.com/strongloop/generator-loopback/pull/130) Remove slc:loopback-example ([0candy](https://github.com/0candy))
  * [PR#124](https://github.com/strongloop/generator-loopback/pull/124) Remote method generator ([jannyHou](https://github.com/jannyHou))
  * [PR#127](https://github.com/strongloop/generator-loopback/pull/127) fix assumptions about dependency locations ([rmg](https://github.com/rmg))
@@ -42,15 +43,12 @@ since: (from 2015-11-10 to 2016-01-05)
 
 
 ### loopback-datasource-juggler
+ * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
  * [PR#809](https://github.com/strongloop/loopback-datasource-juggler/pull/809) Fix broken code fencings in the docs ([alFReD-NSH](https://github.com/alFReD-NSH))
  * [PR#806](https://github.com/strongloop/loopback-datasource-juggler/pull/806) Revert "Correct syntax for should and more" ([superkhau](https://github.com/superkhau))
  * [PR#804](https://github.com/strongloop/loopback-datasource-juggler/pull/804) Upgrade shouldjs to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [@990307f](https://github.com/strongloop/loopback-datasource-juggler/commit/990307f3d5a5b08a49ae88b505205384312daec0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#801](https://github.com/strongloop/loopback-datasource-juggler/pull/801) Start development of 3.0 ([bajtos](https://github.com/bajtos))
- * [@e9899a9](https://github.com/strongloop/loopback-datasource-juggler/commit/e9899a93cf3bbb95f99298da238d78d30a9cf992) Enhance "persist" hook in DAO.updateOrCreate ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@fd9bef4](https://github.com/strongloop/loopback-datasource-juggler/commit/fd9bef4aa78dbf4f3a6d7ccfb4b6badd64e47076) Enhance "persisted" hook in DAO.updateAttributes ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@3028329](https://github.com/strongloop/loopback-datasource-juggler/commit/3028329126702456d59b42d6a88da17effe89919) "loaded" hook in DAO.find: ctx.data, not instance ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@89e4555](https://github.com/strongloop/loopback-datasource-juggler/commit/89e4555bc022a63a30e3697266a04093e4a88afb) describe-operation-hooks: add "loaded" hook ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
  * **Released 2.44.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#789](https://github.com/strongloop/loopback-datasource-juggler/pull/789) Fix failing test for MongoDB connector ([superkhau](https://github.com/superkhau))
@@ -71,9 +69,9 @@ since: (from 2015-11-10 to 2016-01-05)
 
 
 ### loopback-swagger
+ * [PR#19](https://github.com/strongloop/loopback-swagger/pull/19) Fix handling of allOf when generating models ([mastersingh24](https://github.com/mastersingh24))
  * **Released 2.2.3** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#21](https://github.com/strongloop/loopback-swagger/pull/21) Fix unused models + GeoPoint definition ([bajtos](https://github.com/bajtos))
- * [@af8f18a](https://github.com/strongloop/loopback-swagger/commit/af8f18ac53b8dd5fbbf40196ff218e0c364e38a2) Fix handling of allOf when generating models (Gari Singh)
  * [PR#20](https://github.com/strongloop/loopback-swagger/pull/20) Add GeoPoint support to explorer. ([0candy](https://github.com/0candy))
  * **Released 2.2.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#17](https://github.com/strongloop/loopback-swagger/pull/17) specgen: ensure operation ids are unique ([bajtos](https://github.com/bajtos))
@@ -171,6 +169,11 @@ since: (from 2015-11-10 to 2016-01-05)
 
 
 ## Components
+
+### loopback-component-explorer
+ * [PR#141](https://github.com/strongloop/loopback-component-explorer/pull/141) Returning updated swaggerObject ([pktippa](https://github.com/pktippa))
+ * [@2186b69](https://github.com/strongloop/loopback-component-explorer/commit/2186b69885f5b505ec59c0e2595a3c43e0759d9a) Update swaggerObject when a new model was added ([Pradeep Kumar Tippa](https://github.com/pktippa))
+
 
 ### loopback-component-passport
  * [PR#110](https://github.com/strongloop/loopback-component-passport/pull/110) Enforce email verification for local accounts ([loay](https://github.com/loay))
