@@ -6,6 +6,7 @@ since: (from 2015-11-12 to 2016-01-07)
 ## Core
 
 ### generator-loopback
+ * [@43d087b](https://github.com/strongloop/generator-loopback/commit/43d087b2d0dcfbdd7bf127e06a1c9d11eb18e36b) Add cli tool for printing swagger api definition ([Candy](https://github.com/0candy))
  * [PR#132](https://github.com/strongloop/generator-loopback/pull/132) Use shared function ([jannyHou](https://github.com/jannyHou))
  * [PR#130](https://github.com/strongloop/generator-loopback/pull/130) Remove slc:loopback-example ([0candy](https://github.com/0candy))
  * [PR#124](https://github.com/strongloop/generator-loopback/pull/124) Remote method generator ([jannyHou](https://github.com/jannyHou))
