@@ -1,12 +1,13 @@
 ---
 layout: page
-since: (from 2015-11-12 to 2016-01-07)
+since: (from 2015-11-13 to 2016-01-08)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@43d087b](https://github.com/strongloop/generator-loopback/commit/43d087b2d0dcfbdd7bf127e06a1c9d11eb18e36b) Add cli tool for printing swagger api definition ([Candy](https://github.com/0candy))
+ * [PR#134](https://github.com/strongloop/generator-loopback/pull/134) Fix ci timeout error. ([0candy](https://github.com/0candy))
+ * [PR#121](https://github.com/strongloop/generator-loopback/pull/121) Add command line printing swagger definition to loopback ([0candy](https://github.com/0candy))
  * [PR#132](https://github.com/strongloop/generator-loopback/pull/132) Use shared function ([jannyHou](https://github.com/jannyHou))
  * [PR#130](https://github.com/strongloop/generator-loopback/pull/130) Remove slc:loopback-example ([0candy](https://github.com/0candy))
  * [PR#124](https://github.com/strongloop/generator-loopback/pull/124) Remote method generator ([jannyHou](https://github.com/jannyHou))
@@ -45,6 +46,7 @@ since: (from 2015-11-12 to 2016-01-07)
 
 
 ### loopback-datasource-juggler
+ * [@853ca03](https://github.com/strongloop/loopback-datasource-juggler/commit/853ca0349166af0d4cd82de21db197aa57eab7eb) Use bluebird in utils.js ([Jue Hou](https://github.com/jannyHou))
  * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
  * [PR#809](https://github.com/strongloop/loopback-datasource-juggler/pull/809) Fix broken code fencings in the docs ([alFReD-NSH](https://github.com/alFReD-NSH))
  * [PR#806](https://github.com/strongloop/loopback-datasource-juggler/pull/806) Revert "Correct syntax for should and more" ([superkhau](https://github.com/superkhau))
@@ -129,6 +131,7 @@ since: (from 2015-11-12 to 2016-01-07)
 
 
 ### loopback-connector-remote
+ * [PR#29](https://github.com/strongloop/loopback-connector-remote/pull/29) Cleaning up obsolete or unused files & dependencies ([glesage](https://github.com/glesage))
  * [PR#28](https://github.com/strongloop/loopback-connector-remote/pull/28) Add test for custom http.path configuration. ([richardpringle](https://github.com/richardpringle))
  * [PR#27](https://github.com/strongloop/loopback-connector-remote/pull/27) test: load the correct Remote instance ([bajtos](https://github.com/bajtos))
 
