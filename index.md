@@ -73,6 +73,7 @@ since: (from 2015-11-13 to 2016-01-08)
 
 
 ### loopback-swagger
+ * [@c724179](https://github.com/strongloop/loopback-swagger/commit/c7241792e39a2c5fa9bcde1f63a312adb0e8855c) Exclude definition that are not referenced ([Candy](https://github.com/0candy))
  * [PR#19](https://github.com/strongloop/loopback-swagger/pull/19) Fix handling of allOf when generating models ([mastersingh24](https://github.com/mastersingh24))
  * **Released 2.2.3** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#21](https://github.com/strongloop/loopback-swagger/pull/21) Fix unused models + GeoPoint definition ([bajtos](https://github.com/bajtos))
