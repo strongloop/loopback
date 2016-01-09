@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-11-13 to 2016-01-08)
+since: (from 2015-11-14 to 2016-01-09)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#133](https://github.com/strongloop/generator-loopback/pull/133) Prevent readonly models in relation generator ([jannyHou](https://github.com/jannyHou))
  * [PR#134](https://github.com/strongloop/generator-loopback/pull/134) Fix ci timeout error. ([0candy](https://github.com/0candy))
  * [PR#121](https://github.com/strongloop/generator-loopback/pull/121) Add command line printing swagger definition to loopback ([0candy](https://github.com/0candy))
  * [PR#132](https://github.com/strongloop/generator-loopback/pull/132) Use shared function ([jannyHou](https://github.com/jannyHou))
@@ -16,6 +17,7 @@ since: (from 2015-11-13 to 2016-01-08)
 
 
 ### loopback
+ * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
  * [PR#1935](https://github.com/strongloop/loopback/pull/1935) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
  * [PR#1934](https://github.com/strongloop/loopback/pull/1934) Fix failing tests ([superkhau](https://github.com/superkhau))
@@ -46,7 +48,7 @@ since: (from 2015-11-13 to 2016-01-08)
 
 
 ### loopback-datasource-juggler
- * [@853ca03](https://github.com/strongloop/loopback-datasource-juggler/commit/853ca0349166af0d4cd82de21db197aa57eab7eb) Use bluebird in utils.js ([Jue Hou](https://github.com/jannyHou))
+ * [PR#790](https://github.com/strongloop/loopback-datasource-juggler/pull/790) [SEMVER-MAJOR] Always use bluebird as the Promise implementation ([jannyHou](https://github.com/jannyHou))
  * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
  * [PR#809](https://github.com/strongloop/loopback-datasource-juggler/pull/809) Fix broken code fencings in the docs ([alFReD-NSH](https://github.com/alFReD-NSH))
  * [PR#806](https://github.com/strongloop/loopback-datasource-juggler/pull/806) Revert "Correct syntax for should and more" ([superkhau](https://github.com/superkhau))
@@ -73,7 +75,7 @@ since: (from 2015-11-13 to 2016-01-08)
 
 
 ### loopback-swagger
- * [@c724179](https://github.com/strongloop/loopback-swagger/commit/c7241792e39a2c5fa9bcde1f63a312adb0e8855c) Exclude definition that are not referenced ([Candy](https://github.com/0candy))
+ * [PR#22](https://github.com/strongloop/loopback-swagger/pull/22) Exclude definitions that are not referenced ([0candy](https://github.com/0candy))
  * [PR#19](https://github.com/strongloop/loopback-swagger/pull/19) Fix handling of allOf when generating models ([mastersingh24](https://github.com/mastersingh24))
  * **Released 2.2.3** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#21](https://github.com/strongloop/loopback-swagger/pull/21) Fix unused models + GeoPoint definition ([bajtos](https://github.com/bajtos))
@@ -132,6 +134,7 @@ since: (from 2015-11-13 to 2016-01-08)
 
 
 ### loopback-connector-remote
+ * [PR#31](https://github.com/strongloop/loopback-connector-remote/pull/31) Test fixes ([superkhau](https://github.com/superkhau))
  * [PR#29](https://github.com/strongloop/loopback-connector-remote/pull/29) Cleaning up obsolete or unused files & dependencies ([glesage](https://github.com/glesage))
  * [PR#28](https://github.com/strongloop/loopback-connector-remote/pull/28) Add test for custom http.path configuration. ([richardpringle](https://github.com/richardpringle))
  * [PR#27](https://github.com/strongloop/loopback-connector-remote/pull/27) test: load the correct Remote instance ([bajtos](https://github.com/bajtos))
