@@ -18,6 +18,7 @@ since: (from 2015-11-16 to 2016-01-11)
 
 ### loopback
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
+ * [@4b30c27](https://github.com/strongloop/loopback/commit/4b30c27fa2d158e98dd78d4ddc4f123718a7fa7f) Remove unused code from loopback-testing-helper (Simon Ho)
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
  * [PR#1935](https://github.com/strongloop/loopback/pull/1935) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
  * [PR#1934](https://github.com/strongloop/loopback/pull/1934) Fix failing tests ([superkhau](https://github.com/superkhau))
