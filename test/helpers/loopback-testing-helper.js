@@ -28,49 +28,6 @@ _beforeEach.withApp = function(app) {
   });
 };
 
-_beforeEach.cleanDatasource = function(dsName) {
-  beforeEach(function(done) {
-    if (!dsName) dsName = 'db';
-
-    if (typeof this.app === 'function' &&
-        typeof this.app.datasources === 'object' &&
-        typeof this.app.datasources[dsName] === 'object') {
-      this.app.datasources[dsName].automigrate();
-      this.app.datasources[dsName].connector.ids = {};
-    }
-
-    done();
-  });
-};
-
-function mixin(obj, into) {
-  Object.keys(obj).forEach(function(key) {
-    if (typeof obj[key] === 'function') {
-      into[key] = obj[key];
-    }
-  });
-}
-
-_describe.staticMethod = function(methodName, cb) {
-  describe('.' + methodName, function() {
-    beforeEach(function() {
-      this.method = methodName;
-      this.isStaticMethod = true;
-    });
-    cb();
-  });
-};
-
-_describe.instanceMethod = function(methodName, cb) {
-  describe('.prototype.' + methodName, function() {
-    beforeEach(function() {
-      this.method = methodName;
-      this.isInstanceMethod = true;
-    });
-    cb();
-  });
-};
-
 _beforeEach.withArgs = function() {
   var args = Array.prototype.slice.call(arguments, 0);
   beforeEach(function() {
@@ -129,79 +86,8 @@ _beforeEach.givenUser = function(attrs, optionalHandler) {
   _beforeEach.givenModel('user', attrs, optionalHandler);
 };
 
-_beforeEach.givenUserWithRole = function(attrs, role, optionalHandler) {
-  _beforeEach.givenUser(attrs, function(done) {
-    var test = this;
-    test.app.models.Role.create({name: role}, function(err, result) {
-      if (err) {
-        console.error(err.message);
-        if (err.details) console.error(err.details);
-        return done(err);
-      }
-
-      test.userRole = result;
-      test.app.models.roleMapping.create(
-        {principalId: test.user.id,
-         principalType: test.app.models.roleMapping.USER,
-         roleId: result.id},
-        function(err, result) {
-          if (err) {
-            console.error(err.message);
-            if (err.details) console.error(err.details);
-            return done(err);
-          }
-
-          test.userRoleMapping = result;
-          done();
-        }
-      );
-    });
-  });
-
-  if (typeof optionalHandler === 'function') {
-    beforeEach(optionalHandler);
-  }
-
-  afterEach(function(done) {
-    var test = this;
-    this.userRole.destroy(function(err) {
-      if (err) return done(err);
-      test.userRole = undefined;
-
-      test.userRoleMapping.destroy(function(err) {
-        if (err) return done(err);
-        test.userRoleMapping = undefined;
-        done();
-      });
-    });
-  });
-};
-
 _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
   _beforeEach.givenUser(credentials, function(done) {
-    var test = this;
-    this.user.constructor.login(credentials, function(err, token) {
-      if (err) {
-        done(err);
-      } else {
-        test.loggedInAccessToken = token;
-        done();
-      }
-    });
-  });
-
-  afterEach(function(done) {
-    var test = this;
-    this.loggedInAccessToken.destroy(function(err) {
-      if (err) return done(err);
-      test.loggedInAccessToken = undefined;
-      done();
-    });
-  });
-};
-
-_beforeEach.givenLoggedInUserWithRole = function(credentials, role, optionalHandler) {
-  _beforeEach.givenUserWithRole(credentials, role, function(done) {
     var test = this;
     this.user.constructor.login(credentials, function(err, token) {
       if (err) {
@@ -290,23 +176,9 @@ _describe.whenLoggedInAsUser = function(credentials, cb) {
   });
 };
 
-_describe.whenLoggedInAsUserWithRole = function(credentials, role, cb) {
-  describe('when logged in as user', function() {
-    _beforeEach.givenLoggedInUser(credentials, role);
-    cb();
-  });
-};
-
 _describe.whenCalledByUser = function(credentials, verb, url, data, cb) {
   describe('when called by logged in user', function() {
     _beforeEach.givenLoggedInUser(credentials);
-    _describe.whenCalledRemotely(verb, url, data, cb);
-  });
-};
-
-_describe.whenCalledByUserWithRole = function(credentials, role, verb, url, data, cb) {
-  describe('when called by logged in user with role ' + role, function() {
-    _beforeEach.givenLoggedInUserWithRole(credentials, role);
     _describe.whenCalledRemotely(verb, url, data, cb);
   });
 };
@@ -389,20 +261,6 @@ function(credentials, verb, url, data) {
 _it.shouldBeDeniedWhenCalledByUser =
 function(credentials, verb, url) {
   _describe.whenCalledByUser(credentials, verb, url, function() {
-    _it.shouldBeDenied();
-  });
-};
-
-_it.shouldBeAllowedWhenCalledByUserWithRole =
-function(credentials, role, verb, url, data) {
-  _describe.whenCalledByUserWithRole(credentials, role, verb, url, data, function() {
-    _it.shouldBeAllowed();
-  });
-};
-
-_it.shouldBeDeniedWhenCalledByUserWithRole =
-function(credentials, role, verb, url) {
-  _describe.whenCalledByUserWithRole(credentials, role, verb, url, function() {
     _it.shouldBeDenied();
   });
 };
