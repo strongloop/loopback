@@ -301,7 +301,9 @@ module.exports = function(User) {
    * Compare the given `password` with the users hashed password.
    *
    * @param {String} password The plain text password
-   * @returns {Boolean}
+   * @callback {Function} callback Callback function
+   * @param {Error} err Error object
+   * @param {Boolean} isMatch Returns true if the given `password` matches record
    */
 
   User.prototype.hasPassword = function(plain, fn) {
