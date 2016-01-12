@@ -17,6 +17,7 @@ since: (from 2015-11-17 to 2016-01-12)
 
 ### loopback
  * [PR#1944](https://github.com/strongloop/loopback/pull/1944) Remove unused code from loopback-testing-helper ([superkhau](https://github.com/superkhau))
+ * [@8657890](https://github.com/strongloop/loopback/commit/865789017d1d3b56a24d20669afc9a8e43e5a109) Fix description for User.prototype.hasPassword ([Jue Hou](https://github.com/jannyHou))
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
  * [PR#1935](https://github.com/strongloop/loopback/pull/1935) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
