@@ -105,6 +105,7 @@ since: (from 2015-11-17 to 2016-01-12)
 
 
 ### loopback-connector-soap
+ * [@17c3404](https://github.com/strongloop/loopback-connector-soap/commit/17c34044f1da0f55b7276bb77cef8aba1bde5834) Fix typo in readme.md ([David Cheung](https://github.com/davidcheung))
  * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
 
 
