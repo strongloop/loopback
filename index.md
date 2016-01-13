@@ -115,6 +115,7 @@ since: (from 2015-11-17 to 2016-01-12)
 ## SDKs
 
 ### loopback-sdk-angular
+ * [@5807be2](https://github.com/strongloop/loopback-sdk-angular/commit/5807be21b535a0a1fe7d3fa4d4b39f5512c996e3) Fix npm test on windows ([David Cheung](https://github.com/davidcheung))
  * **Released 1.6.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#184](https://github.com/strongloop/loopback-sdk-angular/pull/184) Fix request interceptor to process all requests on same host as urlBase ([partap](https://github.com/partap))
  * [@6a24f4d](https://github.com/strongloop/loopback-sdk-angular/commit/6a24f4d9892d44335cbea8ec7a10055fc9b78168) Send auth header to all URLs on the same host ([Partap Davis](https://github.com/partap))
