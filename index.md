@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-17 to 2016-01-12)
+since: (from 2015-11-18 to 2016-01-13)
 ---
 
 ## Core
@@ -16,8 +16,8 @@ since: (from 2015-11-17 to 2016-01-12)
 
 
 ### loopback
+ * [PR#1953](https://github.com/strongloop/loopback/pull/1953) Fix description for User.prototype.hasPassword ([jannyHou](https://github.com/jannyHou))
  * [PR#1944](https://github.com/strongloop/loopback/pull/1944) Remove unused code from loopback-testing-helper ([superkhau](https://github.com/superkhau))
- * [@8657890](https://github.com/strongloop/loopback/commit/865789017d1d3b56a24d20669afc9a8e43e5a109) Fix description for User.prototype.hasPassword ([Jue Hou](https://github.com/jannyHou))
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
  * [PR#1935](https://github.com/strongloop/loopback/pull/1935) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
@@ -81,12 +81,12 @@ since: (from 2015-11-17 to 2016-01-12)
 ## Connectors
 
 ### loopback-connector-mongodb
+ * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
  * [PR#215](https://github.com/strongloop/loopback-connector-mongodb/pull/215) Remove email from AUTHORS ([superkhau](https://github.com/superkhau))
  * [PR#214](https://github.com/strongloop/loopback-connector-mongodb/pull/214) Update description in README.md ([superkhau](https://github.com/superkhau))
  * [PR#211](https://github.com/strongloop/loopback-connector-mongodb/pull/211) Clean up package.json ([superkhau](https://github.com/superkhau))
  * [PR#213](https://github.com/strongloop/loopback-connector-mongodb/pull/213) Update AUTHORS ([superkhau](https://github.com/superkhau))
  * [PR#212](https://github.com/strongloop/loopback-connector-mongodb/pull/212) Add AUTHORS file ([superkhau](https://github.com/superkhau))
- * [@4ad6ba0](https://github.com/strongloop/loopback-connector-mongodb/commit/4ad6ba030f21832f2de74262178d3dcbecc4a926) Use ObjectId as internal storage for id ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#209](https://github.com/strongloop/loopback-connector-mongodb/pull/209) test: fix order of semver arguments ([rmg](https://github.com/rmg))
  * [@42f951c](https://github.com/strongloop/loopback-connector-mongodb/commit/42f951cdfd258c35b9488fe8bf232042b7d1150a) Add more tests for id coercion ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.13.2** ([Raymond Feng](https://github.com/raymondfeng))
@@ -107,7 +107,7 @@ since: (from 2015-11-17 to 2016-01-12)
 
 
 ### loopback-connector-soap
- * [@17c3404](https://github.com/strongloop/loopback-connector-soap/commit/17c34044f1da0f55b7276bb77cef8aba1bde5834) Fix typo in readme.md ([David Cheung](https://github.com/davidcheung))
+ * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
  * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
 
 
@@ -115,7 +115,7 @@ since: (from 2015-11-17 to 2016-01-12)
 ## SDKs
 
 ### loopback-sdk-angular
- * [@5807be2](https://github.com/strongloop/loopback-sdk-angular/commit/5807be21b535a0a1fe7d3fa4d4b39f5512c996e3) Fix npm test on windows ([David Cheung](https://github.com/davidcheung))
+ * [PR#202](https://github.com/strongloop/loopback-sdk-angular/pull/202) Fix npm test on windows ([davidcheung](https://github.com/davidcheung))
  * **Released 1.6.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#184](https://github.com/strongloop/loopback-sdk-angular/pull/184) Fix request interceptor to process all requests on same host as urlBase ([partap](https://github.com/partap))
  * [@6a24f4d](https://github.com/strongloop/loopback-sdk-angular/commit/6a24f4d9892d44335cbea8ec7a10055fc9b78168) Send auth header to all URLs on the same host ([Partap Davis](https://github.com/partap))
@@ -130,6 +130,7 @@ since: (from 2015-11-17 to 2016-01-12)
 
 
 ### loopback-sdk-ios
+ * [PR#91](https://github.com/strongloop/loopback-sdk-ios/pull/91) Remove docs and docs-1.0 ([crandmck](https://github.com/crandmck))
  * [PR#85](https://github.com/strongloop/loopback-sdk-ios/pull/85) Added resetPasswordWithEmail to trigger reset of the users password ([kgoedecke](https://github.com/kgoedecke))
  * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
  * [PR#79](https://github.com/strongloop/loopback-sdk-ios/pull/79) Enable unit test execution from `npm test` ([hideya](https://github.com/hideya))
