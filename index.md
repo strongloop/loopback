@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-18 to 2016-01-13)
+since: (from 2015-11-19 to 2016-01-14)
 ---
 
 ## Core
@@ -142,6 +142,7 @@ since: (from 2015-11-18 to 2016-01-13)
 ## Components
 
 ### loopback-component-explorer
+ * [PR#148](https://github.com/strongloop/loopback-component-explorer/pull/148) remove references to ubuntu font ([anthonyettinger](https://github.com/anthonyettinger))
  * [PR#141](https://github.com/strongloop/loopback-component-explorer/pull/141) Returning updated swaggerObject ([pktippa](https://github.com/pktippa))
  * [@2186b69](https://github.com/strongloop/loopback-component-explorer/commit/2186b69885f5b505ec59c0e2595a3c43e0759d9a) Update swaggerObject when a new model was added ([Pradeep Kumar Tippa](https://github.com/pktippa))
 
