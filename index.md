@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-19 to 2016-01-14)
+since: (from 2015-11-20 to 2016-01-15)
 ---
 
 ## Core
@@ -100,6 +100,13 @@ since: (from 2015-11-19 to 2016-01-14)
  * [@e7b5a69](https://github.com/strongloop/loopback-connector-oracle/commit/e7b5a6992afd87a12e0e903c7ecac868100fe958) Upgrade oracle driver version ([Raymond Feng](https://github.com/raymondfeng))
 
 
+### loopback-connector-redis
+ * [@5236baa](https://github.com/strongloop/loopback-connector-redis/commit/5236baac6f75ecd4826f0a3bc4983cda1f9b074f) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [@f9e76c7](https://github.com/strongloop/loopback-connector-redis/commit/f9e76c7e8428a6fe1f4ca3ff2ba2896ca9259978) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [@94a73a8](https://github.com/strongloop/loopback-connector-redis/commit/94a73a8385711b881256251b670910b6253c74f8) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [PR#11](https://github.com/strongloop/loopback-connector-redis/pull/11) Refactor ([superkhau](https://github.com/superkhau))
+
+
 ### loopback-connector-remote
  * [PR#31](https://github.com/strongloop/loopback-connector-remote/pull/31) Test fixes ([superkhau](https://github.com/superkhau))
  * [PR#29](https://github.com/strongloop/loopback-connector-remote/pull/29) Cleaning up obsolete or unused files & dependencies ([glesage](https://github.com/glesage))
@@ -142,6 +149,7 @@ since: (from 2015-11-19 to 2016-01-14)
 ## Components
 
 ### loopback-component-explorer
+ * **Released 2.2.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#148](https://github.com/strongloop/loopback-component-explorer/pull/148) remove references to ubuntu font ([anthonyettinger](https://github.com/anthonyettinger))
  * [PR#141](https://github.com/strongloop/loopback-component-explorer/pull/141) Returning updated swaggerObject ([pktippa](https://github.com/pktippa))
  * [@2186b69](https://github.com/strongloop/loopback-component-explorer/commit/2186b69885f5b505ec59c0e2595a3c43e0759d9a) Update swaggerObject when a new model was added ([Pradeep Kumar Tippa](https://github.com/pktippa))
