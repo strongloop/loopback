@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-11-20 to 2016-01-15)
+since: (from 2015-11-21 to 2016-01-16)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.14.0** (Simon Ho)
  * [PR#133](https://github.com/strongloop/generator-loopback/pull/133) Prevent readonly models in relation generator ([jannyHou](https://github.com/jannyHou))
  * [PR#134](https://github.com/strongloop/generator-loopback/pull/134) Fix ci timeout error. ([0candy](https://github.com/0candy))
  * [PR#121](https://github.com/strongloop/generator-loopback/pull/121) Add command line printing swagger definition to loopback ([0candy](https://github.com/0candy))
