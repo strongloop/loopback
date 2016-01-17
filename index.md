@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-21 to 2016-01-16)
+since: (from 2015-11-22 to 2016-01-17)
 ---
 
 ## Core
@@ -46,7 +46,7 @@ since: (from 2015-11-21 to 2016-01-16)
 
 
 ### loopback-datasource-juggler
- * [@a515026](https://github.com/strongloop/loopback-datasource-juggler/commit/a5150265ec728b0fb2415a3de5c304064d24130b) Fix a bug when validation is off for findOrCreate (Amir Jafarian)
+ * [PR#815](https://github.com/strongloop/loopback-datasource-juggler/pull/815) Implement `findOrCreate` for memory connector ([Amir-61](https://github.com/Amir-61))
  * [PR#790](https://github.com/strongloop/loopback-datasource-juggler/pull/790) [SEMVER-MAJOR] Always use bluebird as the Promise implementation ([jannyHou](https://github.com/jannyHou))
  * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
  * [PR#809](https://github.com/strongloop/loopback-datasource-juggler/pull/809) Fix broken code fencings in the docs ([alFReD-NSH](https://github.com/alFReD-NSH))
@@ -103,6 +103,7 @@ since: (from 2015-11-21 to 2016-01-16)
 
 
 ### loopback-connector-redis
+ * [PR#13](https://github.com/strongloop/loopback-connector-redis/pull/13) Use NPM run scripts instead of Make ([superkhau](https://github.com/superkhau))
  * [@5236baa](https://github.com/strongloop/loopback-connector-redis/commit/5236baac6f75ecd4826f0a3bc4983cda1f9b074f) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@f9e76c7](https://github.com/strongloop/loopback-connector-redis/commit/f9e76c7e8428a6fe1f4ca3ff2ba2896ca9259978) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@94a73a8](https://github.com/strongloop/loopback-connector-redis/commit/94a73a8385711b881256251b670910b6253c74f8) Update README.md ([Simon Ho](https://github.com/superkhau))
