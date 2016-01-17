@@ -46,6 +46,7 @@ since: (from 2015-11-21 to 2016-01-16)
 
 
 ### loopback-datasource-juggler
+ * [@a515026](https://github.com/strongloop/loopback-datasource-juggler/commit/a5150265ec728b0fb2415a3de5c304064d24130b) Fix a bug when validation is off for findOrCreate (Amir Jafarian)
  * [PR#790](https://github.com/strongloop/loopback-datasource-juggler/pull/790) [SEMVER-MAJOR] Always use bluebird as the Promise implementation ([jannyHou](https://github.com/jannyHou))
  * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
  * [PR#809](https://github.com/strongloop/loopback-datasource-juggler/pull/809) Fix broken code fencings in the docs ([alFReD-NSH](https://github.com/alFReD-NSH))
