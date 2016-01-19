@@ -1,7 +1,7 @@
 {
   "name": "loopback",
   "version": "3.0.0-alpha.1",
-  "pubishConfig": {
+  "publishConfig": {
     "tag": "next"
   },
   "description": "LoopBack: Open Source Framework for Node.js",
