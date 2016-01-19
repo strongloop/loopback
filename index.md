@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-23 to 2016-01-18)
+since: (from 2015-11-24 to 2016-01-19)
 ---
 
 ## Core
@@ -38,6 +38,7 @@ since: (from 2015-11-23 to 2016-01-18)
 
 
 ### loopback-boot
+ * [PR#169](https://github.com/strongloop/loopback-boot/pull/169) Fix lodash 4.0.0 breaking changes ([jdrouet](https://github.com/jdrouet))
  * **Released 2.16.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#165](https://github.com/strongloop/loopback-boot/pull/165) executor: allow loopback versions >= 3.0.0-alpha ([bajtos](https://github.com/bajtos))
  * **Released 2.15.0** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -117,6 +118,7 @@ since: (from 2015-11-23 to 2016-01-18)
 
 
 ### loopback-connector-soap
+ * [@da1c3b2](https://github.com/strongloop/loopback-connector-soap/commit/da1c3b2d634be7d6732966c3a1a76e261369ac6f) Remove example dir (Simon Ho)
  * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
  * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
 
