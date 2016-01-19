@@ -27,43 +27,45 @@ module.exports = function(Checkpoint) {
    * Get the current checkpoint id
    * @callback {Function} callback
    * @param {Error} err
-   * @param {Number} checkpointId The current checkpoint id
+   * @param {Number} checkpoint The current checkpoint seq
    */
-
   Checkpoint.current = function(cb) {
     var Checkpoint = this;
-    this.find({
-      limit: 1,
-      order: 'seq DESC'
-    }, function(err, checkpoints) {
-      if (err) return cb(err);
-      var checkpoint = checkpoints[0];
-      if (checkpoint) {
-        cb(null, checkpoint.seq);
-      } else {
-        Checkpoint.create({ seq: 1 }, function(err, checkpoint) {
-          if (err) return cb(err);
-          cb(null, checkpoint.seq);
-        });
-      }
+    Checkpoint._getSingleton(function(err, cp) {
+      cb(err, cp.seq);
     });
   };
 
-  Checkpoint.observe('before save', function(ctx, next) {
-    if (!ctx.instance) {
-      // Example: Checkpoint.updateAll() and Checkpoint.updateOrCreate()
-      return next(new Error('Checkpoint does not support partial updates.'));
-    }
+  Checkpoint._getSingleton = function(cb) {
+    var query = {limit: 1}; // match all instances, return only one
+    var initialData = {seq: 1};
+    this.findOrCreate(query, initialData, cb);
+  };
 
-    var model = ctx.instance;
-    if (!model.getId() && model.seq === undefined) {
-      model.constructor.current(function(err, seq) {
-        if (err) return next(err);
-        model.seq = seq + 1;
-        next();
+  /**
+   * Increase the current checkpoint if it already exists otherwise initialize it
+   * @callback {Function} callback
+   * @param {Error} err
+   * @param {Object} checkpoint The current checkpoint
+   */
+  Checkpoint.bumpLastSeq = function(cb) {
+    var Checkpoint = this;
+    Checkpoint._getSingleton(function(err, cp) {
+      if (err) return cb(err);
+      var originalSeq = cp.seq;
+      cp.seq++;
+      // Update the checkpoint but only if it was not changed under our hands
+      Checkpoint.updateAll({id: cp.id, seq: originalSeq}, {seq: cp.seq}, function(err, info) {
+        if (err) return cb(err);
+        // possible outcomes
+        // 1) seq was updated to seq+1 - exactly what we wanted!
+        // 2) somebody else already updated seq to seq+1 and our call was a no-op.
+        //   That should be ok, checkpoints are time based, so we reuse the one created just now
+        //  3) seq was bumped more than once, so we will be using a value that is behind the latest seq.
+        //    @bajtos is not entirely sure if this is ok, but since it wasn't handled by the current implementation either,
+        //    he thinks we can keep it this way.
+        cb(null, cp);
       });
-    } else {
-      next();
-    }
-  });
+    });
+  };
 };
