@@ -146,6 +146,7 @@ since: (from 2015-11-25 to 2016-01-20)
 ### loopback-sdk-ios
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.3.1** ([Raymond Feng](https://github.com/raymondfeng))
+ * [@63532d3](https://github.com/strongloop/loopback-sdk-ios/commit/63532d3e167b783b2f010f4f0006f8ce22879c2b) Upload now passes HTTP response as LBFile into success callback ([Kevin Gödecke](https://github.com/kgoedecke))
  * [PR#91](https://github.com/strongloop/loopback-sdk-ios/pull/91) Remove docs and docs-1.0 ([crandmck](https://github.com/crandmck))
  * [PR#85](https://github.com/strongloop/loopback-sdk-ios/pull/85) Added resetPasswordWithEmail to trigger reset of the users password ([kgoedecke](https://github.com/kgoedecke))
  * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
