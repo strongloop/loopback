@@ -19,6 +19,7 @@ since: (from 2015-11-25 to 2016-01-20)
 ### loopback
  * [PR#1908](https://github.com/strongloop/loopback/pull/1908) Checkpoint speedup ([Amir-61](https://github.com/Amir-61))
  * [@e06bd1a](https://github.com/strongloop/loopback/commit/e06bd1a8b0fe8e911eb656791ff1e9c9e672ecfc) Fix typo in package.json (publishConfig) ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@492e7da](https://github.com/strongloop/loopback/commit/492e7da3e9b0aaa821843cc94905c6d2df03ee96) Start development of 3.0 ([Candy](https://github.com/0candy))
  * [PR#1953](https://github.com/strongloop/loopback/pull/1953) Fix description for User.prototype.hasPassword ([jannyHou](https://github.com/jannyHou))
  * [PR#1944](https://github.com/strongloop/loopback/pull/1944) Remove unused code from loopback-testing-helper ([superkhau](https://github.com/superkhau))
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
@@ -71,6 +72,7 @@ since: (from 2015-11-25 to 2016-01-20)
 
 
 ### strong-remoting
+ * [@888a2ed](https://github.com/strongloop/strong-remoting/commit/888a2edfb13e23266208f4b5d92c844a95dae84f) Setup transition to 3.0. ([Candy](https://github.com/0candy))
  * **Released 2.24.0** ([Ritchie Martori](https://github.com/ritch))
  * [@eb90d1c](https://github.com/strongloop/strong-remoting/commit/eb90d1c544144d8a5cffb8cfce1d3deca0a6125b) Remove old rest-models example ([Ritchie Martori](https://github.com/ritch))
  * **Released 2.23.2** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -87,6 +89,7 @@ since: (from 2015-11-25 to 2016-01-20)
 
 ### loopback-connector-mongodb
  * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
+ * [@eaefc4a](https://github.com/strongloop/loopback-connector-mongodb/commit/eaefc4a1406d57b2f7bcb5ce94cd585f9a2cf415) Check dataSource.connecting to prevent race conditions ([Fabien Franzen](https://github.com/fabien))
  * [PR#215](https://github.com/strongloop/loopback-connector-mongodb/pull/215) Remove email from AUTHORS ([superkhau](https://github.com/superkhau))
  * [PR#214](https://github.com/strongloop/loopback-connector-mongodb/pull/214) Update description in README.md ([superkhau](https://github.com/superkhau))
  * [PR#211](https://github.com/strongloop/loopback-connector-mongodb/pull/211) Clean up package.json ([superkhau](https://github.com/superkhau))
