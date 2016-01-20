@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-24 to 2016-01-19)
+since: (from 2015-11-25 to 2016-01-20)
 ---
 
 ## Core
@@ -17,9 +17,10 @@ since: (from 2015-11-24 to 2016-01-19)
 
 
 ### loopback
+ * [PR#1908](https://github.com/strongloop/loopback/pull/1908) Checkpoint speedup ([Amir-61](https://github.com/Amir-61))
+ * [@e06bd1a](https://github.com/strongloop/loopback/commit/e06bd1a8b0fe8e911eb656791ff1e9c9e672ecfc) Fix typo in package.json (publishConfig) ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1953](https://github.com/strongloop/loopback/pull/1953) Fix description for User.prototype.hasPassword ([jannyHou](https://github.com/jannyHou))
  * [PR#1944](https://github.com/strongloop/loopback/pull/1944) Remove unused code from loopback-testing-helper ([superkhau](https://github.com/superkhau))
- * [@08a2786](https://github.com/strongloop/loopback/commit/08a2786b0491e13eb5a64f83b75bd63f317d955d) Checkpoint speedup (Amir Jafarian)
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
  * [PR#1935](https://github.com/strongloop/loopback/pull/1935) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
@@ -119,7 +120,7 @@ since: (from 2015-11-24 to 2016-01-19)
 
 
 ### loopback-connector-soap
- * [@da1c3b2](https://github.com/strongloop/loopback-connector-soap/commit/da1c3b2d634be7d6732966c3a1a76e261369ac6f) Remove example dir (Simon Ho)
+ * [PR#32](https://github.com/strongloop/loopback-connector-soap/pull/32) Remove example dir ([superkhau](https://github.com/superkhau))
  * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
  * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
 
@@ -143,6 +144,8 @@ since: (from 2015-11-24 to 2016-01-19)
 
 
 ### loopback-sdk-ios
+ * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
+ * **Released 1.3.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#91](https://github.com/strongloop/loopback-sdk-ios/pull/91) Remove docs and docs-1.0 ([crandmck](https://github.com/crandmck))
  * [PR#85](https://github.com/strongloop/loopback-sdk-ios/pull/85) Added resetPasswordWithEmail to trigger reset of the users password ([kgoedecke](https://github.com/kgoedecke))
  * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
