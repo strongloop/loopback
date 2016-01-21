@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-11-25 to 2016-01-20)
+since: (from 2015-11-26 to 2016-01-21)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#136](https://github.com/strongloop/generator-loopback/pull/136) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.14.0** (Simon Ho)
  * [PR#133](https://github.com/strongloop/generator-loopback/pull/133) Prevent readonly models in relation generator ([jannyHou](https://github.com/jannyHou))
  * [PR#134](https://github.com/strongloop/generator-loopback/pull/134) Fix ci timeout error. ([0candy](https://github.com/0candy))
@@ -17,9 +18,9 @@ since: (from 2015-11-25 to 2016-01-20)
 
 
 ### loopback
+ * [PR#1957](https://github.com/strongloop/loopback/pull/1957) Start development of 3.0 ([0candy](https://github.com/0candy))
  * [PR#1908](https://github.com/strongloop/loopback/pull/1908) Checkpoint speedup ([Amir-61](https://github.com/Amir-61))
  * [@e06bd1a](https://github.com/strongloop/loopback/commit/e06bd1a8b0fe8e911eb656791ff1e9c9e672ecfc) Fix typo in package.json (publishConfig) ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@492e7da](https://github.com/strongloop/loopback/commit/492e7da3e9b0aaa821843cc94905c6d2df03ee96) Start development of 3.0 ([Candy](https://github.com/0candy))
  * [PR#1953](https://github.com/strongloop/loopback/pull/1953) Fix description for User.prototype.hasPassword ([jannyHou](https://github.com/jannyHou))
  * [PR#1944](https://github.com/strongloop/loopback/pull/1944) Remove unused code from loopback-testing-helper ([superkhau](https://github.com/superkhau))
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
@@ -65,6 +66,7 @@ since: (from 2015-11-25 to 2016-01-20)
 
 
 ### loopback-swagger
+ * [PR#23](https://github.com/strongloop/loopback-swagger/pull/23) Treat property as type 'any' if not specified ([0candy](https://github.com/0candy))
  * [PR#22](https://github.com/strongloop/loopback-swagger/pull/22) Exclude definitions that are not referenced ([0candy](https://github.com/0candy))
  * [PR#19](https://github.com/strongloop/loopback-swagger/pull/19) Fix handling of allOf when generating models ([mastersingh24](https://github.com/mastersingh24))
  * **Released 2.2.3** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -72,7 +74,7 @@ since: (from 2015-11-25 to 2016-01-20)
 
 
 ### strong-remoting
- * [@888a2ed](https://github.com/strongloop/strong-remoting/commit/888a2edfb13e23266208f4b5d92c844a95dae84f) Setup transition to 3.0. ([Candy](https://github.com/0candy))
+ * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
  * **Released 2.24.0** ([Ritchie Martori](https://github.com/ritch))
  * [@eb90d1c](https://github.com/strongloop/strong-remoting/commit/eb90d1c544144d8a5cffb8cfce1d3deca0a6125b) Remove old rest-models example ([Ritchie Martori](https://github.com/ritch))
  * **Released 2.23.2** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -101,8 +103,8 @@ since: (from 2015-11-25 to 2016-01-20)
 
 
 ### loopback-connector-mongodb
+ * [PR#221](https://github.com/strongloop/loopback-connector-mongodb/pull/221) Check dataSource.connecting to prevent race conditions ([fabien](https://github.com/fabien))
  * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
- * [@eaefc4a](https://github.com/strongloop/loopback-connector-mongodb/commit/eaefc4a1406d57b2f7bcb5ce94cd585f9a2cf415) Check dataSource.connecting to prevent race conditions ([Fabien Franzen](https://github.com/fabien))
  * [PR#215](https://github.com/strongloop/loopback-connector-mongodb/pull/215) Remove email from AUTHORS ([superkhau](https://github.com/superkhau))
  * [PR#214](https://github.com/strongloop/loopback-connector-mongodb/pull/214) Update description in README.md ([superkhau](https://github.com/superkhau))
  * [PR#211](https://github.com/strongloop/loopback-connector-mongodb/pull/211) Clean up package.json ([superkhau](https://github.com/superkhau))
@@ -114,6 +116,10 @@ since: (from 2015-11-25 to 2016-01-20)
  * [@cf53567](https://github.com/strongloop/loopback-connector-mongodb/commit/cf53567142f9500f250aeefc1c61ad4271c8ba20) Make sure null/undefined id is not coerced ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#203](https://github.com/strongloop/loopback-connector-mongodb/pull/203) Allow runtime configurable test environment ([superkhau](https://github.com/superkhau))
  * [@de7258a](https://github.com/strongloop/loopback-connector-mongodb/commit/de7258a44dd66d40418e51dae86be1d419d3c206) changed env variable fortest servers ([cgole](https://github.com/cgole))
+
+
+### loopback-connector-mssql
+ * [PR#68](https://github.com/strongloop/loopback-connector-mssql/pull/68) Add help for Azure SQL users ([sochka](https://github.com/sochka))
 
 
 ### loopback-connector-oracle
@@ -160,9 +166,9 @@ since: (from 2015-11-25 to 2016-01-20)
 
 
 ### loopback-sdk-ios
+ * [PR#90](https://github.com/strongloop/loopback-sdk-ios/pull/90) Upload now passes HTTP response as LBFile into success callback ([kgoedecke](https://github.com/kgoedecke))
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.3.1** ([Raymond Feng](https://github.com/raymondfeng))
- * [@63532d3](https://github.com/strongloop/loopback-sdk-ios/commit/63532d3e167b783b2f010f4f0006f8ce22879c2b) Upload now passes HTTP response as LBFile into success callback ([Kevin Gödecke](https://github.com/kgoedecke))
  * [PR#91](https://github.com/strongloop/loopback-sdk-ios/pull/91) Remove docs and docs-1.0 ([crandmck](https://github.com/crandmck))
  * [PR#85](https://github.com/strongloop/loopback-sdk-ios/pull/85) Added resetPasswordWithEmail to trigger reset of the users password ([kgoedecke](https://github.com/kgoedecke))
  * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
