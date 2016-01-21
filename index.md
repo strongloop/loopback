@@ -135,6 +135,10 @@ since: (from 2015-11-26 to 2016-01-21)
  * [@e7b5a69](https://github.com/strongloop/loopback-connector-oracle/commit/e7b5a6992afd87a12e0e903c7ecac868100fe958) Upgrade oracle driver version ([Raymond Feng](https://github.com/raymondfeng))
 
 
+### loopback-connector-postgresql
+ * [@8c90513](https://github.com/strongloop/loopback-connector-postgresql/commit/8c905139895b75daa3b00ad1fa62d915b039afcc) Upgrade should to 8.0.2 (Simon Ho)
+
+
 ### loopback-connector-redis
  * [PR#13](https://github.com/strongloop/loopback-connector-redis/pull/13) Use NPM run scripts instead of Make ([superkhau](https://github.com/superkhau))
  * [@5236baa](https://github.com/strongloop/loopback-connector-redis/commit/5236baac6f75ecd4826f0a3bc4983cda1f9b074f) Update README.md ([Simon Ho](https://github.com/superkhau))
