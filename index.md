@@ -102,6 +102,14 @@ since: (from 2015-11-26 to 2016-01-21)
  * [@326b006](https://github.com/strongloop/loopback-connector-cloudant/commit/326b006fd4980f8dadf467df1a5dabce01c7afb3) first commit, most CURD operations are functional ([Anthony Ffrench](https://github.com/tonyffrench))
 
 
+### loopback-connector-db2
+ * [@c4448e3](https://github.com/strongloop/loopback-connector-db2/commit/c4448e34fbb6a04c8247df3a03479caa25daf943) update README, fix timestap issue, start to work on limit and offset ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@b03d365](https://github.com/strongloop/loopback-connector-db2/commit/b03d3657b6b995b25f2f6cd07cb49dee9b65e25a) use version 0.17 of ibm_db driver ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@b780bbb](https://github.com/strongloop/loopback-connector-db2/commit/b780bbbba1bc69558fbab323a5539ebc032c43d1) Retrieve the correct effected row counts for UPDATE and DELETE ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@cf80635](https://github.com/strongloop/loopback-connector-db2/commit/cf806350af12ebc2cd75ac38972c474c6ac5af02) DB2 loopback connector initial commit ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@6dd0688](https://github.com/strongloop/loopback-connector-db2/commit/6dd0688c9dfa0320ecb00484a6faa465c25b59bb) first commit ([Anthony Ffrench](https://github.com/tonyffrench))
+
+
 ### loopback-connector-mongodb
  * [PR#221](https://github.com/strongloop/loopback-connector-mongodb/pull/221) Check dataSource.connecting to prevent race conditions ([fabien](https://github.com/fabien))
  * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
