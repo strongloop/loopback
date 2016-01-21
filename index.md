@@ -87,6 +87,19 @@ since: (from 2015-11-25 to 2016-01-20)
 
 ## Connectors
 
+### loopback-connector-cloudant
+ * [@aef5672](https://github.com/strongloop/loopback-connector-cloudant/commit/aef5672d16d5d250c9ebadd9c7fa67fafad3fa14) Updates to conform with StrongLoop eslint config ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@8c5e025](https://github.com/strongloop/loopback-connector-cloudant/commit/8c5e02511c22717cb098cc2108049c647df71ed7) Synchronize the configuration settings with the documentation. remove any hardcoded modelIndex (loopback__model__name) cases ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@05df20f](https://github.com/strongloop/loopback-connector-cloudant/commit/05df20f5d2547f312ea1f9ce9a1040b6acc35686) Add example usage (example/example.js) ... minor fixes ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@58fe2cc](https://github.com/strongloop/loopback-connector-cloudant/commit/58fe2cc8b46a993d474cf8f2d94a0cc7c80cbd5c) README documentation and intro ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@93e250e](https://github.com/strongloop/loopback-connector-cloudant/commit/93e250ec8b35ecfe36cb10ddf0fa13fb4989f53d) Implement save(), findByID(), find(), updateOrCreate(). ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@11c383c](https://github.com/strongloop/loopback-connector-cloudant/commit/11c383c7e568f6f056a67b7d37221d05772d1b52) Always sort by _id. Execute deletes in parallel. ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@086790d](https://github.com/strongloop/loopback-connector-cloudant/commit/086790d580f514acc45809cdb31781ff3c08a628) Basic discovery for Models and Schemas ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@4b5903b](https://github.com/strongloop/loopback-connector-cloudant/commit/4b5903b611ae1f9bbc000f2e7d19a19793047c9a) Implement updataAll and updateAttributes. Auto formating. ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@01f02de](https://github.com/strongloop/loopback-connector-cloudant/commit/01f02de099a7ffb8a6f21dc2d883ed0aa712c41f) Support for per model db names. Support for order filters (using Cloudant Query). Additional test cases. ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@326b006](https://github.com/strongloop/loopback-connector-cloudant/commit/326b006fd4980f8dadf467df1a5dabce01c7afb3) first commit, most CURD operations are functional ([Anthony Ffrench](https://github.com/tonyffrench))
+
+
 ### loopback-connector-mongodb
  * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
  * [@eaefc4a](https://github.com/strongloop/loopback-connector-mongodb/commit/eaefc4a1406d57b2f7bcb5ce94cd585f9a2cf415) Check dataSource.connecting to prevent race conditions ([Fabien Franzen](https://github.com/fabien))
