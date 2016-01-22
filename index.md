@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-26 to 2016-01-21)
+since: (from 2015-11-27 to 2016-01-22)
 ---
 
 ## Core
@@ -103,6 +103,9 @@ since: (from 2015-11-26 to 2016-01-21)
 
 
 ### loopback-connector-db2
+ * [@76a8dc1](https://github.com/strongloop/loopback-connector-db2/commit/76a8dc19b40f249749a8a00720336888b5dd90ee) fix another hardcoded id case vs model.idName ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@a190cc5](https://github.com/strongloop/loopback-connector-db2/commit/a190cc5766c35ac1a0920392e597cfe50cfdc4f1) update <dot>gitignore add <dot>npmignore ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@c79a328](https://github.com/strongloop/loopback-connector-db2/commit/c79a328ce7335d7ed71059a72bab9dfdd7852623) add support for limit and offset ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@c4448e3](https://github.com/strongloop/loopback-connector-db2/commit/c4448e34fbb6a04c8247df3a03479caa25daf943) update README, fix timestap issue, start to work on limit and offset ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@b03d365](https://github.com/strongloop/loopback-connector-db2/commit/b03d3657b6b995b25f2f6cd07cb49dee9b65e25a) use version 0.17 of ibm_db driver ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@b780bbb](https://github.com/strongloop/loopback-connector-db2/commit/b780bbbba1bc69558fbab323a5539ebc032c43d1) Retrieve the correct effected row counts for UPDATE and DELETE ([Anthony Ffrench](https://github.com/tonyffrench))
@@ -111,6 +114,7 @@ since: (from 2015-11-26 to 2016-01-21)
 
 
 ### loopback-connector-mongodb
+ * [PR#216](https://github.com/strongloop/loopback-connector-mongodb/pull/216) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#221](https://github.com/strongloop/loopback-connector-mongodb/pull/221) Check dataSource.connecting to prevent race conditions ([fabien](https://github.com/fabien))
  * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
  * [PR#215](https://github.com/strongloop/loopback-connector-mongodb/pull/215) Remove email from AUTHORS ([superkhau](https://github.com/superkhau))
@@ -127,19 +131,26 @@ since: (from 2015-11-26 to 2016-01-21)
 
 
 ### loopback-connector-mssql
+ * [PR#64](https://github.com/strongloop/loopback-connector-mssql/pull/64) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#68](https://github.com/strongloop/loopback-connector-mssql/pull/68) Add help for Azure SQL users ([sochka](https://github.com/sochka))
 
 
+### loopback-connector-mysql
+ * [PR#146](https://github.com/strongloop/loopback-connector-mysql/pull/146) Upgrade `should` module ([Amir-61](https://github.com/Amir-61))
+
+
 ### loopback-connector-oracle
+ * [PR#56](https://github.com/strongloop/loopback-connector-oracle/pull/56) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * **Released 2.3.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [@e7b5a69](https://github.com/strongloop/loopback-connector-oracle/commit/e7b5a6992afd87a12e0e903c7ecac868100fe958) Upgrade oracle driver version ([Raymond Feng](https://github.com/raymondfeng))
 
 
 ### loopback-connector-postgresql
- * [@8c90513](https://github.com/strongloop/loopback-connector-postgresql/commit/8c905139895b75daa3b00ad1fa62d915b039afcc) Upgrade should to 8.0.2 (Simon Ho)
+ * [PR#120](https://github.com/strongloop/loopback-connector-postgresql/pull/120) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-connector-redis
+ * [PR#14](https://github.com/strongloop/loopback-connector-redis/pull/14) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#13](https://github.com/strongloop/loopback-connector-redis/pull/13) Use NPM run scripts instead of Make ([superkhau](https://github.com/superkhau))
  * [@5236baa](https://github.com/strongloop/loopback-connector-redis/commit/5236baac6f75ecd4826f0a3bc4983cda1f9b074f) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@f9e76c7](https://github.com/strongloop/loopback-connector-redis/commit/f9e76c7e8428a6fe1f4ca3ff2ba2896ca9259978) Update README.md ([Simon Ho](https://github.com/superkhau))
@@ -157,6 +168,10 @@ since: (from 2015-11-26 to 2016-01-21)
  * [PR#32](https://github.com/strongloop/loopback-connector-soap/pull/32) Remove example dir ([superkhau](https://github.com/superkhau))
  * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
  * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
+
+
+### loopback-connector-sqlite3
+ * [PR#12](https://github.com/strongloop/loopback-connector-sqlite3/pull/12) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
 
