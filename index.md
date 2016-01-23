@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-11-27 to 2016-01-22)
+since: (from 2015-11-28 to 2016-01-23)
 ---
 
 ## Core
@@ -18,6 +18,7 @@ since: (from 2015-11-27 to 2016-01-22)
 
 
 ### loopback
+ * [PR#1983](https://github.com/strongloop/loopback/pull/1983) Correct JSDoc findOrCreate() callback in PersistedModel ([noderat](https://github.com/noderat))
  * [PR#1957](https://github.com/strongloop/loopback/pull/1957) Start development of 3.0 ([0candy](https://github.com/0candy))
  * [PR#1908](https://github.com/strongloop/loopback/pull/1908) Checkpoint speedup ([Amir-61](https://github.com/Amir-61))
  * [@e06bd1a](https://github.com/strongloop/loopback/commit/e06bd1a8b0fe8e911eb656791ff1e9c9e672ecfc) Fix typo in package.json (publishConfig) ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -51,6 +52,12 @@ since: (from 2015-11-27 to 2016-01-22)
 
 
 ### loopback-datasource-juggler
+ * [@d49dfa0](https://github.com/strongloop/loopback-datasource-juggler/commit/d49dfa0293fe3c649298a283a82e7768104ee754) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [@4ebbd0e](https://github.com/strongloop/loopback-datasource-juggler/commit/4ebbd0e5c2ebf5481c5cf1606fa078abeb4bd2d2) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [@c5f0be8](https://github.com/strongloop/loopback-datasource-juggler/commit/c5f0be83a84baf7df19cdfedc6951b6f3d3be7ee) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [PR#828](https://github.com/strongloop/loopback-datasource-juggler/pull/828) Add unit test to verify fix for #754 ([superkhau](https://github.com/superkhau))
+ * [@2cdc4dd](https://github.com/strongloop/loopback-datasource-juggler/commit/2cdc4ddcbf59d5036b230db8742ec636d3b136d0) Update package.json ([Janny](https://github.com/jannyHou))
+ * [@ccf52f0](https://github.com/strongloop/loopback-datasource-juggler/commit/ccf52f0822ee7d590cf979cc75d337f0b77724c7) Try mocha test ([Janny](https://github.com/jannyHou))
  * [PR#815](https://github.com/strongloop/loopback-datasource-juggler/pull/815) Implement `findOrCreate` for memory connector ([Amir-61](https://github.com/Amir-61))
  * [PR#790](https://github.com/strongloop/loopback-datasource-juggler/pull/790) [SEMVER-MAJOR] Always use bluebird as the Promise implementation ([jannyHou](https://github.com/jannyHou))
  * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
@@ -90,6 +97,7 @@ since: (from 2015-11-27 to 2016-01-22)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * [@4798b84](https://github.com/strongloop/loopback-connector-cloudant/commit/4798b843ea501a0f0ac5bff7319827766e87c0f4) default to sorting by id, fix custom id naming, implement filter.include ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@aef5672](https://github.com/strongloop/loopback-connector-cloudant/commit/aef5672d16d5d250c9ebadd9c7fa67fafad3fa14) Updates to conform with StrongLoop eslint config ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@8c5e025](https://github.com/strongloop/loopback-connector-cloudant/commit/8c5e02511c22717cb098cc2108049c647df71ed7) Synchronize the configuration settings with the documentation. remove any hardcoded modelIndex (loopback__model__name) cases ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@05df20f](https://github.com/strongloop/loopback-connector-cloudant/commit/05df20f5d2547f312ea1f9ce9a1040b6acc35686) Add example usage (example/example.js) ... minor fixes ([Anthony Ffrench](https://github.com/tonyffrench))
@@ -103,6 +111,9 @@ since: (from 2015-11-27 to 2016-01-22)
 
 
 ### loopback-connector-db2
+ * [@887da69](https://github.com/strongloop/loopback-connector-db2/commit/887da695c7c85e70d3cf173de1a6c1c92ccf2593) Update package.json an init.js ([Quentin Presley](https://github.com/qpresley))
+ * [@ab69ca4](https://github.com/strongloop/loopback-connector-db2/commit/ab69ca40ec7059c4455ec947dad9833281c798b0) Fix up some lint/test issues ([Quentin Presley](https://github.com/qpresley))
+ * [@a2c436c](https://github.com/strongloop/loopback-connector-db2/commit/a2c436c9d2f6d0da5c4fee670ddfdb699a72a188) Add settings.schema to the default schema name that is used to qualify unqualified database objects. closes #2 ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@76a8dc1](https://github.com/strongloop/loopback-connector-db2/commit/76a8dc19b40f249749a8a00720336888b5dd90ee) fix another hardcoded id case vs model.idName ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@a190cc5](https://github.com/strongloop/loopback-connector-db2/commit/a190cc5766c35ac1a0920392e597cfe50cfdc4f1) update <dot>gitignore add <dot>npmignore ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@c79a328](https://github.com/strongloop/loopback-connector-db2/commit/c79a328ce7335d7ed71059a72bab9dfdd7852623) add support for limit and offset ([Anthony Ffrench](https://github.com/tonyffrench))
@@ -159,9 +170,15 @@ since: (from 2015-11-27 to 2016-01-22)
 
 
 ### loopback-connector-remote
+ * [@5b721fe](https://github.com/strongloop/loopback-connector-remote/commit/5b721fe016a158bea4f2e2343a8ae51d2c17671c) Update README.md ([Simon Ho](https://github.com/superkhau))
+ * [@14bfe9e](https://github.com/strongloop/loopback-connector-remote/commit/14bfe9eaeaef98b242c7de5d36f2b03be8bd6d07) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [PR#31](https://github.com/strongloop/loopback-connector-remote/pull/31) Test fixes ([superkhau](https://github.com/superkhau))
  * [PR#29](https://github.com/strongloop/loopback-connector-remote/pull/29) Cleaning up obsolete or unused files & dependencies ([glesage](https://github.com/glesage))
  * [PR#28](https://github.com/strongloop/loopback-connector-remote/pull/28) Add test for custom http.path configuration. ([richardpringle](https://github.com/richardpringle))
+
+
+### loopback-connector-rest
+ * [PR#47](https://github.com/strongloop/loopback-connector-rest/pull/47) Remove example dir ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-connector-soap
