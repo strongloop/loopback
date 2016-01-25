@@ -18,18 +18,6 @@ loopback.User.settings.saltWorkFactor = 4;
 
 beforeEach(function() {
   this.app = app = loopback();
-
-  // setup default data sources
-  loopback.setDefaultDataSourceForType('db', {
-    connector: loopback.Memory,
-  });
-
-  loopback.setDefaultDataSourceForType('mail', {
-    connector: loopback.Mail,
-    transports: [
-      { type: 'STUB' },
-    ],
-  });
 });
 
 assertValidDataSource = function(dataSource) {

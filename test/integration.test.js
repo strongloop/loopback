@@ -24,7 +24,6 @@ describe('loopback application', function() {
     function setupAppWithStreamingMethod() {
       app.dataSource('db', {
         connector: loopback.Memory,
-        defaultForType: 'db',
       });
       var db = app.datasources.db;
 
