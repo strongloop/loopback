@@ -36,7 +36,6 @@ describe('loopback', function() {
         'Change',
         'Checkpoint',
         'Connector',
-        'DataModel',
         'DataSource',
         'Email',
         'GeoPoint',
