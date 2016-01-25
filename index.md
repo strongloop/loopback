@@ -23,6 +23,7 @@ since: (from 2015-11-30 to 2016-01-25)
  * [PR#1908](https://github.com/strongloop/loopback/pull/1908) Checkpoint speedup ([Amir-61](https://github.com/Amir-61))
  * [@e06bd1a](https://github.com/strongloop/loopback/commit/e06bd1a8b0fe8e911eb656791ff1e9c9e672ecfc) Fix typo in package.json (publishConfig) ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#1953](https://github.com/strongloop/loopback/pull/1953) Fix description for User.prototype.hasPassword ([jannyHou](https://github.com/jannyHou))
+ * [@2741d50](https://github.com/strongloop/loopback/commit/2741d50342ff877628d2fffeeba7b16f4a8985bb) Hide verificationToken ([Samuel Gaus](https://github.com/gausie))
  * [PR#1944](https://github.com/strongloop/loopback/pull/1944) Remove unused code from loopback-testing-helper ([superkhau](https://github.com/superkhau))
  * [PR#1896](https://github.com/strongloop/loopback/pull/1896) [SEMVER-MAJOR] Always use bluebird as promise library ([jannyHou](https://github.com/jannyHou))
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
@@ -248,6 +249,7 @@ since: (from 2015-11-30 to 2016-01-25)
 
 
 ### loopback-component-storage
+ * [@8eaf9f5](https://github.com/strongloop/loopback-component-storage/commit/8eaf9f54a0d0bbf1c9ae7da0e1f6b0216510c41a) Expose `originalFilename` property ([Santiago Osorio](https://github.com/sanosom))
  * [@24cd1a6](https://github.com/strongloop/loopback-component-storage/commit/24cd1a619e33ed1882f6ea818e3e2bd450d51d62) Remove test file ([Raymond Feng](https://github.com/raymondfeng))
  * [@685db48](https://github.com/strongloop/loopback-component-storage/commit/685db4819d972c07c45d58a1774f76dbdf95554d) Replace image ([Raymond Feng](https://github.com/raymondfeng))
 
