@@ -111,6 +111,9 @@ since: (from 2015-11-29 to 2016-01-24)
 
 
 ### loopback-connector-db2
+ * [@2e7176e](https://github.com/strongloop/loopback-connector-db2/commit/2e7176ef0a7365c30a2ca8996c24dd0fc8dda7fa) Update README.md ([Rand McKinney](https://github.com/crandmck))
+ * [@272f179](https://github.com/strongloop/loopback-connector-db2/commit/272f179f8e32a96b08faf71340367ea61bdf2453) Add title ([crandmck](https://github.com/crandmck))
+ * [@9593cdd](https://github.com/strongloop/loopback-connector-db2/commit/9593cdd8c5e78214ac31856afdabe29d9a8d022d) Initial edits of README ([crandmck](https://github.com/crandmck))
  * [@887da69](https://github.com/strongloop/loopback-connector-db2/commit/887da695c7c85e70d3cf173de1a6c1c92ccf2593) Update package.json an init.js ([Quentin Presley](https://github.com/qpresley))
  * [@ab69ca4](https://github.com/strongloop/loopback-connector-db2/commit/ab69ca40ec7059c4455ec947dad9833281c798b0) Fix up some lint/test issues ([Quentin Presley](https://github.com/qpresley))
  * [@a2c436c](https://github.com/strongloop/loopback-connector-db2/commit/a2c436c9d2f6d0da5c4fee670ddfdb699a72a188) Add settings.schema to the default schema name that is used to qualify unqualified database objects. closes #2 ([Anthony Ffrench](https://github.com/tonyffrench))
