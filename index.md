@@ -45,6 +45,7 @@ since: (from 2015-12-01 to 2016-01-26)
 
 ### loopback-datasource-juggler
  * [PR#826](https://github.com/strongloop/loopback-datasource-juggler/pull/826) Refactor `updateAttributes` ([Amir-61](https://github.com/Amir-61))
+ * [@1e9affe](https://github.com/strongloop/loopback-datasource-juggler/commit/1e9affe4ba194831e35827fb0c17884fb1c9b345) Change "npm test" to call mocha directly ([Hans(Zhenghan) Zhang](https://github.com/Hans-Zhang28))
  * [@d49dfa0](https://github.com/strongloop/loopback-datasource-juggler/commit/d49dfa0293fe3c649298a283a82e7768104ee754) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@4ebbd0e](https://github.com/strongloop/loopback-datasource-juggler/commit/4ebbd0e5c2ebf5481c5cf1606fa078abeb4bd2d2) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@c5f0be8](https://github.com/strongloop/loopback-datasource-juggler/commit/c5f0be83a84baf7df19cdfedc6951b6f3d3be7ee) Update README.md ([Simon Ho](https://github.com/superkhau))
