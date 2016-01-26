@@ -32,7 +32,7 @@
   "options": {
     "caseSensitiveEmail": true
   },
-  "hidden": ["password"],
+  "hidden": ["password", "verificationToken"],
   "acls": [
     {
       "principalType": "ROLE",

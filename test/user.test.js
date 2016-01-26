@@ -1320,6 +1320,12 @@ describe('User', function() {
         });
       });
 
+      it('should hide verification tokens from user JSON', function(done) {
+        var user = new User({email: 'bar@bat.com', password: 'bar', verificationToken: 'a-token' });
+        var data = user.toJSON();
+        assert(!('verificationToken' in data));
+        done();
+      });
     });
 
     describe('User.confirm(options, fn)', function() {
