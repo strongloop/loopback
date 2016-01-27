@@ -82,6 +82,38 @@ describe('Change', function() {
     });
   });
 
+  describe('Change.rectifyModelChanges - promise variant', function() {
+    describe('using an existing untracked model', function() {
+      beforeEach(function(done) {
+        var test = this;
+        Change.rectifyModelChanges(this.modelName, [this.modelId])
+          .then(function(trackedChanges) {
+            done();
+          })
+          .catch(done);
+      });
+
+      it('should create an entry', function(done) {
+        var test = this;
+        Change.find()
+          .then(function(trackedChanges) {
+            assert.equal(trackedChanges[0].modelId, test.modelId.toString());
+            done();
+          })
+          .catch(done);
+      });
+
+      it('should only create one change', function(done) {
+        Change.count()
+          .then(function(count) {
+            assert.equal(count, 1);
+            done();
+          })
+          .catch(done);
+      });
+    });
+  });
+
   describe('Change.findOrCreateChange(modelName, modelId, callback)', function() {
 
     describe('when a change doesnt exist', function() {
@@ -92,6 +124,27 @@ describe('Change', function() {
           test.result = result;
           done();
         });
+      });
+
+      it('should create an entry', function(done) {
+        var test = this;
+        Change.findById(this.result.id, function(err, change) {
+          if (err) return done(err);
+          assert.equal(change.id, test.result.id);
+          done();
+        });
+      });
+    });
+
+    describe('when a change doesnt exist - promise variant', function() {
+      beforeEach(function(done) {
+        var test = this;
+        Change.findOrCreateChange(this.modelName, this.modelId)
+        .then(function(result) {
+          test.result = result;
+          done();
+        })
+        .catch(done);
       });
 
       it('should create an entry', function(done) {
@@ -219,6 +272,28 @@ describe('Change', function() {
     });
   });
 
+  describe('change.rectify - promise variant', function() {
+    var change;
+    beforeEach(function(done) {
+      Change.findOrCreateChange(this.modelName, this.modelId)
+        .then(function(ch) {
+          change = ch;
+          done();
+        })
+        .catch(done);
+    });
+
+    it('should create a new change with the correct revision', function(done) {
+      var test = this;
+      change.rectify()
+        .then(function(ch) {
+          assert.equal(ch.rev, test.revisionForModel);
+          done();
+        })
+        .catch(done);
+    });
+  });
+
   describe('change.currentRevision(callback)', function() {
     it('should get the correct revision', function(done) {
       var test = this;
@@ -231,6 +306,23 @@ describe('Change', function() {
         assert.equal(rev, test.revisionForModel);
         done();
       });
+    });
+  });
+
+  describe('change.currentRevision - promise variant', function() {
+    it('should get the correct revision', function(done) {
+      var test = this;
+      var change = new Change({
+        modelName: this.modelName,
+        modelId: this.modelId
+      });
+
+      change.currentRevision()
+      .then(function(rev) {
+        assert.equal(rev, test.revisionForModel);
+        done();
+      })
+      .catch(done);
     });
   });
 
@@ -372,6 +464,25 @@ describe('Change', function() {
         assert.equal(diff.conflicts.length, 1);
         done();
       });
+    });
+
+    it('should return delta and conflict lists - promise variant', function(done) {
+      var remoteChanges = [
+        // an update => should result in a delta
+        {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
+        // no change => should not result in a delta / conflict
+        {rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
+        // a conflict => should result in a conflict
+        {rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1},
+      ];
+
+      Change.diff(this.modelName, 0, remoteChanges)
+        .then(function(diff) {
+          assert.equal(diff.deltas.length, 1);
+          assert.equal(diff.conflicts.length, 1);
+          done();
+        })
+        .catch(done);
     });
 
     it('should set "prev" to local revision in non-conflicting delta', function(done) {
