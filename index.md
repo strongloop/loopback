@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-01 to 2016-01-26)
+since: (from 2015-12-02 to 2016-01-27)
 ---
 
 ## Core
@@ -44,8 +44,9 @@ since: (from 2015-12-01 to 2016-01-26)
 
 
 ### loopback-datasource-juggler
+ * [@54ca067](https://github.com/strongloop/loopback-datasource-juggler/commit/54ca06761063e6cab6bb3cac9b2b0c1a790e69bf) Revert "Change "npm test" to call mocha directly" ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#831](https://github.com/strongloop/loopback-datasource-juggler/pull/831) Change "npm test" to call mocha directly ([bajtos](https://github.com/bajtos))
  * [PR#826](https://github.com/strongloop/loopback-datasource-juggler/pull/826) Refactor `updateAttributes` ([Amir-61](https://github.com/Amir-61))
- * [@1e9affe](https://github.com/strongloop/loopback-datasource-juggler/commit/1e9affe4ba194831e35827fb0c17884fb1c9b345) Change "npm test" to call mocha directly ([Hans(Zhenghan) Zhang](https://github.com/Hans-Zhang28))
  * [@d49dfa0](https://github.com/strongloop/loopback-datasource-juggler/commit/d49dfa0293fe3c649298a283a82e7768104ee754) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@4ebbd0e](https://github.com/strongloop/loopback-datasource-juggler/commit/4ebbd0e5c2ebf5481c5cf1606fa078abeb4bd2d2) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@c5f0be8](https://github.com/strongloop/loopback-datasource-juggler/commit/c5f0be83a84baf7df19cdfedc6951b6f3d3be7ee) Update README.md ([Simon Ho](https://github.com/superkhau))
@@ -136,6 +137,7 @@ since: (from 2015-12-01 to 2016-01-26)
 
 
 ### loopback-connector-redis
+ * [PR#15](https://github.com/strongloop/loopback-connector-redis/pull/15) Skip failing tests ([superkhau](https://github.com/superkhau))
  * [PR#14](https://github.com/strongloop/loopback-connector-redis/pull/14) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#13](https://github.com/strongloop/loopback-connector-redis/pull/13) Use NPM run scripts instead of Make ([superkhau](https://github.com/superkhau))
  * [@5236baa](https://github.com/strongloop/loopback-connector-redis/commit/5236baac6f75ecd4826f0a3bc4983cda1f9b074f) Update README.md ([Simon Ho](https://github.com/superkhau))
@@ -145,6 +147,7 @@ since: (from 2015-12-01 to 2016-01-26)
 
 
 ### loopback-connector-remote
+ * [PR#35](https://github.com/strongloop/loopback-connector-remote/pull/35) Register Models with Dynamic converter ([bajtos](https://github.com/bajtos))
  * [@5b721fe](https://github.com/strongloop/loopback-connector-remote/commit/5b721fe016a158bea4f2e2343a8ae51d2c17671c) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@14bfe9e](https://github.com/strongloop/loopback-connector-remote/commit/14bfe9eaeaef98b242c7de5d36f2b03be8bd6d07) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [PR#31](https://github.com/strongloop/loopback-connector-remote/pull/31) Test fixes ([superkhau](https://github.com/superkhau))
@@ -183,6 +186,7 @@ since: (from 2015-12-01 to 2016-01-26)
 
 
 ### loopback-sdk-ios
+ * [@8c16599](https://github.com/strongloop/loopback-sdk-ios/commit/8c1659938bab90b983763d4216884666a1c882a6) Add support for plain model creation ([hideya kawahara](https://github.com/hideya))
  * [PR#90](https://github.com/strongloop/loopback-sdk-ios/pull/90) Upload now passes HTTP response as LBFile into success callback ([kgoedecke](https://github.com/kgoedecke))
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.3.1** ([Raymond Feng](https://github.com/raymondfeng))
@@ -202,6 +206,7 @@ since: (from 2015-12-01 to 2016-01-26)
 
 
 ### loopback-component-passport
+ * [PR#121](https://github.com/strongloop/loopback-component-passport/pull/121) Fix email validation for LDAP ([loay](https://github.com/loay))
  * **Released 2.0.0** ([Ryan Graham](https://github.com/rmg))
  * [PR#115](https://github.com/strongloop/loopback-component-passport/pull/115) Fix version Number ([loay](https://github.com/loay))
  * [PR#113](https://github.com/strongloop/loopback-component-passport/pull/113) Use Auto-generated email ([loay](https://github.com/loay))
