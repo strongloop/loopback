@@ -7,7 +7,7 @@ since: (from 2015-12-02 to 2016-01-27)
 
 ### generator-loopback
  * [PR#136](https://github.com/strongloop/generator-loopback/pull/136) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
- * **Released 1.14.0** (Simon Ho)
+ * **Released 1.14.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#133](https://github.com/strongloop/generator-loopback/pull/133) Prevent readonly models in relation generator ([jannyHou](https://github.com/jannyHou))
  * [PR#134](https://github.com/strongloop/generator-loopback/pull/134) Fix ci timeout error. ([0candy](https://github.com/0candy))
  * [PR#121](https://github.com/strongloop/generator-loopback/pull/121) Add command line printing swagger definition to loopback ([0candy](https://github.com/0candy))
