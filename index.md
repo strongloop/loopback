@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-02 to 2016-01-27)
+since: (from 2015-12-03 to 2016-01-28)
 ---
 
 ## Core
@@ -92,6 +92,7 @@ since: (from 2015-12-02 to 2016-01-27)
 
 
 ### loopback-connector-db2
+ * [PR#8](https://github.com/strongloop/loopback-connector-db2/pull/8) Add updateOrCreate and ALTER TABLE support ([qpresley](https://github.com/qpresley))
  * [PR#4](https://github.com/strongloop/loopback-connector-db2/pull/4) Readme cleanup ([crandmck](https://github.com/crandmck))
  * [@887da69](https://github.com/strongloop/loopback-connector-db2/commit/887da695c7c85e70d3cf173de1a6c1c92ccf2593) Update package.json an init.js ([Quentin Presley](https://github.com/qpresley))
  * [@ab69ca4](https://github.com/strongloop/loopback-connector-db2/commit/ab69ca40ec7059c4455ec947dad9833281c798b0) Fix up some lint/test issues ([Quentin Presley](https://github.com/qpresley))
@@ -159,6 +160,7 @@ since: (from 2015-12-02 to 2016-01-27)
 
 
 ### loopback-connector-soap
+ * [PR#33](https://github.com/strongloop/loopback-connector-soap/pull/33) Add new example location to README.md ([superkhau](https://github.com/superkhau))
  * [PR#32](https://github.com/strongloop/loopback-connector-soap/pull/32) Remove example dir ([superkhau](https://github.com/superkhau))
  * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
  * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
@@ -186,7 +188,7 @@ since: (from 2015-12-02 to 2016-01-27)
 
 
 ### loopback-sdk-ios
- * [@8c16599](https://github.com/strongloop/loopback-sdk-ios/commit/8c1659938bab90b983763d4216884666a1c882a6) Add support for plain model creation ([hideya kawahara](https://github.com/hideya))
+ * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
  * [PR#90](https://github.com/strongloop/loopback-sdk-ios/pull/90) Upload now passes HTTP response as LBFile into success callback ([kgoedecke](https://github.com/kgoedecke))
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.3.1** ([Raymond Feng](https://github.com/raymondfeng))
