@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-03 to 2016-01-28)
+since: (from 2015-12-04 to 2016-01-29)
 ---
 
 ## Core
@@ -65,12 +65,14 @@ since: (from 2015-12-03 to 2016-01-28)
 
 
 ### loopback-swagger
+ * [PR#24](https://github.com/strongloop/loopback-swagger/pull/24) Make type geopoint case insensitive ([0candy](https://github.com/0candy))
  * [PR#23](https://github.com/strongloop/loopback-swagger/pull/23) Treat property as type 'any' if not specified ([0candy](https://github.com/0candy))
  * [PR#22](https://github.com/strongloop/loopback-swagger/pull/22) Exclude definitions that are not referenced ([0candy](https://github.com/0candy))
  * [PR#19](https://github.com/strongloop/loopback-swagger/pull/19) Fix handling of allOf when generating models ([mastersingh24](https://github.com/mastersingh24))
 
 
 ### strong-remoting
+ * [PR#272](https://github.com/strongloop/strong-remoting/pull/272) To allow user to customize the root element of xml output ([davidcheung](https://github.com/davidcheung))
  * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
  * **Released 2.24.0** ([Ritchie Martori](https://github.com/ritch))
  * [@eb90d1c](https://github.com/strongloop/strong-remoting/commit/eb90d1c544144d8a5cffb8cfce1d3deca0a6125b) Remove old rest-models example ([Ritchie Martori](https://github.com/ritch))
@@ -92,6 +94,7 @@ since: (from 2015-12-03 to 2016-01-28)
 
 
 ### loopback-connector-db2
+ * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
  * [PR#8](https://github.com/strongloop/loopback-connector-db2/pull/8) Add updateOrCreate and ALTER TABLE support ([qpresley](https://github.com/qpresley))
  * [PR#4](https://github.com/strongloop/loopback-connector-db2/pull/4) Readme cleanup ([crandmck](https://github.com/crandmck))
  * [@887da69](https://github.com/strongloop/loopback-connector-db2/commit/887da695c7c85e70d3cf173de1a6c1c92ccf2593) Update package.json an init.js ([Quentin Presley](https://github.com/qpresley))
@@ -174,6 +177,7 @@ since: (from 2015-12-03 to 2016-01-28)
 ## SDKs
 
 ### loopback-sdk-angular
+ * [PR#203](https://github.com/strongloop/loopback-sdk-angular/pull/203) Patch safari-private-mode localStorage unusable ([davidcheung](https://github.com/davidcheung))
  * [PR#207](https://github.com/strongloop/loopback-sdk-angular/pull/207) Remove bower.json and update dependencies ([bajtos](https://github.com/bajtos))
  * [PR#201](https://github.com/strongloop/loopback-sdk-angular/pull/201) CommonJS package manager support ([dfeddad](https://github.com/dfeddad))
  * [@08bdc48](https://github.com/strongloop/loopback-sdk-angular/commit/08bdc48db519ef45f6cf8be886f6337ff016d58e) Add CommonJS package manager support ([Djamel Feddad](https://github.com/dfeddad))
