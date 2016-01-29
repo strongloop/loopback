@@ -72,6 +72,7 @@ since: (from 2015-12-04 to 2016-01-29)
 
 
 ### strong-remoting
+ * [@601114f](https://github.com/strongloop/strong-remoting/commit/601114ff45504b078413be527fc4673340f45a21) Extract ContextBase and ctx.getScope() ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#272](https://github.com/strongloop/strong-remoting/pull/272) To allow user to customize the root element of xml output ([davidcheung](https://github.com/davidcheung))
  * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
  * **Released 2.24.0** ([Ritchie Martori](https://github.com/ritch))
