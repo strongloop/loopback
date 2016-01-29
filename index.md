@@ -64,6 +64,10 @@ since: (from 2015-12-04 to 2016-01-29)
  * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
 
 
+### loopback-phase
+ * [@6f81c7c](https://github.com/strongloop/loopback-phase/commit/6f81c7c9fde09ea674d2b5c8c791db29d12ed1c3) Add "phaseList.registerHandler" ([Miroslav Bajtoš](https://github.com/bajtos))
+
+
 ### loopback-swagger
  * [PR#24](https://github.com/strongloop/loopback-swagger/pull/24) Make type geopoint case insensitive ([0candy](https://github.com/0candy))
  * [PR#23](https://github.com/strongloop/loopback-swagger/pull/23) Treat property as type 'any' if not specified ([0candy](https://github.com/0candy))
