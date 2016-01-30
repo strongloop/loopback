@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-04 to 2016-01-29)
+since: (from 2015-12-05 to 2016-01-30)
 ---
 
 ## Core
@@ -65,7 +65,7 @@ since: (from 2015-12-04 to 2016-01-29)
 
 
 ### loopback-phase
- * [@6f81c7c](https://github.com/strongloop/loopback-phase/commit/6f81c7c9fde09ea674d2b5c8c791db29d12ed1c3) Add "phaseList.registerHandler" ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#10](https://github.com/strongloop/loopback-phase/pull/10) Add "phaseList.registerHandler" ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-swagger
@@ -76,7 +76,7 @@ since: (from 2015-12-04 to 2016-01-29)
 
 
 ### strong-remoting
- * [@601114f](https://github.com/strongloop/strong-remoting/commit/601114ff45504b078413be527fc4673340f45a21) Extract ContextBase and ctx.getScope() ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#278](https://github.com/strongloop/strong-remoting/pull/278) Extract ContextBase and ctx.getScope() ([bajtos](https://github.com/bajtos))
  * [PR#272](https://github.com/strongloop/strong-remoting/pull/272) To allow user to customize the root element of xml output ([davidcheung](https://github.com/davidcheung))
  * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
  * **Released 2.24.0** ([Ritchie Martori](https://github.com/ritch))
@@ -100,7 +100,10 @@ since: (from 2015-12-04 to 2016-01-29)
 
 ### loopback-connector-db2
  * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
+ * [@86fc8c9](https://github.com/strongloop/loopback-connector-db2/commit/86fc8c9aaeaa49fe96dc66beff63d28e393ce6e8) update ibm_db to 0.18 remove mocha testcase filters ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#8](https://github.com/strongloop/loopback-connector-db2/pull/8) Add updateOrCreate and ALTER TABLE support ([qpresley](https://github.com/qpresley))
+ * [@7939d74](https://github.com/strongloop/loopback-connector-db2/commit/7939d74a638f2375896489b3766dde7cea17333b) skip a few testcases that are dependent on fixes to ibm_db ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@a626ec0](https://github.com/strongloop/loopback-connector-db2/commit/a626ec05e34007da316b3fb2eab1a5c56edd044c) add bluebird to devDeps list ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#4](https://github.com/strongloop/loopback-connector-db2/pull/4) Readme cleanup ([crandmck](https://github.com/crandmck))
  * [@887da69](https://github.com/strongloop/loopback-connector-db2/commit/887da695c7c85e70d3cf173de1a6c1c92ccf2593) Update package.json an init.js ([Quentin Presley](https://github.com/qpresley))
  * [@ab69ca4](https://github.com/strongloop/loopback-connector-db2/commit/ab69ca40ec7059c4455ec947dad9833281c798b0) Fix up some lint/test issues ([Quentin Presley](https://github.com/qpresley))
