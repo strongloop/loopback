@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-05 to 2016-01-30)
+since: (from 2015-12-06 to 2016-01-31)
 ---
 
 ## Core
@@ -99,11 +99,9 @@ since: (from 2015-12-05 to 2016-01-30)
 
 
 ### loopback-connector-db2
+ * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
  * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
- * [@86fc8c9](https://github.com/strongloop/loopback-connector-db2/commit/86fc8c9aaeaa49fe96dc66beff63d28e393ce6e8) update ibm_db to 0.18 remove mocha testcase filters ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#8](https://github.com/strongloop/loopback-connector-db2/pull/8) Add updateOrCreate and ALTER TABLE support ([qpresley](https://github.com/qpresley))
- * [@7939d74](https://github.com/strongloop/loopback-connector-db2/commit/7939d74a638f2375896489b3766dde7cea17333b) skip a few testcases that are dependent on fixes to ibm_db ([Anthony Ffrench](https://github.com/tonyffrench))
- * [@a626ec0](https://github.com/strongloop/loopback-connector-db2/commit/a626ec05e34007da316b3fb2eab1a5c56edd044c) add bluebird to devDeps list ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#4](https://github.com/strongloop/loopback-connector-db2/pull/4) Readme cleanup ([crandmck](https://github.com/crandmck))
  * [@887da69](https://github.com/strongloop/loopback-connector-db2/commit/887da695c7c85e70d3cf173de1a6c1c92ccf2593) Update package.json an init.js ([Quentin Presley](https://github.com/qpresley))
  * [@ab69ca4](https://github.com/strongloop/loopback-connector-db2/commit/ab69ca40ec7059c4455ec947dad9833281c798b0) Fix up some lint/test issues ([Quentin Presley](https://github.com/qpresley))
