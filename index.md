@@ -6,6 +6,8 @@ since: (from 2015-12-07 to 2016-02-01)
 ## Core
 
 ### generator-loopback
+ * [@d75e3d5](https://github.com/strongloop/generator-loopback/commit/d75e3d5249260d71f0dda289bd3ff83ee452be3e) Change path for function invoke ([Jue Hou](https://github.com/jannyHou))
+ * [@29e4199](https://github.com/strongloop/generator-loopback/commit/29e41996d8b44f4ae11e9a4ce450d0634003b914) Import `generator#invoke()` directly ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#136](https://github.com/strongloop/generator-loopback/pull/136) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.14.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#133](https://github.com/strongloop/generator-loopback/pull/133) Prevent readonly models in relation generator ([jannyHou](https://github.com/jannyHou))
@@ -198,6 +200,7 @@ since: (from 2015-12-07 to 2016-02-01)
 
 
 ### loopback-sdk-ios
+ * [@591cb50](https://github.com/strongloop/loopback-sdk-ios/commit/591cb503a4fd337dc952ce2e54d362ecb7a678f0) Add support for Buffer and GeoPoint data types ([hideya kawahara](https://github.com/hideya))
  * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
  * [PR#90](https://github.com/strongloop/loopback-sdk-ios/pull/90) Upload now passes HTTP response as LBFile into success callback ([kgoedecke](https://github.com/kgoedecke))
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
