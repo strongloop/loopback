@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-06 to 2016-01-31)
+since: (from 2015-12-07 to 2016-02-01)
 ---
 
 ## Core
