@@ -41,6 +41,7 @@ since: (from 2015-12-07 to 2016-02-01)
 
 ### loopback-boot
  * [PR#169](https://github.com/strongloop/loopback-boot/pull/169) Fix lodash 4.0.0 breaking changes ([jdrouet](https://github.com/jdrouet))
+ * [@d850560](https://github.com/strongloop/loopback-boot/commit/d850560a189c4f7a77bc27a4e2a6bbd03916c479) When config is overriden with null don't merge ([Farid Neshat](https://github.com/alFReD-NSH))
  * **Released 2.16.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#165](https://github.com/strongloop/loopback-boot/pull/165) executor: allow loopback versions >= 3.0.0-alpha ([bajtos](https://github.com/bajtos))
 
