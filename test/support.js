@@ -11,6 +11,7 @@ app = null;
 TaskEmitter = require('strong-task-emitter');
 request = require('supertest');
 var RemoteObjects = require('strong-remoting');
+var longjohn = require('longjohn');
 
 // Speed up the password hashing algorithm
 // for tests using the built-in User model
