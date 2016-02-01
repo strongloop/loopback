@@ -85,7 +85,8 @@
     "mocha": "^2.1.0",
     "sinon": "^1.13.0",
     "strong-task-emitter": "^0.0.6",
-    "supertest": "^0.15.0"
+    "supertest": "^0.15.0",
+    "longjohn": "^0.2.11"
   },
   "repository": {
     "type": "git",
