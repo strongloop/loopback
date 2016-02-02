@@ -79,6 +79,9 @@ since: (from 2015-12-08 to 2016-02-02)
 
 
 ### strong-remoting
+ * [@89690db](https://github.com/strongloop/strong-remoting/commit/89690db6de46d8ce6ad1cdf42e93602759092d66) Add remotes.registerPhaseHandler ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@081964c](https://github.com/strongloop/strong-remoting/commit/081964ce2bac6fbae371995728e182ae851fa895) Add remote invocation phases ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@0d439e4](https://github.com/strongloop/strong-remoting/commit/0d439e4d7c6472b26b45a408ef8628c1fc200d9a) Simplify invokeMethodInContext ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#278](https://github.com/strongloop/strong-remoting/pull/278) Extract ContextBase and ctx.getScope() ([bajtos](https://github.com/bajtos))
  * [PR#272](https://github.com/strongloop/strong-remoting/pull/272) To allow user to customize the root element of xml output ([davidcheung](https://github.com/davidcheung))
  * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
