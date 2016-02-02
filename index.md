@@ -1,13 +1,12 @@
 ---
 layout: page
-since: (from 2015-12-07 to 2016-02-01)
+since: (from 2015-12-08 to 2016-02-02)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@d75e3d5](https://github.com/strongloop/generator-loopback/commit/d75e3d5249260d71f0dda289bd3ff83ee452be3e) Change path for function invoke ([Jue Hou](https://github.com/jannyHou))
- * [@29e4199](https://github.com/strongloop/generator-loopback/commit/29e41996d8b44f4ae11e9a4ce450d0634003b914) Import `generator#invoke()` directly ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#138](https://github.com/strongloop/generator-loopback/pull/138) Import `generator#invoke()` directly ([bajtos](https://github.com/bajtos))
  * [PR#136](https://github.com/strongloop/generator-loopback/pull/136) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.14.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#133](https://github.com/strongloop/generator-loopback/pull/133) Prevent readonly models in relation generator ([jannyHou](https://github.com/jannyHou))
@@ -40,8 +39,8 @@ since: (from 2015-12-07 to 2016-02-01)
 
 
 ### loopback-boot
+ * [PR#168](https://github.com/strongloop/loopback-boot/pull/168) When config is overriden with null don't merge ([alFReD-NSH](https://github.com/alFReD-NSH))
  * [PR#169](https://github.com/strongloop/loopback-boot/pull/169) Fix lodash 4.0.0 breaking changes ([jdrouet](https://github.com/jdrouet))
- * [@d850560](https://github.com/strongloop/loopback-boot/commit/d850560a189c4f7a77bc27a4e2a6bbd03916c479) When config is overriden with null don't merge ([Farid Neshat](https://github.com/alFReD-NSH))
  * **Released 2.16.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#165](https://github.com/strongloop/loopback-boot/pull/165) executor: allow loopback versions >= 3.0.0-alpha ([bajtos](https://github.com/bajtos))
 
@@ -68,6 +67,7 @@ since: (from 2015-12-07 to 2016-02-01)
 
 
 ### loopback-phase
+ * **Released 1.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#10](https://github.com/strongloop/loopback-phase/pull/10) Add "phaseList.registerHandler" ([bajtos](https://github.com/bajtos))
 
 
@@ -102,6 +102,7 @@ since: (from 2015-12-07 to 2016-02-01)
 
 
 ### loopback-connector-db2
+ * [@c0231de](https://github.com/strongloop/loopback-connector-db2/commit/c0231de905cb7b069d3642ab8f021725d3c6204e) Update IBM DB2 driver. Resolves node v0.10 build issues ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
  * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
  * [PR#8](https://github.com/strongloop/loopback-connector-db2/pull/8) Add updateOrCreate and ALTER TABLE support ([qpresley](https://github.com/qpresley))
@@ -201,7 +202,7 @@ since: (from 2015-12-07 to 2016-02-01)
 
 
 ### loopback-sdk-ios
- * [@591cb50](https://github.com/strongloop/loopback-sdk-ios/commit/591cb503a4fd337dc952ce2e54d362ecb7a678f0) Add support for Buffer and GeoPoint data types ([hideya kawahara](https://github.com/hideya))
+ * [PR#83](https://github.com/strongloop/loopback-sdk-ios/pull/83) Add support for Buffer and GeoPoint data types ([hideya](https://github.com/hideya))
  * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
  * [PR#90](https://github.com/strongloop/loopback-sdk-ios/pull/90) Upload now passes HTTP response as LBFile into success callback ([kgoedecke](https://github.com/kgoedecke))
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
