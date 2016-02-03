@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-08 to 2016-02-02)
+since: (from 2015-12-09 to 2016-02-03)
 ---
 
 ## Core
@@ -46,6 +46,7 @@ since: (from 2015-12-08 to 2016-02-02)
 
 
 ### loopback-datasource-juggler
+ * [PR#823](https://github.com/strongloop/loopback-datasource-juggler/pull/823) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * [@54ca067](https://github.com/strongloop/loopback-datasource-juggler/commit/54ca06761063e6cab6bb3cac9b2b0c1a790e69bf) Revert "Change "npm test" to call mocha directly" ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#831](https://github.com/strongloop/loopback-datasource-juggler/pull/831) Change "npm test" to call mocha directly ([bajtos](https://github.com/bajtos))
  * [PR#826](https://github.com/strongloop/loopback-datasource-juggler/pull/826) Refactor `updateAttributes` ([Amir-61](https://github.com/Amir-61))
@@ -79,9 +80,8 @@ since: (from 2015-12-08 to 2016-02-02)
 
 
 ### strong-remoting
- * [@89690db](https://github.com/strongloop/strong-remoting/commit/89690db6de46d8ce6ad1cdf42e93602759092d66) Add remotes.registerPhaseHandler ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@081964c](https://github.com/strongloop/strong-remoting/commit/081964ce2bac6fbae371995728e182ae851fa895) Add remote invocation phases ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@0d439e4](https://github.com/strongloop/strong-remoting/commit/0d439e4d7c6472b26b45a408ef8628c1fc200d9a) Simplify invokeMethodInContext ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@40c331a](https://github.com/strongloop/strong-remoting/commit/40c331a37c34ac5f7f06095bb014780d8dadda87) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#279](https://github.com/strongloop/strong-remoting/pull/279) Remote invocation phases ([bajtos](https://github.com/bajtos))
  * [PR#278](https://github.com/strongloop/strong-remoting/pull/278) Extract ContextBase and ctx.getScope() ([bajtos](https://github.com/bajtos))
  * [PR#272](https://github.com/strongloop/strong-remoting/pull/272) To allow user to customize the root element of xml output ([davidcheung](https://github.com/davidcheung))
  * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
@@ -146,7 +146,7 @@ since: (from 2015-12-08 to 2016-02-02)
 
 
 ### loopback-connector-oracle
- * [@fe95e5e](https://github.com/strongloop/loopback-connector-oracle/commit/fe95e5e091e75ddeecb0b31bd58d53cdc8820396) Add NOTICE ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#57](https://github.com/strongloop/loopback-connector-oracle/pull/57) Add NOTICE ([raymondfeng](https://github.com/raymondfeng))
  * [PR#56](https://github.com/strongloop/loopback-connector-oracle/pull/56) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
@@ -220,6 +220,7 @@ since: (from 2015-12-08 to 2016-02-02)
 ## Components
 
 ### loopback-component-explorer
+ * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 2.2.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#148](https://github.com/strongloop/loopback-component-explorer/pull/148) remove references to ubuntu font ([anthonyettinger](https://github.com/anthonyettinger))
  * [PR#141](https://github.com/strongloop/loopback-component-explorer/pull/141) Returning updated swaggerObject ([pktippa](https://github.com/pktippa))
