@@ -146,6 +146,7 @@ since: (from 2015-12-08 to 2016-02-02)
 
 
 ### loopback-connector-oracle
+ * [@fe95e5e](https://github.com/strongloop/loopback-connector-oracle/commit/fe95e5e091e75ddeecb0b31bd58d53cdc8820396) Add NOTICE ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#56](https://github.com/strongloop/loopback-connector-oracle/pull/56) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
