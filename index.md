@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-09 to 2016-02-03)
+since: (from 2015-12-10 to 2016-02-04)
 ---
 
 ## Core
@@ -46,6 +46,7 @@ since: (from 2015-12-09 to 2016-02-03)
 
 
 ### loopback-datasource-juggler
+ * [PR#839](https://github.com/strongloop/loopback-datasource-juggler/pull/839) Fix conversion for `updateAttributes` ([Amir-61](https://github.com/Amir-61))
  * [PR#823](https://github.com/strongloop/loopback-datasource-juggler/pull/823) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * [@54ca067](https://github.com/strongloop/loopback-datasource-juggler/commit/54ca06761063e6cab6bb3cac9b2b0c1a790e69bf) Revert "Change "npm test" to call mocha directly" ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#831](https://github.com/strongloop/loopback-datasource-juggler/pull/831) Change "npm test" to call mocha directly ([bajtos](https://github.com/bajtos))
@@ -80,6 +81,7 @@ since: (from 2015-12-09 to 2016-02-03)
 
 
 ### strong-remoting
+ * [PR#275](https://github.com/strongloop/strong-remoting/pull/275) Change method call to find remote method. ([0candy](https://github.com/0candy))
  * [@40c331a](https://github.com/strongloop/strong-remoting/commit/40c331a37c34ac5f7f06095bb014780d8dadda87) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#279](https://github.com/strongloop/strong-remoting/pull/279) Remote invocation phases ([bajtos](https://github.com/bajtos))
  * [PR#278](https://github.com/strongloop/strong-remoting/pull/278) Extract ContextBase and ctx.getScope() ([bajtos](https://github.com/bajtos))
@@ -206,6 +208,7 @@ since: (from 2015-12-09 to 2016-02-03)
 
 
 ### loopback-sdk-ios
+ * [PR#93](https://github.com/strongloop/loopback-sdk-ios/pull/93) Improve LBRESTAdapter repositoryWithModelName ([hideya](https://github.com/hideya))
  * [PR#83](https://github.com/strongloop/loopback-sdk-ios/pull/83) Add support for Buffer and GeoPoint data types ([hideya](https://github.com/hideya))
  * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
  * [PR#90](https://github.com/strongloop/loopback-sdk-ios/pull/90) Upload now passes HTTP response as LBFile into success callback ([kgoedecke](https://github.com/kgoedecke))
@@ -241,6 +244,7 @@ since: (from 2015-12-09 to 2016-02-03)
 
 
 ### loopback-component-storage
+ * [PR#109](https://github.com/strongloop/loopback-component-storage/pull/109) Migrate examples ([superkhau](https://github.com/superkhau))
  * [PR#102](https://github.com/strongloop/loopback-component-storage/pull/102) Expose originalFilename when getFilename is called ([sanosom](https://github.com/sanosom))
  * [@24cd1a6](https://github.com/strongloop/loopback-component-storage/commit/24cd1a619e33ed1882f6ea818e3e2bd450d51d62) Remove test file ([Raymond Feng](https://github.com/raymondfeng))
  * [@685db48](https://github.com/strongloop/loopback-component-storage/commit/685db4819d972c07c45d58a1774f76dbdf95554d) Replace image ([Raymond Feng](https://github.com/raymondfeng))
