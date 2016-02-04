@@ -1042,7 +1042,6 @@ describe('User', function() {
 
           user.verify(options)
             .then(function(result) {
-              console.log('here in then function');
               assert(result.email);
               assert(result.email.response);
               assert(result.token);
