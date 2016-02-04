@@ -46,6 +46,7 @@ since: (from 2015-12-10 to 2016-02-04)
 
 
 ### loopback-datasource-juggler
+ * [@2281e95](https://github.com/strongloop/loopback-datasource-juggler/commit/2281e959409cb7aeeba8fa17f107b99076b83fdc) Implementtaion of replace (Amir Jafarian)
  * [PR#839](https://github.com/strongloop/loopback-datasource-juggler/pull/839) Fix conversion for `updateAttributes` ([Amir-61](https://github.com/Amir-61))
  * [PR#823](https://github.com/strongloop/loopback-datasource-juggler/pull/823) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * [@54ca067](https://github.com/strongloop/loopback-datasource-juggler/commit/54ca06761063e6cab6bb3cac9b2b0c1a790e69bf) Revert "Change "npm test" to call mocha directly" ([Miroslav Bajtoš](https://github.com/bajtos))
