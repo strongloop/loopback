@@ -217,7 +217,10 @@ module.exports = function(grunt) {
   grunt.registerTask('e2e-server', function() {
     var done = this.async();
     var app = require('./test/fixtures/e2e/app');
-    app.listen(3000, done);
+    app.listen(0, function() {
+      process.env.PORT = this.address().port;
+      done();
+    });
   });
 
   grunt.registerTask('e2e', ['e2e-server', 'karma:e2e']);

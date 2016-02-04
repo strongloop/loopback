@@ -11,6 +11,12 @@ var CURRENT_USER = {email: 'current@test.test', password: 'test'};
 var debug = require('debug')('loopback:test:access-control.integration');
 
 describe('access control - integration', function() {
+  before(function(done) {
+    if (app.booting) {
+      return app.once('booted', done);
+    }
+    done();
+  });
 
   lt.beforeEach.withApp(app);
 
