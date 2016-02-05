@@ -143,13 +143,11 @@ describe('Replication / Change APIs', function() {
 
       SourceModel.rectifyChange = function(id, cb) {
         calls.push('rectifyChange');
-        console.trace('rectifyChange');
         process.nextTick(cb);
       };
 
       SourceModel.rectifyAllChanges = function(cb) {
         calls.push('rectifyAllChanges');
-        console.trace('rectifyAllChanges');
         process.nextTick(cb);
       };
 
@@ -161,13 +159,11 @@ describe('Replication / Change APIs', function() {
 
       TargetModel.rectifyChange = function(id, cb) {
         calls.push('rectifyChange');
-        console.trace('rectifyChange');
         process.nextTick(cb);
       };
 
       TargetModel.rectifyAllChanges = function(cb) {
         calls.push('rectifyAllChanges');
-        console.trace('rectifyAllChanges');
         process.nextTick(cb);
       };
 
