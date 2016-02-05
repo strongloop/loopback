@@ -67,40 +67,26 @@ describe('Replication / Change APIs', function() {
     });
 
     it('should call rectifyAllChanges if no id is passed for rectifyOnDelete', function(done) {
-      SourceModel.rectifyChange = function() {
-        return done(new Error('Should not call rectifyChange'));
-      };
-      SourceModel.rectifyAllChanges = function() {
-        return done();
-      };
+      var calls = mockSourceModelRectify();
       SourceModel.destroyAll({name: 'John'}, function(err, data) {
-        if (err)
-          return done(err);
+        if (err) return done(err);
+        expect(calls).to.eql(['rectifyAllChanges']);
+        done();
       });
     });
 
     it('should call rectifyAllChanges if no id is passed for rectifyOnSave', function(done) {
-      SourceModel.rectifyChange = function() {
-        return done(new Error('Should not call rectifyChange'));
-      };
-      SourceModel.rectifyAllChanges = function() {
-        return done();
-      };
+      var calls = mockSourceModelRectify();
       var newData = {'name': 'Janie'};
       SourceModel.update({name: 'Jane'}, newData, function(err, data) {
-        if (err)
-          return done(err);
+        if (err) return done(err);
+        expect(calls).to.eql(['rectifyAllChanges']);
+        done();
       });
     });
 
     it('rectifyOnDelete for Delete should call rectifyChange instead of rectifyAllChanges', function(done) {
-      TargetModel.rectifyChange = function() {
-        return done();
-      };
-      TargetModel.rectifyAllChanges = function() {
-        return done(new Error('Should not call rectifyAllChanges'));
-      };
-
+      var calls = mockTargetModelRectify();
       async.waterfall([
         function(callback) {
           SourceModel.destroyAll({name: 'John'}, callback);
@@ -110,19 +96,14 @@ describe('Replication / Change APIs', function() {
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
         }
       ], function(err, results) {
-        if (err)
-          return done(err);
+        if (err) return done(err);
+        expect(calls).to.eql(['rectifyChange']);
+        done();
       });
     });
 
     it('rectifyOnSave for Update should call rectifyChange instead of rectifyAllChanges', function(done) {
-      TargetModel.rectifyChange = function() {
-        return done();
-      };
-      TargetModel.rectifyAllChanges = function() {
-        return done(new Error('Should not call rectifyAllChanges'));
-      };
-
+      var calls = mockTargetModelRectify();
       var newData = {'name': 'Janie'};
       async.waterfall([
         function(callback) {
@@ -131,20 +112,16 @@ describe('Replication / Change APIs', function() {
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        }], function(err, result) {
-        if (err)
-          return done(err);
+        }
+      ], function(err, result) {
+        if (err) return done(err);
+        expect(calls).to.eql(['rectifyChange']);
+        done();
       });
     });
 
     it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges', function(done) {
-      TargetModel.rectifyChange = function() {
-        return done();
-      };
-      TargetModel.rectifyAllChanges = function() {
-        return done(new Error('Should not call rectifyAllChanges'));
-      };
-
+      var calls = mockTargetModelRectify();
       var newData = [{name: 'Janie', surname: 'Doe'}];
       async.waterfall([
         function(callback) {
@@ -155,10 +132,47 @@ describe('Replication / Change APIs', function() {
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
         }
       ], function(err, result) {
-        if (err)
-          return done(err);
+        if (err) return done(err);
+        expect(calls).to.eql(['rectifyChange']);
+        done();
       });
     });
+
+    function mockSourceModelRectify() {
+      var calls = [];
+
+      SourceModel.rectifyChange = function(id, cb) {
+        calls.push('rectifyChange');
+        console.trace('rectifyChange');
+        process.nextTick(cb);
+      };
+
+      SourceModel.rectifyAllChanges = function(cb) {
+        calls.push('rectifyAllChanges');
+        console.trace('rectifyAllChanges');
+        process.nextTick(cb);
+      };
+
+      return calls;
+    }
+
+    function mockTargetModelRectify() {
+      var calls = [];
+
+      TargetModel.rectifyChange = function(id, cb) {
+        calls.push('rectifyChange');
+        console.trace('rectifyChange');
+        process.nextTick(cb);
+      };
+
+      TargetModel.rectifyAllChanges = function(cb) {
+        calls.push('rectifyAllChanges');
+        console.trace('rectifyAllChanges');
+        process.nextTick(cb);
+      };
+
+      return calls;
+    }
   });
 
   describe('Model.changes(since, filter, callback)', function() {
