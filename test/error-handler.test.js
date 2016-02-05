@@ -41,15 +41,23 @@ describe('loopback.errorHandler(options)', function() {
     //arrange
     var app = loopback();
     app.use(loopback.urlNotFound());
-    app.use(loopback.errorHandler({ includeStack: false, log: customLogger }));
+
+    var errorLogged;
+    app.use(loopback.errorHandler({
+      includeStack: false,
+      log: function customLogger(err, str, req) {
+        errorLogged = err;
+      }
+    }));
 
     //act
-    request(app).get('/url-does-not-exist').end();
-
-    //assert
-    function customLogger(err, str, req) {
-      assert.ok(err.message === 'Cannot GET /url-does-not-exist');
+    request(app).get('/url-does-not-exist').end(function(err) {
+      if (err) return done(err);
+      //assert
+      expect(errorLogged)
+        .to.have.property('message', 'Cannot GET /url-does-not-exist');
       done();
-    }
+    });
+
   });
 });
