@@ -18,6 +18,7 @@ since: (from 2015-12-11 to 2016-02-05)
 
 ### loopback
  * [PR#1999](https://github.com/strongloop/loopback/pull/1999) Promisify change ([jannyHou](https://github.com/jannyHou))
+ * [@ab5254f](https://github.com/strongloop/loopback/commit/ab5254fcba6919a46d8a54b40cbdd2865bab278e) test: remove errant console.log from test ([Ryan Graham](https://github.com/rmg))
  * [@524058d](https://github.com/strongloop/loopback/commit/524058d8fce3f6e47ae2eb14213df2913b59a71b) Travis: drop iojs, add v4.x and v5.x ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2030](https://github.com/strongloop/loopback/pull/2030) Safer tests - step 1 ([bajtos](https://github.com/bajtos))
  * [PR#1851](https://github.com/strongloop/loopback/pull/1851) Hide verificationToken ([gausie](https://github.com/gausie))
