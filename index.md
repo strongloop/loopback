@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-10 to 2016-02-04)
+since: (from 2015-12-11 to 2016-02-05)
 ---
 
 ## Core
@@ -17,6 +17,9 @@ since: (from 2015-12-10 to 2016-02-04)
 
 
 ### loopback
+ * [PR#1999](https://github.com/strongloop/loopback/pull/1999) Promisify change ([jannyHou](https://github.com/jannyHou))
+ * [@524058d](https://github.com/strongloop/loopback/commit/524058d8fce3f6e47ae2eb14213df2913b59a71b) Travis: drop iojs, add v4.x and v5.x ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#2030](https://github.com/strongloop/loopback/pull/2030) Safer tests - step 1 ([bajtos](https://github.com/bajtos))
  * [PR#1851](https://github.com/strongloop/loopback/pull/1851) Hide verificationToken ([gausie](https://github.com/gausie))
  * [PR#1988](https://github.com/strongloop/loopback/pull/1988) [SEMVER-MAJOR] Remove "loopback.DataModel" ([bajtos](https://github.com/bajtos))
  * [PR#1983](https://github.com/strongloop/loopback/pull/1983) Correct JSDoc findOrCreate() callback in PersistedModel ([noderat](https://github.com/noderat))
@@ -46,7 +49,7 @@ since: (from 2015-12-10 to 2016-02-04)
 
 
 ### loopback-datasource-juggler
- * [@2281e95](https://github.com/strongloop/loopback-datasource-juggler/commit/2281e959409cb7aeeba8fa17f107b99076b83fdc) Implementtaion of replace (Amir Jafarian)
+ * [PR#788](https://github.com/strongloop/loopback-datasource-juggler/pull/788) Implementation of replaceOrCreate and replace ([Amir-61](https://github.com/Amir-61))
  * [PR#839](https://github.com/strongloop/loopback-datasource-juggler/pull/839) Fix conversion for `updateAttributes` ([Amir-61](https://github.com/Amir-61))
  * [PR#823](https://github.com/strongloop/loopback-datasource-juggler/pull/823) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * [@54ca067](https://github.com/strongloop/loopback-datasource-juggler/commit/54ca06761063e6cab6bb3cac9b2b0c1a790e69bf) Revert "Change "npm test" to call mocha directly" ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -108,6 +111,10 @@ since: (from 2015-12-10 to 2016-02-04)
 
 
 ### loopback-connector-db2
+ * [@822a195](https://github.com/strongloop/loopback-connector-db2/commit/822a195c3ac4bfeab49a80b15ea7d1f9f10befcf) Remove more commented out lines ([Quentin Presley](https://github.com/qpresley))
+ * [@39e7f82](https://github.com/strongloop/loopback-connector-db2/commit/39e7f829f5869e493e8d409e148829241941afdc) Remove commented out lines in migration.js ([Quentin Presley](https://github.com/qpresley))
+ * [@4aa8d26](https://github.com/strongloop/loopback-connector-db2/commit/4aa8d26ad798bbefe0404590e32fbfc0c809ac68) Add tests for discovery ([Quentin Presley](https://github.com/qpresley))
+ * [@c389e40](https://github.com/strongloop/loopback-connector-db2/commit/c389e40caba62004a41e12668b63f0125680d90b) Adding discovery/migration/transaction ([Quentin Presley](https://github.com/qpresley))
  * [@c0231de](https://github.com/strongloop/loopback-connector-db2/commit/c0231de905cb7b069d3642ab8f021725d3c6204e) Update IBM DB2 driver. Resolves node v0.10 build issues ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
  * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
@@ -168,6 +175,7 @@ since: (from 2015-12-10 to 2016-02-04)
 
 
 ### loopback-connector-remote
+ * **Released 1.1.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#35](https://github.com/strongloop/loopback-connector-remote/pull/35) Register Models with Dynamic converter ([bajtos](https://github.com/bajtos))
  * [@5b721fe](https://github.com/strongloop/loopback-connector-remote/commit/5b721fe016a158bea4f2e2343a8ae51d2c17671c) Update README.md ([Simon Ho](https://github.com/superkhau))
  * [@14bfe9e](https://github.com/strongloop/loopback-connector-remote/commit/14bfe9eaeaef98b242c7de5d36f2b03be8bd6d07) Update README.md ([Simon Ho](https://github.com/superkhau))
