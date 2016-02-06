@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-11 to 2016-02-05)
+since: (from 2015-12-12 to 2016-02-06)
 ---
 
 ## Core
@@ -17,8 +17,10 @@ since: (from 2015-12-11 to 2016-02-05)
 
 
 ### loopback
+ * [@782e897](https://github.com/strongloop/loopback/commit/782e89758e8583b862f7428eac3bd5ebcf8e6ec1) test: remove forgotten console.trace logs ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#2036](https://github.com/strongloop/loopback/pull/2036) Fix race conditions in unit tests ([bajtos](https://github.com/bajtos))
+ * [PR#2035](https://github.com/strongloop/loopback/pull/2035) test: remove errant console.log from test ([rmg](https://github.com/rmg))
  * [PR#1999](https://github.com/strongloop/loopback/pull/1999) Promisify change ([jannyHou](https://github.com/jannyHou))
- * [@ab5254f](https://github.com/strongloop/loopback/commit/ab5254fcba6919a46d8a54b40cbdd2865bab278e) test: remove errant console.log from test ([Ryan Graham](https://github.com/rmg))
  * [@524058d](https://github.com/strongloop/loopback/commit/524058d8fce3f6e47ae2eb14213df2913b59a71b) Travis: drop iojs, add v4.x and v5.x ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2030](https://github.com/strongloop/loopback/pull/2030) Safer tests - step 1 ([bajtos](https://github.com/bajtos))
  * [PR#1851](https://github.com/strongloop/loopback/pull/1851) Hide verificationToken ([gausie](https://github.com/gausie))
@@ -50,6 +52,7 @@ since: (from 2015-12-11 to 2016-02-05)
 
 
 ### loopback-datasource-juggler
+ * [@504675f](https://github.com/strongloop/loopback-datasource-juggler/commit/504675fc78715f7e4bf4bb3a7ccf36125e8a4a7c) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#788](https://github.com/strongloop/loopback-datasource-juggler/pull/788) Implementation of replaceOrCreate and replace ([Amir-61](https://github.com/Amir-61))
  * [PR#839](https://github.com/strongloop/loopback-datasource-juggler/pull/839) Fix conversion for `updateAttributes` ([Amir-61](https://github.com/Amir-61))
  * [PR#823](https://github.com/strongloop/loopback-datasource-juggler/pull/823) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
@@ -112,10 +115,7 @@ since: (from 2015-12-11 to 2016-02-05)
 
 
 ### loopback-connector-db2
- * [@822a195](https://github.com/strongloop/loopback-connector-db2/commit/822a195c3ac4bfeab49a80b15ea7d1f9f10befcf) Remove more commented out lines ([Quentin Presley](https://github.com/qpresley))
- * [@39e7f82](https://github.com/strongloop/loopback-connector-db2/commit/39e7f829f5869e493e8d409e148829241941afdc) Remove commented out lines in migration.js ([Quentin Presley](https://github.com/qpresley))
- * [@4aa8d26](https://github.com/strongloop/loopback-connector-db2/commit/4aa8d26ad798bbefe0404590e32fbfc0c809ac68) Add tests for discovery ([Quentin Presley](https://github.com/qpresley))
- * [@c389e40](https://github.com/strongloop/loopback-connector-db2/commit/c389e40caba62004a41e12668b63f0125680d90b) Adding discovery/migration/transaction ([Quentin Presley](https://github.com/qpresley))
+ * [PR#12](https://github.com/strongloop/loopback-connector-db2/pull/12) Dbdiscovery ([qpresley](https://github.com/qpresley))
  * [@c0231de](https://github.com/strongloop/loopback-connector-db2/commit/c0231de905cb7b069d3642ab8f021725d3c6204e) Update IBM DB2 driver. Resolves node v0.10 build issues ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
  * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
@@ -176,6 +176,7 @@ since: (from 2015-12-11 to 2016-02-05)
 
 
 ### loopback-connector-remote
+ * [PR#36](https://github.com/strongloop/loopback-connector-remote/pull/36) test: listen on ephemeral ports ([bajtos](https://github.com/bajtos))
  * **Released 1.1.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#35](https://github.com/strongloop/loopback-connector-remote/pull/35) Register Models with Dynamic converter ([bajtos](https://github.com/bajtos))
  * [@5b721fe](https://github.com/strongloop/loopback-connector-remote/commit/5b721fe016a158bea4f2e2343a8ae51d2c17671c) Update README.md ([Simon Ho](https://github.com/superkhau))
