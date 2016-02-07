@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-12 to 2016-02-06)
+since: (from 2015-12-13 to 2016-02-07)
 ---
 
 ## Core
@@ -89,6 +89,7 @@ since: (from 2015-12-12 to 2016-02-06)
 
 
 ### strong-remoting
+ * [PR#283](https://github.com/strongloop/strong-remoting/pull/283) Do not call "afterError" on success ([bajtos](https://github.com/bajtos))
  * [PR#275](https://github.com/strongloop/strong-remoting/pull/275) Change method call to find remote method. ([0candy](https://github.com/0candy))
  * [@40c331a](https://github.com/strongloop/strong-remoting/commit/40c331a37c34ac5f7f06095bb014780d8dadda87) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#279](https://github.com/strongloop/strong-remoting/pull/279) Remote invocation phases ([bajtos](https://github.com/bajtos))
