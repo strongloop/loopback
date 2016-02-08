@@ -386,7 +386,7 @@ module.exports = function(User) {
       displayPort +
       options.restApiRoot +
       userModel.http.path +
-      userModel.sharedClass.find('confirm', true).http.path +
+      userModel.sharedClass.findMethodByName('confirm').http.path +
       '?uid=' +
       options.user.id +
       '&redirect=' +
