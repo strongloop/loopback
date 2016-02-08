@@ -17,6 +17,7 @@ since: (from 2015-12-14 to 2016-02-08)
 
 
 ### loopback
+ * [@0e63796](https://github.com/strongloop/loopback/commit/0e637962d5a87670180ae0b776b505531f90e4d8) Use new strong-remoting API ([Candy](https://github.com/0candy))
  * [@782e897](https://github.com/strongloop/loopback/commit/782e89758e8583b862f7428eac3bd5ebcf8e6ec1) test: remove forgotten console.trace logs ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2036](https://github.com/strongloop/loopback/pull/2036) Fix race conditions in unit tests ([bajtos](https://github.com/bajtos))
  * [PR#2035](https://github.com/strongloop/loopback/pull/2035) test: remove errant console.log from test ([rmg](https://github.com/rmg))
