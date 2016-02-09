@@ -1,4 +1,4 @@
-Copyright (c) 2013-2015 StrongLoop, Inc and other contributors.
+Copyright (c) 2013-2016 StrongLoop, Inc and other contributors.
 
 loopback uses a dual license model.
 
