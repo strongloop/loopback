@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-14 to 2016-02-08)
+since: (from 2015-12-15 to 2016-02-09)
 ---
 
 ## Core
@@ -13,11 +13,10 @@ since: (from 2015-12-14 to 2016-02-08)
  * [PR#134](https://github.com/strongloop/generator-loopback/pull/134) Fix ci timeout error. ([0candy](https://github.com/0candy))
  * [PR#121](https://github.com/strongloop/generator-loopback/pull/121) Add command line printing swagger definition to loopback ([0candy](https://github.com/0candy))
  * [PR#132](https://github.com/strongloop/generator-loopback/pull/132) Use shared function ([jannyHou](https://github.com/jannyHou))
- * [PR#130](https://github.com/strongloop/generator-loopback/pull/130) Remove slc:loopback-example ([0candy](https://github.com/0candy))
 
 
 ### loopback
- * [@0e63796](https://github.com/strongloop/loopback/commit/0e637962d5a87670180ae0b776b505531f90e4d8) Use new strong-remoting API ([Candy](https://github.com/0candy))
+ * [PR#2039](https://github.com/strongloop/loopback/pull/2039) Use new strong-remoting API ([0candy](https://github.com/0candy))
  * [@782e897](https://github.com/strongloop/loopback/commit/782e89758e8583b862f7428eac3bd5ebcf8e6ec1) test: remove forgotten console.trace logs ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2036](https://github.com/strongloop/loopback/pull/2036) Fix race conditions in unit tests ([bajtos](https://github.com/bajtos))
  * [PR#2035](https://github.com/strongloop/loopback/pull/2035) test: remove errant console.log from test ([rmg](https://github.com/rmg))
@@ -36,20 +35,11 @@ since: (from 2015-12-14 to 2016-02-08)
  * [PR#1943](https://github.com/strongloop/loopback/pull/1943) [SEMVER-MAJOR] Make juggler a regular dependency ([bajtos](https://github.com/bajtos))
  * [PR#1935](https://github.com/strongloop/loopback/pull/1935) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
  * [PR#1934](https://github.com/strongloop/loopback/pull/1934) Fix failing tests ([superkhau](https://github.com/superkhau))
- * [PR#1910](https://github.com/strongloop/loopback/pull/1910) Update persisted-model.js ([crandmck](https://github.com/crandmck))
- * [@b0a6242](https://github.com/strongloop/loopback/commit/b0a62422c1d83c9b748bb97b7100e8dd8d2220e0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#1909](https://github.com/strongloop/loopback/pull/1909) Start development of 3.0 ([bajtos](https://github.com/bajtos))
- * **Released 2.26.2** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#1899](https://github.com/strongloop/loopback/pull/1899) Fix bulkUpdate to not trigger rectifyAll  ([Amir-61](https://github.com/Amir-61))
- * **Released 2.26.1** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#1894](https://github.com/strongloop/loopback/pull/1894) PersistedModel: log rectify/rectifyAll triggers ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-boot
  * [PR#168](https://github.com/strongloop/loopback-boot/pull/168) When config is overriden with null don't merge ([alFReD-NSH](https://github.com/alFReD-NSH))
  * [PR#169](https://github.com/strongloop/loopback-boot/pull/169) Fix lodash 4.0.0 breaking changes ([jdrouet](https://github.com/jdrouet))
- * **Released 2.16.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#165](https://github.com/strongloop/loopback-boot/pull/165) executor: allow loopback versions >= 3.0.0-alpha ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-datasource-juggler
@@ -70,11 +60,6 @@ since: (from 2015-12-14 to 2016-02-08)
  * [PR#790](https://github.com/strongloop/loopback-datasource-juggler/pull/790) [SEMVER-MAJOR] Always use bluebird as the Promise implementation ([jannyHou](https://github.com/jannyHou))
  * [PR#796](https://github.com/strongloop/loopback-datasource-juggler/pull/796) Various fixes in operation hooks ([bajtos](https://github.com/bajtos))
  * [PR#809](https://github.com/strongloop/loopback-datasource-juggler/pull/809) Fix broken code fencings in the docs ([alFReD-NSH](https://github.com/alFReD-NSH))
- * [PR#806](https://github.com/strongloop/loopback-datasource-juggler/pull/806) Revert "Correct syntax for should and more" ([superkhau](https://github.com/superkhau))
- * [PR#804](https://github.com/strongloop/loopback-datasource-juggler/pull/804) Upgrade shouldjs to 8.0.2 ([superkhau](https://github.com/superkhau))
- * [@990307f](https://github.com/strongloop/loopback-datasource-juggler/commit/990307f3d5a5b08a49ae88b505205384312daec0) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#801](https://github.com/strongloop/loopback-datasource-juggler/pull/801) Start development of 3.0 ([bajtos](https://github.com/bajtos))
- * [PR#792](https://github.com/strongloop/loopback-datasource-juggler/pull/792) Redis test failiures ([Amir-61](https://github.com/Amir-61))
 
 
 ### loopback-phase
@@ -99,11 +84,6 @@ since: (from 2015-12-14 to 2016-02-08)
  * [PR#273](https://github.com/strongloop/strong-remoting/pull/273) Start development of 3.0 ([0candy](https://github.com/0candy))
  * **Released 2.24.0** ([Ritchie Martori](https://github.com/ritch))
  * [@eb90d1c](https://github.com/strongloop/strong-remoting/commit/eb90d1c544144d8a5cffb8cfce1d3deca0a6125b) Remove old rest-models example ([Ritchie Martori](https://github.com/ritch))
- * **Released 2.23.2** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#270](https://github.com/strongloop/strong-remoting/pull/270) Retain accepted content-type with no-content ([davidcheung](https://github.com/davidcheung))
- * [PR#261](https://github.com/strongloop/strong-remoting/pull/261) Fix incorrect boolean logic on shared-method's `documented` flag. ([STRML](https://github.com/STRML))
- * **Released 2.23.1** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#269](https://github.com/strongloop/strong-remoting/pull/269) Revert "Refactor and rework http coercion." ([bajtos](https://github.com/bajtos))
 
 
 
@@ -112,8 +92,6 @@ since: (from 2015-12-14 to 2016-02-08)
 ### loopback-connector-cloudant
  * [@4798b84](https://github.com/strongloop/loopback-connector-cloudant/commit/4798b843ea501a0f0ac5bff7319827766e87c0f4) default to sorting by id, fix custom id naming, implement filter.include ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@aef5672](https://github.com/strongloop/loopback-connector-cloudant/commit/aef5672d16d5d250c9ebadd9c7fa67fafad3fa14) Updates to conform with StrongLoop eslint config ([Anthony Ffrench](https://github.com/tonyffrench))
- * [@8c5e025](https://github.com/strongloop/loopback-connector-cloudant/commit/8c5e02511c22717cb098cc2108049c647df71ed7) Synchronize the configuration settings with the documentation. remove any hardcoded modelIndex (loopback__model__name) cases ([Anthony Ffrench](https://github.com/tonyffrench))
- * [@05df20f](https://github.com/strongloop/loopback-connector-cloudant/commit/05df20f5d2547f312ea1f9ce9a1040b6acc35686) Add example usage (example/example.js) ... minor fixes ([Anthony Ffrench](https://github.com/tonyffrench))
 
 
 ### loopback-connector-db2
@@ -133,20 +111,12 @@ since: (from 2015-12-14 to 2016-02-08)
  * [@b03d365](https://github.com/strongloop/loopback-connector-db2/commit/b03d3657b6b995b25f2f6cd07cb49dee9b65e25a) use version 0.17 of ibm_db driver ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@b780bbb](https://github.com/strongloop/loopback-connector-db2/commit/b780bbbba1bc69558fbab323a5539ebc032c43d1) Retrieve the correct effected row counts for UPDATE and DELETE ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@cf80635](https://github.com/strongloop/loopback-connector-db2/commit/cf806350af12ebc2cd75ac38972c474c6ac5af02) DB2 loopback connector initial commit ([Anthony Ffrench](https://github.com/tonyffrench))
- * [@6dd0688](https://github.com/strongloop/loopback-connector-db2/commit/6dd0688c9dfa0320ecb00484a6faa465c25b59bb) first commit ([Anthony Ffrench](https://github.com/tonyffrench))
 
 
 ### loopback-connector-mongodb
  * [PR#216](https://github.com/strongloop/loopback-connector-mongodb/pull/216) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#221](https://github.com/strongloop/loopback-connector-mongodb/pull/221) Check dataSource.connecting to prevent race conditions ([fabien](https://github.com/fabien))
  * [PR#210](https://github.com/strongloop/loopback-connector-mongodb/pull/210) Use ObjectId as internal storage for id ([raymondfeng](https://github.com/raymondfeng))
- * [PR#215](https://github.com/strongloop/loopback-connector-mongodb/pull/215) Remove email from AUTHORS ([superkhau](https://github.com/superkhau))
- * [PR#214](https://github.com/strongloop/loopback-connector-mongodb/pull/214) Update description in README.md ([superkhau](https://github.com/superkhau))
- * [PR#211](https://github.com/strongloop/loopback-connector-mongodb/pull/211) Clean up package.json ([superkhau](https://github.com/superkhau))
- * [PR#213](https://github.com/strongloop/loopback-connector-mongodb/pull/213) Update AUTHORS ([superkhau](https://github.com/superkhau))
- * [PR#212](https://github.com/strongloop/loopback-connector-mongodb/pull/212) Add AUTHORS file ([superkhau](https://github.com/superkhau))
- * [PR#209](https://github.com/strongloop/loopback-connector-mongodb/pull/209) test: fix order of semver arguments ([rmg](https://github.com/rmg))
- * [@42f951c](https://github.com/strongloop/loopback-connector-mongodb/commit/42f951cdfd258c35b9488fe8bf232042b7d1150a) Add more tests for id coercion ([Raymond Feng](https://github.com/raymondfeng))
 
 
 ### loopback-connector-mssql
@@ -195,7 +165,6 @@ since: (from 2015-12-14 to 2016-02-08)
  * [PR#33](https://github.com/strongloop/loopback-connector-soap/pull/33) Add new example location to README.md ([superkhau](https://github.com/superkhau))
  * [PR#32](https://github.com/strongloop/loopback-connector-soap/pull/32) Remove example dir ([superkhau](https://github.com/superkhau))
  * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
- * [PR#29](https://github.com/strongloop/loopback-connector-soap/pull/29) Changing soap invocation test to weather services ([davidcheung](https://github.com/davidcheung))
 
 
 ### loopback-connector-sqlite3
@@ -213,13 +182,6 @@ since: (from 2015-12-14 to 2016-02-08)
  * [PR#202](https://github.com/strongloop/loopback-sdk-angular/pull/202) Fix npm test on windows ([davidcheung](https://github.com/davidcheung))
 
 
-### loopback-sdk-angular-cli
- * **Released 2.0.1** ([Ryan Graham](https://github.com/rmg))
- * [@8e1fde3](https://github.com/strongloop/loopback-sdk-angular-cli/commit/8e1fde3b0254f93ad30cc3cf724b82c983d3edd9) remove ref to removed lb-ng-doc bin ([Ryan Graham](https://github.com/rmg))
- * **Released 2.0.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#36](https://github.com/strongloop/loopback-sdk-angular-cli/pull/36) [SEMVER-MAJOR] Remove lb-ng-doc and docular dependency ([bajtos](https://github.com/bajtos))
-
-
 ### loopback-sdk-ios
  * [PR#93](https://github.com/strongloop/loopback-sdk-ios/pull/93) Improve LBRESTAdapter repositoryWithModelName ([hideya](https://github.com/hideya))
  * [PR#83](https://github.com/strongloop/loopback-sdk-ios/pull/83) Add support for Buffer and GeoPoint data types ([hideya](https://github.com/hideya))
@@ -228,8 +190,6 @@ since: (from 2015-12-14 to 2016-02-08)
  * **Released 1.3.2** ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.3.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#91](https://github.com/strongloop/loopback-sdk-ios/pull/91) Remove docs and docs-1.0 ([crandmck](https://github.com/crandmck))
- * [PR#85](https://github.com/strongloop/loopback-sdk-ios/pull/85) Added resetPasswordWithEmail to trigger reset of the users password ([kgoedecke](https://github.com/kgoedecke))
- * [PR#87](https://github.com/strongloop/loopback-sdk-ios/pull/87) Fix swift compatibility issue when init'ing a repo ([hideya](https://github.com/hideya))
 
 
 
@@ -259,7 +219,5 @@ since: (from 2015-12-14 to 2016-02-08)
 ### loopback-component-storage
  * [PR#109](https://github.com/strongloop/loopback-component-storage/pull/109) Migrate examples ([superkhau](https://github.com/superkhau))
  * [PR#102](https://github.com/strongloop/loopback-component-storage/pull/102) Expose originalFilename when getFilename is called ([sanosom](https://github.com/sanosom))
- * [@24cd1a6](https://github.com/strongloop/loopback-component-storage/commit/24cd1a619e33ed1882f6ea818e3e2bd450d51d62) Remove test file ([Raymond Feng](https://github.com/raymondfeng))
- * [@685db48](https://github.com/strongloop/loopback-component-storage/commit/685db4819d972c07c45d58a1774f76dbdf95554d) Replace image ([Raymond Feng](https://github.com/raymondfeng))
 
 
