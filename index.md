@@ -6,6 +6,7 @@ since: (from 2015-12-16 to 2016-02-10)
 ## Core
 
 ### generator-loopback
+ * [@7ae2408](https://github.com/strongloop/generator-loopback/commit/7ae240865d3f95fe8d689d89849f5b7feb83edf6) Make `slc arc` conditional based on the cmd name ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#138](https://github.com/strongloop/generator-loopback/pull/138) Import `generator#invoke()` directly ([bajtos](https://github.com/bajtos))
  * [PR#136](https://github.com/strongloop/generator-loopback/pull/136) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.14.0** ([Simon Ho](https://github.com/superkhau))
