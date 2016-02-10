@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-15 to 2016-02-09)
+since: (from 2015-12-16 to 2016-02-10)
 ---
 
 ## Core
@@ -43,7 +43,7 @@ since: (from 2015-12-15 to 2016-02-09)
 
 
 ### loopback-datasource-juggler
- * [@5d81bfc](https://github.com/strongloop/loopback-datasource-juggler/commit/5d81bfc58b0b7b22dba466f529a5da8ceae75a9e) Update describe-operation-hooks ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#847](https://github.com/strongloop/loopback-datasource-juggler/pull/847) Update describe-operation-hooks ([bajtos](https://github.com/bajtos))
  * [@504675f](https://github.com/strongloop/loopback-datasource-juggler/commit/504675fc78715f7e4bf4bb3a7ccf36125e8a4a7c) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#788](https://github.com/strongloop/loopback-datasource-juggler/pull/788) Implementation of replaceOrCreate and replace ([Amir-61](https://github.com/Amir-61))
  * [PR#839](https://github.com/strongloop/loopback-datasource-juggler/pull/839) Fix conversion for `updateAttributes` ([Amir-61](https://github.com/Amir-61))
@@ -69,6 +69,7 @@ since: (from 2015-12-15 to 2016-02-09)
 
 
 ### loopback-swagger
+ * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#24](https://github.com/strongloop/loopback-swagger/pull/24) Make type geopoint case insensitive ([0candy](https://github.com/0candy))
  * [PR#23](https://github.com/strongloop/loopback-swagger/pull/23) Treat property as type 'any' if not specified ([0candy](https://github.com/0candy))
  * [PR#22](https://github.com/strongloop/loopback-swagger/pull/22) Exclude definitions that are not referenced ([0candy](https://github.com/0candy))
