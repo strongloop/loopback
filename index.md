@@ -121,6 +121,10 @@ since: (from 2015-12-15 to 2016-02-09)
 
 
 ### loopback-connector-mssql
+ * [@2f87f50](https://github.com/strongloop/loopback-connector-mssql/commit/2f87f507d072fb8581279f807ba4d791f565117b) Refactor Fix for Insert into Table with Active Trigger by getting the column data type instead of varchar. ([FoysalOsmany](https://github.com/FoysalOsmany))
+ * [@52550ed](https://github.com/strongloop/loopback-connector-mssql/commit/52550ed31155b1534c4851fe4c1fa2cbe2281b79) Fix for Insert into Table with Active Trigger ([FoysalOsmany](https://github.com/FoysalOsmany))
+ * [@a6fd32c](https://github.com/strongloop/loopback-connector-mssql/commit/a6fd32c34c49419882aae66c0416ad9591f3db96) Upgrade should to 8.0.2 (Simon Ho)
+ * [@6996e6a](https://github.com/strongloop/loopback-connector-mssql/commit/6996e6a0a9facff45c3239652512b9e311b3969a) Add help for Azure SQL users ([Oleksandr Sochka](https://github.com/sochka))
  * [PR#64](https://github.com/strongloop/loopback-connector-mssql/pull/64) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#68](https://github.com/strongloop/loopback-connector-mssql/pull/68) Add help for Azure SQL users ([sochka](https://github.com/sochka))
 
