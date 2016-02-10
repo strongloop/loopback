@@ -43,6 +43,7 @@ since: (from 2015-12-16 to 2016-02-10)
 
 
 ### loopback-datasource-juggler
+ * [@686ce5b](https://github.com/strongloop/loopback-datasource-juggler/commit/686ce5bae3c0e9feca71f79444338d8d55cb4db5) Fix missing connector error msg for db2, cloudant ([Candy](https://github.com/0candy))
  * [PR#847](https://github.com/strongloop/loopback-datasource-juggler/pull/847) Update describe-operation-hooks ([bajtos](https://github.com/bajtos))
  * [@504675f](https://github.com/strongloop/loopback-datasource-juggler/commit/504675fc78715f7e4bf4bb3a7ccf36125e8a4a7c) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#788](https://github.com/strongloop/loopback-datasource-juggler/pull/788) Implementation of replaceOrCreate and replace ([Amir-61](https://github.com/Amir-61))
