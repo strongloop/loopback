@@ -1,12 +1,15 @@
 ---
 layout: page
-since: (from 2015-12-16 to 2016-02-10)
+since: (from 2015-12-17 to 2016-02-11)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@7ae2408](https://github.com/strongloop/generator-loopback/commit/7ae240865d3f95fe8d689d89849f5b7feb83edf6) Make `slc arc` conditional based on the cmd name ([Raymond Feng](https://github.com/raymondfeng))
+ * **Released 1.15.1** ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#144](https://github.com/strongloop/generator-loopback/pull/144) Helpers to display correct usage message for apic ([davidcheung](https://github.com/davidcheung))
+ * **Released 1.15.0** ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#143](https://github.com/strongloop/generator-loopback/pull/143) Make `slc arc` conditional based on the cmd name ([raymondfeng](https://github.com/raymondfeng))
  * [PR#138](https://github.com/strongloop/generator-loopback/pull/138) Import `generator#invoke()` directly ([bajtos](https://github.com/bajtos))
  * [PR#136](https://github.com/strongloop/generator-loopback/pull/136) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
  * **Released 1.14.0** ([Simon Ho](https://github.com/superkhau))
@@ -44,7 +47,7 @@ since: (from 2015-12-16 to 2016-02-10)
 
 
 ### loopback-datasource-juggler
- * [@686ce5b](https://github.com/strongloop/loopback-datasource-juggler/commit/686ce5bae3c0e9feca71f79444338d8d55cb4db5) Fix missing connector error msg for db2, cloudant ([Candy](https://github.com/0candy))
+ * [PR#852](https://github.com/strongloop/loopback-datasource-juggler/pull/852) Fix missing connector error msg for db2, cloudant ([0candy](https://github.com/0candy))
  * [PR#847](https://github.com/strongloop/loopback-datasource-juggler/pull/847) Update describe-operation-hooks ([bajtos](https://github.com/bajtos))
  * [@504675f](https://github.com/strongloop/loopback-datasource-juggler/commit/504675fc78715f7e4bf4bb3a7ccf36125e8a4a7c) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#788](https://github.com/strongloop/loopback-datasource-juggler/pull/788) Implementation of replaceOrCreate and replace ([Amir-61](https://github.com/Amir-61))
@@ -124,10 +127,8 @@ since: (from 2015-12-16 to 2016-02-10)
 
 
 ### loopback-connector-mssql
- * [@2f87f50](https://github.com/strongloop/loopback-connector-mssql/commit/2f87f507d072fb8581279f807ba4d791f565117b) Refactor Fix for Insert into Table with Active Trigger by getting the column data type instead of varchar. ([FoysalOsmany](https://github.com/FoysalOsmany))
- * [@52550ed](https://github.com/strongloop/loopback-connector-mssql/commit/52550ed31155b1534c4851fe4c1fa2cbe2281b79) Fix for Insert into Table with Active Trigger ([FoysalOsmany](https://github.com/FoysalOsmany))
- * [@a6fd32c](https://github.com/strongloop/loopback-connector-mssql/commit/a6fd32c34c49419882aae66c0416ad9591f3db96) Upgrade should to 8.0.2 (Simon Ho)
- * [@6996e6a](https://github.com/strongloop/loopback-connector-mssql/commit/6996e6a0a9facff45c3239652512b9e311b3969a) Add help for Azure SQL users ([Oleksandr Sochka](https://github.com/sochka))
+ * **Released 2.4.0** ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#70](https://github.com/strongloop/loopback-connector-mssql/pull/70) #21 Fix for Insert into Table with Active Trigger ([FoysalOsmany](https://github.com/FoysalOsmany))
  * [PR#64](https://github.com/strongloop/loopback-connector-mssql/pull/64) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
  * [PR#68](https://github.com/strongloop/loopback-connector-mssql/pull/68) Add help for Azure SQL users ([sochka](https://github.com/sochka))
 
@@ -191,6 +192,8 @@ since: (from 2015-12-16 to 2016-02-10)
 
 
 ### loopback-sdk-ios
+ * [PR#100](https://github.com/strongloop/loopback-sdk-ios/pull/100) Fix error in upsert implementation and make SLObject.repository attribute strong ([hideya](https://github.com/hideya))
+ * [@b70c133](https://github.com/strongloop/loopback-sdk-ios/commit/b70c13336bc1a669c464017b9d019f5cae064995) Cleanup typedefs for success blocks, mark extra typedefs "deprecated" ([hideya kawahara](https://github.com/hideya))
  * [PR#93](https://github.com/strongloop/loopback-sdk-ios/pull/93) Improve LBRESTAdapter repositoryWithModelName ([hideya](https://github.com/hideya))
  * [PR#83](https://github.com/strongloop/loopback-sdk-ios/pull/83) Add support for Buffer and GeoPoint data types ([hideya](https://github.com/hideya))
  * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
