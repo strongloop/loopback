@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-17 to 2016-02-11)
+since: (from 2015-12-18 to 2016-02-12)
 ---
 
 ## Core
@@ -192,8 +192,8 @@ since: (from 2015-12-17 to 2016-02-11)
 
 
 ### loopback-sdk-ios
+ * [PR#101](https://github.com/strongloop/loopback-sdk-ios/pull/101) Cleanup typedefs for success blocks, mark extra typedefs "deprecated" ([hideya](https://github.com/hideya))
  * [PR#100](https://github.com/strongloop/loopback-sdk-ios/pull/100) Fix error in upsert implementation and make SLObject.repository attribute strong ([hideya](https://github.com/hideya))
- * [@b70c133](https://github.com/strongloop/loopback-sdk-ios/commit/b70c13336bc1a669c464017b9d019f5cae064995) Cleanup typedefs for success blocks, mark extra typedefs "deprecated" ([hideya kawahara](https://github.com/hideya))
  * [PR#93](https://github.com/strongloop/loopback-sdk-ios/pull/93) Improve LBRESTAdapter repositoryWithModelName ([hideya](https://github.com/hideya))
  * [PR#83](https://github.com/strongloop/loopback-sdk-ios/pull/83) Add support for Buffer and GeoPoint data types ([hideya](https://github.com/hideya))
  * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
