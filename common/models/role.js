@@ -212,7 +212,7 @@ module.exports = function(Role) {
         // Try to follow belongsTo
         for (var r in modelClass.relations) {
           var rel = modelClass.relations[r];
-          if (rel.type === 'belongsTo' && isUserClass(rel.modelTo)) {
+          if (rel.type === 'belongsTo') {
             debug('Checking relation %s to %s: %j', r, rel.modelTo.modelName, rel);
             inst[r](processRelatedUser);
             return;
@@ -222,10 +222,14 @@ module.exports = function(Role) {
         if (callback) callback(null, false);
       }
 
-      function processRelatedUser(err, user) {
-        if (!err && user) {
-          debug('User found: %j', user.id);
-          if (callback) callback(null, matches(user.id, userId));
+      function processRelatedUser(err, relatedModel) {
+        if (!err && relatedModel) {
+          debug('Related model found: %j', relatedModel.id);
+          if (callback) {
+            if (matches(relatedModel.id, userId) || matches(relatedModel.userId, userId)) {
+                callback(null, true);
+            }
+          }
         } else {
           if (callback) callback(err, false);
         }
