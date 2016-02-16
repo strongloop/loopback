@@ -169,6 +169,32 @@ module.exports = function(Role) {
     // The id can be a MongoDB ObjectID
     return id1 === id2 || id1.toString() === id2.toString();
   }
+  
+  /*!
+   * Walks belongsTo relationships looking for User derivative.
+   * @param {Function} sourceModel Source instance of model being walked
+   * @param {Function} pathToUser String array of path to user model
+   * @returns {userFound: boolean, pathToUser: ["string"]} 
+   */
+  function walkBelongsToForUser(sourceModel, pathToUser) {
+      var userFound = false;
+      for (var r in sourceModel.relations) {
+        var rel = sourceModel.relations[r];
+        if (rel.type === 'belongsTo') {
+            pathToUser = pathToUser || [];
+            pathToUser.push(rel.modelTo.modelName)
+            
+            if(isUserClass(rel.modelTo)){
+                return {userFound: true, pathToUser: pathToUser};
+            }
+            var result = walkBelongsToForUser(rel.modelTo, pathToUser)
+            if(result.userFound) {
+                return {userFound: true, pathToUser: result.pathToUser}; 
+            }
+        }
+    }
+    return {userFound: userFound, pathToUser: pathToUser};
+  }
 
   /**
    * Check if a given user ID is the owner the model instance.
@@ -210,16 +236,23 @@ module.exports = function(Role) {
         return;
       } else {
         // Try to follow belongsTo
-        for (var r in modelClass.relations) {
-          var rel = modelClass.relations[r];
-          if (rel.type === 'belongsTo') {
-            debug('Checking relation %s to %s: %j', r, rel.modelTo.modelName, rel);
-            inst[r](processRelatedUser);
+        var lookupUserModel = walkBelongsToForUser(modelClass);
+        if(lookupUserModel.userFound){
+            processBelongsToTree(null, inst);
             return;
-          }
         }
+        
         debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
         if (callback) callback(null, false);
+      }
+      
+      function processBelongsToTree(err, model){
+          var relName = lookupUserModel.pathToUser.shift();
+          if(lookupUserModel.pathToUser.length === 0){
+              return model[relName](processRelatedUser);
+          }
+          
+          return model[relName](processBelongsToTree);
       }
 
       function processRelatedUser(err, relatedModel) {
