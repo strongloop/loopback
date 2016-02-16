@@ -187,7 +187,7 @@ module.exports = function(Role) {
       var rel = sourceModel.relations[r];
       if (rel.type === 'belongsTo') {
         pathToUser = pathToUser || [];
-        pathToUser.push(rel.modelTo.modelName)
+        pathToUser.push(rel.modelTo.modelName);
 
         if (isUserClass(rel.modelTo)) {
           return {
@@ -195,7 +195,7 @@ module.exports = function(Role) {
             pathToUser: pathToUser
           };
         }
-        var result = walkBelongsToForUser(rel.modelTo, pathToUser)
+        var result = walkBelongsToForUser(rel.modelTo, pathToUser);
         if (result.userFound) {
           return {
             userFound: true,
