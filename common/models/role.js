@@ -19,14 +19,14 @@ module.exports = function(Role) {
   // Workaround for https://github.com/strongloop/loopback/issues/292
   Role.definition.rawProperties.created.default =
     Role.definition.properties.created.default = function() {
-    return new Date();
-  };
+      return new Date();
+    };
 
   // Workaround for https://github.com/strongloop/loopback/issues/292
   Role.definition.rawProperties.modified.default =
     Role.definition.properties.modified.default = function() {
-    return new Date();
-  };
+      return new Date();
+    };
 
   Role.resolveRelatedModels = function() {
     if (!this.userModel) {
@@ -94,7 +94,10 @@ module.exports = function(Role) {
       }
 
       roleModel.roleMappingModel.find({
-        where: {roleId: this.id, principalType: principalType}
+        where: {
+          roleId: this.id,
+          principalType: principalType
+        }
       }, function(err, mappings) {
         var ids;
         if (err) {
@@ -104,7 +107,9 @@ module.exports = function(Role) {
           return m.principalId;
         });
         query.where = query.where || {};
-        query.where.id = {inq: ids};
+        query.where.id = {
+          inq: ids
+        };
         model.find(query, function(err, models) {
           callback(err, models);
         });
@@ -169,31 +174,40 @@ module.exports = function(Role) {
     // The id can be a MongoDB ObjectID
     return id1 === id2 || id1.toString() === id2.toString();
   }
-  
+
   /*!
    * Walks belongsTo relationships looking for User derivative.
    * @param {Function} sourceModel Source instance of model being walked
    * @param {Function} pathToUser String array of path to user model
-   * @returns {userFound: boolean, pathToUser: ["string"]} 
+   * @returns {userFound: boolean, pathToUser: ["string"]}
    */
   function walkBelongsToForUser(sourceModel, pathToUser) {
-      var userFound = false;
-      for (var r in sourceModel.relations) {
-        var rel = sourceModel.relations[r];
-        if (rel.type === 'belongsTo') {
-            pathToUser = pathToUser || [];
-            pathToUser.push(rel.modelTo.modelName)
-            
-            if(isUserClass(rel.modelTo)){
-                return {userFound: true, pathToUser: pathToUser};
-            }
-            var result = walkBelongsToForUser(rel.modelTo, pathToUser)
-            if(result.userFound) {
-                return {userFound: true, pathToUser: result.pathToUser}; 
-            }
+    var userFound = false;
+    for (var r in sourceModel.relations) {
+      var rel = sourceModel.relations[r];
+      if (rel.type === 'belongsTo') {
+        pathToUser = pathToUser || [];
+        pathToUser.push(rel.modelTo.modelName)
+
+        if (isUserClass(rel.modelTo)) {
+          return {
+            userFound: true,
+            pathToUser: pathToUser
+          };
         }
+        var result = walkBelongsToForUser(rel.modelTo, pathToUser)
+        if (result.userFound) {
+          return {
+            userFound: true,
+            pathToUser: result.pathToUser
+          };
+        }
+      }
     }
-    return {userFound: userFound, pathToUser: pathToUser};
+    return {
+      userFound: userFound,
+      pathToUser: pathToUser
+    };
   }
 
   /**
@@ -237,22 +251,26 @@ module.exports = function(Role) {
       } else {
         // Try to follow belongsTo
         var lookupUserModel = walkBelongsToForUser(modelClass);
-        if(lookupUserModel.userFound){
-            processBelongsToTree(null, inst);
-            return;
+        if (lookupUserModel.userFound) {
+          processBelongsToTree(null, inst);
+          return;
         }
-        
+
         debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
         if (callback) callback(null, false);
       }
-      
-      function processBelongsToTree(err, model){
-          var relName = lookupUserModel.pathToUser.shift();
-          if(lookupUserModel.pathToUser.length === 0){
-              return model[relName](processRelatedUser);
-          }
-          
-          return model[relName](processBelongsToTree);
+
+      function processBelongsToTree(err, model) {
+        if (err) {
+          if (callback) callback(err, false);
+          return;
+        }
+        var relName = lookupUserModel.pathToUser.shift();
+        if (lookupUserModel.pathToUser.length === 0) {
+          return model[relName](processRelatedUser);
+        }
+
+        return model[relName](processBelongsToTree);
       }
 
       function processRelatedUser(err, relatedModel) {
@@ -260,7 +278,7 @@ module.exports = function(Role) {
           debug('Related model found: %j', relatedModel.id);
           if (callback) {
             if (matches(relatedModel.id, userId) || matches(relatedModel.userId, userId)) {
-                callback(null, true);
+              callback(null, true);
             }
           }
         } else {
@@ -359,7 +377,11 @@ module.exports = function(Role) {
     }
 
     var roleMappingModel = this.roleMappingModel;
-    this.findOne({where: {name: role}}, function(err, result) {
+    this.findOne({
+      where: {
+        name: role
+      }
+    }, function(err, result) {
       if (err) {
         if (callback) callback(err);
         return;
@@ -381,8 +403,13 @@ module.exports = function(Role) {
         }
 
         if (principalType && principalId) {
-          roleMappingModel.findOne({where: {roleId: roleId,
-              principalType: principalType, principalId: principalId}},
+          roleMappingModel.findOne({
+              where: {
+                roleId: roleId,
+                principalType: principalType,
+                principalId: principalId
+              }
+            },
             function(err, result) {
               debug('Role mapping found: %j', result);
               done(!err && result); // The only arg is the result
@@ -458,8 +485,12 @@ module.exports = function(Role) {
       if (principalType && principalId) {
         // Please find() treat undefined matches all values
         inRoleTasks.push(function(done) {
-          roleMappingModel.find({where: {principalType: principalType,
-            principalId: principalId}}, function(err, mappings) {
+          roleMappingModel.find({
+            where: {
+              principalType: principalType,
+              principalId: principalId
+            }
+          }, function(err, mappings) {
             debug('Role mappings found: %s %j', err, mappings);
             if (err) {
               if (done) done(err);
