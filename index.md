@@ -1,11 +1,13 @@
 ---
 layout: page
-since: (from 2015-12-22 to 2016-02-16)
+since: (from 2015-12-23 to 2016-02-17)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.15.2** (Raymond Feng)
+ * [@9d0a49a](https://github.com/strongloop/generator-loopback/commit/9d0a49ab2da5d801041ab2ae8a0b0a80cedfadc3) Fix the message for apic (Raymond Feng)
  * **Released 1.15.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#144](https://github.com/strongloop/generator-loopback/pull/144) Helpers to display correct usage message for apic ([davidcheung](https://github.com/davidcheung))
  * **Released 1.15.0** ([Raymond Feng](https://github.com/raymondfeng))
@@ -157,6 +159,8 @@ since: (from 2015-12-22 to 2016-02-16)
 
 
 ### loopback-connector-remote
+ * **Released 1.2.0** ([Raymond Feng](https://github.com/raymondfeng))
+ * [@b875050](https://github.com/strongloop/loopback-connector-remote/commit/b8750508c2a36d80ba86da129943edb4c3dc6ac3) Remove blip ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#36](https://github.com/strongloop/loopback-connector-remote/pull/36) test: listen on ephemeral ports ([bajtos](https://github.com/bajtos))
  * **Released 1.1.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#35](https://github.com/strongloop/loopback-connector-remote/pull/35) Register Models with Dynamic converter ([bajtos](https://github.com/bajtos))
