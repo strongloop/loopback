@@ -195,13 +195,7 @@ module.exports = function(Role) {
             pathToUser: pathToUser
           };
         }
-        var result = walkBelongsToForUser(rel.modelTo, pathToUser);
-        if (result.userFound) {
-          return {
-            userFound: true,
-            pathToUser: result.pathToUser
-          };
-        }
+        return walkBelongsToForUser(rel.modelTo, pathToUser);
       }
     }
     return {
