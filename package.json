@@ -101,8 +101,5 @@
     "depd": "loopback-datasource-juggler/lib/browser.depd.js",
     "bcrypt": false
   },
-  "license": "MIT",
-  "optionalDependencies": {
-    "sl-blip": "http://blip.strongloop.com/loopback@3.0.0-alpha.1"
-  }
+  "license": "MIT"
 }
