@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-12-23 to 2016-02-17)
+since: (from 2015-12-24 to 2016-02-18)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#146](https://github.com/strongloop/generator-loopback/pull/146) Only show editable model names in remote-method generator ([jannyHou](https://github.com/jannyHou))
  * **Released 1.15.2** (Raymond Feng)
  * [@9d0a49a](https://github.com/strongloop/generator-loopback/commit/9d0a49ab2da5d801041ab2ae8a0b0a80cedfadc3) Fix the message for apic (Raymond Feng)
  * **Released 1.15.1** ([Raymond Feng](https://github.com/raymondfeng))
