@@ -1,3 +1,33 @@
+2016-02-19, Version 2.27.0
+==========================
+
+ * Remove sl-blip from dependency (Candy)
+
+ * Fix race condition in replication tests (Miroslav Bajtoš)
+
+ * test: remove errant console.log from test (Ryan Graham)
+
+ * Promisify Model Change (Jue Hou)
+
+ * Fix race condition in error handler test (Miroslav Bajtoš)
+
+ * Travis: drop iojs, add v4.x and v5.x (Miroslav Bajtoš)
+
+ * Correct JSDoc findOrCreate() callback in PersistedModel (Miroslav Bajtoš)
+
+ * Hide verificationToken (Miroslav Bajtoš)
+
+ * test: use ephemeral port for e2e server (Ryan Graham)
+
+ * test: fail on error instead of crash (Ryan Graham)
+
+ * ensure app is booted before integration tests (Ryan Graham)
+
+ * Checkpoint speedup (Amir Jafarian)
+
+ * Pull in API doc fix from PR into master #1910 (crandmck)
+
+
 2015-12-22, Version 2.26.2
 ==========================
 
@@ -989,8 +1019,6 @@
 2014-07-15, Version 2.0.0-beta6
 ===============================
 
- * 2.0.0-beta6 (Miroslav Bajtoš)
-
  * lib/application: publish Change models to REST API (Miroslav Bajtoš)
 
  * models/change: fix typo (Miroslav Bajtoš)
@@ -1000,8 +1028,6 @@
 
 2014-07-03, Version 2.0.0-beta5
 ===============================
-
- * 2.0.0-beta5 (Miroslav Bajtoš)
 
  * app: update `url` on `listening` event (Miroslav Bajtoš)
 
@@ -1020,8 +1046,6 @@
 
 2014-06-26, Version 2.0.0-beta4
 ===============================
-
- * 2.0.0-beta4 (Miroslav Bajtoš)
 
  * package: upgrade juggler to 2.0.0-beta2 (Miroslav Bajtoš)
 
@@ -1148,8 +1172,6 @@
 
 2014-05-28, Version 2.0.0-beta3
 ===============================
-
- * 2.0.0-beta3 (Miroslav Bajtoš)
 
  * package.json: fix malformed json (Miroslav Bajtoš)
 
