@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-24 to 2016-02-18)
+since: (from 2015-12-25 to 2016-02-19)
 ---
 
 ## Core
@@ -23,6 +23,7 @@ since: (from 2015-12-24 to 2016-02-18)
 
 
 ### loopback
+ * [@804265b](https://github.com/strongloop/loopback/commit/804265b801187b072ae182b1f35b9594b304f25f) Remove sl-blip from dependency ([Candy](https://github.com/0candy))
  * [PR#2039](https://github.com/strongloop/loopback/pull/2039) Use new strong-remoting API ([0candy](https://github.com/0candy))
  * [@782e897](https://github.com/strongloop/loopback/commit/782e89758e8583b862f7428eac3bd5ebcf8e6ec1) test: remove forgotten console.trace logs ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2036](https://github.com/strongloop/loopback/pull/2036) Fix race conditions in unit tests ([bajtos](https://github.com/bajtos))
@@ -105,6 +106,8 @@ since: (from 2015-12-24 to 2016-02-18)
 
 
 ### loopback-connector-db2
+ * [@264bf38](https://github.com/strongloop/loopback-connector-db2/commit/264bf383295c3418a1a4574f15f467dbe5413762) Update migration tests ([Quentin Presley](https://github.com/qpresley))
+ * [@0d6b076](https://github.com/strongloop/loopback-connector-db2/commit/0d6b076260ddb280d36de23dd7c13f9fde47547c) Update migration tests ([Quentin Presley](https://github.com/qpresley))
  * [PR#12](https://github.com/strongloop/loopback-connector-db2/pull/12) Dbdiscovery ([qpresley](https://github.com/qpresley))
  * [@c0231de](https://github.com/strongloop/loopback-connector-db2/commit/c0231de905cb7b069d3642ab8f021725d3c6204e) Update IBM DB2 driver. Resolves node v0.10 build issues ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
