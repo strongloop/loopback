@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2015-12-25 to 2016-02-19)
+since: (from 2015-12-26 to 2016-02-20)
 ---
 
 ## Core
@@ -23,6 +23,7 @@ since: (from 2015-12-25 to 2016-02-19)
 
 
 ### loopback
+ * [PR#2088](https://github.com/strongloop/loopback/pull/2088) application: correct spelling of "cannont" ([sam-github](https://github.com/sam-github))
  * [@804265b](https://github.com/strongloop/loopback/commit/804265b801187b072ae182b1f35b9594b304f25f) Remove sl-blip from dependency ([Candy](https://github.com/0candy))
  * [PR#2039](https://github.com/strongloop/loopback/pull/2039) Use new strong-remoting API ([0candy](https://github.com/0candy))
  * [@782e897](https://github.com/strongloop/loopback/commit/782e89758e8583b862f7428eac3bd5ebcf8e6ec1) test: remove forgotten console.trace logs ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -106,8 +107,8 @@ since: (from 2015-12-25 to 2016-02-19)
 
 
 ### loopback-connector-db2
- * [@264bf38](https://github.com/strongloop/loopback-connector-db2/commit/264bf383295c3418a1a4574f15f467dbe5413762) Update migration tests ([Quentin Presley](https://github.com/qpresley))
- * [@0d6b076](https://github.com/strongloop/loopback-connector-db2/commit/0d6b076260ddb280d36de23dd7c13f9fde47547c) Update migration tests ([Quentin Presley](https://github.com/qpresley))
+ * [PR#16](https://github.com/strongloop/loopback-connector-db2/pull/16) clean up console.log in db2.js ([qpresley](https://github.com/qpresley))
+ * [PR#15](https://github.com/strongloop/loopback-connector-db2/pull/15) Adding migration tests and updates to code to improve on some reported issues ([qpresley](https://github.com/qpresley))
  * [PR#12](https://github.com/strongloop/loopback-connector-db2/pull/12) Dbdiscovery ([qpresley](https://github.com/qpresley))
  * [@c0231de](https://github.com/strongloop/loopback-connector-db2/commit/c0231de905cb7b069d3642ab8f021725d3c6204e) Update IBM DB2 driver. Resolves node v0.10 build issues ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
@@ -133,6 +134,8 @@ since: (from 2015-12-25 to 2016-02-19)
 
 
 ### loopback-connector-mssql
+ * **Released 2.4.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@1a00250](https://github.com/strongloop/loopback-connector-mssql/commit/1a00250e375c2c396ebb8b4931083d17cfce6da0) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 2.4.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#70](https://github.com/strongloop/loopback-connector-mssql/pull/70) #21 Fix for Insert into Table with Active Trigger ([FoysalOsmany](https://github.com/FoysalOsmany))
  * [PR#64](https://github.com/strongloop/loopback-connector-mssql/pull/64) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
@@ -140,15 +143,21 @@ since: (from 2015-12-25 to 2016-02-19)
 
 
 ### loopback-connector-mysql
+ * **Released 2.2.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@c321556](https://github.com/strongloop/loopback-connector-mysql/commit/c32155611d1bd3e4efbc1c8f1d3e82d2fe14bb17) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#146](https://github.com/strongloop/loopback-connector-mysql/pull/146) Upgrade `should` module ([Amir-61](https://github.com/Amir-61))
 
 
 ### loopback-connector-oracle
+ * **Released 2.3.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@3e08c96](https://github.com/strongloop/loopback-connector-oracle/commit/3e08c96e117aa42662c0ca6a7619c3c29e07dae9) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#57](https://github.com/strongloop/loopback-connector-oracle/pull/57) Add NOTICE ([raymondfeng](https://github.com/raymondfeng))
  * [PR#56](https://github.com/strongloop/loopback-connector-oracle/pull/56) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-connector-postgresql
+ * **Released 2.4.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@e64a894](https://github.com/strongloop/loopback-connector-postgresql/commit/e64a894c80031182a5f86a893b7ff3b990d1e485) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#120](https://github.com/strongloop/loopback-connector-postgresql/pull/120) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
@@ -175,16 +184,24 @@ since: (from 2015-12-25 to 2016-02-19)
 
 
 ### loopback-connector-rest
+ * **Released 1.10.2** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@4048ed7](https://github.com/strongloop/loopback-connector-rest/commit/4048ed7a53813884910561bc59137688a7abe74d) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#47](https://github.com/strongloop/loopback-connector-rest/pull/47) Remove example dir ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-connector-soap
+ * **Released 2.3.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@bbf366f](https://github.com/strongloop/loopback-connector-soap/commit/bbf366f0457811411e83c70f0918fa7f011b05b3) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#33](https://github.com/strongloop/loopback-connector-soap/pull/33) Add new example location to README.md ([superkhau](https://github.com/superkhau))
  * [PR#32](https://github.com/strongloop/loopback-connector-soap/pull/32) Remove example dir ([superkhau](https://github.com/superkhau))
  * [PR#30](https://github.com/strongloop/loopback-connector-soap/pull/30) Fix typo in readme.md ([davidcheung](https://github.com/davidcheung))
 
 
 ### loopback-connector-sqlite3
+ * **Released 1.1.1** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@127c8fb](https://github.com/strongloop/loopback-connector-sqlite3/commit/127c8fbe0fc974443be400c00b03657c21230e35) Fix CHANGES.md ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@0fcc27d](https://github.com/strongloop/loopback-connector-sqlite3/commit/0fcc27dfaf94e3638a4ecaea5a8f8655388d9a30) last e3ce30b4d67c211db11b82e3eb524eed3a7154ee head 78006909331d252419ec50b0ecbf2b44d4dcad2c ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@7800690](https://github.com/strongloop/loopback-connector-sqlite3/commit/78006909331d252419ec50b0ecbf2b44d4dcad2c) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#12](https://github.com/strongloop/loopback-connector-sqlite3/pull/12) Upgrade should to 8.0.2 ([superkhau](https://github.com/superkhau))
 
 
@@ -222,6 +239,11 @@ since: (from 2015-12-25 to 2016-02-19)
  * [@2186b69](https://github.com/strongloop/loopback-component-explorer/commit/2186b69885f5b505ec59c0e2595a3c43e0759d9a) Update swaggerObject when a new model was added ([Pradeep Kumar Tippa](https://github.com/pktippa))
 
 
+### loopback-component-oauth2
+ * **Released 2.3.7** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@4abd4b0](https://github.com/strongloop/loopback-component-oauth2/commit/4abd4b04e2c3cc5ff4cf983c9efd38f2a1f7b061) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
+
+
 ### loopback-component-passport
  * [PR#121](https://github.com/strongloop/loopback-component-passport/pull/121) Fix email validation for LDAP ([loay](https://github.com/loay))
  * **Released 2.0.0** ([Ryan Graham](https://github.com/rmg))
@@ -230,12 +252,16 @@ since: (from 2015-12-25 to 2016-02-19)
 
 
 ### loopback-component-push
+ * **Released 1.5.3** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@b093dea](https://github.com/strongloop/loopback-component-push/commit/b093dea13d995146a8f5d47e3b0af4c8eba4abc6) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#109](https://github.com/strongloop/loopback-component-push/pull/109) Remove dependency on loopback-testing ([superkhau](https://github.com/superkhau))
  * **Released 1.5.2** (Simon Ho)
  * [PR#108](https://github.com/strongloop/loopback-component-push/pull/108) Remove example dir ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-component-storage
+ * **Released 1.7.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@69bcf93](https://github.com/strongloop/loopback-component-storage/commit/69bcf93247122ffb4b272fa0e47cbd94fe59671d) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#109](https://github.com/strongloop/loopback-component-storage/pull/109) Migrate examples ([superkhau](https://github.com/superkhau))
  * [PR#102](https://github.com/strongloop/loopback-component-storage/pull/102) Expose originalFilename when getFilename is called ([sanosom](https://github.com/sanosom))
 
