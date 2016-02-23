@@ -38,6 +38,7 @@ since: (from 2015-12-29 to 2016-02-23)
 
 
 ### loopback-boot
+ * [@b0e5a0b](https://github.com/strongloop/loopback-boot/commit/b0e5a0bc633198958418a6c9d4fb318376c2ac36) executor: move "booted" and cb() to the next tick ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#168](https://github.com/strongloop/loopback-boot/pull/168) When config is overriden with null don't merge ([alFReD-NSH](https://github.com/alFReD-NSH))
  * [PR#169](https://github.com/strongloop/loopback-boot/pull/169) Fix lodash 4.0.0 breaking changes ([jdrouet](https://github.com/jdrouet))
 
