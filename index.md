@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2015-12-30 to 2016-02-24)
+since: (from 2015-12-31 to 2016-02-25)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#149](https://github.com/strongloop/generator-loopback/pull/149) Add project template prompt, support apic ([bajtos](https://github.com/bajtos))
  * [PR#146](https://github.com/strongloop/generator-loopback/pull/146) Only show editable model names in remote-method generator ([jannyHou](https://github.com/jannyHou))
  * **Released 1.15.2** (Raymond Feng)
  * [@9d0a49a](https://github.com/strongloop/generator-loopback/commit/9d0a49ab2da5d801041ab2ae8a0b0a80cedfadc3) Fix the message for apic (Raymond Feng)
@@ -76,6 +77,7 @@ since: (from 2015-12-30 to 2016-02-24)
 
 
 ### strong-remoting
+ * [@9fb9119](https://github.com/strongloop/strong-remoting/commit/9fb9119b156b367276fffc55d02be08d34d5f4df) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#283](https://github.com/strongloop/strong-remoting/pull/283) Do not call "afterError" on success ([bajtos](https://github.com/bajtos))
  * [PR#275](https://github.com/strongloop/strong-remoting/pull/275) Change method call to find remote method. ([0candy](https://github.com/0candy))
  * [@40c331a](https://github.com/strongloop/strong-remoting/commit/40c331a37c34ac5f7f06095bb014780d8dadda87) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -192,6 +194,7 @@ since: (from 2015-12-30 to 2016-02-24)
 ## SDKs
 
 ### loopback-sdk-angular
+ * **Released 1.7.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#203](https://github.com/strongloop/loopback-sdk-angular/pull/203) Patch safari-private-mode localStorage unusable ([davidcheung](https://github.com/davidcheung))
  * [PR#207](https://github.com/strongloop/loopback-sdk-angular/pull/207) Remove bower.json and update dependencies ([bajtos](https://github.com/bajtos))
  * [PR#201](https://github.com/strongloop/loopback-sdk-angular/pull/201) CommonJS package manager support ([dfeddad](https://github.com/dfeddad))
