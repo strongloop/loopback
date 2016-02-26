@@ -6,6 +6,7 @@ since: (from 2016-01-01 to 2016-02-26)
 ## Core
 
 ### generator-loopback
+ * [@d7a9481](https://github.com/strongloop/generator-loopback/commit/d7a94819a4778cc7204d33cf76938eed72e23c46) Add `yo loopback --skip-next-steps` options ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#149](https://github.com/strongloop/generator-loopback/pull/149) Add project template prompt, support apic ([bajtos](https://github.com/bajtos))
  * [PR#146](https://github.com/strongloop/generator-loopback/pull/146) Only show editable model names in remote-method generator ([jannyHou](https://github.com/jannyHou))
  * **Released 1.15.2** (Raymond Feng)
@@ -77,6 +78,7 @@ since: (from 2016-01-01 to 2016-02-26)
 
 
 ### strong-remoting
+ * [@588740b](https://github.com/strongloop/strong-remoting/commit/588740beb521cfbbf7e721309b175be1d477e653) Fix handling of args with http.target:header ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@9fb9119](https://github.com/strongloop/strong-remoting/commit/9fb9119b156b367276fffc55d02be08d34d5f4df) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#283](https://github.com/strongloop/strong-remoting/pull/283) Do not call "afterError" on success ([bajtos](https://github.com/bajtos))
  * [PR#275](https://github.com/strongloop/strong-remoting/pull/275) Change method call to find remote method. ([0candy](https://github.com/0candy))
