@@ -21,7 +21,7 @@ function rewriteUserLiteral(req, currentUserLiteral) {
     var urlBeforeRewrite = req.url;
     req.url = req.url.replace(
       new RegExp('/' + currentUserLiteral + '(/|$|\\?)', 'g'),
-        '/' + req.accessToken.userId + '$1');
+      '/' + req.accessToken.userId + '$1');
     if (req.url !== urlBeforeRewrite) {
       debug('req.url has been rewritten from %s to %s', urlBeforeRewrite,
         req.url);
@@ -62,6 +62,8 @@ function escapeRegExp(str) {
  * @property {Array} [headers] Array of header names.
  * @property {Array} [params] Array of param names.
  * @property {Boolean} [searchDefaultTokenKeys] Use the default search locations for Token in request
+ * @property {Boolean} [enableDoublecheck] Execute middleware although an instance mounted earlier in the chain didn't find a token
+ * @property {Boolean} [overwriteExistingToken] only has effect in combination with `enableDoublecheck`. If truthy, will allow to overwrite an existing accessToken.
  * @property {Function|String} [model] AccessToken model name or class to use.
  * @property {String} [currentUserLiteral] String literal for the current user.
  * @header loopback.token([options])
@@ -80,6 +82,9 @@ function token(options) {
     currentUserLiteral = escapeRegExp(currentUserLiteral);
   }
 
+  var enableDoublecheck = !!options.enableDoublecheck;
+  var overwriteExistingToken = !!options.overwriteExistingToken;
+
   return function(req, res, next) {
     var app = req.app;
     var registry = app.registry;
@@ -96,9 +101,20 @@ function token(options) {
     assert(typeof TokenModel === 'function',
       'loopback.token() middleware requires a AccessToken model');
 
-    if (req.accessToken && req.accessToken.id) {
-      rewriteUserLiteral(req, currentUserLiteral);
-      return next();
+    if (req.accessToken !== undefined) {
+      if (!enableDoublecheck) {
+        // req.accessToken is defined already (might also be "null" or "false") and enableDoublecheck
+        // has not been set --> skip searching for credentials
+        rewriteUserLiteral(req, currentUserLiteral);
+        return next();
+      }
+      if (req.accessToken.id && !overwriteExistingToken) {
+        // req.accessToken.id is defined, which means that some other middleware has identified a valid user.
+        // when overwriteExistingToken is not set to a truthy value, skip searching for credentials.
+        rewriteUserLiteral(req, currentUserLiteral);
+        return next();
+      }
+      // continue normal operation (as if req.accessToken was undefined)
     }
     TokenModel.findForRequest(req, options, function(err, token) {
       req.accessToken = token || null;
