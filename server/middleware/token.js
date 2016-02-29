@@ -96,7 +96,7 @@ function token(options) {
     assert(typeof TokenModel === 'function',
       'loopback.token() middleware requires a AccessToken model');
 
-    if (req.accessToken !== undefined) {
+    if (req.accessToken && req.accessToken.id) {
       rewriteUserLiteral(req, currentUserLiteral);
       return next();
     }

@@ -65,7 +65,7 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
-  describe('populating req.toen from HTTP Basic Auth formatted authorization header', function() {
+  describe('populating req.token from HTTP Basic Auth formatted authorization header', function() {
     it('parses "standalone-token"', function(done) {
       var token = this.token.id;
       token = 'Basic ' + new Buffer(token).toString('base64');
@@ -196,6 +196,27 @@ describe('loopback.token(options)', function() {
       .end(function(err, res) {
         if (err) return done(err);
         expect(res.body).to.eql(tokenStub);
+        done();
+      });
+  });
+
+  it('should not skip when req.accessToken is falsy', function(done) {
+    var token = this.token;
+    app.use(function(req, res, next) {
+      req.accessToken = null;
+      next();
+    });
+    app.use(loopback.token({ model: Token }));
+    app.get('/', function(req, res, next) {
+      res.send(req.accessToken);
+    });
+
+    request(app).get('/')
+      .set('Authorization', token.id)
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body.userId).to.eql(token.userId);
         done();
       });
   });
