@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-03 to 2016-02-28)
+since: (from 2016-01-04 to 2016-02-29)
 ---
 
 ## Core
@@ -97,6 +97,8 @@ since: (from 2016-01-03 to 2016-02-28)
 
 
 ### loopback-connector-db2
+ * [@ca2bea8](https://github.com/strongloop/loopback-connector-db2/commit/ca2bea88ae2f20e197e12b6045eabb52fccdd1a1) fix connection string ([Quentin Presley](https://github.com/qpresley))
+ * [@50cd43b](https://github.com/strongloop/loopback-connector-db2/commit/50cd43b6fd9f6b04482dcc6ad90595811e8dc388) update connection string setup ([Quentin Presley](https://github.com/qpresley))
  * [@a17bdd2](https://github.com/strongloop/loopback-connector-db2/commit/a17bdd2eb6387769283f7482c8384d3f2a07f543) Consolidate and update changelog as CHANGES.md ([Ryan Graham](https://github.com/rmg))
  * **Released 1.0.3** ([Quentin Presley](https://github.com/qpresley))
  * [@d2a8789](https://github.com/strongloop/loopback-connector-db2/commit/d2a878963aa7305ef3e2308149803b7ba2efc02c) Fix for hasMany tests ([Quentin Presley](https://github.com/qpresley))
