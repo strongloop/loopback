@@ -65,7 +65,7 @@ describe('loopback.token(options)', function() {
       .end(done);
   });
 
-  describe('populating req.toen from HTTP Basic Auth formatted authorization header', function() {
+  describe('populating req.token from HTTP Basic Auth formatted authorization header', function() {
     it('parses "standalone-token"', function(done) {
       var token = this.token.id;
       token = 'Basic ' + new Buffer(token).toString('base64');
@@ -198,6 +198,90 @@ describe('loopback.token(options)', function() {
         expect(res.body).to.eql(tokenStub);
         done();
       });
+  });
+
+  describe('loading multiple instances of token middleware', function() {
+    it('should skip when req.token is already present and no further options are set',
+    function(done) {
+      var tokenStub = { id: 'stub id' };
+      app.use(function(req, res, next) {
+        req.accessToken = tokenStub;
+        next();
+      });
+      app.use(loopback.token({ model: Token }));
+      app.get('/', function(req, res, next) {
+        res.send(req.accessToken);
+      });
+
+      request(app).get('/')
+        .set('Authorization', this.token.id)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql(tokenStub);
+          done();
+        });
+    });
+
+    it('should not overwrite valid existing token (has "id" property) ' +
+      ' when overwriteExistingToken is falsy',
+    function(done) {
+      var tokenStub = { id: 'stub id' };
+      app.use(function(req, res, next) {
+        req.accessToken = tokenStub;
+        next();
+      });
+      app.use(loopback.token({
+        model: Token,
+        enableDoublecheck: true,
+      }));
+      app.get('/', function(req, res, next) {
+        res.send(req.accessToken);
+      });
+
+      request(app).get('/')
+        .set('Authorization', this.token.id)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql(tokenStub);
+          done();
+        });
+    });
+
+    it('should overwrite existing token when enableDoublecheck ' +
+      'and overwriteExistingToken options are truthy',
+    function(done) {
+      var token = this.token;
+      var tokenStub = { id: 'stub id' };
+
+      app.use(function(req, res, next) {
+        req.accessToken = tokenStub;
+        next();
+      });
+      app.use(loopback.token({
+        model: Token,
+        enableDoublecheck: true,
+        overwriteExistingToken: true,
+      }));
+      app.get('/', function(req, res, next) {
+        res.send(req.accessToken);
+      });
+
+      request(app).get('/')
+        .set('Authorization', token.id)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql({
+            id: token.id,
+            ttl: token.ttl,
+            userId: token.userId,
+            created: token.created.toJSON(),
+          });
+          done();
+        });
+    });
   });
 });
 
