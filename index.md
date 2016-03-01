@@ -7,6 +7,7 @@ since: (from 2016-01-05 to 2016-03-01)
 
 ### generator-loopback
  * [PR#147](https://github.com/strongloop/generator-loopback/pull/147) Use http and verb ([jannyHou](https://github.com/jannyHou))
+ * [@a4b7bb2](https://github.com/strongloop/generator-loopback/commit/a4b7bb2bccb7bb7960bd9e4c2bae48905bbe77a7) datasource: ask for connector-specific settings ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#150](https://github.com/strongloop/generator-loopback/pull/150) Add `yo loopback --skip-next-steps` option ([bajtos](https://github.com/bajtos))
  * [PR#149](https://github.com/strongloop/generator-loopback/pull/149) Add project template prompt, support apic ([bajtos](https://github.com/bajtos))
  * [PR#146](https://github.com/strongloop/generator-loopback/pull/146) Only show editable model names in remote-method generator ([jannyHou](https://github.com/jannyHou))
