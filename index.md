@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-01-04 to 2016-02-29)
+since: (from 2016-01-05 to 2016-03-01)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#147](https://github.com/strongloop/generator-loopback/pull/147) Use http and verb ([jannyHou](https://github.com/jannyHou))
  * [PR#150](https://github.com/strongloop/generator-loopback/pull/150) Add `yo loopback --skip-next-steps` option ([bajtos](https://github.com/bajtos))
  * [PR#149](https://github.com/strongloop/generator-loopback/pull/149) Add project template prompt, support apic ([bajtos](https://github.com/bajtos))
  * [PR#146](https://github.com/strongloop/generator-loopback/pull/146) Only show editable model names in remote-method generator ([jannyHou](https://github.com/jannyHou))
