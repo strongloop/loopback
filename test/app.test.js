@@ -732,6 +732,16 @@ describe('app', function() {
       app.dataSource('custom', { connector: 'custom' });
       expect(app.dataSources.custom.name).to.equal(loopback.Memory.name);
     });
+
+    it('adds data source name to error messages', function() {
+      app.connector('throwing', {
+        initialize: function() { throw new Error('expected test error'); },
+      });
+
+      expect(function() {
+        app.dataSource('bad-ds', { connector: 'throwing' });
+      }).to.throw(/bad-ds.*throwing/);
+    });
   });
 
   describe.onServer('listen()', function() {
