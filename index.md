@@ -1,13 +1,15 @@
 ---
 layout: page
-since: (from 2016-01-05 to 2016-03-01)
+since: (from 2016-01-06 to 2016-03-02)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#154](https://github.com/strongloop/generator-loopback/pull/154) Implement `yo loopback --no-explorer` ([bajtos](https://github.com/bajtos))
+ * [PR#152](https://github.com/strongloop/generator-loopback/pull/152) datasource: ask for connector-specific settings ([bajtos](https://github.com/bajtos))
+ * **Released 1.16.0** (Raymond Feng)
  * [PR#147](https://github.com/strongloop/generator-loopback/pull/147) Use http and verb ([jannyHou](https://github.com/jannyHou))
- * [@a4b7bb2](https://github.com/strongloop/generator-loopback/commit/a4b7bb2bccb7bb7960bd9e4c2bae48905bbe77a7) datasource: ask for connector-specific settings ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#150](https://github.com/strongloop/generator-loopback/pull/150) Add `yo loopback --skip-next-steps` option ([bajtos](https://github.com/bajtos))
  * [PR#149](https://github.com/strongloop/generator-loopback/pull/149) Add project template prompt, support apic ([bajtos](https://github.com/bajtos))
  * [PR#146](https://github.com/strongloop/generator-loopback/pull/146) Only show editable model names in remote-method generator ([jannyHou](https://github.com/jannyHou))
@@ -99,6 +101,7 @@ since: (from 2016-01-05 to 2016-03-01)
 
 
 ### loopback-connector-db2
+ * **Released 1.0.4** ([Quentin Presley](https://github.com/qpresley))
  * [@ca2bea8](https://github.com/strongloop/loopback-connector-db2/commit/ca2bea88ae2f20e197e12b6045eabb52fccdd1a1) fix connection string ([Quentin Presley](https://github.com/qpresley))
  * [@50cd43b](https://github.com/strongloop/loopback-connector-db2/commit/50cd43b6fd9f6b04482dcc6ad90595811e8dc388) update connection string setup ([Quentin Presley](https://github.com/qpresley))
  * [@a17bdd2](https://github.com/strongloop/loopback-connector-db2/commit/a17bdd2eb6387769283f7482c8384d3f2a07f543) Consolidate and update changelog as CHANGES.md ([Ryan Graham](https://github.com/rmg))
