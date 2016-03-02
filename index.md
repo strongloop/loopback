@@ -25,6 +25,7 @@ since: (from 2016-01-06 to 2016-03-02)
 
 
 ### loopback
+ * [@93d487f](https://github.com/strongloop/loopback/commit/93d487ffc03f384bfdb14936d0493edc5dee608e) Improve error message on connector init error ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2088](https://github.com/strongloop/loopback/pull/2088) application: correct spelling of "cannont" ([sam-github](https://github.com/sam-github))
  * [@804265b](https://github.com/strongloop/loopback/commit/804265b801187b072ae182b1f35b9594b304f25f) Remove sl-blip from dependency ([Candy](https://github.com/0candy))
  * [PR#2039](https://github.com/strongloop/loopback/pull/2039) Use new strong-remoting API ([0candy](https://github.com/0candy))
@@ -51,6 +52,7 @@ since: (from 2016-01-06 to 2016-03-02)
 
 
 ### loopback-datasource-juggler
+ * [@9dcf30e](https://github.com/strongloop/loopback-datasource-juggler/commit/9dcf30efe966d73640618f4a7274df3f46d3a3a6) Improve error message on connector init error ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@dd4530c](https://github.com/strongloop/loopback-datasource-juggler/commit/dd4530cad62107c8f32fe0e3b8335ee9db930104) 3.0.0-alpha.3 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#852](https://github.com/strongloop/loopback-datasource-juggler/pull/852) Fix missing connector error msg for db2, cloudant ([0candy](https://github.com/0candy))
  * [PR#847](https://github.com/strongloop/loopback-datasource-juggler/pull/847) Update describe-operation-hooks ([bajtos](https://github.com/bajtos))
