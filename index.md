@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-06 to 2016-03-02)
+since: (from 2016-01-07 to 2016-03-03)
 ---
 
 ## Core
@@ -25,7 +25,7 @@ since: (from 2016-01-06 to 2016-03-02)
 
 
 ### loopback
- * [@93d487f](https://github.com/strongloop/loopback/commit/93d487ffc03f384bfdb14936d0493edc5dee608e) Improve error message on connector init error ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#2105](https://github.com/strongloop/loopback/pull/2105) Improve error message on connector init error ([bajtos](https://github.com/bajtos))
  * [PR#2088](https://github.com/strongloop/loopback/pull/2088) application: correct spelling of "cannont" ([sam-github](https://github.com/sam-github))
  * [@804265b](https://github.com/strongloop/loopback/commit/804265b801187b072ae182b1f35b9594b304f25f) Remove sl-blip from dependency ([Candy](https://github.com/0candy))
  * [PR#2039](https://github.com/strongloop/loopback/pull/2039) Use new strong-remoting API ([0candy](https://github.com/0candy))
@@ -52,7 +52,8 @@ since: (from 2016-01-06 to 2016-03-02)
 
 
 ### loopback-datasource-juggler
- * [@9dcf30e](https://github.com/strongloop/loopback-datasource-juggler/commit/9dcf30efe966d73640618f4a7274df3f46d3a3a6) Improve error message on connector init error ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#862](https://github.com/strongloop/loopback-datasource-juggler/pull/862) Add forgotten unit test ([bajtos](https://github.com/bajtos))
+ * [PR#859](https://github.com/strongloop/loopback-datasource-juggler/pull/859) Improve error message on connector init error ([bajtos](https://github.com/bajtos))
  * [@dd4530c](https://github.com/strongloop/loopback-datasource-juggler/commit/dd4530cad62107c8f32fe0e3b8335ee9db930104) 3.0.0-alpha.3 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#852](https://github.com/strongloop/loopback-datasource-juggler/pull/852) Fix missing connector error msg for db2, cloudant ([0candy](https://github.com/0candy))
  * [PR#847](https://github.com/strongloop/loopback-datasource-juggler/pull/847) Update describe-operation-hooks ([bajtos](https://github.com/bajtos))
@@ -99,10 +100,12 @@ since: (from 2016-01-06 to 2016-03-02)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * [@a67cfcb](https://github.com/strongloop/loopback-connector-cloudant/commit/a67cfcb1c05bc7c1ade96ac107db0d4e1657c387) Throw a better exception when url or username and password are undefined ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@4798b84](https://github.com/strongloop/loopback-connector-cloudant/commit/4798b843ea501a0f0ac5bff7319827766e87c0f4) default to sorting by id, fix custom id naming, implement filter.include ([Anthony Ffrench](https://github.com/tonyffrench))
 
 
 ### loopback-connector-db2
+ * [@f207206](https://github.com/strongloop/loopback-connector-db2/commit/f20720628ad36ec74308c079ce4d71f1f3bd98d3) updating settings for user in connection string ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.4** ([Quentin Presley](https://github.com/qpresley))
  * [@ca2bea8](https://github.com/strongloop/loopback-connector-db2/commit/ca2bea88ae2f20e197e12b6045eabb52fccdd1a1) fix connection string ([Quentin Presley](https://github.com/qpresley))
  * [@50cd43b](https://github.com/strongloop/loopback-connector-db2/commit/50cd43b6fd9f6b04482dcc6ad90595811e8dc388) update connection string setup ([Quentin Presley](https://github.com/qpresley))
