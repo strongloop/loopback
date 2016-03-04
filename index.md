@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-07 to 2016-03-03)
+since: (from 2016-01-08 to 2016-03-04)
 ---
 
 ## Core
@@ -100,11 +100,13 @@ since: (from 2016-01-07 to 2016-03-03)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * [@cf478fd](https://github.com/strongloop/loopback-connector-cloudant/commit/cf478fda2027308bc3699b080581c9b3c0399d1e) Use the bookmark field to grab beyond 200 documents, closes #3 ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@a67cfcb](https://github.com/strongloop/loopback-connector-cloudant/commit/a67cfcb1c05bc7c1ade96ac107db0d4e1657c387) Throw a better exception when url or username and password are undefined ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@4798b84](https://github.com/strongloop/loopback-connector-cloudant/commit/4798b843ea501a0f0ac5bff7319827766e87c0f4) default to sorting by id, fix custom id naming, implement filter.include ([Anthony Ffrench](https://github.com/tonyffrench))
 
 
 ### loopback-connector-db2
+ * **Released 1.0.5** ([Quentin Presley](https://github.com/qpresley))
  * [@f207206](https://github.com/strongloop/loopback-connector-db2/commit/f20720628ad36ec74308c079ce4d71f1f3bd98d3) updating settings for user in connection string ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.4** ([Quentin Presley](https://github.com/qpresley))
  * [@ca2bea8](https://github.com/strongloop/loopback-connector-db2/commit/ca2bea88ae2f20e197e12b6045eabb52fccdd1a1) fix connection string ([Quentin Presley](https://github.com/qpresley))
