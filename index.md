@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-08 to 2016-03-04)
+since: (from 2016-01-09 to 2016-03-05)
 ---
 
 ## Core
@@ -79,6 +79,8 @@ since: (from 2016-01-08 to 2016-03-04)
 
 
 ### loopback-swagger
+ * **Released 2.3.1** (Raymond Feng)
+ * [PR#30](https://github.com/strongloop/loopback-swagger/pull/30) Handle extensions under paths ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#24](https://github.com/strongloop/loopback-swagger/pull/24) Make type geopoint case insensitive ([0candy](https://github.com/0candy))
  * [PR#23](https://github.com/strongloop/loopback-swagger/pull/23) Treat property as type 'any' if not specified ([0candy](https://github.com/0candy))
@@ -100,12 +102,17 @@ since: (from 2016-01-08 to 2016-03-04)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * **Released 1.0.6** ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@60e705e](https://github.com/strongloop/loopback-connector-cloudant/commit/60e705ed4f720ae940952f9418d76f236b67112a) rename CHANGES to work with slt-release ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@33dfc47](https://github.com/strongloop/loopback-connector-cloudant/commit/33dfc47e6254f9b1c7b7736a59e5aef7eb1836c1) Include related docs in chunks to avoid too many boolean clauses, closes #6 ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@cf478fd](https://github.com/strongloop/loopback-connector-cloudant/commit/cf478fda2027308bc3699b080581c9b3c0399d1e) Use the bookmark field to grab beyond 200 documents, closes #3 ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@a67cfcb](https://github.com/strongloop/loopback-connector-cloudant/commit/a67cfcb1c05bc7c1ade96ac107db0d4e1657c387) Throw a better exception when url or username and password are undefined ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@4798b84](https://github.com/strongloop/loopback-connector-cloudant/commit/4798b843ea501a0f0ac5bff7319827766e87c0f4) default to sorting by id, fix custom id naming, implement filter.include ([Anthony Ffrench](https://github.com/tonyffrench))
 
 
 ### loopback-connector-db2
+ * [@aeca345](https://github.com/strongloop/loopback-connector-db2/commit/aeca3458dac2f2a5fab081cfd1802ab14eb6216d) Remove commented out line in transaction.js ([Quentin Presley](https://github.com/qpresley))
+ * [PR#19](https://github.com/strongloop/loopback-connector-db2/pull/19) Add transaction support and tests ([qpresley](https://github.com/qpresley))
  * **Released 1.0.5** ([Quentin Presley](https://github.com/qpresley))
  * [@f207206](https://github.com/strongloop/loopback-connector-db2/commit/f20720628ad36ec74308c079ce4d71f1f3bd98d3) updating settings for user in connection string ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.4** ([Quentin Presley](https://github.com/qpresley))
@@ -139,6 +146,7 @@ since: (from 2016-01-08 to 2016-03-04)
 
 
 ### loopback-connector-mssql
+ * **Released 2.5.0** (Raymond Feng)
  * **Released 2.4.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@1a00250](https://github.com/strongloop/loopback-connector-mssql/commit/1a00250e375c2c396ebb8b4931083d17cfce6da0) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 2.4.0** ([Raymond Feng](https://github.com/raymondfeng))
@@ -154,6 +162,9 @@ since: (from 2016-01-08 to 2016-03-04)
 
 
 ### loopback-connector-oracle
+ * **Released 2.4.1** (Raymond Feng)
+ * [@1f93047](https://github.com/strongloop/loopback-connector-oracle/commit/1f930471cec6a394ed92639f137b4fb2d610a591) Remove license check (Raymond Feng)
+ * **Released 2.4.0** (Raymond Feng)
  * **Released 2.3.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@3e08c96](https://github.com/strongloop/loopback-connector-oracle/commit/3e08c96e117aa42662c0ca6a7619c3c29e07dae9) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#57](https://github.com/strongloop/loopback-connector-oracle/pull/57) Add NOTICE ([raymondfeng](https://github.com/raymondfeng))
@@ -193,6 +204,8 @@ since: (from 2016-01-08 to 2016-03-04)
 
 
 ### loopback-connector-soap
+ * **Released 2.4.0** (Raymond Feng)
+ * [@dfae045](https://github.com/strongloop/loopback-connector-soap/commit/dfae045320100c60689f9137a750ce655825222a) Upgrade deps and remove license check (Raymond Feng)
  * **Released 2.3.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@bbf366f](https://github.com/strongloop/loopback-connector-soap/commit/bbf366f0457811411e83c70f0918fa7f011b05b3) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#33](https://github.com/strongloop/loopback-connector-soap/pull/33) Add new example location to README.md ([superkhau](https://github.com/superkhau))
@@ -242,6 +255,8 @@ since: (from 2016-01-08 to 2016-03-04)
 
 
 ### loopback-component-oauth2
+ * **Released 2.4.0** (Raymond Feng)
+ * [@cfd2fb4](https://github.com/strongloop/loopback-component-oauth2/commit/cfd2fb4b9c0891dca0973c4ad9e2efc987b1b6ed) Remove license check (Raymond Feng)
  * **Released 2.3.7** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@4abd4b0](https://github.com/strongloop/loopback-component-oauth2/commit/4abd4b04e2c3cc5ff4cf983c9efd38f2a1f7b061) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
 
