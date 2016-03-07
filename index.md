@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-10 to 2016-03-06)
+since: (from 2016-01-11 to 2016-03-07)
 ---
 
 ## Core
@@ -111,6 +111,8 @@ since: (from 2016-01-10 to 2016-03-06)
 
 
 ### loopback-connector-db2
+ * **Released 1.0.7** ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.6** ([Quentin Presley](https://github.com/qpresley))
  * [@aeca345](https://github.com/strongloop/loopback-connector-db2/commit/aeca3458dac2f2a5fab081cfd1802ab14eb6216d) Remove commented out line in transaction.js ([Quentin Presley](https://github.com/qpresley))
  * [PR#19](https://github.com/strongloop/loopback-connector-db2/pull/19) Add transaction support and tests ([qpresley](https://github.com/qpresley))
  * **Released 1.0.5** ([Quentin Presley](https://github.com/qpresley))
