@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-01-12 to 2016-03-08)
+since: (from 2016-01-13 to 2016-03-09)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [@9e818e8](https://github.com/strongloop/generator-loopback/commit/9e818e8128f25c7823c7d5a2e5e5b66e7a31c416) Only use 'db' as the default datasource for a model if 'db' exists (Raymond Feng)
  * **Released 1.16.1** ([Ritchie Martori](https://github.com/ritch))
  * [PR#155](https://github.com/strongloop/generator-loopback/pull/155) Remove prompt for datasources when none exist ([ritch](https://github.com/ritch))
  * [PR#154](https://github.com/strongloop/generator-loopback/pull/154) Implement `yo loopback --no-explorer` ([bajtos](https://github.com/bajtos))
@@ -84,6 +85,8 @@ since: (from 2016-01-12 to 2016-03-08)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * **Released 1.0.7** ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@78bd90d](https://github.com/strongloop/loopback-connector-cloudant/commit/78bd90d934ec2d01ac98e865d52f0c0f8f285cbc) coerce id names before attempting to resolve includes ([Anthony Ffrench](https://github.com/tonyffrench))
  * **Released 1.0.6** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@60e705e](https://github.com/strongloop/loopback-connector-cloudant/commit/60e705ed4f720ae940952f9418d76f236b67112a) rename CHANGES to work with slt-release ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@33dfc47](https://github.com/strongloop/loopback-connector-cloudant/commit/33dfc47e6254f9b1c7b7736a59e5aef7eb1836c1) Include related docs in chunks to avoid too many boolean clauses, closes #6 ([Anthony Ffrench](https://github.com/tonyffrench))
@@ -192,6 +195,8 @@ since: (from 2016-01-12 to 2016-03-08)
 ## Components
 
 ### loopback-component-explorer
+ * **Released 2.4.0** (Raymond Feng)
+ * [PR#154](https://github.com/strongloop/loopback-component-explorer/pull/154) Add `swaggerUI` option to enable/disable UI serving ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
 
 
