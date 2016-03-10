@@ -1,12 +1,13 @@
 ---
 layout: page
-since: (from 2016-01-13 to 2016-03-09)
+since: (from 2016-01-14 to 2016-03-10)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@9e818e8](https://github.com/strongloop/generator-loopback/commit/9e818e8128f25c7823c7d5a2e5e5b66e7a31c416) Only use 'db' as the default datasource for a model if 'db' exists (Raymond Feng)
+ * **Released 1.16.2** (Raymond Feng)
+ * [PR#156](https://github.com/strongloop/generator-loopback/pull/156) Only use 'db' as the default datasource for a model if 'db' exists ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.16.1** ([Ritchie Martori](https://github.com/ritch))
  * [PR#155](https://github.com/strongloop/generator-loopback/pull/155) Remove prompt for datasources when none exist ([ritch](https://github.com/ritch))
  * [PR#154](https://github.com/strongloop/generator-loopback/pull/154) Implement `yo loopback --no-explorer` ([bajtos](https://github.com/bajtos))
@@ -95,6 +96,8 @@ since: (from 2016-01-13 to 2016-03-09)
 
 
 ### loopback-connector-db2
+ * **Released 1.0.8** ([Quentin Presley](https://github.com/qpresley))
+ * [PR#20](https://github.com/strongloop/loopback-connector-db2/pull/20) Update migration to support connector specific properties stanza ([qpresley](https://github.com/qpresley))
  * **Released 1.0.7** ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.6** ([Quentin Presley](https://github.com/qpresley))
  * [@aeca345](https://github.com/strongloop/loopback-connector-db2/commit/aeca3458dac2f2a5fab081cfd1802ab14eb6216d) Remove commented out line in transaction.js ([Quentin Presley](https://github.com/qpresley))
