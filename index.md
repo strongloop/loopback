@@ -1,11 +1,17 @@
 ---
 layout: page
-since: (from 2016-01-14 to 2016-03-10)
+since: (from 2016-01-15 to 2016-03-11)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.17.1** (Raymond Feng)
+ * [@933bfd2](https://github.com/strongloop/generator-loopback/commit/933bfd251fd5b1594f09b609a0054e7822949b28) Update workspace dep (Raymond Feng)
+ * **Released 1.17.0** (Raymond Feng)
+ * [PR#158](https://github.com/strongloop/generator-loopback/pull/158) Add support for object/array data source settings ([raymondfeng](https://github.com/raymondfeng))
+ * **Released 1.16.3** (Raymond Feng)
+ * [PR#157](https://github.com/strongloop/generator-loopback/pull/157) Allow connectors without config settings ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.16.2** (Raymond Feng)
  * [PR#156](https://github.com/strongloop/generator-loopback/pull/156) Only use 'db' as the default datasource for a model if 'db' exists ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.16.1** ([Ritchie Martori](https://github.com/ritch))
@@ -120,6 +126,8 @@ since: (from 2016-01-14 to 2016-03-10)
 
 
 ### loopback-connector-mssql
+ * **Released 2.5.1** (Raymond Feng)
+ * [@51b4a8e](https://github.com/strongloop/loopback-connector-mssql/commit/51b4a8e052098230029fd7950cb820f0b31a15bf) Remove the license check (Raymond Feng)
  * **Released 2.5.0** (Raymond Feng)
  * **Released 2.4.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@1a00250](https://github.com/strongloop/loopback-connector-mssql/commit/1a00250e375c2c396ebb8b4931083d17cfce6da0) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
