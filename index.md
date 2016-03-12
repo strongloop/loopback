@@ -1,11 +1,13 @@
 ---
 layout: page
-since: (from 2016-01-15 to 2016-03-11)
+since: (from 2016-01-16 to 2016-03-12)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.17.2** (Raymond Feng)
+ * [@4984d62](https://github.com/strongloop/generator-loopback/commit/4984d62720fa2f30933503401558dfb457aeecde) Allow default value for datasource settings (Raymond Feng)
  * **Released 1.17.1** (Raymond Feng)
  * [@933bfd2](https://github.com/strongloop/generator-loopback/commit/933bfd251fd5b1594f09b609a0054e7822949b28) Update workspace dep (Raymond Feng)
  * **Released 1.17.0** (Raymond Feng)
