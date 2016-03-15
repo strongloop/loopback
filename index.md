@@ -1,11 +1,13 @@
 ---
 layout: page
-since: (from 2016-01-18 to 2016-03-14)
+since: (from 2016-01-19 to 2016-03-15)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.18.0** (Raymond Feng)
+ * [PR#159](https://github.com/strongloop/generator-loopback/pull/159) Fix data source ordier and default for models ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.17.2** (Raymond Feng)
  * [@4984d62](https://github.com/strongloop/generator-loopback/commit/4984d62720fa2f30933503401558dfb457aeecde) Allow default value for datasource settings (Raymond Feng)
  * **Released 1.17.1** (Raymond Feng)
