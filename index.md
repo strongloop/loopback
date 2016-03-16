@@ -136,6 +136,7 @@ since: (from 2016-01-20 to 2016-03-16)
 
 
 ### loopback-connector-mssql
+ * [@cad27c5](https://github.com/strongloop/loopback-connector-mssql/commit/cad27c56ef1b1599c646d5d87b4939551035e130) Remove regenerator from babel-runtime and bundle mssql (Raymond Feng)
  * **Released 2.5.1** (Raymond Feng)
  * [@51b4a8e](https://github.com/strongloop/loopback-connector-mssql/commit/51b4a8e052098230029fd7950cb820f0b31a15bf) Remove the license check (Raymond Feng)
  * **Released 2.5.0** (Raymond Feng)
