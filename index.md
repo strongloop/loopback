@@ -171,6 +171,8 @@ since: (from 2016-01-19 to 2016-03-15)
 
 
 ### loopback-connector-rest
+ * [@c72de7e](https://github.com/strongloop/loopback-connector-rest/commit/c72de7ea9036ce2b6404869537ce48033f57ed88) use an error object ([Horia Radu](https://github.com/horiaradu))
+ * [@05cbfc4](https://github.com/strongloop/loopback-connector-rest/commit/05cbfc4201b6dce07d292cc0d5f7bade72c60827) handle http status code >= 4XX as errors ([Horia Radu](https://github.com/horiaradu))
  * **Released 1.10.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@4048ed7](https://github.com/strongloop/loopback-connector-rest/commit/4048ed7a53813884910561bc59137688a7abe74d) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
 
