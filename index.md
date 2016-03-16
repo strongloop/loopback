@@ -1,11 +1,13 @@
 ---
 layout: page
-since: (from 2016-01-19 to 2016-03-15)
+since: (from 2016-01-20 to 2016-03-16)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.19.0** (Raymond Feng)
+ * [PR#160](https://github.com/strongloop/generator-loopback/pull/160) Add the option to install connector modules on demand ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.18.0** (Raymond Feng)
  * [PR#159](https://github.com/strongloop/generator-loopback/pull/159) Fix data source ordier and default for models ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.17.2** (Raymond Feng)
@@ -56,6 +58,7 @@ since: (from 2016-01-19 to 2016-03-15)
 
 
 ### loopback-datasource-juggler
+ * [PR#873](https://github.com/strongloop/loopback-datasource-juggler/pull/873) Update error message for missing connector ([gunjpan](https://github.com/gunjpan))
  * [PR#862](https://github.com/strongloop/loopback-datasource-juggler/pull/862) Add forgotten unit test ([bajtos](https://github.com/bajtos))
  * [PR#859](https://github.com/strongloop/loopback-datasource-juggler/pull/859) Improve error message on connector init error ([bajtos](https://github.com/bajtos))
  * [@dd4530c](https://github.com/strongloop/loopback-datasource-juggler/commit/dd4530cad62107c8f32fe0e3b8335ee9db930104) 3.0.0-alpha.3 ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -106,6 +109,9 @@ since: (from 2016-01-19 to 2016-03-15)
 
 
 ### loopback-connector-db2
+ * **Released 1.0.10** ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.9** ([Quentin Presley](https://github.com/qpresley))
+ * [PR#21](https://github.com/strongloop/loopback-connector-db2/pull/21) Add dashDB support ([qpresley](https://github.com/qpresley))
  * **Released 1.0.8** ([Quentin Presley](https://github.com/qpresley))
  * [PR#20](https://github.com/strongloop/loopback-connector-db2/pull/20) Update migration to support connector specific properties stanza ([qpresley](https://github.com/qpresley))
  * **Released 1.0.7** ([Quentin Presley](https://github.com/qpresley))
@@ -171,8 +177,10 @@ since: (from 2016-01-19 to 2016-03-15)
 
 
 ### loopback-connector-rest
- * [@c72de7e](https://github.com/strongloop/loopback-connector-rest/commit/c72de7ea9036ce2b6404869537ce48033f57ed88) use an error object ([Horia Radu](https://github.com/horiaradu))
- * [@05cbfc4](https://github.com/strongloop/loopback-connector-rest/commit/05cbfc4201b6dce07d292cc0d5f7bade72c60827) handle http status code >= 4XX as errors ([Horia Radu](https://github.com/horiaradu))
+ * **Released 1.11.0** (Raymond Feng)
+ * [PR#55](https://github.com/strongloop/loopback-connector-rest/pull/55) Feature/switch to jsonpath plus ([raymondfeng](https://github.com/raymondfeng))
+ * [PR#49](https://github.com/strongloop/loopback-connector-rest/pull/49) handle http status code >= 4XX as errors ([horiaradu](https://github.com/horiaradu))
+ * [PR#53](https://github.com/strongloop/loopback-connector-rest/pull/53) This should fix issue #21 'Delete api not working' ([jouke](https://github.com/jouke))
  * **Released 1.10.2** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@4048ed7](https://github.com/strongloop/loopback-connector-rest/commit/4048ed7a53813884910561bc59137688a7abe74d) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
 
