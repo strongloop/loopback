@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-20 to 2016-03-16)
+since: (from 2016-01-21 to 2016-03-17)
 ---
 
 ## Core
@@ -109,6 +109,9 @@ since: (from 2016-01-20 to 2016-03-16)
 
 
 ### loopback-connector-db2
+ * **Released 1.0.12** ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.11** ([Quentin Presley](https://github.com/qpresley))
+ * [PR#22](https://github.com/strongloop/loopback-connector-db2/pull/22) Fix support for downlevel DB2 versions ([qpresley](https://github.com/qpresley))
  * **Released 1.0.10** ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.9** ([Quentin Presley](https://github.com/qpresley))
  * [PR#21](https://github.com/strongloop/loopback-connector-db2/pull/21) Add dashDB support ([qpresley](https://github.com/qpresley))
@@ -136,7 +139,8 @@ since: (from 2016-01-20 to 2016-03-16)
 
 
 ### loopback-connector-mssql
- * [@cad27c5](https://github.com/strongloop/loopback-connector-mssql/commit/cad27c56ef1b1599c646d5d87b4939551035e130) Remove regenerator from babel-runtime and bundle mssql (Raymond Feng)
+ * **Released 2.6.0** (Raymond Feng)
+ * [PR#73](https://github.com/strongloop/loopback-connector-mssql/pull/73) Remove regenerator from babel-runtime and bundle mssql ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.5.1** (Raymond Feng)
  * [@51b4a8e](https://github.com/strongloop/loopback-connector-mssql/commit/51b4a8e052098230029fd7950cb820f0b31a15bf) Remove the license check (Raymond Feng)
  * **Released 2.5.0** (Raymond Feng)
@@ -161,6 +165,7 @@ since: (from 2016-01-20 to 2016-03-16)
 
 
 ### loopback-connector-postgresql
+ * [PR#132](https://github.com/strongloop/loopback-connector-postgresql/pull/132) - Adds support for long JSON strings when using `embedOne` ([jimmylimm](https://github.com/jimmylimm))
  * **Released 2.4.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@e64a894](https://github.com/strongloop/loopback-connector-postgresql/commit/e64a894c80031182a5f86a893b7ff3b990d1e485) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
 
