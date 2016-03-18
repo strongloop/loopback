@@ -191,6 +191,8 @@ since: (from 2016-01-22 to 2016-03-18)
 
 
 ### loopback-connector-rest
+ * [@0d3f11f](https://github.com/strongloop/loopback-connector-rest/commit/0d3f11f04961577c2dc91a69a1bd8e12be2f4533) Derive the http source from the template (Raymond Feng)
+ * [@ddedeb2](https://github.com/strongloop/loopback-connector-rest/commit/ddedeb2c6ac28f0ec976e637a19b3837c1fb60a3) Allow functions to specify param http source ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 1.11.0** (Raymond Feng)
  * [PR#55](https://github.com/strongloop/loopback-connector-rest/pull/55) Feature/switch to jsonpath plus ([raymondfeng](https://github.com/raymondfeng))
  * [PR#49](https://github.com/strongloop/loopback-connector-rest/pull/49) handle http status code >= 4XX as errors ([horiaradu](https://github.com/horiaradu))
