@@ -33,9 +33,16 @@ since: (from 2016-01-22 to 2016-03-18)
  * [@9d0a49a](https://github.com/strongloop/generator-loopback/commit/9d0a49ab2da5d801041ab2ae8a0b0a80cedfadc3) Fix the message for apic (Raymond Feng)
  * **Released 1.15.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#144](https://github.com/strongloop/generator-loopback/pull/144) Helpers to display correct usage message for apic ([davidcheung](https://github.com/davidcheung))
+ * [@7d7a67d](https://github.com/strongloop/generator-loopback/commit/7d7a67d463d89988879a85f534731904aa6f4691) Fixing copy-paste error of field name ([Sean Moore](https://github.com/cmoore4))
+ * [@c43b220](https://github.com/strongloop/generator-loopback/commit/c43b22092716e337ae85b24cb93d63970a631d03) Linting updates ([Sean Moore](https://github.com/cmoore4))
+ * [@a9ac01d](https://github.com/strongloop/generator-loopback/commit/a9ac01d3d1886b0b0f0f6245d5d5195902c18405) Add tests for default values of properties ([Sean Moore](https://github.com/cmoore4))
  * **Released 1.15.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#143](https://github.com/strongloop/generator-loopback/pull/143) Make `slc arc` conditional based on the cmd name ([raymondfeng](https://github.com/raymondfeng))
  * [PR#138](https://github.com/strongloop/generator-loopback/pull/138) Import `generator#invoke()` directly ([bajtos](https://github.com/bajtos))
+ * [@f38b399](https://github.com/strongloop/generator-loopback/commit/f38b399a953dc2262e2765a4bd603753787de032) More style changes for project linting ([Sean Moore](https://github.com/cmoore4))
+ * [@34925c8](https://github.com/strongloop/generator-loopback/commit/34925c88ca233c1ae6bb467379532ab5824c8d49) Style changes to meet project exepectations ([Sean Moore](https://github.com/cmoore4))
+ * [@7376462](https://github.com/strongloop/generator-loopback/commit/73764623988fa85b8ec42ff2a6e2aec0014298d4) Updating overwritten master changes ([Sean Moore](https://github.com/cmoore4))
+ * [@3742f10](https://github.com/strongloop/generator-loopback/commit/3742f10f6d61084eed9d0f244163523437a75198) Add prompt for default values on model properties ([Sean Moore](https://github.com/cmoore4))
 
 
 ### loopback
