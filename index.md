@@ -101,6 +101,7 @@ since: (from 2016-01-21 to 2016-03-17)
 ### loopback-connector-cloudant
  * **Released 1.0.7** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@78bd90d](https://github.com/strongloop/loopback-connector-cloudant/commit/78bd90d934ec2d01ac98e865d52f0c0f8f285cbc) coerce id names before attempting to resolve includes ([Anthony Ffrench](https://github.com/tonyffrench))
+ * [@8215d3a](https://github.com/strongloop/loopback-connector-cloudant/commit/8215d3a66df8f2603b50ba856559313db1542312) Sort by date field did not work. Error: Unspecified or ambiguous sort type. Try appending :number or :string to the sort field. checkdate ([Helmut Tammen](https://github.com/htammen))
  * **Released 1.0.6** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@60e705e](https://github.com/strongloop/loopback-connector-cloudant/commit/60e705ed4f720ae940952f9418d76f236b67112a) rename CHANGES to work with slt-release ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@33dfc47](https://github.com/strongloop/loopback-connector-cloudant/commit/33dfc47e6254f9b1c7b7736a59e5aef7eb1836c1) Include related docs in chunks to avoid too many boolean clauses, closes #6 ([Anthony Ffrench](https://github.com/tonyffrench))
