@@ -1,11 +1,16 @@
 ---
 layout: page
-since: (from 2016-01-22 to 2016-03-18)
+since: (from 2016-01-23 to 2016-03-19)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.20.1** (Raymond Feng)
+ * [PR#163](https://github.com/strongloop/generator-loopback/pull/163) Use the correct regex to test yml/yaml extension ([raymondfeng](https://github.com/raymondfeng))
+ * **Released 1.20.0** (Raymond Feng)
+ * [PR#162](https://github.com/strongloop/generator-loopback/pull/162) Fix the failing test and validate data source name as required ([raymondfeng](https://github.com/raymondfeng))
+ * [PR#140](https://github.com/strongloop/generator-loopback/pull/140) Prompt for Default Value on Property creation ([cmoore4](https://github.com/cmoore4))
  * **Released 1.19.0** (Raymond Feng)
  * [PR#160](https://github.com/strongloop/generator-loopback/pull/160) Add the option to install connector modules on demand ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.18.0** (Raymond Feng)
@@ -33,16 +38,9 @@ since: (from 2016-01-22 to 2016-03-18)
  * [@9d0a49a](https://github.com/strongloop/generator-loopback/commit/9d0a49ab2da5d801041ab2ae8a0b0a80cedfadc3) Fix the message for apic (Raymond Feng)
  * **Released 1.15.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#144](https://github.com/strongloop/generator-loopback/pull/144) Helpers to display correct usage message for apic ([davidcheung](https://github.com/davidcheung))
- * [@7d7a67d](https://github.com/strongloop/generator-loopback/commit/7d7a67d463d89988879a85f534731904aa6f4691) Fixing copy-paste error of field name ([Sean Moore](https://github.com/cmoore4))
- * [@c43b220](https://github.com/strongloop/generator-loopback/commit/c43b22092716e337ae85b24cb93d63970a631d03) Linting updates ([Sean Moore](https://github.com/cmoore4))
- * [@a9ac01d](https://github.com/strongloop/generator-loopback/commit/a9ac01d3d1886b0b0f0f6245d5d5195902c18405) Add tests for default values of properties ([Sean Moore](https://github.com/cmoore4))
  * **Released 1.15.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#143](https://github.com/strongloop/generator-loopback/pull/143) Make `slc arc` conditional based on the cmd name ([raymondfeng](https://github.com/raymondfeng))
  * [PR#138](https://github.com/strongloop/generator-loopback/pull/138) Import `generator#invoke()` directly ([bajtos](https://github.com/bajtos))
- * [@f38b399](https://github.com/strongloop/generator-loopback/commit/f38b399a953dc2262e2765a4bd603753787de032) More style changes for project linting ([Sean Moore](https://github.com/cmoore4))
- * [@34925c8](https://github.com/strongloop/generator-loopback/commit/34925c88ca233c1ae6bb467379532ab5824c8d49) Style changes to meet project exepectations ([Sean Moore](https://github.com/cmoore4))
- * [@7376462](https://github.com/strongloop/generator-loopback/commit/73764623988fa85b8ec42ff2a6e2aec0014298d4) Updating overwritten master changes ([Sean Moore](https://github.com/cmoore4))
- * [@3742f10](https://github.com/strongloop/generator-loopback/commit/3742f10f6d61084eed9d0f244163523437a75198) Add prompt for default values on model properties ([Sean Moore](https://github.com/cmoore4))
 
 
 ### loopback
@@ -106,9 +104,9 @@ since: (from 2016-01-22 to 2016-03-18)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * [PR#9](https://github.com/strongloop/loopback-connector-cloudant/pull/9) Sort by date field did not work. Error: Unspecified or ambiguous sort… ([htammen](https://github.com/htammen))
  * **Released 1.0.7** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@78bd90d](https://github.com/strongloop/loopback-connector-cloudant/commit/78bd90d934ec2d01ac98e865d52f0c0f8f285cbc) coerce id names before attempting to resolve includes ([Anthony Ffrench](https://github.com/tonyffrench))
- * [@8215d3a](https://github.com/strongloop/loopback-connector-cloudant/commit/8215d3a66df8f2603b50ba856559313db1542312) Sort by date field did not work. Error: Unspecified or ambiguous sort type. Try appending :number or :string to the sort field. checkdate ([Helmut Tammen](https://github.com/htammen))
  * **Released 1.0.6** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@60e705e](https://github.com/strongloop/loopback-connector-cloudant/commit/60e705ed4f720ae940952f9418d76f236b67112a) rename CHANGES to work with slt-release ([Anthony Ffrench](https://github.com/tonyffrench))
  * [@33dfc47](https://github.com/strongloop/loopback-connector-cloudant/commit/33dfc47e6254f9b1c7b7736a59e5aef7eb1836c1) Include related docs in chunks to avoid too many boolean clauses, closes #6 ([Anthony Ffrench](https://github.com/tonyffrench))
@@ -191,8 +189,8 @@ since: (from 2016-01-22 to 2016-03-18)
 
 
 ### loopback-connector-rest
- * [@0d3f11f](https://github.com/strongloop/loopback-connector-rest/commit/0d3f11f04961577c2dc91a69a1bd8e12be2f4533) Derive the http source from the template (Raymond Feng)
- * [@ddedeb2](https://github.com/strongloop/loopback-connector-rest/commit/ddedeb2c6ac28f0ec976e637a19b3837c1fb60a3) Allow functions to specify param http source ([Raymond Feng](https://github.com/raymondfeng))
+ * **Released 2.0.0** (Raymond Feng)
+ * [PR#56](https://github.com/strongloop/loopback-connector-rest/pull/56) Enhance http source mapping for parameters from the REST template ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.11.0** (Raymond Feng)
  * [PR#55](https://github.com/strongloop/loopback-connector-rest/pull/55) Feature/switch to jsonpath plus ([raymondfeng](https://github.com/raymondfeng))
  * [PR#49](https://github.com/strongloop/loopback-connector-rest/pull/49) handle http status code >= 4XX as errors ([horiaradu](https://github.com/horiaradu))
@@ -249,6 +247,12 @@ since: (from 2016-01-22 to 2016-03-18)
 
 
 ### loopback-component-passport
+ * **Released 2.1.0** (Raymond Feng)
+ * [@b558062](https://github.com/strongloop/loopback-component-passport/commit/b5580624f6ee1eaabb31b7b014a654b76c833de1) Update deps (Raymond Feng)
+ * [PR#116](https://github.com/strongloop/loopback-component-passport/pull/116) Fix getting AuthStrategy directly from package when Strategy key is n… ([kwiky](https://github.com/kwiky))
+ * [PR#112](https://github.com/strongloop/loopback-component-passport/pull/112) Throw softer error in `local` strategy ... ([vshushkov](https://github.com/vshushkov))
+ * [PR#105](https://github.com/strongloop/loopback-component-passport/pull/105) provider name can be configured in options ([clarkorz](https://github.com/clarkorz))
+ * [PR#104](https://github.com/strongloop/loopback-component-passport/pull/104) Avoid duplicate user identities ([clarkorz](https://github.com/clarkorz))
  * [PR#121](https://github.com/strongloop/loopback-component-passport/pull/121) Fix email validation for LDAP ([loay](https://github.com/loay))
 
 
