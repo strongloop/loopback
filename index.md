@@ -1,11 +1,13 @@
 ---
 layout: page
-since: (from 2016-01-23 to 2016-03-19)
+since: (from 2016-01-24 to 2016-03-20)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.20.2** (Raymond Feng)
+ * [@258a16b](https://github.com/strongloop/generator-loopback/commit/258a16b5e190fee6fd528f9e904440b936d79679) Fix code generation from swagger (Raymond Feng)
  * **Released 1.20.1** (Raymond Feng)
  * [PR#163](https://github.com/strongloop/generator-loopback/pull/163) Use the correct regex to test yml/yaml extension ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.20.0** (Raymond Feng)
@@ -83,6 +85,8 @@ since: (from 2016-01-23 to 2016-03-19)
 
 
 ### loopback-swagger
+ * **Released 2.3.2** (Raymond Feng)
+ * [PR#31](https://github.com/strongloop/loopback-swagger/pull/31) Handle {id} and . in operation id ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.3.1** (Raymond Feng)
  * [PR#30](https://github.com/strongloop/loopback-swagger/pull/30) Handle extensions under paths ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
