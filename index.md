@@ -229,6 +229,7 @@ since: (from 2016-01-25 to 2016-03-21)
 
 
 ### loopback-sdk-ios
+ * [@04338d5](https://github.com/strongloop/loopback-sdk-ios/commit/04338d58e4d311733308dbe7b3fb323c6365be47) Minor cleanup in the run-unittests script ([hideya kawahara](https://github.com/hideya))
  * [PR#101](https://github.com/strongloop/loopback-sdk-ios/pull/101) Cleanup typedefs for success blocks, mark extra typedefs "deprecated" ([hideya](https://github.com/hideya))
  * [PR#100](https://github.com/strongloop/loopback-sdk-ios/pull/100) Fix error in upsert implementation and make SLObject.repository attribute strong ([hideya](https://github.com/hideya))
  * [PR#93](https://github.com/strongloop/loopback-sdk-ios/pull/93) Improve LBRESTAdapter repositoryWithModelName ([hideya](https://github.com/hideya))
