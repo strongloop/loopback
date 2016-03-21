@@ -1,11 +1,13 @@
 ---
 layout: page
-since: (from 2016-01-24 to 2016-03-20)
+since: (from 2016-01-25 to 2016-03-21)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.20.3** (Raymond Feng)
+ * [PR#164](https://github.com/strongloop/generator-loopback/pull/164) Fix swagger code gen when no data sources are defined ([raymondfeng](https://github.com/raymondfeng))
  * **Released 1.20.2** (Raymond Feng)
  * [@258a16b](https://github.com/strongloop/generator-loopback/commit/258a16b5e190fee6fd528f9e904440b936d79679) Fix code generation from swagger (Raymond Feng)
  * **Released 1.20.1** (Raymond Feng)
