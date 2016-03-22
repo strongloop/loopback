@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-25 to 2016-03-21)
+since: (from 2016-01-26 to 2016-03-22)
 ---
 
 ## Core
@@ -44,26 +44,17 @@ since: (from 2016-01-25 to 2016-03-21)
  * [PR#144](https://github.com/strongloop/generator-loopback/pull/144) Helpers to display correct usage message for apic ([davidcheung](https://github.com/davidcheung))
  * **Released 1.15.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#143](https://github.com/strongloop/generator-loopback/pull/143) Make `slc arc` conditional based on the cmd name ([raymondfeng](https://github.com/raymondfeng))
- * [PR#138](https://github.com/strongloop/generator-loopback/pull/138) Import `generator#invoke()` directly ([bajtos](https://github.com/bajtos))
 
 
 ### loopback
  * [PR#2105](https://github.com/strongloop/loopback/pull/2105) Improve error message on connector init error ([bajtos](https://github.com/bajtos))
  * [PR#2088](https://github.com/strongloop/loopback/pull/2088) application: correct spelling of "cannont" ([sam-github](https://github.com/sam-github))
  * [@804265b](https://github.com/strongloop/loopback/commit/804265b801187b072ae182b1f35b9594b304f25f) Remove sl-blip from dependency ([Candy](https://github.com/0candy))
- * [PR#2039](https://github.com/strongloop/loopback/pull/2039) Use new strong-remoting API ([0candy](https://github.com/0candy))
- * [@782e897](https://github.com/strongloop/loopback/commit/782e89758e8583b862f7428eac3bd5ebcf8e6ec1) test: remove forgotten console.trace logs ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#2036](https://github.com/strongloop/loopback/pull/2036) Fix race conditions in unit tests ([bajtos](https://github.com/bajtos))
- * [PR#2035](https://github.com/strongloop/loopback/pull/2035) test: remove errant console.log from test ([rmg](https://github.com/rmg))
- * [PR#1999](https://github.com/strongloop/loopback/pull/1999) Promisify change ([jannyHou](https://github.com/jannyHou))
- * [@524058d](https://github.com/strongloop/loopback/commit/524058d8fce3f6e47ae2eb14213df2913b59a71b) Travis: drop iojs, add v4.x and v5.x ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#2030](https://github.com/strongloop/loopback/pull/2030) Safer tests - step 1 ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-boot
  * **Released 2.17.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#174](https://github.com/strongloop/loopback-boot/pull/174) executor: move "booted" and cb() to the next tick ([bajtos](https://github.com/bajtos))
- * [PR#168](https://github.com/strongloop/loopback-boot/pull/168) When config is overriden with null don't merge ([alFReD-NSH](https://github.com/alFReD-NSH))
 
 
 ### loopback-datasource-juggler
@@ -73,17 +64,6 @@ since: (from 2016-01-25 to 2016-03-21)
  * [@dd4530c](https://github.com/strongloop/loopback-datasource-juggler/commit/dd4530cad62107c8f32fe0e3b8335ee9db930104) 3.0.0-alpha.3 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#852](https://github.com/strongloop/loopback-datasource-juggler/pull/852) Fix missing connector error msg for db2, cloudant ([0candy](https://github.com/0candy))
  * [PR#847](https://github.com/strongloop/loopback-datasource-juggler/pull/847) Update describe-operation-hooks ([bajtos](https://github.com/bajtos))
- * [@504675f](https://github.com/strongloop/loopback-datasource-juggler/commit/504675fc78715f7e4bf4bb3a7ccf36125e8a4a7c) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#788](https://github.com/strongloop/loopback-datasource-juggler/pull/788) Implementation of replaceOrCreate and replace ([Amir-61](https://github.com/Amir-61))
- * [PR#839](https://github.com/strongloop/loopback-datasource-juggler/pull/839) Fix conversion for `updateAttributes` ([Amir-61](https://github.com/Amir-61))
- * [PR#823](https://github.com/strongloop/loopback-datasource-juggler/pull/823) Prevent constructor to be property name ([jannyHou](https://github.com/jannyHou))
- * [@54ca067](https://github.com/strongloop/loopback-datasource-juggler/commit/54ca06761063e6cab6bb3cac9b2b0c1a790e69bf) Revert "Change "npm test" to call mocha directly" ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#831](https://github.com/strongloop/loopback-datasource-juggler/pull/831) Change "npm test" to call mocha directly ([bajtos](https://github.com/bajtos))
-
-
-### loopback-phase
- * **Released 1.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#10](https://github.com/strongloop/loopback-phase/pull/10) Add "phaseList.registerHandler" ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-swagger
@@ -92,18 +72,11 @@ since: (from 2016-01-25 to 2016-03-21)
  * **Released 2.3.1** (Raymond Feng)
  * [PR#30](https://github.com/strongloop/loopback-swagger/pull/30) Handle extensions under paths ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#24](https://github.com/strongloop/loopback-swagger/pull/24) Make type geopoint case insensitive ([0candy](https://github.com/0candy))
 
 
 ### strong-remoting
  * [PR#284](https://github.com/strongloop/strong-remoting/pull/284) Add support for "file" return args ([bajtos](https://github.com/bajtos))
  * [@9fb9119](https://github.com/strongloop/strong-remoting/commit/9fb9119b156b367276fffc55d02be08d34d5f4df) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#283](https://github.com/strongloop/strong-remoting/pull/283) Do not call "afterError" on success ([bajtos](https://github.com/bajtos))
- * [PR#275](https://github.com/strongloop/strong-remoting/pull/275) Change method call to find remote method. ([0candy](https://github.com/0candy))
- * [@40c331a](https://github.com/strongloop/strong-remoting/commit/40c331a37c34ac5f7f06095bb014780d8dadda87) 3.0.0-alpha.1 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#279](https://github.com/strongloop/strong-remoting/pull/279) Remote invocation phases ([bajtos](https://github.com/bajtos))
- * [PR#278](https://github.com/strongloop/strong-remoting/pull/278) Extract ContextBase and ctx.getScope() ([bajtos](https://github.com/bajtos))
- * [PR#272](https://github.com/strongloop/strong-remoting/pull/272) To allow user to customize the root element of xml output ([davidcheung](https://github.com/davidcheung))
 
 
 
@@ -143,11 +116,6 @@ since: (from 2016-01-25 to 2016-03-21)
  * [@d2a8789](https://github.com/strongloop/loopback-connector-db2/commit/d2a878963aa7305ef3e2308149803b7ba2efc02c) Fix for hasMany tests ([Quentin Presley](https://github.com/qpresley))
  * [PR#16](https://github.com/strongloop/loopback-connector-db2/pull/16) clean up console.log in db2.js ([qpresley](https://github.com/qpresley))
  * [PR#15](https://github.com/strongloop/loopback-connector-db2/pull/15) Adding migration tests and updates to code to improve on some reported issues ([qpresley](https://github.com/qpresley))
- * [PR#12](https://github.com/strongloop/loopback-connector-db2/pull/12) Dbdiscovery ([qpresley](https://github.com/qpresley))
- * [@c0231de](https://github.com/strongloop/loopback-connector-db2/commit/c0231de905cb7b069d3642ab8f021725d3c6204e) Update IBM DB2 driver. Resolves node v0.10 build issues ([Anthony Ffrench](https://github.com/tonyffrench))
- * [PR#6](https://github.com/strongloop/loopback-connector-db2/pull/6) CI build cleanup ([tonyffrench](https://github.com/tonyffrench))
- * [PR#10](https://github.com/strongloop/loopback-connector-db2/pull/10) update ibm_db level to 0.0.18 - connect to strongloop/loopback-connector-db2#9 ([qpresley](https://github.com/qpresley))
- * [PR#8](https://github.com/strongloop/loopback-connector-db2/pull/8) Add updateOrCreate and ALTER TABLE support ([qpresley](https://github.com/qpresley))
 
 
 ### loopback-connector-mssql
@@ -173,7 +141,6 @@ since: (from 2016-01-25 to 2016-03-21)
  * **Released 2.4.0** (Raymond Feng)
  * **Released 2.3.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@3e08c96](https://github.com/strongloop/loopback-connector-oracle/commit/3e08c96e117aa42662c0ca6a7619c3c29e07dae9) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#57](https://github.com/strongloop/loopback-connector-oracle/pull/57) Add NOTICE ([raymondfeng](https://github.com/raymondfeng))
 
 
 ### loopback-connector-postgresql
@@ -182,16 +149,9 @@ since: (from 2016-01-25 to 2016-03-21)
  * [@e64a894](https://github.com/strongloop/loopback-connector-postgresql/commit/e64a894c80031182a5f86a893b7ff3b990d1e485) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
 
 
-### loopback-connector-redis
- * [PR#15](https://github.com/strongloop/loopback-connector-redis/pull/15) Skip failing tests ([superkhau](https://github.com/superkhau))
-
-
 ### loopback-connector-remote
  * **Released 1.2.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [@b875050](https://github.com/strongloop/loopback-connector-remote/commit/b8750508c2a36d80ba86da129943edb4c3dc6ac3) Remove blip ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#36](https://github.com/strongloop/loopback-connector-remote/pull/36) test: listen on ephemeral ports ([bajtos](https://github.com/bajtos))
- * **Released 1.1.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#35](https://github.com/strongloop/loopback-connector-remote/pull/35) Register Models with Dynamic converter ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-connector-rest
@@ -210,7 +170,6 @@ since: (from 2016-01-25 to 2016-03-21)
  * [@dfae045](https://github.com/strongloop/loopback-connector-soap/commit/dfae045320100c60689f9137a750ce655825222a) Upgrade deps and remove license check (Raymond Feng)
  * **Released 2.3.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@bbf366f](https://github.com/strongloop/loopback-connector-soap/commit/bbf366f0457811411e83c70f0918fa7f011b05b3) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#33](https://github.com/strongloop/loopback-connector-soap/pull/33) Add new example location to README.md ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-connector-sqlite3
@@ -225,16 +184,12 @@ since: (from 2016-01-25 to 2016-03-21)
 
 ### loopback-sdk-angular
  * **Released 1.7.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#203](https://github.com/strongloop/loopback-sdk-angular/pull/203) Patch safari-private-mode localStorage unusable ([davidcheung](https://github.com/davidcheung))
 
 
 ### loopback-sdk-ios
- * [@04338d5](https://github.com/strongloop/loopback-sdk-ios/commit/04338d58e4d311733308dbe7b3fb323c6365be47) Minor cleanup in the run-unittests script ([hideya kawahara](https://github.com/hideya))
+ * [PR#105](https://github.com/strongloop/loopback-sdk-ios/pull/105) Minor cleanup in the run-unit-tests script ([hideya](https://github.com/hideya))
  * [PR#101](https://github.com/strongloop/loopback-sdk-ios/pull/101) Cleanup typedefs for success blocks, mark extra typedefs "deprecated" ([hideya](https://github.com/hideya))
  * [PR#100](https://github.com/strongloop/loopback-sdk-ios/pull/100) Fix error in upsert implementation and make SLObject.repository attribute strong ([hideya](https://github.com/hideya))
- * [PR#93](https://github.com/strongloop/loopback-sdk-ios/pull/93) Improve LBRESTAdapter repositoryWithModelName ([hideya](https://github.com/hideya))
- * [PR#83](https://github.com/strongloop/loopback-sdk-ios/pull/83) Add support for Buffer and GeoPoint data types ([hideya](https://github.com/hideya))
- * [PR#92](https://github.com/strongloop/loopback-sdk-ios/pull/92) Add support for plain model creation ([hideya](https://github.com/hideya))
 
 
 
@@ -243,7 +198,6 @@ since: (from 2016-01-25 to 2016-03-21)
 ### loopback-component-explorer
  * **Released 2.4.0** (Raymond Feng)
  * [PR#154](https://github.com/strongloop/loopback-component-explorer/pull/154) Add `swaggerUI` option to enable/disable UI serving ([raymondfeng](https://github.com/raymondfeng))
- * **Released 2.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
 
 
 ### loopback-component-oauth2
@@ -260,7 +214,6 @@ since: (from 2016-01-25 to 2016-03-21)
  * [PR#112](https://github.com/strongloop/loopback-component-passport/pull/112) Throw softer error in `local` strategy ... ([vshushkov](https://github.com/vshushkov))
  * [PR#105](https://github.com/strongloop/loopback-component-passport/pull/105) provider name can be configured in options ([clarkorz](https://github.com/clarkorz))
  * [PR#104](https://github.com/strongloop/loopback-component-passport/pull/104) Avoid duplicate user identities ([clarkorz](https://github.com/clarkorz))
- * [PR#121](https://github.com/strongloop/loopback-component-passport/pull/121) Fix email validation for LDAP ([loay](https://github.com/loay))
 
 
 ### loopback-component-push
@@ -271,6 +224,5 @@ since: (from 2016-01-25 to 2016-03-21)
 ### loopback-component-storage
  * **Released 1.7.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@69bcf93](https://github.com/strongloop/loopback-component-storage/commit/69bcf93247122ffb4b272fa0e47cbd94fe59671d) Remove sl-blip from dependencies ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#109](https://github.com/strongloop/loopback-component-storage/pull/109) Migrate examples ([superkhau](https://github.com/superkhau))
 
 
