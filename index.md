@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-01-26 to 2016-03-22)
+since: (from 2016-01-27 to 2016-03-23)
 ---
 
 ## Core
@@ -47,6 +47,7 @@ since: (from 2016-01-26 to 2016-03-22)
 
 
 ### loopback
+ * [PR#1780](https://github.com/strongloop/loopback/pull/1780) Update persisted-model.js ([linguofeng](https://github.com/linguofeng))
  * [PR#2105](https://github.com/strongloop/loopback/pull/2105) Improve error message on connector init error ([bajtos](https://github.com/bajtos))
  * [PR#2088](https://github.com/strongloop/loopback/pull/2088) application: correct spelling of "cannont" ([sam-github](https://github.com/sam-github))
  * [@804265b](https://github.com/strongloop/loopback/commit/804265b801187b072ae182b1f35b9594b304f25f) Remove sl-blip from dependency ([Candy](https://github.com/0candy))
