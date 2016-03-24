@@ -417,7 +417,7 @@ module.exports = function(User) {
 
       options.text = options.text || 'Please verify your email by opening this link in a web browser:\n\t{href}';
 
-      options.text = options.text.replace('{href}', options.verifyHref);
+      options.text = options.text.replace(/\{href\}/gm, options.verifyHref);
 
       options.to = options.to || user.email;
 
