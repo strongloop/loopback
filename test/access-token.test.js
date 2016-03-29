@@ -1,7 +1,7 @@
 var loopback = require('../');
 var extend = require('util')._extend;
 var Token = loopback.AccessToken.extend('MyToken');
-var ds = loopback.createDataSource({ connector: loopback.Memory });
+var ds = loopback.createDataSource({connector: loopback.Memory});
 Token.attachTo(ds);
 var ACL = loopback.ACL;
 
@@ -32,27 +32,28 @@ describe('loopback.token(options)', function() {
   });
 
   it('should not search default keys when searchDefaultTokenKeys is false',
-    function(done) {
-      var tokenId = this.token.id;
-      var app = createTestApp(
-        this.token, { token: { searchDefaultTokenKeys: false } },
-        done);
-      var agent = request.agent(app);
+  function(done) {
+    var tokenId = this.token.id;
+    var app = createTestApp(
+      this.token,
+      { token: { searchDefaultTokenKeys: false } },
+      done);
+    var agent = request.agent(app);
 
-      // Set the token cookie
-      agent.get('/token').expect(200).end(function(err, res) {
-        if (err) return done(err);
+    // Set the token cookie
+    agent.get('/token').expect(200).end(function(err, res) {
+      if (err) return done(err);
 
-        // Make a request that sets the token in all places searched by default
-        agent.get('/check-access?access_token=' + tokenId)
-          .set('X-Access-Token', tokenId)
-          .set('authorization', tokenId)
-          // Expect 401 because there is no (non-default) place configured where
-          // the middleware should load the token from
-          .expect(401)
-          .end(done);
-      });
+      // Make a request that sets the token in all places searched by default
+      agent.get('/check-access?access_token=' + tokenId)
+        .set('X-Access-Token', tokenId)
+        .set('authorization', tokenId)
+        // Expect 401 because there is no (non-default) place configured where
+        // the middleware should load the token from
+        .expect(401)
+        .end(done);
     });
+  });
 
   it('should populate req.token from an authorization header with bearer token', function(done) {
     var token = this.token.id;
@@ -143,7 +144,7 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, { userId: userId });
+          assert.deepEqual(res.body, {userId: userId});
           done();
         });
     });
@@ -158,7 +159,7 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, { userId: userId, state: 1 });
+          assert.deepEqual(res.body, {userId: userId, state: 1});
           done();
         });
     });
@@ -173,10 +174,31 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, { userId: userId, state: 1 });
+          assert.deepEqual(res.body, {userId: userId, state: 1});
           done();
         });
     });
+
+  it('should skip when req.token is already present', function(done) {
+    var tokenStub = { id: 'stub id' };
+    app.use(function(req, res, next) {
+      req.accessToken = tokenStub;
+      next();
+    });
+    app.use(loopback.token({ model: Token }));
+    app.get('/', function(req, res, next) {
+      res.send(req.accessToken);
+    });
+
+    request(app).get('/')
+      .set('Authorization', this.token.id)
+      .expect(200)
+      .end(function(err, res) {
+        if (err) return done(err);
+        expect(res.body).to.eql(tokenStub);
+        done();
+      });
+  });
 
   describe('loading multiple instances of token middleware', function() {
     it('should skip when req.token is already present and no further options are set', function(done) {
@@ -290,19 +312,16 @@ describe('AccessToken', function() {
     });
 
     function mockRequest(opts) {
-      return extend({
+      return extend(
+        {
           method: 'GET',
           url: '/a-test-path',
           headers: {},
           _params: {},
 
           // express helpers
-          param: function(name) {
-            return this._params[name];
-          },
-          header: function(name) {
-            return this.headers[name];
-          }
+          param: function(name) { return this._params[name]; },
+          header: function(name) { return this.headers[name]; }
         },
         opts);
     }
@@ -329,7 +348,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
-    createTestAppAndRequest(this.token, { app: { aclErrorStatus: 403 } }, done)
+    createTestAppAndRequest(this.token, {app:{aclErrorStatus:403}}, done)
       .del('/tests/123')
       .expect(403)
       .set('authorization', this.token.id)
@@ -345,7 +364,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
-    createTestAppAndRequest(this.token, { model: { aclErrorStatus: 404 } }, done)
+    createTestAppAndRequest(this.token, {model:{aclErrorStatus:404}}, done)
       .del('/tests/123')
       .expect(404)
       .set('authorization', this.token.id)
@@ -410,7 +429,7 @@ describe('app.enableAuth()', function() {
 
 function createTestingToken(done) {
   var test = this;
-  Token.create({ userId: '123' }, function(err, token) {
+  Token.create({userId: '123'}, function(err, token) {
     if (err) return done(err);
     test.token = token;
     done();
@@ -439,8 +458,8 @@ function createTestApp(testToken, settings, done) {
   app.use(loopback.cookieParser('secret'));
   app.use(loopback.token(tokenSettings));
   app.get('/token', function(req, res) {
-    res.cookie('authorization', testToken.id, { signed: true });
-    res.cookie('access_token', testToken.id, { signed: true });
+    res.cookie('authorization', testToken.id, {signed: true});
+    res.cookie('access_token', testToken.id, {signed: true});
     res.end();
   });
   app.get('/', function(req, res) {
@@ -456,7 +475,7 @@ function createTestApp(testToken, settings, done) {
     res.status(req.accessToken ? 200 : 401).end();
   });
   app.use('/users/:uid', function(req, res) {
-    var result = { userId: req.params.uid };
+    var result = {userId: req.params.uid};
     if (req.query.state) {
       result.state = req.query.state;
     } else if (req.url !== '/') {
@@ -472,13 +491,15 @@ function createTestApp(testToken, settings, done) {
   });
 
   var modelOptions = {
-    acls: [{
-      principalType: 'ROLE',
-      principalId: '$everyone',
-      accessType: ACL.ALL,
-      permission: ACL.DENY,
-      property: 'deleteById'
-    }]
+    acls: [
+      {
+        principalType: 'ROLE',
+        principalId: '$everyone',
+        accessType: ACL.ALL,
+        permission: ACL.DENY,
+        property: 'deleteById'
+      }
+    ]
   };
 
   Object.keys(modelSettings).forEach(function(key) {
