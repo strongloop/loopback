@@ -21,7 +21,7 @@ function rewriteUserLiteral(req, currentUserLiteral) {
     var urlBeforeRewrite = req.url;
     req.url = req.url.replace(
       new RegExp('/' + currentUserLiteral + '(/|$|\\?)', 'g'),
-      '/' + req.accessToken.userId + '$1');
+        '/' + req.accessToken.userId + '$1');
     if (req.url !== urlBeforeRewrite) {
       debug('req.url has been rewritten from %s to %s', urlBeforeRewrite,
         req.url);
