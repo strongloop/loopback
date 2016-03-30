@@ -268,7 +268,12 @@ describe('loopback.token(options)', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          expect(res.body.userId).to.eql(token.userId);
+          expect(res.body).to.eql({
+            id: token.id,
+            ttl: token.ttl,
+            userId: token.userId,
+            created: token.created.toJSON()
+          });
           done();
         });
     });
