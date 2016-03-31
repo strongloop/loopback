@@ -631,4 +631,92 @@ describe('loopback', function() {
       });
     });
   });
+
+  describe('new remote method configuration', function() {
+    function getAllMethodNamesWithoutClassName(TestModel) {
+      return TestModel.sharedClass.methods().map(function(m) {
+        return m.stringName.replace(/^[^.]+\./, ''); // drop the class name
+      });
+    }
+
+    it('treats method names that don\'t start with "prototype." as "isStatic:true"', function() {
+      var TestModel = loopback.createModel(uniqueModelName);
+      loopback.configureModel(TestModel, {
+        dataSource: null,
+        methods: {
+          staticMethod: {
+            http: { path: '/static' }
+          }
+        }
+      });
+
+      var methodNames = getAllMethodNamesWithoutClassName(TestModel);
+
+      expect(methodNames).to.include('staticMethod');
+    });
+
+    it('treats method names starting with "prototype." as "isStatic:false"', function() {
+      var TestModel = loopback.createModel(uniqueModelName);
+      loopback.configureModel(TestModel, {
+        dataSource: null,
+        methods: {
+          'prototype.instanceMethod': {
+            http: { path: '/instance' }
+          }
+        }
+      });
+
+      var methodNames = getAllMethodNamesWithoutClassName(TestModel);
+
+      expect(methodNames).to.include('prototype.instanceMethod');
+    });
+
+    it('throws an error when "isStatic:true" and method name starts with "prototype."', function() {
+      var TestModel = loopback.createModel(uniqueModelName);
+      expect(function() { loopback.configureModel(TestModel, {
+        dataSource: null,
+        methods: {
+          'prototype.instanceMethod': {
+            isStatic: true,
+            http: { path: '/instance' }
+          }
+        }
+      });}).to.throw(Error, new Error('Remoting metadata for' + TestModel.modelName +
+      ' "isStatic" does not match new method name-based style.'));
+    });
+
+    it('use "isStatic:true" if method name does not start with "prototype."', function() {
+      var TestModel = loopback.createModel(uniqueModelName);
+      loopback.configureModel(TestModel, {
+        dataSource: null,
+        methods: {
+          staticMethod: {
+            isStatic: true,
+            http: { path: '/static' }
+          }
+        }
+      });
+
+      var methodNames = getAllMethodNamesWithoutClassName(TestModel);
+
+      expect(methodNames).to.include('staticMethod');
+    });
+
+    it('use "isStatic:false" if method name starts with "prototype."', function() {
+      var TestModel = loopback.createModel(uniqueModelName);
+      loopback.configureModel(TestModel, {
+        dataSource: null,
+        methods: {
+          'prototype.instanceMethod': {
+            isStatic: false,
+            http: { path: '/instance' }
+          }
+        }
+      });
+
+      var methodNames = getAllMethodNamesWithoutClassName(TestModel);
+
+      expect(methodNames).to.include('prototype.instanceMethod');
+    });
+  });
 });
