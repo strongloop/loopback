@@ -1,5 +1,3 @@
-/*jshint -W030 */
-
 var async = require('async');
 var path = require('path');
 
@@ -13,8 +11,7 @@ var it = require('./util/it');
 
 describe('app', function() {
   describe.onServer('.middleware(phase, handler)', function() {
-    var app;
-    var steps;
+    var app, steps;
 
     beforeEach(function setup() {
       app = loopback();
@@ -24,7 +21,7 @@ describe('app', function() {
     it('runs middleware in phases', function(done) {
       var PHASES = [
         'initial', 'session', 'auth', 'parse',
-        'routes', 'files', 'final'
+        'routes', 'files', 'final',
       ];
 
       PHASES.forEach(function(name) {
@@ -36,7 +33,7 @@ describe('app', function() {
         if (err) return done(err);
         expect(steps).to.eql([
           'initial', 'session', 'auth', 'parse',
-          'main', 'routes', 'files', 'final'
+          'main', 'routes', 'files', 'final',
         ]);
         done();
       });
@@ -233,8 +230,7 @@ describe('app', function() {
     });
 
     it('exposes express helpers on req and res objects', function(done) {
-      var req;
-      var res;
+      var req, res;
 
       app.middleware('initial', function(rq, rs, next) {
         req = rq;
@@ -250,7 +246,7 @@ describe('app', function() {
           'param',
           'params',
           'query',
-          'res'
+          'res',
         ]);
 
         expect(getObjectAndPrototypeKeys(res), 'response').to.include.members([
@@ -262,7 +258,7 @@ describe('app', function() {
           'req',
           'send',
           'sendFile',
-          'set'
+          'set',
         ]);
 
         done();
@@ -316,13 +312,12 @@ describe('app', function() {
     });
 
     it('correctly mounts express apps', function(done) {
-      var data;
-      var mountWasEmitted;
+      var data, mountWasEmitted;
       var subapp = express();
       subapp.use(function(req, res, next) {
         data = {
           mountpath: req.app.mountpath,
-          parent: req.app.parent
+          parent: req.app.parent,
         };
         next();
       });
@@ -335,14 +330,13 @@ describe('app', function() {
         expect(mountWasEmitted, 'mountWasEmitted').to.be.true;
         expect(data).to.eql({
           mountpath: '/mountpath',
-          parent: app
+          parent: app,
         });
         done();
       });
     });
 
     it('restores req & res on return from mounted express app', function(done) {
-      // jshint proto:true
       var expected = {};
       var actual = {};
 
@@ -414,28 +408,28 @@ describe('app', function() {
       app.middlewareFromConfig(handlerFactory, {
         enabled: true,
         phase: 'session',
-        params: expectedConfig
+        params: expectedConfig,
       });
 
       // Config as a value (single arg)
       app.middlewareFromConfig(handlerFactory, {
         enabled: true,
         phase: 'session:before',
-        params: 'before'
+        params: 'before',
       });
 
       // Config as a list of args
       app.middlewareFromConfig(handlerFactory, {
         enabled: true,
         phase: 'session:after',
-        params: ['after', 2]
+        params: ['after', 2],
       });
 
       // Disabled by configuration
       app.middlewareFromConfig(handlerFactory, {
         enabled: false,
         phase: 'initial',
-        params: null
+        params: null,
       });
 
       // This should be triggered with matching verbs
@@ -443,7 +437,7 @@ describe('app', function() {
         enabled: true,
         phase: 'routes:before',
         methods: ['get', 'head'],
-        params: {x: 1}
+        params: { x: 1 },
       });
 
       // This should be skipped as the verb doesn't match
@@ -451,7 +445,7 @@ describe('app', function() {
         enabled: true,
         phase: 'routes:before',
         methods: ['post'],
-        params: {x: 2}
+        params: { x: 2 },
       });
 
       executeMiddlewareHandlers(app, function(err) {
@@ -460,7 +454,7 @@ describe('app', function() {
           ['before'],
           [expectedConfig],
           ['after', 2],
-          [{x: 1}]
+          [{ x: 1 }],
         ]);
         done();
       });
@@ -477,7 +471,7 @@ describe('app', function() {
         },
         {
           phase: 'initial',
-          paths: ['/scope', /^\/(a|b)/]
+          paths: ['/scope', /^\/(a|b)/],
         });
 
       async.eachSeries(
@@ -508,7 +502,7 @@ describe('app', function() {
         'first',
         'initial', // this was the original first phase
         'routes',
-        'subapps'
+        'subapps',
       ], done);
     });
 
@@ -519,7 +513,7 @@ describe('app', function() {
         'auth', 'routes',
         'subapps', // add
         'final',
-        'last' // add
+        'last', // add
       ]);
       verifyMiddlewarePhases([
         'initial',
@@ -527,7 +521,7 @@ describe('app', function() {
         'auth', 'routes',
         'subapps', // new
         'files', 'final',
-        'last' // new
+        'last', // new
       ], done);
     });
 
@@ -555,15 +549,14 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app;
-    var db;
+    var app, db;
     beforeEach(function() {
       app = loopback();
-      db = loopback.createDataSource({connector: loopback.Memory});
+      db = loopback.createDataSource({ connector: loopback.Memory });
     });
 
     it('Expose a `Model` to remote clients', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
 
@@ -571,22 +564,22 @@ describe('app', function() {
     });
 
     it('uses singlar name as app.remoteObjects() key', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({ color: Color });
     });
 
     it('uses singular name as shared class name', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
-      var classes = app.remotes().classes().map(function(c) {return c.name;});
+      var classes = app.remotes().classes().map(function(c) { return c.name; });
       expect(classes).to.contain('color');
     });
 
     it('registers existing models to app.models', function() {
-      var Color = db.createModel('color', {name: String});
+      var Color = db.createModel('color', { name: String });
       app.model(Color);
       expect(Color.app).to.be.equal(app);
       expect(Color.shared).to.equal(true);
@@ -595,7 +588,7 @@ describe('app', function() {
     });
 
     it('emits a `modelRemoted` event', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      var Color = PersistedModel.extend('color', { name: String });
       Color.shared = true;
       var remotedClass;
       app.on('modelRemoted', function(sharedClass) {
@@ -610,7 +603,7 @@ describe('app', function() {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
         if (err) return done(err);
-        var Color = PersistedModel.extend('color', {name: String});
+        var Color = PersistedModel.extend('color', { name: String });
         app.model(Color);
         Color.attachTo(db);
         request(app).get('/colors').expect(200, done);
@@ -628,7 +621,6 @@ describe('app', function() {
     it('should not require dataSource', function() {
       app.model('MyTestModel', {});
     });
-
   });
 
   describe('app.model(name, config)', function() {
@@ -637,13 +629,13 @@ describe('app', function() {
     beforeEach(function() {
       app = loopback();
       app.dataSource('db', {
-        connector: 'memory'
+        connector: 'memory',
       });
     });
 
     it('Sugar for defining a fully built model', function() {
       app.model('foo', {
-        dataSource: 'db'
+        dataSource: 'db',
       });
 
       var Foo = app.models.foo;
@@ -655,7 +647,7 @@ describe('app', function() {
     it('interprets extra first-level keys as options', function() {
       app.model('foo', {
         dataSource: 'db',
-        base: 'User'
+        base: 'User',
       });
 
       expect(app.models.foo.definition.settings.base).to.equal('User');
@@ -666,8 +658,8 @@ describe('app', function() {
         dataSource: 'db',
         base: 'User',
         options: {
-          base: 'Application'
-        }
+          base: 'Application',
+        },
       });
 
       expect(app.models.foo.definition.settings.base).to.equal('Application');
@@ -676,7 +668,7 @@ describe('app', function() {
     it('honors config.public options', function() {
       app.model('foo', {
         dataSource: 'db',
-        public: false
+        public: false,
       });
       expect(app.models.foo.app).to.equal(app);
       expect(app.models.foo.shared).to.equal(false);
@@ -684,12 +676,11 @@ describe('app', function() {
 
     it('defaults config.public to be true', function() {
       app.model('foo', {
-        dataSource: 'db'
+        dataSource: 'db',
       });
       expect(app.models.foo.app).to.equal(app);
       expect(app.models.foo.shared).to.equal(true);
     });
-
   });
 
   describe('app.model(ModelCtor, config)', function() {
@@ -943,8 +934,7 @@ describe('app', function() {
   });
 
   describe('normalizeHttpPath option', function() {
-    var app;
-    var db;
+    var app, db;
     beforeEach(function() {
       app = loopback();
       db = loopback.createDataSource({ connector: loopback.Memory });
@@ -955,7 +945,7 @@ describe('app', function() {
         'UserAccount',
         { name: String },
         {
-          remoting: { normalizeHttpPath: true }
+          remoting: { normalizeHttpPath: true },
         });
       app.model(UserAccount);
       UserAccount.attachTo(db);

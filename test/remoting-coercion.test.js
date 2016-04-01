@@ -7,7 +7,7 @@ describe('remoting coercion', function() {
     var app = loopback();
     app.use(loopback.rest());
 
-    var TestModel = app.model('TestModel', {base: 'Model', dataSource: null, public: true});
+    var TestModel = app.model('TestModel', { base: 'Model', dataSource: null, public: true });
     TestModel.test = function(inst, cb) {
       called = true;
       assert(inst instanceof TestModel);
@@ -15,15 +15,15 @@ describe('remoting coercion', function() {
       cb();
     };
     TestModel.remoteMethod('test', {
-      accepts: {arg: 'inst', type: 'TestModel', http: {source: 'body'}},
-      http: {path: '/test', verb: 'post'}
+      accepts: { arg: 'inst', type: 'TestModel', http: { source: 'body' }},
+      http: { path: '/test', verb: 'post' },
     });
 
     request(app)
       .post('/TestModels/test')
       .set('Content-Type', 'application/json')
       .send({
-        foo: 'bar'
+        foo: 'bar',
       })
       .end(function(err) {
         if (err) return done(err);

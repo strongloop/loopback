@@ -1,23 +1,25 @@
 require('./support');
 var loopback = require('../');
-var User;
-var AccessToken;
+var User, AccessToken;
 var MailConnector = require('../lib/connectors/mail');
 
 var userMemory = loopback.createDataSource({
-  connector: 'memory'
+  connector: 'memory',
 });
 
 describe('User', function() {
   var validCredentialsEmail = 'foo@bar.com';
-  var validCredentials = {email: validCredentialsEmail, password: 'bar'};
-  var validCredentialsEmailVerified = {email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
-  var validCredentialsEmailVerifiedOverREST = {email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
-  var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
-  var validCredentialsWithTTLAndScope = {email: 'foo@bar.com', password: 'bar', ttl: 3600, scope: 'all'};
-  var validMixedCaseEmailCredentials = {email: 'Foo@bar.com', password: 'bar'};
-  var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
-  var incompleteCredentials = {password: 'bar1'};
+  var validCredentials = { email: validCredentialsEmail, password: 'bar' };
+  var validCredentialsEmailVerified = {
+    email: 'foo1@bar.com', password: 'bar1', emailVerified: true };
+  var validCredentialsEmailVerifiedOverREST = {
+    email: 'foo2@bar.com', password: 'bar2', emailVerified: true };
+  var validCredentialsWithTTL = { email: 'foo@bar.com', password: 'bar', ttl: 3600 };
+  var validCredentialsWithTTLAndScope = {
+    email: 'foo@bar.com', password: 'bar', ttl: 3600, scope: 'all' };
+  var validMixedCaseEmailCredentials = { email: 'Foo@bar.com', password: 'bar' };
+  var invalidCredentials = { email: 'foo1@bar.com', password: 'invalid' };
+  var incompleteCredentials = { password: 'bar1' };
 
   var defaultApp;
 
@@ -26,23 +28,22 @@ describe('User', function() {
     // to the wrong app instance
     defaultApp = loopback.User.app;
     loopback.User.app = null;
-    User = loopback.User.extend('TestUser', {}, {http: {path: 'test-users'}});
+    User = loopback.User.extend('TestUser', {}, { http: { path: 'test-users' }});
     AccessToken = loopback.AccessToken.extend('TestAccessToken');
     User.email = loopback.Email.extend('email');
     loopback.autoAttach();
 
     // Update the AccessToken relation to use the subclass of User
-    AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
-    User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
+    AccessToken.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+    User.hasMany(AccessToken, { as: 'accessTokens', foreignKey: 'userId' });
 
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
-
   });
 
   beforeEach(function(done) {
     app.enableAuth();
-    app.use(loopback.token({model: AccessToken}));
+    app.use(loopback.token({ model: AccessToken }));
     app.use(loopback.rest());
     app.model(User);
 
@@ -60,7 +61,7 @@ describe('User', function() {
 
   describe('User.create', function() {
     it('Create a new user', function(done) {
-      User.create({email: 'f@b.com', password: 'bar'}, function(err, user) {
+      User.create({ email: 'f@b.com', password: 'bar' }, function(err, user) {
         assert(!err);
         assert(user.id);
         assert(user.email);
@@ -70,7 +71,7 @@ describe('User', function() {
 
     it('Create a new user (email case-sensitivity off)', function(done) {
       User.settings.caseSensitiveEmail = false;
-      User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
+      User.create({ email: 'F@b.com', password: 'bar' }, function(err, user) {
         if (err) return done(err);
         assert(user.id);
         assert.equal(user.email, user.email.toLowerCase());
@@ -79,7 +80,7 @@ describe('User', function() {
     });
 
     it('Create a new user (email case-sensitive)', function(done) {
-      User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
+      User.create({ email: 'F@b.com', password: 'bar' }, function(err, user) {
         if (err) return done(err);
         assert(user.id);
         assert(user.email);
@@ -89,30 +90,30 @@ describe('User', function() {
     });
 
     it('credentials/challenges are object types', function(done) {
-      User.create({email: 'f1@b.com', password: 'bar1',
-        credentials: {cert: 'xxxxx', key: '111'},
-        challenges: {x: 'X', a: 1}
+      User.create({ email: 'f1@b.com', password: 'bar1',
+        credentials: { cert: 'xxxxx', key: '111' },
+        challenges: { x: 'X', a: 1 },
       }, function(err, user) {
         assert(!err);
         User.findById(user.id, function(err, user) {
           assert(user.id);
           assert(user.email);
-          assert.deepEqual(user.credentials, {cert: 'xxxxx', key: '111'});
-          assert.deepEqual(user.challenges, {x: 'X', a: 1});
+          assert.deepEqual(user.credentials, { cert: 'xxxxx', key: '111' });
+          assert.deepEqual(user.challenges, { x: 'X', a: 1 });
           done();
         });
       });
     });
 
     it('Email is required', function(done) {
-      User.create({password: '123'}, function(err) {
+      User.create({ password: '123' }, function(err) {
         assert(err);
         assert.equal(err.name, 'ValidationError');
         assert.equal(err.statusCode, 422);
         assert.equal(err.details.context, User.modelName);
         assert.deepEqual(err.details.codes.email, [
           'presence',
-          'format.null'
+          'format.null',
         ]);
 
         done();
@@ -121,24 +122,24 @@ describe('User', function() {
 
     // will change in future versions where password will be optional by default
     it('Password is required', function(done) {
-      var u = new User({email: '123@456.com'});
+      var u = new User({ email: '123@456.com' });
 
-      User.create({email: 'c@d.com'}, function(err) {
+      User.create({ email: 'c@d.com' }, function(err) {
         assert(err);
         done();
       });
     });
 
     it('Requires a valid email', function(done) {
-      User.create({email: 'foo@', password: '123'}, function(err) {
+      User.create({ email: 'foo@', password: '123' }, function(err) {
         assert(err);
         done();
       });
     });
 
     it('Requires a unique email', function(done) {
-      User.create({email: 'a@b.com', password: 'foobar'}, function() {
-        User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
+      User.create({ email: 'a@b.com', password: 'foobar' }, function() {
+        User.create({ email: 'a@b.com', password: 'batbaz' }, function(err) {
           assert(err, 'should error because the email is not unique!');
           done();
         });
@@ -147,9 +148,9 @@ describe('User', function() {
 
     it('Requires a unique email (email case-sensitivity off)', function(done) {
       User.settings.caseSensitiveEmail = false;
-      User.create({email: 'A@b.com', password: 'foobar'}, function(err) {
+      User.create({ email: 'A@b.com', password: 'foobar' }, function(err) {
         if (err) return done(err);
-        User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
+        User.create({ email: 'a@b.com', password: 'batbaz' }, function(err) {
           assert(err, 'should error because the email is not unique!');
           done();
         });
@@ -157,8 +158,8 @@ describe('User', function() {
     });
 
     it('Requires a unique email (email case-sensitive)', function(done) {
-      User.create({email: 'A@b.com', password: 'foobar'}, function(err, user1) {
-        User.create({email: 'a@b.com', password: 'batbaz'}, function(err, user2) {
+      User.create({ email: 'A@b.com', password: 'foobar' }, function(err, user1) {
+        User.create({ email: 'a@b.com', password: 'batbaz' }, function(err, user2) {
           if (err) return done(err);
           assert.notEqual(user1.email, user2.email);
           done();
@@ -167,8 +168,8 @@ describe('User', function() {
     });
 
     it('Requires a unique username', function(done) {
-      User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function() {
-        User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function(err) {
+      User.create({ email: 'a@b.com', username: 'abc', password: 'foobar' }, function() {
+        User.create({ email: 'b@b.com', username: 'abc',  password: 'batbaz' }, function(err) {
           assert(err, 'should error because the username is not unique!');
           done();
         });
@@ -176,8 +177,8 @@ describe('User', function() {
     });
 
     it('Requires a password to login with basic auth', function(done) {
-      User.create({email: 'b@c.com'}, function(err) {
-        User.login({email: 'b@c.com'}, function(err, accessToken) {
+      User.create({ email: 'b@c.com' }, function(err) {
+        User.login({ email: 'b@c.com' }, function(err, accessToken) {
           assert(!accessToken, 'should not create a accessToken without a valid password');
           assert(err, 'should not login without a password');
           assert.equal(err.code, 'LOGIN_FAILED');
@@ -187,20 +188,19 @@ describe('User', function() {
     });
 
     it('Hashes the given password', function() {
-      var u = new User({username: 'foo', password: 'bar'});
+      var u = new User({ username: 'foo', password: 'bar' });
       assert(u.password !== 'bar');
     });
 
     it('does not hash the password if it\'s already hashed', function() {
-      var u1 = new User({username: 'foo', password: 'bar'});
+      var u1 = new User({ username: 'foo', password: 'bar' });
       assert(u1.password !== 'bar');
-      var u2 = new User({username: 'foo', password: u1.password});
+      var u2 = new User({ username: 'foo', password: u1.password });
       assert(u2.password === u1.password);
     });
 
     describe('custom password hash', function() {
-      var defaultHashPassword;
-      var defaultValidatePassword;
+      var defaultHashPassword, defaultValidatePassword;
 
       beforeEach(function() {
         defaultHashPassword = User.hashPassword;
@@ -225,7 +225,7 @@ describe('User', function() {
 
       it('Reports invalid password', function() {
         try {
-          var u = new User({username: 'foo', password: 'aa'});
+          var u = new User({ username: 'foo', password: 'aa' });
           assert(false, 'Error should have been thrown');
         } catch (e) {
           // Ignore
@@ -233,7 +233,7 @@ describe('User', function() {
       });
 
       it('Hashes the given password', function() {
-        var u = new User({username: 'foo', password: 'bar'});
+        var u = new User({ username: 'foo', password: 'bar' });
         assert(u.password === 'BAR');
       });
     });
@@ -264,7 +264,7 @@ describe('User', function() {
 
     it('Should be able to find lowercase email with mixed-case email query', function(done) {
       User.settings.caseSensitiveEmail = false;
-      User.find({where:{email: validMixedCaseEmailCredentials.email}}, function(err, result) {
+      User.find({ where: { email: validMixedCaseEmailCredentials.email }}, function(err, result) {
         if (err) done(err);
         assert(result[0], 'The query did not find the user');
         assert.equal(result[0].email, validCredentialsEmail);
@@ -355,7 +355,7 @@ describe('User', function() {
       // Override createAccessToken
       User.prototype.createAccessToken = function(ttl, cb) {
         // Reduce the ttl by half for testing purpose
-        this.accessTokens.create({ttl: ttl / 2 }, cb);
+        this.accessTokens.create({ ttl: ttl / 2 }, cb);
       };
       User.login(validCredentialsWithTTL, function(err, accessToken) {
         assert(accessToken.userId);
@@ -383,7 +383,7 @@ describe('User', function() {
         // Override createAccessToken
         User.prototype.createAccessToken = function(ttl, options, cb) {
           // Reduce the ttl by half for testing purpose
-          this.accessTokens.create({ttl: ttl / 2, scopes: options.scope}, cb);
+          this.accessTokens.create({ ttl: ttl / 2, scopes: options.scope }, cb);
         };
         User.login(validCredentialsWithTTLAndScope, function(err, accessToken) {
           assert(accessToken.userId);
@@ -393,7 +393,7 @@ describe('User', function() {
           assert.equal(accessToken.scopes, 'all');
 
           User.findById(accessToken.userId, function(err, user) {
-            user.createAccessToken(120, {scope: 'default'}, function(err, accessToken) {
+            user.createAccessToken(120, { scope: 'default' }, function(err, accessToken) {
               assert(accessToken.userId);
               assert(accessToken.id);
               assert.equal(accessToken.ttl, 60);
@@ -575,22 +575,26 @@ describe('User', function() {
     it('Require valid and complete credentials for email verification error', function(done) {
       User.login({ email: validCredentialsEmail }, function(err, accessToken) {
         // strongloop/loopback#931
-        // error message should be "login failed" and not "login failed as the email has not been verified"
-        assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
+        // error message should be "login failed"
+        // and not "login failed as the email has not been verified"
+        assert(err && !/verified/.test(err.message),
+          'expecting "login failed" error message, received: "' + err.message + '"');
         assert.equal(err.code, 'LOGIN_FAILED');
         done();
       });
     });
 
-    it('Require valid and complete credentials for email verification error - promise variant', function(done) {
+    it('Require valid and complete credentials for email verification error - promise variant',
+    function(done) {
       User.login({ email: validCredentialsEmail })
         .then(function(accessToken) {
-        done();
-      })
+          done();
+        })
       .catch(function(err) {
         // strongloop/loopback#931
         // error message should be "login failed" and not "login failed as the email has not been verified"
-        assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
+        assert(err && !/verified/.test(err.message),
+          'expecting "login failed" error message, received: "' + err.message + '"');
         assert.equal(err.code, 'LOGIN_FAILED');
         done();
       });
@@ -653,7 +657,9 @@ describe('User', function() {
         });
     });
 
-    it('Login a user over REST require complete and valid credentials for email verification error message', function(done) {
+    it('Login user over REST require complete and valid credentials ' +
+    'for email verification error message',
+    function(done) {
       request(app)
         .post('/test-users/login')
         .expect('Content-Type', /json/)
@@ -664,9 +670,11 @@ describe('User', function() {
             return done(err);
           }
           // strongloop/loopback#931
-          // error message should be "login failed" and not "login failed as the email has not been verified"
+          // error message should be "login failed"
+          // and not "login failed as the email has not been verified"
           var errorResponse = res.body.error;
-          assert(errorResponse && !/verified/.test(errorResponse.message), ('expecting "login failed" error message, received: "' + errorResponse.message + '"'));
+          assert(errorResponse && !/verified/.test(errorResponse.message),
+            'expecting "login failed" error message, received: "' + errorResponse.message + '"');
           assert.equal(errorResponse.code, 'LOGIN_FAILED');
           done();
         });
@@ -687,23 +695,21 @@ describe('User', function() {
           done();
         });
     });
-
   });
 
   describe('User.login requiring realm', function() {
-    var User;
-    var AccessToken;
+    var User, AccessToken;
 
     before(function() {
       User = loopback.User.extend('RealmUser', {},
-        {realmRequired: true, realmDelimiter: ':'});
+        { realmRequired: true, realmDelimiter: ':' });
       AccessToken = loopback.AccessToken.extend('RealmAccessToken');
 
       loopback.autoAttach();
 
       // Update the AccessToken relation to use the subclass of User
-      AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
-      User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
+      AccessToken.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+      User.hasMany(AccessToken, { as: 'accessTokens', foreignKey: 'userId' });
 
       // allow many User.afterRemote's to be called
       User.setMaxListeners(0);
@@ -713,53 +719,53 @@ describe('User', function() {
       realm: 'realm1',
       username: 'foo100',
       email: 'foo100@bar.com',
-      password: 'pass100'
+      password: 'pass100',
     };
 
     var realm2User = {
       realm: 'realm2',
       username: 'foo100',
       email: 'foo100@bar.com',
-      password: 'pass200'
+      password: 'pass200',
     };
 
     var credentialWithoutRealm = {
       username: 'foo100',
       email: 'foo100@bar.com',
-      password: 'pass100'
+      password: 'pass100',
     };
 
     var credentialWithBadPass = {
       realm: 'realm1',
       username: 'foo100',
       email: 'foo100@bar.com',
-      password: 'pass001'
+      password: 'pass001',
     };
 
     var credentialWithBadRealm = {
       realm: 'realm3',
       username: 'foo100',
       email: 'foo100@bar.com',
-      password: 'pass100'
+      password: 'pass100',
     };
 
     var credentialWithRealm = {
       realm: 'realm1',
       username: 'foo100',
-      password: 'pass100'
+      password: 'pass100',
     };
 
     var credentialRealmInUsername = {
       username: 'realm1:foo100',
-      password: 'pass100'
+      password: 'pass100',
     };
 
     var credentialRealmInEmail = {
       email: 'realm1:foo100@bar.com',
-      password: 'pass100'
+      password: 'pass100',
     };
 
-    var user1;
+    var user1 = null;
     beforeEach(function(done) {
       User.create(realm1User, function(err, u) {
         if (err) {
@@ -771,11 +777,11 @@ describe('User', function() {
     });
 
     afterEach(function(done) {
-      User.deleteAll({realm: 'realm1'}, function(err) {
+      User.deleteAll({ realm: 'realm1' }, function(err) {
         if (err) {
           return done(err);
         }
-        User.deleteAll({realm: 'realm2'}, done);
+        User.deleteAll({ realm: 'realm2' }, done);
       });
     });
 
@@ -860,7 +866,7 @@ describe('User', function() {
       login(logout);
 
       function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+        User.login({ email: 'foo@bar.com', password: 'bar' }, fn);
       }
 
       function logout(err, accessToken) {
@@ -868,11 +874,12 @@ describe('User', function() {
       }
     });
 
-    it('Logout a user by providing the current accessToken id (using node) - promise variant', function(done) {
+    it('Logout a user by providing the current accessToken id (using node) - promise variant',
+    function(done) {
       login(logout);
 
       function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+        User.login({ email: 'foo@bar.com', password: 'bar' }, fn);
       }
 
       function logout(err, accessToken) {
@@ -891,7 +898,7 @@ describe('User', function() {
           .post('/test-users/login')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'foo@bar.com', password: 'bar'})
+          .send({ email: 'foo@bar.com', password: 'bar' })
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -932,7 +939,7 @@ describe('User', function() {
 
   describe('user.hasPassword(plain, fn)', function() {
     it('Determine if the password matches the stored password', function(done) {
-      var u = new User({username: 'foo', password: 'bar'});
+      var u = new User({ username: 'foo', password: 'bar' });
       u.hasPassword('bar', function(err, isMatch) {
         assert(isMatch, 'password doesnt match');
         done();
@@ -940,7 +947,7 @@ describe('User', function() {
     });
 
     it('Determine if the password matches the stored password - promise variant', function(done) {
-      var u = new User({username: 'foo', password: 'bar'});
+      var u = new User({ username: 'foo', password: 'bar' });
       u.hasPassword('bar')
         .then(function(isMatch) {
           assert(isMatch, 'password doesnt match');
@@ -952,7 +959,7 @@ describe('User', function() {
     });
 
     it('should match a password when saved', function(done) {
-      var u = new User({username: 'a', password: 'b', email: 'z@z.net'});
+      var u = new User({ username: 'a', password: 'b', email: 'z@z.net' });
 
       u.save(function(err, user) {
         User.findById(user.id, function(err, uu) {
@@ -965,7 +972,7 @@ describe('User', function() {
     });
 
     it('should match a password after it is changed', function(done) {
-      User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function(err, user) {
+      User.create({ email: 'foo@baz.net', username: 'bat', password: 'baz' }, function(err, user) {
         User.findById(user.id, function(err, foundUser) {
           assert(foundUser);
           foundUser.hasPassword('baz', function(err, isMatch) {
@@ -989,7 +996,6 @@ describe('User', function() {
   });
 
   describe('Verification', function() {
-
     describe('user.verify(options, fn)', function() {
       it('Verify a user\'s email address', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
@@ -1001,7 +1007,7 @@ describe('User', function() {
             from: 'noreply@myapp.org',
             redirect: '/',
             protocol: ctx.req.protocol,
-            host: ctx.req.get('host')
+            host: ctx.req.get('host'),
           };
 
           user.verify(options, function(err, result) {
@@ -1019,7 +1025,7 @@ describe('User', function() {
           .post('/test-users')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'bar@bat.com', password: 'bar'})
+          .send({ email: 'bar@bat.com', password: 'bar' })
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -1037,7 +1043,7 @@ describe('User', function() {
             from: 'noreply@myapp.org',
             redirect: '/',
             protocol: ctx.req.protocol,
-            host: ctx.req.get('host')
+            host: ctx.req.get('host'),
           };
 
           user.verify(options)
@@ -1057,7 +1063,7 @@ describe('User', function() {
 
         request(app)
           .post('/test-users')
-          .send({email: 'bar@bat.com', password: 'bar'})
+          .send({ email: 'bar@bat.com', password: 'bar' })
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
@@ -1078,7 +1084,7 @@ describe('User', function() {
             redirect: '/',
             protocol: ctx.req.protocol,
             host: ctx.req.get('host'),
-            headers: {'message-id':'custom-header-value'}
+            headers: { 'message-id': 'custom-header-value' },
           };
 
           user.verify(options, function(err, result) {
@@ -1092,7 +1098,7 @@ describe('User', function() {
           .post('/test-users')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'bar@bat.com', password: 'bar'})
+          .send({ email: 'bar@bat.com', password: 'bar' })
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -1120,7 +1126,7 @@ describe('User', function() {
               process.nextTick(function() {
                 cb(null, 'token-123456');
               });
-            }
+            },
           };
 
           user.verify(options, function(err, result) {
@@ -1138,7 +1144,7 @@ describe('User', function() {
           .post('/test-users')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'bar@bat.com', password: 'bar'})
+          .send({ email: 'bar@bat.com', password: 'bar' })
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -1162,7 +1168,7 @@ describe('User', function() {
               process.nextTick(function() {
                 cb(new Error('Fake error'));
               });
-            }
+            },
           };
 
           user.verify(options, function(err, result) {
@@ -1177,7 +1183,7 @@ describe('User', function() {
           .post('/test-users')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'bar@bat.com', password: 'bar'})
+          .send({ email: 'bar@bat.com', password: 'bar' })
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -1197,7 +1203,7 @@ describe('User', function() {
               redirect: '/',
               protocol: 'http',
               host: 'myapp.org',
-              port: 3000
+              port: 3000,
             };
 
             user.verify(options, function(err, result) {
@@ -1211,7 +1217,7 @@ describe('User', function() {
             .post('/test-users')
             .expect('Content-Type', /json/)
             .expect(200)
-            .send({email: 'bar@bat.com', password: 'bar'})
+            .send({ email: 'bar@bat.com', password: 'bar' })
             .end(function(err, res) {
               if (err) {
                 return done(err);
@@ -1230,7 +1236,7 @@ describe('User', function() {
               redirect: '/',
               protocol: 'http',
               host: 'myapp.org',
-              port: 80
+              port: 80,
             };
 
             user.verify(options, function(err, result) {
@@ -1244,7 +1250,7 @@ describe('User', function() {
             .post('/test-users')
             .expect('Content-Type', /json/)
             .expect(200)
-            .send({email: 'bar@bat.com', password: 'bar'})
+            .send({ email: 'bar@bat.com', password: 'bar' })
             .end(function(err, res) {
               if (err) {
                 return done(err);
@@ -1263,7 +1269,7 @@ describe('User', function() {
               redirect: '/',
               protocol: 'https',
               host: 'myapp.org',
-              port: 3000
+              port: 3000,
             };
 
             user.verify(options, function(err, result) {
@@ -1277,7 +1283,7 @@ describe('User', function() {
             .post('/test-users')
             .expect('Content-Type', /json/)
             .expect(200)
-            .send({email: 'bar@bat.com', password: 'bar'})
+            .send({ email: 'bar@bat.com', password: 'bar' })
             .end(function(err, res) {
               if (err) {
                 return done(err);
@@ -1296,7 +1302,7 @@ describe('User', function() {
               redirect: '/',
               protocol: 'https',
               host: 'myapp.org',
-              port: 443
+              port: 443,
             };
 
             user.verify(options, function(err, result) {
@@ -1310,7 +1316,7 @@ describe('User', function() {
             .post('/test-users')
             .expect('Content-Type', /json/)
             .expect(200)
-            .send({email: 'bar@bat.com', password: 'bar'})
+            .send({ email: 'bar@bat.com', password: 'bar' })
             .end(function(err, res) {
               if (err) {
                 return done(err);
@@ -1320,7 +1326,11 @@ describe('User', function() {
       });
 
       it('should hide verification tokens from user JSON', function(done) {
-        var user = new User({email: 'bar@bat.com', password: 'bar', verificationToken: 'a-token' });
+        var user = new User({
+          email: 'bar@bat.com',
+          password: 'bar',
+          verificationToken: 'a-token',
+        });
         var data = user.toJSON();
         assert(!('verificationToken' in data));
         done();
@@ -1340,7 +1350,7 @@ describe('User', function() {
             from: 'noreply@myapp.org',
             redirect: 'http://foo.com/bar',
             protocol: ctx.req.protocol,
-            host: ctx.req.get('host')
+            host: ctx.req.get('host'),
           };
 
           user.verify(options, function(err, result) {
@@ -1355,7 +1365,7 @@ describe('User', function() {
           .post('/test-users')
           .expect('Content-Type', /json/)
           .expect(302)
-          .send({email: 'bar@bat.com', password: 'bar'})
+          .send({ email: 'bar@bat.com', password: 'bar' })
           .end(function(err, res) {
             if (err) {
               return done(err);
@@ -1478,7 +1488,7 @@ describe('User', function() {
         var calledBack = false;
 
         User.resetPassword({
-          email: email
+          email: email,
         }, function() {
           calledBack = true;
         });

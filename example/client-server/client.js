@@ -3,7 +3,7 @@ var client = loopback();
 var CartItem = require('./models').CartItem;
 var remote = loopback.createDataSource({
   connector: loopback.Remote,
-  url: 'http://localhost:3000'
+  url: 'http://localhost:3000',
 });
 
 client.model(CartItem);

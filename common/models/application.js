@@ -65,7 +65,6 @@ function generateKey(hmacKey, algorithm, encoding) {
  */
 
 module.exports = function(Application) {
-
   // Workaround for https://github.com/strongloop/loopback/issues/292
   Application.definition.rawProperties.created.default =
   Application.definition.properties.created.default = function() {
@@ -122,7 +121,7 @@ module.exports = function(Application) {
     }
     cb = cb || utils.createPromiseCallback();
 
-    var props = {owner: owner, name: name};
+    var props = { owner: owner, name: name };
     for (var p in options) {
       if (!(p in props)) {
         props[p] = options[p];
@@ -195,7 +194,7 @@ module.exports = function(Application) {
         if (app[keyNames[i]] === key) {
           result = {
             application: app,
-            keyType: keyNames[i]
+            keyType: keyNames[i],
           };
           break;
         }

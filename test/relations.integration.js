@@ -1,5 +1,3 @@
-/*jshint -W030 */
-
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -11,14 +9,13 @@ var debug = require('debug')('loopback:test:relations.integration');
 var async = require('async');
 
 describe('relations - integration', function() {
-
   lt.beforeEach.withApp(app);
 
   lt.beforeEach.givenModel('store');
   beforeEach(function(done) {
     this.widgetName = 'foo';
     this.store.widgets.create({
-      name: this.widgetName
+      name: this.widgetName,
     }, function() {
       done();
     });
@@ -28,37 +25,36 @@ describe('relations - integration', function() {
   });
 
   describe('polymorphicHasMany', function() {
-
     before(function defineProductAndCategoryModels() {
       var Team = app.model(
         'Team',
         { properties: { name: 'string' },
-          dataSource: 'db'
+          dataSource: 'db',
         }
       );
       var Reader = app.model(
         'Reader',
         { properties: { name: 'string' },
-          dataSource: 'db'
+          dataSource: 'db',
         }
       );
       var Picture = app.model(
         'Picture',
-        { properties: { name: 'string', imageableId: 'number', imageableType: 'string'},
-          dataSource: 'db'
+        { properties: { name: 'string', imageableId: 'number', imageableType: 'string' },
+          dataSource: 'db',
         }
       );
 
       Reader.hasMany(Picture, { polymorphic: { // alternative syntax
         as: 'imageable', // if not set, default to: reference
         foreignKey: 'imageableId', // defaults to 'as + Id'
-        discriminator: 'imageableType' // defaults to 'as + Type'
-      } });
+        discriminator: 'imageableType', // defaults to 'as + Type'
+      }});
 
       Picture.belongsTo('imageable', { polymorphic: {
         foreignKey: 'imageableId',
-        discriminator: 'imageableType'
-      } });
+        discriminator: 'imageableType',
+      }});
 
       Reader.belongsTo(Team);
     });
@@ -89,14 +85,14 @@ describe('relations - integration', function() {
     it('includes the related child model', function(done) {
       var url = '/api/readers/' + this.reader.id;
       this.get(url)
-        .query({'filter': {'include' : 'pictures'}})
+        .query({ 'filter': { 'include': 'pictures' }})
         .expect(200, function(err, res) {
           if (err) return done(err);
           // console.log(res.body);
           expect(res.body.name).to.be.equal('Reader 1');
           expect(res.body.pictures).to.be.eql([
-            { name: 'Picture 1', id: 1, imageableId: 1, imageableType: 'Reader'},
-            { name: 'Picture 2', id: 2, imageableId: 1, imageableType: 'Reader'},
+            { name: 'Picture 1', id: 1, imageableId: 1, imageableType: 'Reader' },
+            { name: 'Picture 2', id: 2, imageableId: 1, imageableType: 'Reader' },
           ]);
           done();
         });
@@ -105,13 +101,13 @@ describe('relations - integration', function() {
     it('includes the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({'filter': {'include' : 'imageable'}})
+        .query({ 'filter': { 'include': 'imageable' }})
         .expect(200, function(err, res) {
           if (err) return done(err);
           // console.log(res.body);
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
-          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1, teamId: 1});
+          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1, teamId: 1 });
           done();
         });
     });
@@ -119,17 +115,19 @@ describe('relations - integration', function() {
     it('includes related models scoped to the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({'filter': {'include' : {'relation': 'imageable', 'scope': { 'include' : 'team'}}}})
+        .query({ 'filter': { 'include': {
+          'relation': 'imageable',
+          'scope': { 'include': 'team' },
+        }}})
         .expect(200, function(err, res) {
           if (err) return done(err);
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
           expect(res.body[0].imageable.name).to.be.eql('Reader 1');
-          expect(res.body[0].imageable.team).to.be.eql({ name: 'Team 1', id: 1});
+          expect(res.body[0].imageable.team).to.be.eql({ name: 'Team 1', id: 1 });
           done();
         });
     });
-
   });
 
   describe('/store/superStores', function() {
@@ -148,7 +146,6 @@ describe('relations - integration', function() {
       this.url = '/api/stores/' + this.store.id + '/widgets';
     });
     lt.describe.whenCalledRemotely('GET', '/api/stores/:id/widgets', function() {
-
       it('should succeed with statusCode 200', function() {
         assert.equal(this.res.statusCode, 200);
       });
@@ -180,7 +177,7 @@ describe('relations - integration', function() {
       beforeEach(function() {
         this.newWidgetName = 'baz';
         this.newWidget = {
-          name: this.newWidgetName
+          name: this.newWidgetName,
         };
       });
       beforeEach(function(done) {
@@ -212,7 +209,7 @@ describe('relations - integration', function() {
       });
       it('should have a single widget with storeId', function(done) {
         this.app.models.widget.count({
-          storeId: this.store.id
+          storeId: this.store.id,
         }, function(err, count) {
           if (err) return done(err);
           assert.equal(count, 2);
@@ -226,7 +223,7 @@ describe('relations - integration', function() {
     beforeEach(function(done) {
       var self = this;
       this.store.widgets.create({
-        name: this.widgetName
+        name: this.widgetName,
       }, function(err, widget) {
         self.widget = widget;
         self.url = '/api/stores/' + self.store.id + '/widgets/' + widget.id;
@@ -299,7 +296,7 @@ describe('relations - integration', function() {
     beforeEach(function(done) {
       var self = this;
       this.store.widgets.create({
-        name: this.widgetName
+        name: this.widgetName,
       }, function(err, widget) {
         self.widget = widget;
         self.url = '/api/widgets/' + self.widget.id + '/store';
@@ -315,7 +312,6 @@ describe('relations - integration', function() {
   });
 
   describe('hasMany through', function() {
-
     function setup(connecting, cb) {
       var root = {};
 
@@ -334,7 +330,7 @@ describe('relations - integration', function() {
         // Create a physician
         function(done) {
           app.models.physician.create({
-            name: 'ph1'
+            name: 'ph1',
           }, function(err, physician) {
             root.physician = physician;
             done();
@@ -344,7 +340,7 @@ describe('relations - integration', function() {
         // Create a patient
         connecting ? function(done) {
           root.physician.patients.create({
-            name: 'pa1'
+            name: 'pa1',
           }, function(err, patient) {
             root.patient = patient;
             root.relUrl = '/api/physicians/' + root.physician.id +
@@ -353,7 +349,7 @@ describe('relations - integration', function() {
           });
         } : function(done) {
           app.models.patient.create({
-            name: 'pa1'
+            name: 'pa1',
           }, function(err, patient) {
             root.patient = patient;
             root.relUrl = '/api/physicians/' + root.physician.id +
@@ -366,7 +362,6 @@ describe('relations - integration', function() {
     }
 
     describe('PUT /physicians/:id/patients/rel/:fk', function() {
-
       before(function(done) {
         var self = this;
         setup(false, function(err, root) {
@@ -405,7 +400,6 @@ describe('relations - integration', function() {
     });
 
     describe('PUT /physicians/:id/patients/rel/:fk with data', function() {
-
       before(function(done) {
         var self = this;
         setup(false, function(err, root) {
@@ -450,7 +444,6 @@ describe('relations - integration', function() {
     });
 
     describe('HEAD /physicians/:id/patients/rel/:fk', function() {
-
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
@@ -469,7 +462,6 @@ describe('relations - integration', function() {
     });
 
     describe('HEAD /physicians/:id/patients/rel/:fk that does not exist', function() {
-
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
@@ -489,7 +481,6 @@ describe('relations - integration', function() {
     });
 
     describe('DELETE /physicians/:id/patients/rel/:fk', function() {
-
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
@@ -543,7 +534,6 @@ describe('relations - integration', function() {
     });
 
     describe('GET /physicians/:id/patients/:fk', function() {
-
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
@@ -564,7 +554,6 @@ describe('relations - integration', function() {
     });
 
     describe('DELETE /physicians/:id/patients/:fk', function() {
-
       before(function(done) {
         var self = this;
         setup(true, function(err, root) {
@@ -605,7 +594,6 @@ describe('relations - integration', function() {
             done();
           });
         });
-
       });
     });
   });
@@ -630,7 +618,7 @@ describe('relations - integration', function() {
     beforeEach(function createProductsInCategory(done) {
       var test = this;
       this.category.products.create({
-        name: 'a-product'
+        name: 'a-product',
       }, function(err, product) {
         if (err) return done(err);
         test.product = product;
@@ -659,8 +647,8 @@ describe('relations - integration', function() {
           expect(res.body).to.eql([
             {
               id: expectedProduct.id,
-              name: expectedProduct.name
-            }
+              name: expectedProduct.name,
+            },
           ]);
           done();
         });
@@ -674,8 +662,8 @@ describe('relations - integration', function() {
           expect(res.body).to.eql([
             {
               id: expectedProduct.id,
-              name: expectedProduct.name
-            }
+              name: expectedProduct.name,
+            },
           ]);
           done();
         });
@@ -693,8 +681,8 @@ describe('relations - integration', function() {
           expect(res.body.products).to.eql([
             {
               id: expectedProduct.id,
-              name: expectedProduct.name
-            }
+              name: expectedProduct.name,
+            },
           ]);
           done();
         });
@@ -713,8 +701,8 @@ describe('relations - integration', function() {
           expect(res.body.products).to.eql([
             {
               id: expectedProduct.id,
-              name: expectedProduct.name
-            }
+              name: expectedProduct.name,
+            },
           ]);
           done();
         });
@@ -722,13 +710,12 @@ describe('relations - integration', function() {
   });
 
   describe('embedsOne', function() {
-
     before(function defineGroupAndPosterModels() {
       var group = app.model(
         'group',
         { properties: { name: 'string' },
           dataSource: 'db',
-          plural: 'groups'
+          plural: 'groups',
         }
       );
       var poster = app.model(
@@ -825,17 +812,15 @@ describe('relations - integration', function() {
       var url = '/api/groups/' + this.group.id + '/cover';
       this.get(url).expect(404, done);
     });
-
   });
 
   describe('embedsMany', function() {
-
     before(function defineProductAndCategoryModels() {
       var todoList = app.model(
         'todoList',
         { properties: { name: 'string' },
           dataSource: 'db',
-          plural: 'todo-lists'
+          plural: 'todo-lists',
         }
       );
       var todoItem = app.model(
@@ -870,7 +855,7 @@ describe('relations - integration', function() {
           expect(res.body.name).to.be.equal('List A');
           expect(res.body.todoItems).to.be.eql([
             { content: 'Todo 1', id: 1 },
-            { content: 'Todo 2', id: 2 }
+            { content: 'Todo 2', id: 2 },
           ]);
           done();
         });
@@ -884,7 +869,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
-            { content: 'Todo 2', id: 2 }
+            { content: 'Todo 2', id: 2 },
           ]);
           done();
         });
@@ -898,7 +883,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
           expect(res.body).to.be.eql([
-            { content: 'Todo 2', id: 2 }
+            { content: 'Todo 2', id: 2 },
           ]);
           done();
         });
@@ -926,7 +911,7 @@ describe('relations - integration', function() {
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 2', id: 2 },
-            { content: 'Todo 3', id: 3 }
+            { content: 'Todo 3', id: 3 },
           ]);
           done();
         });
@@ -963,7 +948,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
-            { content: 'Todo 3', id: 3 }
+            { content: 'Todo 3', id: 3 },
           ]);
           done();
         });
@@ -997,11 +982,9 @@ describe('relations - integration', function() {
           done();
         });
     });
-
   });
 
   describe('referencesMany', function() {
-
     before(function defineProductAndCategoryModels() {
       var recipe = app.model(
         'recipe',
@@ -1018,8 +1001,8 @@ describe('relations - integration', function() {
       recipe.referencesMany(ingredient);
       // contrived example for test:
       recipe.hasOne(photo, { as: 'picture', options: {
-        http: { path: 'image' }
-      } });
+        http: { path: 'image' },
+      }});
     });
 
     before(function createRecipe(done) {
@@ -1090,7 +1073,7 @@ describe('relations - integration', function() {
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 },
-            { name: 'Butter', id: test.ingredient3 }
+            { name: 'Butter', id: test.ingredient3 },
           ]);
           done();
         });
@@ -1105,7 +1088,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Butter', id: test.ingredient3 }
+            { name: 'Butter', id: test.ingredient3 },
           ]);
           done();
         });
@@ -1120,7 +1103,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
           expect(res.body).to.be.eql([
-            { name: 'Butter', id: test.ingredient3 }
+            { name: 'Butter', id: test.ingredient3 },
           ]);
           done();
         });
@@ -1135,11 +1118,11 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
           expect(res.body.ingredientIds).to.eql([
-            test.ingredient1, test.ingredient3
+            test.ingredient1, test.ingredient3,
           ]);
           expect(res.body.ingredients).to.eql([
             { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Butter', id: test.ingredient3 }
+            { name: 'Butter', id: test.ingredient3 },
           ]);
           done();
         });
@@ -1195,7 +1178,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 }
+            { name: 'Sugar', id: test.ingredient2 },
           ]);
           done();
         });
@@ -1209,7 +1192,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 }
+            { name: 'Chocolate', id: test.ingredient1 },
           ]);
           done();
         });
@@ -1238,7 +1221,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 }
+            { name: 'Sugar', id: test.ingredient2 },
           ]);
           done();
         });
@@ -1263,7 +1246,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
           expect(res.body).to.be.eql([
-            { name: 'Sugar', id: test.ingredient2 }
+            { name: 'Sugar', id: test.ingredient2 },
           ]);
           done();
         });
@@ -1278,7 +1261,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 }
+            { name: 'Sugar', id: test.ingredient2 },
           ]);
           done();
         });
@@ -1315,11 +1298,9 @@ describe('relations - integration', function() {
           done();
         });
     });
-
   });
 
   describe('nested relations', function() {
-
     before(function defineModels() {
       var Book = app.model(
         'Book',
@@ -1357,7 +1338,7 @@ describe('relations - integration', function() {
         throw new Error('This should not crash the app');
       };
 
-      Page.remoteMethod('__throw__errors', { isStatic: false, http: { path: '/throws', verb: 'get' } });
+      Page.remoteMethod('__throw__errors', { isStatic: false, http: { path: '/throws', verb: 'get' }});
 
       Book.nestRemoting('pages');
       Book.nestRemoting('chapters');
@@ -1375,7 +1356,6 @@ describe('relations - integration', function() {
         ctx.res.set('x-after', 'after');
         next();
       });
-
     });
 
     before(function createBook(done) {
@@ -1573,7 +1553,7 @@ describe('relations - integration', function() {
       var url = '/api/customers/' + cust.id + '/profile';
 
       this.post(url)
-        .send({points: 10})
+        .send({ points: 10 })
         .expect(200, function(err, res) {
           if (err) {
             return done(err);
@@ -1600,7 +1580,7 @@ describe('relations - integration', function() {
     it('should not create the referenced model twice', function(done) {
       var url = '/api/customers/' + cust.id + '/profile';
       this.post(url)
-        .send({points: 20})
+        .send({ points: 20 })
         .expect(500, function(err, res) {
           done(err);
         });
@@ -1609,7 +1589,7 @@ describe('relations - integration', function() {
     it('should update the referenced model', function(done) {
       var url = '/api/customers/' + cust.id + '/profile';
       this.put(url)
-        .send({points: 100})
+        .send({ points: 100 })
         .expect(200, function(err, res) {
           if (err) {
             return done(err);
@@ -1636,5 +1616,4 @@ describe('relations - integration', function() {
         });
     });
   });
-
 });

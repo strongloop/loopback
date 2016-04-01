@@ -1,17 +1,14 @@
-/*jshint -W030 */
-
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
 var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
 var app = require(path.join(ACCESS_CONTROL_APP, 'server/server.js'));
 var assert = require('assert');
-var USER = {email: 'test@test.test', password: 'test'};
-var CURRENT_USER = {email: 'current@test.test', password: 'test'};
+var USER = { email: 'test@test.test', password: 'test' };
+var CURRENT_USER = { email: 'current@test.test', password: 'test' };
 var debug = require('debug')('loopback:test:access-control.integration');
 
 describe('access control - integration', function() {
-
   lt.beforeEach.withApp(app);
 
   /*
@@ -61,7 +58,6 @@ describe('access control - integration', function() {
   */
 
   describe('/users', function() {
-
     lt.beforeEach.givenModel('user', USER, 'randomUser');
 
     lt.it.shouldBeDeniedWhenCalledAnonymously('GET', '/api/users');
@@ -128,7 +124,7 @@ describe('access control - integration', function() {
       userCounter = userCounter ? ++userCounter : 1;
       return {
         email: 'new-' + userCounter + '@test.test',
-        password: 'test'
+        password: 'test',
       };
     }
   });
@@ -200,13 +196,13 @@ describe('access control - integration', function() {
         // Create an account under the given user
         app.models.account.create({
           userId: self.user.id,
-          balance: 100
+          balance: 100,
         }, function(err, act) {
           self.url = '/api/accounts/' + act.id;
           done();
         });
-
       });
+
       lt.describe.whenCalledRemotely('PUT', '/api/accounts/:id', function() {
         lt.it.shouldBeAllowed();
       });
@@ -226,5 +222,4 @@ describe('access control - integration', function() {
       return '/api/accounts/' + this.account.id;
     }
   });
-
 });

@@ -8,8 +8,7 @@ var expect = require('chai').expect;
 var debug = require('debug')('test');
 
 describe('Replication / Change APIs', function() {
-  var dataSource, SourceModel, TargetModel;
-  var useSinceFilter;
+  var dataSource, SourceModel, TargetModel, useSinceFilter;
   var tid = 0; // per-test unique id used e.g. to build unique model names
 
   beforeEach(function() {
@@ -17,18 +16,18 @@ describe('Replication / Change APIs', function() {
     useSinceFilter = false;
     var test = this;
     dataSource = this.dataSource = loopback.createDataSource({
-      connector: loopback.Memory
+      connector: loopback.Memory,
     });
     SourceModel = this.SourceModel = PersistedModel.extend(
       'SourceModel-' + tid,
-      { id: { id: true, type: String, defaultFn: 'guid' } },
+      { id: { id: true, type: String, defaultFn: 'guid' }},
       { trackChanges: true });
 
     SourceModel.attachTo(dataSource);
 
     TargetModel = this.TargetModel = PersistedModel.extend(
       'TargetModel-' + tid,
-      { id: { id: true, type: String, defaultFn: 'guid' } },
+      { id: { id: true, type: String, defaultFn: 'guid' }},
       { trackChanges: true });
 
     // NOTE(bajtos) At the moment, all models share the same Checkpoint
@@ -44,7 +43,7 @@ describe('Replication / Change APIs', function() {
     test.startingCheckpoint = -1;
 
     this.createInitalData = function(cb) {
-      SourceModel.create({name: 'foo'}, function(err, inst) {
+      SourceModel.create({ name: 'foo' }, function(err, inst) {
         if (err) return cb(err);
         test.model = inst;
         SourceModel.replicate(TargetModel, cb);
@@ -54,7 +53,7 @@ describe('Replication / Change APIs', function() {
 
   describe('optimization check rectifyChange Vs rectifyAllChanges', function() {
     beforeEach(function initialData(done) {
-      var data = [{name: 'John', surname: 'Doe'}, {name: 'Jane', surname: 'Roe'}];
+      var data = [{ name: 'John', surname: 'Doe' }, { name: 'Jane', surname: 'Roe' }];
       async.waterfall([
         function(callback) {
           SourceModel.create(data, callback);
@@ -68,7 +67,7 @@ describe('Replication / Change APIs', function() {
 
     it('should call rectifyAllChanges if no id is passed for rectifyOnDelete', function(done) {
       var calls = mockSourceModelRectify();
-      SourceModel.destroyAll({name: 'John'}, function(err, data) {
+      SourceModel.destroyAll({ name: 'John' }, function(err, data) {
         if (err) return done(err);
         expect(calls).to.eql(['rectifyAllChanges']);
         done();
@@ -77,24 +76,25 @@ describe('Replication / Change APIs', function() {
 
     it('should call rectifyAllChanges if no id is passed for rectifyOnSave', function(done) {
       var calls = mockSourceModelRectify();
-      var newData = {'name': 'Janie'};
-      SourceModel.update({name: 'Jane'}, newData, function(err, data) {
+      var newData = { 'name': 'Janie' };
+      SourceModel.update({ name: 'Jane' }, newData, function(err, data) {
         if (err) return done(err);
         expect(calls).to.eql(['rectifyAllChanges']);
         done();
       });
     });
 
-    it('rectifyOnDelete for Delete should call rectifyChange instead of rectifyAllChanges', function(done) {
+    it('rectifyOnDelete for Delete should call rectifyChange instead of rectifyAllChanges',
+    function(done) {
       var calls = mockTargetModelRectify();
       async.waterfall([
         function(callback) {
-          SourceModel.destroyAll({name: 'John'}, callback);
+          SourceModel.destroyAll({ name: 'John' }, callback);
         },
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        }
+        },
       ], function(err, results) {
         if (err) return done(err);
         expect(calls).to.eql(['rectifyChange']);
@@ -102,17 +102,18 @@ describe('Replication / Change APIs', function() {
       });
     });
 
-    it('rectifyOnSave for Update should call rectifyChange instead of rectifyAllChanges', function(done) {
+    it('rectifyOnSave for Update should call rectifyChange instead of rectifyAllChanges',
+    function(done) {
       var calls = mockTargetModelRectify();
-      var newData = {'name': 'Janie'};
+      var newData = { 'name': 'Janie' };
       async.waterfall([
         function(callback) {
-          SourceModel.update({name: 'Jane'}, newData, callback);
+          SourceModel.update({ name: 'Jane' }, newData, callback);
         },
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        }
+        },
       ], function(err, result) {
         if (err) return done(err);
         expect(calls).to.eql(['rectifyChange']);
@@ -120,9 +121,10 @@ describe('Replication / Change APIs', function() {
       });
     });
 
-    it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges', function(done) {
+    it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges',
+    function(done) {
       var calls = mockTargetModelRectify();
-      var newData = [{name: 'Janie', surname: 'Doe'}];
+      var newData = [{ name: 'Janie', surname: 'Doe' }];
       async.waterfall([
         function(callback) {
           SourceModel.create(newData, callback);
@@ -130,7 +132,7 @@ describe('Replication / Change APIs', function() {
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        }
+        },
       ], function(err, result) {
         if (err) return done(err);
         expect(calls).to.eql(['rectifyChange']);
@@ -174,7 +176,7 @@ describe('Replication / Change APIs', function() {
   describe('Model.changes(since, filter, callback)', function() {
     it('Get changes since the given checkpoint', function(done) {
       var test = this;
-      this.SourceModel.create({name: 'foo'}, function(err) {
+      this.SourceModel.create({ name: 'foo' }, function(err) {
         if (err) return done(err);
         setTimeout(function() {
           test.SourceModel.changes(test.startingCheckpoint, {}, function(err, changes) {
@@ -192,7 +194,6 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
         SourceModel.changes(FUTURE_CHECKPOINT, {}, function(err, changes) {
           if (err) return done(err);
-          /*jshint -W030 */
           expect(changes).to.be.empty;
           done();
         });
@@ -201,11 +202,9 @@ describe('Replication / Change APIs', function() {
   });
 
   describe('Model.replicate(since, targetModel, options, callback)', function() {
-
     function assertTargetModelEqualsSourceModel(conflicts, sourceModel,
       targetModel, done) {
-      var sourceData;
-      var targetData;
+      var sourceData, targetData;
 
       assert(conflicts.length === 0);
       async.parallel([
@@ -222,7 +221,7 @@ describe('Replication / Change APIs', function() {
             targetData = result;
             cb();
           });
-        }
+        },
       ], function(err) {
         if (err) return done(err);
 
@@ -235,7 +234,7 @@ describe('Replication / Change APIs', function() {
       var test = this;
       var options = {};
 
-      this.SourceModel.create({name: 'foo'}, function(err) {
+      this.SourceModel.create({ name: 'foo' }, function(err) {
         if (err) return done(err);
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
@@ -251,7 +250,7 @@ describe('Replication / Change APIs', function() {
       var test = this;
       var options = {};
 
-      this.SourceModel.create({name: 'foo'}, function(err) {
+      this.SourceModel.create({ name: 'foo' }, function(err) {
         if (err) return done(err);
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options)
@@ -289,7 +288,7 @@ describe('Replication / Change APIs', function() {
             expect(getIds(list)).to.eql(['2']);
             next();
           });
-        }
+        },
       ], done);
     });
 
@@ -321,7 +320,7 @@ describe('Replication / Change APIs', function() {
             expect(getIds(list)).to.eql(['2']);
             next();
           });
-        }
+        },
       ], done);
     });
 
@@ -433,7 +432,7 @@ describe('Replication / Change APIs', function() {
             expect(getIds(list), 'target ids').to.eql(['init', 'racer']);
             next();
           });
-        }
+        },
       ], done);
     });
 
@@ -453,11 +452,11 @@ describe('Replication / Change APIs', function() {
               expect(conflicts, 'conflicts').to.eql([]);
               expect(newCheckpoints, 'currentCheckpoints').to.eql({
                 source: sourceCp + 1,
-                target: targetCp + 1
+                target: targetCp + 1,
               });
               cb();
             });
-        }
+        },
       ], done);
 
       function bumpSourceCheckpoint(cb) {
@@ -487,14 +486,14 @@ describe('Replication / Change APIs', function() {
           TargetModel.currentCheckpoint(function(err, cp) {
             if (err) return next(err);
             TargetModel.getChangeModel().find(
-              { where: { checkpoint: { gte: cp } } },
+              { where: { checkpoint: { gte: cp }}},
               function(err, changes) {
                 if (err) return done(err);
                 expect(changes).to.have.length(0);
                 done();
               });
           });
-        }
+        },
       ], done);
     });
 
@@ -513,14 +512,14 @@ describe('Replication / Change APIs', function() {
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  {name: '3rd-party'},
+                  { name: '3rd-party' },
                   cb);
               } else {
                 // 2.x connectors require `options`
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  {name: '3rd-party'},
+                  { name: '3rd-party' },
                   {}, // options
                   cb);
               }
@@ -540,7 +539,7 @@ describe('Replication / Change APIs', function() {
           },
 
           replicateExpectingSuccess(),
-          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1'),
         ], done);
       });
 
@@ -555,13 +554,13 @@ describe('Replication / Change APIs', function() {
               if (connector.create.length <= 3) {
                 connector.create(
                   TargetModel.modelName,
-                  {id: '1', name: '3rd-party'},
+                  { id: '1', name: '3rd-party' },
                   cb);
               } else {
                 // 2.x connectors require `options`
                 connector.create(
                   TargetModel.modelName,
-                  {id: '1', name: '3rd-party'},
+                  { id: '1', name: '3rd-party' },
                   {}, // options
                   cb);
               }
@@ -581,7 +580,7 @@ describe('Replication / Change APIs', function() {
           },
 
           replicateExpectingSuccess(),
-          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1'),
         ], done);
       });
 
@@ -599,14 +598,14 @@ describe('Replication / Change APIs', function() {
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  {name: '3rd-party'},
+                  { name: '3rd-party' },
                   cb);
               } else {
                 // 2.x connectors require `options`
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  {name: '3rd-party'},
+                  { name: '3rd-party' },
                   {}, // options
                   cb);
               }
@@ -626,7 +625,7 @@ describe('Replication / Change APIs', function() {
           },
 
           replicateExpectingSuccess(),
-          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1'),
         ], done);
       });
 
@@ -657,7 +656,7 @@ describe('Replication / Change APIs', function() {
             next();
           },
           replicateExpectingSuccess(),
-          verifyInstanceWasReplicated(SourceModel, TargetModel, '1')
+          verifyInstanceWasReplicated(SourceModel, TargetModel, '1'),
         ], done);
       });
     });
@@ -686,7 +685,7 @@ describe('Replication / Change APIs', function() {
               inst.name = 'target update';
               inst.save(cb);
             });
-          }
+          },
         ], function(err) {
           if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
@@ -724,11 +723,11 @@ describe('Replication / Change APIs', function() {
       this.conflict.models(function(err, source, target) {
         assert.deepEqual(source.toJSON(), {
           id: test.model.id,
-          name: 'source update'
+          name: 'source update',
         });
         assert.deepEqual(target.toJSON(), {
           id: test.model.id,
-          name: 'target update'
+          name: 'target update',
         });
         done();
       });
@@ -758,7 +757,7 @@ describe('Replication / Change APIs', function() {
               inst.name = 'target update';
               inst.save(cb);
             });
-          }
+          },
         ], function(err) {
           if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
@@ -797,7 +796,7 @@ describe('Replication / Change APIs', function() {
         assert.equal(source, null);
         assert.deepEqual(target.toJSON(), {
           id: test.model.id,
-          name: 'target update'
+          name: 'target update',
         });
         done();
       });
@@ -827,7 +826,7 @@ describe('Replication / Change APIs', function() {
               if (err) return cb(err);
               inst.remove(cb);
             });
-          }
+          },
         ], function(err) {
           if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
@@ -866,7 +865,7 @@ describe('Replication / Change APIs', function() {
         assert.equal(target, null);
         assert.deepEqual(source.toJSON(), {
           id: test.model.id,
-          name: 'source update'
+          name: 'source update',
         });
         done();
       });
@@ -895,7 +894,7 @@ describe('Replication / Change APIs', function() {
               if (err) return cb(err);
               inst.remove(cb);
             });
-          }
+          },
         ], function(err) {
           if (err) return done(err);
           SourceModel.replicate(TargetModel, function(err, conflicts) {
@@ -958,7 +957,7 @@ describe('Replication / Change APIs', function() {
         };
 
       SourceModel.findOrCreate(
-        { where: { name: 'does-not-exist' } },
+        { where: { name: 'does-not-exist' }},
         { name: 'created' },
         function(err, inst) {
           if (err) return done(err);
@@ -1070,14 +1069,14 @@ describe('Replication / Change APIs', function() {
           });
         },
         replicateExpectingSuccess(),
-        verifySourceWasReplicated()
+        verifySourceWasReplicated(),
       ], done);
     });
 
     beforeEach(function setupThirdModel() {
       AnotherModel = this.AnotherModel = PersistedModel.extend(
         'AnotherModel-' + tid,
-        { id: { id: true, type: String, defaultFn: 'guid' } },
+        { id: { id: true, type: String, defaultFn: 'guid' }},
         { trackChanges: true });
 
       // NOTE(bajtos) At the moment, all models share the same Checkpoint
@@ -1107,7 +1106,7 @@ describe('Replication / Change APIs', function() {
             expect(getIds(list)).to.not.contain(sourceInstance.id);
             next();
           });
-        }
+        },
       ], done);
     });
 
@@ -1119,7 +1118,7 @@ describe('Replication / Change APIs', function() {
         updateSourceInstanceNameTo('updated'),
         updateSourceInstanceNameTo('again'),
         replicateExpectingSuccess(),
-        verifySourceWasReplicated()
+        verifySourceWasReplicated(),
       ], done);
     });
 
@@ -1141,7 +1140,7 @@ describe('Replication / Change APIs', function() {
         async.series([
           // Note that ClientA->Server was already replicated during setup
           replicateExpectingSuccess(Server, ClientB),
-          verifySourceWasReplicated(ClientB)
+          verifySourceWasReplicated(ClientB),
         ], done);
       });
 
@@ -1158,7 +1157,7 @@ describe('Replication / Change APIs', function() {
           replicateExpectingSuccess(ClientA, Server),
 
           replicateExpectingSuccess(Server, ClientB),
-          verifySourceWasReplicated(ClientB)
+          verifySourceWasReplicated(ClientB),
         ], done);
       });
 
@@ -1167,7 +1166,7 @@ describe('Replication / Change APIs', function() {
           deleteSourceInstance(),
           replicateExpectingSuccess(ClientA, Server),
           replicateExpectingSuccess(Server, ClientB),
-          verifySourceWasReplicated(ClientB)
+          verifySourceWasReplicated(ClientB),
         ], done);
       });
 
@@ -1183,7 +1182,7 @@ describe('Replication / Change APIs', function() {
         it('propagates CREATE', function(done) {
           async.series([
             sync(ClientA, Server),
-            sync(ClientB, Server)
+            sync(ClientB, Server),
           ], done);
         });
 
@@ -1207,7 +1206,6 @@ describe('Replication / Change APIs', function() {
             // ClientB fetches the created & updated instance from the server
             sync(ClientB, Server),
           ], done);
-
         });
 
         it('does not report false conflicts', function(done) {
@@ -1227,7 +1225,7 @@ describe('Replication / Change APIs', function() {
             sync(ClientB, Server),
 
             // client A fetches the changes
-            sync(ClientA, Server)
+            sync(ClientA, Server),
           ], done);
         });
 
@@ -1325,7 +1323,7 @@ describe('Replication / Change APIs', function() {
           // and sync back to ClientA too
           sync(ClientA, Server),
 
-          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId)
+          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId),
         ], cb);
       }
 
@@ -1363,7 +1361,7 @@ describe('Replication / Change APIs', function() {
           // and sync back to ClientA too
           sync(ClientA, Server),
 
-          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId)
+          verifyInstanceWasReplicated(ClientB, ClientA, sourceInstanceId),
         ], cb);
       }
 
@@ -1383,11 +1381,10 @@ describe('Replication / Change APIs', function() {
             // NOTE(bajtos) It's important to replicate from the client to the
             // server first, so that we can resolve any conflicts at the client
             replicateExpectingSuccess(client, server),
-            replicateExpectingSuccess(server, client)
+            replicateExpectingSuccess(server, client),
           ], next);
         };
       }
-
     });
 
     function updateSourceInstanceNameTo(value) {

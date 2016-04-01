@@ -9,14 +9,14 @@ describe('RemoteConnector', function() {
     // setup the remote connector
     var ds = loopback.createDataSource({
       url: 'http://127.0.0.1:3000/api',
-      connector: loopback.Remote
+      connector: loopback.Remote,
     });
     TestModel.attachTo(ds);
   });
 
   it('should be able to call create', function(done) {
     TestModel.create({
-      foo: 'bar'
+      foo: 'bar',
     }, function(err, inst) {
       if (err) return done(err);
       assert(inst.id);
@@ -26,7 +26,7 @@ describe('RemoteConnector', function() {
 
   it('should be able to call save', function(done) {
     var m = new TestModel({
-      foo: 'bar'
+      foo: 'bar',
     });
     m.save(function(err, data) {
       if (err) return done(err);

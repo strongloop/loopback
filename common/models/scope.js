@@ -36,7 +36,7 @@ module.exports = function(Scope) {
     assert(aclModel,
       'ACL model must be defined before Scope.checkPermission is called');
 
-    this.findOne({where: {name: scope}}, function(err, scope) {
+    this.findOne({ where: { name: scope }}, function(err, scope) {
       if (err) {
         if (callback) callback(err);
       } else {

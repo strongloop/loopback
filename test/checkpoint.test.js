@@ -8,7 +8,7 @@ describe('Checkpoint', function() {
   describe('bumpLastSeq() and current()', function() {
     beforeEach(function() {
       var memory = loopback.createDataSource({
-        connector: loopback.Memory
+        connector: loopback.Memory,
       });
       Checkpoint.attachTo(memory);
     });
@@ -23,14 +23,14 @@ describe('Checkpoint', function() {
             expect(seq).to.equal(3);
             next();
           });
-        }
+        },
       ], done);
     });
 
     it('Should be no race condition for current() when calling in parallel', function(done) {
       async.parallel([
         function(next) { Checkpoint.current(next); },
-        function(next) { Checkpoint.current(next); }
+        function(next) { Checkpoint.current(next); },
       ], function(err, list) {
         if (err) return done(err);
         Checkpoint.find(function(err, data) {
@@ -44,7 +44,7 @@ describe('Checkpoint', function() {
     it('Should be no race condition for bumpLastSeq() when calling in parallel', function(done) {
       async.parallel([
         function(next) { Checkpoint.bumpLastSeq(next); },
-        function(next) { Checkpoint.bumpLastSeq(next); }
+        function(next) { Checkpoint.bumpLastSeq(next); },
       ], function(err, list) {
         if (err) return done(err);
         Checkpoint.find(function(err, data) {
@@ -57,14 +57,15 @@ describe('Checkpoint', function() {
           expect(data[0].seq).to.equal(2);
           // In this particular case, since the new last seq is always 2, both results
           // should be 2.
-          expect(list.map(function(it) {return it.seq;}))
+          expect(list.map(function(it) { return it.seq; }))
             .to.eql([2, 2]);
           done();
         });
       });
     });
 
-    it('Checkpoint.current() for non existing checkpoint should initialize checkpoint', function(done) {
+    it('Checkpoint.current() for non existing checkpoint should initialize checkpoint',
+    function(done) {
       Checkpoint.current(function(err, seq) {
         expect(seq).to.equal(1);
         done(err);

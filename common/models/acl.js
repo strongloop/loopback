@@ -78,7 +78,6 @@ assert(Role, 'Role model must be defined before ACL model');
  */
 
 module.exports = function(ACL) {
-
   ACL.ALL = AccessContext.ALL;
 
   ACL.DEFAULT = AccessContext.DEFAULT; // Not specified
@@ -112,7 +111,8 @@ module.exports = function(ACL) {
       score = score * 4;
       var ruleValue = rule[props[i]] || ACL.ALL;
       var requestedValue = req[props[i]] || ACL.ALL;
-      var isMatchingMethodName = props[i] === 'property' && req.methodNames.indexOf(ruleValue) !== -1;
+      var isMatchingMethodName = props[i] === 'property' &&
+        req.methodNames.indexOf(ruleValue) !== -1;
 
       var isMatchingAccessType = ruleValue === requestedValue;
       if (props[i] === 'accessType' && !isMatchingAccessType) {
@@ -278,7 +278,7 @@ module.exports = function(ACL) {
             principalType: acl.principalType,
             principalId: acl.principalId, // TODO: Should it be a name?
             accessType: acl.accessType || ACL.ALL,
-            permission: acl.permission
+            permission: acl.permission,
           }));
         }
       });
@@ -300,7 +300,7 @@ module.exports = function(ACL) {
           principalType: acl.principalType,
           principalId: acl.principalId,
           accessType: acl.accessType,
-          permission: acl.permission
+          permission: acl.permission,
         }));
       });
     }
@@ -325,9 +325,10 @@ module.exports = function(ACL) {
       principalId = principalId.toString();
     }
     property = property || ACL.ALL;
-    var propertyQuery = (property === ACL.ALL) ? undefined : {inq: [property, ACL.ALL]};
+    var propertyQuery = (property === ACL.ALL) ? undefined : { inq: [property, ACL.ALL] };
     accessType = accessType || ACL.ALL;
-    var accessTypeQuery = (accessType === ACL.ALL) ? undefined : {inq: [accessType, ACL.ALL, ACL.EXECUTE]};
+    var accessTypeQuery = (accessType === ACL.ALL) ? undefined :
+      { inq: [accessType, ACL.ALL, ACL.EXECUTE] };
 
     var req = new AccessRequest(model, property, accessType);
 
@@ -345,8 +346,8 @@ module.exports = function(ACL) {
     }
 
     var self = this;
-    this.find({where: {principalType: principalType, principalId: principalId,
-        model: model, property: propertyQuery, accessType: accessTypeQuery}},
+    this.find({ where: { principalType: principalType, principalId: principalId,
+        model: model, property: propertyQuery, accessType: accessTypeQuery }},
       function(err, dynACLs) {
         if (err) {
           if (callback) callback(err);
@@ -399,13 +400,13 @@ module.exports = function(ACL) {
     var modelName = context.modelName;
 
     var methodNames = context.methodNames;
-    var propertyQuery = (property === ACL.ALL) ? undefined : {inq: methodNames.concat([ACL.ALL])};
+    var propertyQuery = (property === ACL.ALL) ? undefined : { inq: methodNames.concat([ACL.ALL]) };
 
     var accessTypeQuery = (accessType === ACL.ALL) ?
       undefined :
       (accessType === ACL.REPLICATE) ?
-        {inq: [ACL.REPLICATE, ACL.WRITE, ACL.ALL]} :
-        {inq: [accessType, ACL.ALL]};
+        { inq: [ACL.REPLICATE, ACL.WRITE, ACL.ALL] } :
+        { inq: [accessType, ACL.ALL] };
 
     var req = new AccessRequest(modelName, property, accessType, ACL.DEFAULT, methodNames);
 
@@ -414,8 +415,8 @@ module.exports = function(ACL) {
 
     var self = this;
     var roleModel = registry.getModelByType(Role);
-    this.find({where: {model: model.modelName, property: propertyQuery,
-      accessType: accessTypeQuery}}, function(err, acls) {
+    this.find({ where: { model: model.modelName, property: propertyQuery,
+      accessType: accessTypeQuery }}, function(err, acls) {
       if (err) {
         if (callback) callback(err);
         return;
@@ -485,7 +486,7 @@ module.exports = function(ACL) {
       model: model,
       property: method,
       method: method,
-      modelId: modelId
+      modelId: modelId,
     });
 
     this.checkAccessForContext(context, function(err, access) {
@@ -518,15 +519,15 @@ module.exports = function(ACL) {
     this.resolveRelatedModels();
     switch (type) {
       case ACL.ROLE:
-        this.roleModel.findOne({where: {or: [{name: id}, {id: id}]}}, cb);
+        this.roleModel.findOne({ where: { or: [{ name: id }, { id: id }] }}, cb);
         break;
       case ACL.USER:
         this.userModel.findOne(
-          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb);
+          { where: { or: [{ username: id }, { email: id }, { id: id }] }}, cb);
         break;
       case ACL.APP:
         this.applicationModel.findOne(
-          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb);
+          { where: { or: [{ name: id }, { email: id }, { id: id }] }}, cb);
         break;
       default:
         process.nextTick(function() {
@@ -559,8 +560,8 @@ module.exports = function(ACL) {
             where: {
               roleId: role.id,
               principalType: principalType,
-              principalId: String(principalId)
-            }
+              principalId: String(principalId),
+            },
           }, function(err, result) {
             if (err) return cb(err);
             return cb(null, !!result);

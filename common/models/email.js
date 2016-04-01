@@ -11,7 +11,6 @@
  */
 
 module.exports = function(Email) {
-
   /**
    * Send an email with the given `options`.
    *

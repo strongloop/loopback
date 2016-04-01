@@ -4,7 +4,6 @@ var cls = require('continuation-local-storage');
 var domain = require('domain');
 
 module.exports = function(loopback) {
-
   /**
    * Get the current context object. The context is preserved
    * across async calls, it behaves like a thread-local storage.

@@ -15,18 +15,17 @@ assert(RoleMapping, 'RoleMapping model must be defined before Role model');
  * @header Role object
  */
 module.exports = function(Role) {
-
   // Workaround for https://github.com/strongloop/loopback/issues/292
   Role.definition.rawProperties.created.default =
     Role.definition.properties.created.default = function() {
-    return new Date();
-  };
+      return new Date();
+    };
 
   // Workaround for https://github.com/strongloop/loopback/issues/292
   Role.definition.rawProperties.modified.default =
     Role.definition.properties.modified.default = function() {
-    return new Date();
-  };
+      return new Date();
+    };
 
   Role.resolveRelatedModels = function() {
     if (!this.userModel) {
@@ -39,7 +38,6 @@ module.exports = function(Role) {
 
   // Set up the connection to users/applications/roles once the model
   Role.once('dataSourceAttached', function(roleModel) {
-
     ['users', 'applications', 'roles'].forEach(function(rel) {
       /**
        * Fetch all users assigned to this role
@@ -64,14 +62,14 @@ module.exports = function(Role) {
         var relsToModels = {
           users: roleModel.userModel,
           applications: roleModel.applicationModel,
-          roles: roleModel
+          roles: roleModel,
         };
 
         var ACL = loopback.ACL;
         var relsToTypes = {
           users: ACL.USER,
           applications: ACL.APP,
-          roles: ACL.ROLE
+          roles: ACL.ROLE,
         };
 
         var model = relsToModels[rel];
@@ -94,7 +92,7 @@ module.exports = function(Role) {
       }
 
       roleModel.roleMappingModel.find({
-        where: {roleId: this.id, principalType: principalType}
+        where: { roleId: this.id, principalType: principalType },
       }, function(err, mappings) {
         var ids;
         if (err) {
@@ -104,13 +102,12 @@ module.exports = function(Role) {
           return m.principalId;
         });
         query.where = query.where || {};
-        query.where.id = {inq: ids};
+        query.where.id = { inq: ids };
         model.find(query, function(err, models) {
           callback(err, models);
         });
       });
     }
-
   });
 
   // Special roles
@@ -305,7 +302,6 @@ module.exports = function(Role) {
     }
 
     var inRole = context.principals.some(function(p) {
-
       var principalType = p.type || undefined;
       var principalId = p.id || undefined;
 
@@ -322,7 +318,7 @@ module.exports = function(Role) {
     }
 
     var roleMappingModel = this.roleMappingModel;
-    this.findOne({where: {name: role}}, function(err, result) {
+    this.findOne({ where: { name: role }}, function(err, result) {
       if (err) {
         if (callback) callback(err);
         return;
@@ -338,14 +334,15 @@ module.exports = function(Role) {
         var principalType = p.type || undefined;
         var principalId = p.id || undefined;
         var roleId = result.id.toString();
+        var principalIdIsString = typeof principalId === 'string';
 
-        if (principalId !== null && principalId !== undefined && (typeof principalId !== 'string')) {
+        if (principalId !== null && principalId !== undefined && !principalIdIsString) {
           principalId = principalId.toString();
         }
 
         if (principalType && principalId) {
-          roleMappingModel.findOne({where: {roleId: roleId,
-              principalType: principalType, principalId: principalId}},
+          roleMappingModel.findOne({ where: { roleId: roleId,
+              principalType: principalType, principalId: principalId }},
             function(err, result) {
               debug('Role mapping found: %j', result);
               done(!err && result); // The only arg is the result
@@ -360,7 +357,6 @@ module.exports = function(Role) {
         if (callback) callback(null, inRole);
       });
     });
-
   };
 
   /**
@@ -421,8 +417,8 @@ module.exports = function(Role) {
       if (principalType && principalId) {
         // Please find() treat undefined matches all values
         inRoleTasks.push(function(done) {
-          roleMappingModel.find({where: {principalType: principalType,
-            principalId: principalId}}, function(err, mappings) {
+          roleMappingModel.find({ where: { principalType: principalType,
+            principalId: principalId }}, function(err, mappings) {
             debug('Role mappings found: %s %j', err, mappings);
             if (err) {
               if (done) done(err);

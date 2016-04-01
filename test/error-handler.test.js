@@ -4,9 +4,7 @@ var assert = require('assert');
 var request = require('supertest');
 
 describe('loopback.errorHandler(options)', function() {
-
   it('should return default middleware when options object is not present', function(done) {
-
     //arrange
     var app = loopback();
     app.use(loopback.urlNotFound());
@@ -22,7 +20,6 @@ describe('loopback.errorHandler(options)', function() {
   });
 
   it('should delete stack when options.includeStack is false', function(done) {
-
     //arrange
     var app = loopback();
     app.use(loopback.urlNotFound());
@@ -47,7 +44,7 @@ describe('loopback.errorHandler(options)', function() {
       includeStack: false,
       log: function customLogger(err, str, req) {
         errorLogged = err;
-      }
+      },
     }));
 
     //act
@@ -58,6 +55,5 @@ describe('loopback.errorHandler(options)', function() {
         .to.have.property('message', 'Cannot GET /url-does-not-exist');
       done();
     });
-
   });
 });

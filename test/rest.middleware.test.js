@@ -4,7 +4,7 @@ describe('loopback.rest', function() {
   var MyModel;
   beforeEach(function() {
     var ds = app.dataSource('db', { connector: loopback.Memory });
-    MyModel = ds.createModel('MyModel', {name: String});
+    MyModel = ds.createModel('MyModel', { name: String });
     loopback.autoAttach();
   });
 
@@ -20,7 +20,7 @@ describe('loopback.rest', function() {
     app.set('legacyExplorer', false);
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({name: 'm1'}, function(err, inst) {
+    MyModel.create({ name: 'm1' }, function(err, inst) {
       request(app)
         .del('/mymodels/' + inst.id)
         .expect(200, function(err, res) {
@@ -61,7 +61,7 @@ describe('loopback.rest', function() {
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err);
-        expect(res.body).to.eql({exists: false});
+        expect(res.body).to.eql({ exists: false });
         done();
       });
   });
@@ -69,7 +69,7 @@ describe('loopback.rest', function() {
   it('should report 200 for GET /:id found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({name: 'm1'}, function(err, inst) {
+    MyModel.create({ name: 'm1' }, function(err, inst) {
       request(app).get('/mymodels/' + inst.id)
         .expect(200)
         .end(done);
@@ -79,7 +79,7 @@ describe('loopback.rest', function() {
   it('should report 200 for HEAD /:id found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({name: 'm2'}, function(err, inst) {
+    MyModel.create({ name: 'm2' }, function(err, inst) {
       request(app).head('/mymodels/' + inst.id)
         .expect(200)
         .end(done);
@@ -89,12 +89,12 @@ describe('loopback.rest', function() {
   it('should report 200 for GET /:id/exists found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({name: 'm2'}, function(err, inst) {
+    MyModel.create({ name: 'm2' }, function(err, inst) {
       request(app).get('/mymodels/' + inst.id + '/exists')
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          expect(res.body).to.eql({exists: true});
+          expect(res.body).to.eql({ exists: true });
           done();
         });
     });
@@ -105,7 +105,7 @@ describe('loopback.rest', function() {
 
     // NOTE it is crucial to set `remoting` before creating any models
     var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
-    app.set('remoting', { rest: { supportedTypes: supportedTypes } });
+    app.set('remoting', { rest: { supportedTypes: supportedTypes }});
 
     app.model(MyModel);
     app.use(loopback.rest());
@@ -120,7 +120,7 @@ describe('loopback.rest', function() {
     var ds = app.dataSource('db', { connector: loopback.Memory });
     var CustomModel = ds.createModel('CustomModel',
       { name: String },
-      { http: { 'path': 'domain1/CustomModelPath' }
+      { http: { 'path': 'domain1/CustomModelPath' },
     });
 
     app.model(CustomModel);
@@ -133,7 +133,7 @@ describe('loopback.rest', function() {
     var ds = app.dataSource('db', { connector: loopback.Memory });
     var CustomModel = ds.createModel('CustomModel',
       { name: String },
-      { http: { path: 'domain%20one/CustomModelPath' }
+      { http: { path: 'domain%20one/CustomModelPath' },
     });
 
     app.model(CustomModel);
@@ -163,8 +163,8 @@ describe('loopback.rest', function() {
       cb(null, req.accessToken ? req.accessToken.id : null);
     };
     loopback.remoteMethod(User.getToken, {
-      accepts: [{ type: 'object', http: { source: 'req' } }],
-      returns: [{ type: 'object', name: 'id' }]
+      accepts: [{ type: 'object', http: { source: 'req' }}],
+      returns: [{ type: 'object', name: 'id' }],
     });
 
     app.use(loopback.rest());
@@ -240,15 +240,15 @@ describe('loopback.rest', function() {
         cb(null, req && req.accessToken ? req.accessToken.id : null);
       };
       // Set up the ACL
-      User.settings.acls.push({principalType: 'ROLE',
+      User.settings.acls.push({ principalType: 'ROLE',
         principalId: '$authenticated', permission: 'ALLOW',
-        property: 'getToken'});
+        property: 'getToken' });
 
       loopback.remoteMethod(User.getToken, {
         accepts: [],
         returns: [
-          { type: 'object', name: 'id' }
-        ]
+          { type: 'object', name: 'id' },
+        ],
       });
     });
 
@@ -276,7 +276,7 @@ describe('loopback.rest', function() {
 
     it('should enable context with loopback.rest', function(done) {
       app.enableAuth();
-      app.set('remoting', { context: { enableHttpContext: true } });
+      app.set('remoting', { context: { enableHttpContext: true }});
       app.use(loopback.rest());
 
       invokeGetToken(done);
@@ -312,8 +312,8 @@ describe('loopback.rest', function() {
       loopback.remoteMethod(User.getToken, {
         accepts: [],
         returns: [
-          { type: 'object', name: 'id' }
-        ]
+          { type: 'object', name: 'id' },
+        ],
       });
 
       invokeGetToken(done);
@@ -326,9 +326,9 @@ describe('loopback.rest', function() {
     // the global model registry
     app.model('accessToken', {
       options: {
-        base: 'AccessToken'
+        base: 'AccessToken',
       },
-      dataSource: 'db'
+      dataSource: 'db',
     });
     return app.model('user', {
       options: {
@@ -337,11 +337,11 @@ describe('loopback.rest', function() {
           accessTokens: {
             model: 'accessToken',
             type: 'hasMany',
-            foreignKey: 'userId'
-          }
-        }
+            foreignKey: 'userId',
+          },
+        },
       },
-      dataSource: 'db'
+      dataSource: 'db',
     });
   }
   function givenLoggedInUser(cb, done) {
@@ -363,11 +363,11 @@ describe('loopback.rest', function() {
     describe('with specific definitions in model-config.json', function() {
       it('should not be exposed when the definition value is false',
           function(done) {
-        var app = require(getFixturePath('model-config-defined-false'));
-        request(app)
+            var app = require(getFixturePath('model-config-defined-false'));
+            request(app)
           .get('/todos')
           .expect(404, done);
-      });
+          });
 
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('model-config-defined-true'));
@@ -380,18 +380,18 @@ describe('loopback.rest', function() {
     describe('with default definitions in model-config.json', function() {
       it('should not be exposed when the definition value is false',
           function(done) {
-        var app = require(getFixturePath('model-config-default-false'));
-        request(app)
+            var app = require(getFixturePath('model-config-default-false'));
+            request(app)
           .get('/todos')
           .expect(404, done);
-      });
+          });
 
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('model-config-default-true'));
         app.models.Todo.create([
-          {content: 'a'},
-          {content: 'b'},
-          {content: 'c'}
+          { content: 'a' },
+          { content: 'b' },
+          { content: 'c' },
         ], function() {
           request(app)
             .del('/todos')
@@ -408,36 +408,36 @@ describe('loopback.rest', function() {
     describe('with specific definitions in config.json', function() {
       it('should not be exposed when the definition value is false',
           function(done) {
-        var app = require(getFixturePath('config-defined-false'));
-        request(app)
+            var app = require(getFixturePath('config-defined-false'));
+            request(app)
           .get('/todos')
           .expect(404, done);
-      });
+          });
 
       it('should be exposed when the definition value is true',
           function(done) {
-        var app = require(getFixturePath('config-defined-true'));
-        request(app)
+            var app = require(getFixturePath('config-defined-true'));
+            request(app)
           .get('/todos')
           .expect(200, done);
-      });
+          });
     });
 
     describe('with default definitions in config.json', function() {
       it('should not be exposed when the definition value is false',
           function(done) {
-        var app = require(getFixturePath('config-default-false'));
-        request(app)
+            var app = require(getFixturePath('config-default-false'));
+            request(app)
           .get('/todos')
           .expect(404, done);
-      });
+          });
 
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('config-default-true'));
         app.models.Todo.create([
-          {content: 'a'},
-          {content: 'b'},
-          {content: 'c'}
+          { content: 'a' },
+          { content: 'b' },
+          { content: 'c' },
         ], function() {
           request(app)
             .del('/todos')
@@ -457,20 +457,20 @@ describe('loopback.rest', function() {
     // consequence, this causes the tests in user.integration to fail.
     describe.skip('with definitions in both config.json and model-config.json',
         function() {
-      it('should prioritize the settings in model-config.json', function(done) {
-        var app = require(getFixturePath('both-configs-set'));
-        request(app)
+          it('should prioritize the settings in model-config.json', function(done) {
+            var app = require(getFixturePath('both-configs-set'));
+            request(app)
           .del('/todos')
           .expect(404, done);
-      });
+          });
 
-      it('should fall back to config.json settings if setting is not found in' +
+          it('should fall back to config.json settings if setting is not found in' +
           'model-config.json', function(done) {
-        var app = require(getFixturePath('both-configs-set'));
-        request(app)
+            var app = require(getFixturePath('both-configs-set'));
+            request(app)
           .get('/todos')
           .expect(404, done);
-      });
-    });
+          });
+        });
   });
 });

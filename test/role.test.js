@@ -18,7 +18,7 @@ describe('role model', function() {
   var ds;
 
   beforeEach(function() {
-    ds = loopback.createDataSource({connector: 'memory'});
+    ds = loopback.createDataSource({ connector: 'memory' });
     // Re-attach the models so that they can have isolated store to avoid
     // pollutions from other tests
     ACL.attachTo(ds);
@@ -36,9 +36,10 @@ describe('role model', function() {
   });
 
   it('should define role/role relations', function() {
-    Role.create({name: 'user'}, function(err, userRole) {
-      Role.create({name: 'admin'}, function(err, adminRole) {
-        userRole.principals.create({principalType: RoleMapping.ROLE, principalId: adminRole.id}, function(err, mapping) {
+    Role.create({ name: 'user' }, function(err, userRole) {
+      Role.create({ name: 'admin' }, function(err, adminRole) {
+        userRole.principals.create({ principalType: RoleMapping.ROLE, principalId: adminRole.id },
+        function(err, mapping) {
           Role.find(function(err, roles) {
             assert.equal(roles.length, 2);
           });
@@ -56,15 +57,14 @@ describe('role model', function() {
         });
       });
     });
-
   });
 
   it('should define role/user relations', function() {
-
-    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
+    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
       // console.log('User: ', user.id);
-      Role.create({name: 'userRole'}, function(err, role) {
-        role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
+      Role.create({ name: 'userRole' }, function(err, role) {
+        role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+        function(err, p) {
           Role.find(function(err, roles) {
             assert(!err);
             assert.equal(roles.length, 1);
@@ -85,16 +85,15 @@ describe('role model', function() {
         });
       });
     });
-
   });
 
   it('should automatically generate role id', function() {
-
-    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
+    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
       // console.log('User: ', user.id);
-      Role.create({name: 'userRole'}, function(err, role) {
+      Role.create({ name: 'userRole' }, function(err, role) {
         assert(role.id);
-        role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
+        role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+        function(err, p) {
           assert(p.id);
           assert.equal(p.roleId, role.id);
           Role.find(function(err, roles) {
@@ -117,45 +116,52 @@ describe('role model', function() {
         });
       });
     });
-
   });
 
   it('should support getRoles() and isInRole()', function() {
-    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
+    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
       // console.log('User: ', user.id);
-      Role.create({name: 'userRole'}, function(err, role) {
-        role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
+      Role.create({ name: 'userRole' }, function(err, role) {
+        role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+        function(err, p) {
           // Role.find(console.log);
           // role.principals(console.log);
-          Role.isInRole('userRole', {principalType: RoleMapping.USER, principalId: user.id}, function(err, exists) {
+          Role.isInRole('userRole', { principalType: RoleMapping.USER, principalId: user.id },
+          function(err, exists) {
             assert(!err && exists === true);
           });
 
-          Role.isInRole('userRole', {principalType: RoleMapping.APP, principalId: user.id}, function(err, exists) {
+          Role.isInRole('userRole', { principalType: RoleMapping.APP, principalId: user.id },
+          function(err, exists) {
             assert(!err && exists === false);
           });
 
-          Role.isInRole('userRole', {principalType: RoleMapping.USER, principalId: 100}, function(err, exists) {
+          Role.isInRole('userRole', { principalType: RoleMapping.USER, principalId: 100 },
+          function(err, exists) {
             assert(!err && exists === false);
           });
 
-          Role.getRoles({principalType: RoleMapping.USER, principalId: user.id}, function(err, roles) {
+          Role.getRoles({ principalType: RoleMapping.USER, principalId: user.id },
+          function(err, roles) {
             assert.equal(roles.length, 3); // everyone, authenticated, userRole
             assert(roles.indexOf(role.id) >= 0);
             assert(roles.indexOf(Role.EVERYONE) >= 0);
             assert(roles.indexOf(Role.AUTHENTICATED) >= 0);
           });
-          Role.getRoles({principalType: RoleMapping.APP, principalId: user.id}, function(err, roles) {
+          Role.getRoles({ principalType: RoleMapping.APP, principalId: user.id },
+          function(err, roles) {
             assert.equal(roles.length, 2);
             assert(roles.indexOf(Role.EVERYONE) >= 0);
             assert(roles.indexOf(Role.AUTHENTICATED) >= 0);
           });
-          Role.getRoles({principalType: RoleMapping.USER, principalId: 100}, function(err, roles) {
+          Role.getRoles({ principalType: RoleMapping.USER, principalId: 100 },
+          function(err, roles) {
             assert.equal(roles.length, 2);
             assert(roles.indexOf(Role.EVERYONE) >= 0);
             assert(roles.indexOf(Role.AUTHENTICATED) >= 0);
           });
-          Role.getRoles({principalType: RoleMapping.USER, principalId: null}, function(err, roles) {
+          Role.getRoles({ principalType: RoleMapping.USER, principalId: null },
+          function(err, roles) {
             assert.equal(roles.length, 2);
             assert(roles.indexOf(Role.EVERYONE) >= 0);
             assert(roles.indexOf(Role.UNAUTHENTICATED) >= 0);
@@ -163,54 +169,60 @@ describe('role model', function() {
         });
       });
     });
-
   });
 
   it('should support owner role resolver', function() {
-
     var Album = ds.createModel('Album', {
       name: String,
-      userId: Number
+      userId: Number,
     }, {
       relations: {
         user: {
           type: 'belongsTo',
           model: 'User',
-          foreignKey: 'userId'
-        }
-      }
+          foreignKey: 'userId',
+        },
+      },
     });
 
-    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
-      Role.isInRole(Role.AUTHENTICATED, {principalType: ACL.USER, principalId: user.id}, function(err, yes) {
+    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+      Role.isInRole(Role.AUTHENTICATED, { principalType: ACL.USER, principalId: user.id },
+      function(err, yes) {
         assert(!err && yes);
       });
-      Role.isInRole(Role.AUTHENTICATED, {principalType: ACL.USER, principalId: null}, function(err, yes) {
+      Role.isInRole(Role.AUTHENTICATED, { principalType: ACL.USER, principalId: null },
+      function(err, yes) {
         assert(!err && !yes);
       });
 
-      Role.isInRole(Role.UNAUTHENTICATED, {principalType: ACL.USER, principalId: user.id}, function(err, yes) {
+      Role.isInRole(Role.UNAUTHENTICATED, { principalType: ACL.USER, principalId: user.id },
+      function(err, yes) {
         assert(!err && !yes);
       });
-      Role.isInRole(Role.UNAUTHENTICATED, {principalType: ACL.USER, principalId: null}, function(err, yes) {
+      Role.isInRole(Role.UNAUTHENTICATED, { principalType: ACL.USER, principalId: null },
+      function(err, yes) {
         assert(!err && yes);
       });
 
-      Role.isInRole(Role.EVERYONE, {principalType: ACL.USER, principalId: user.id}, function(err, yes) {
+      Role.isInRole(Role.EVERYONE, { principalType: ACL.USER, principalId: user.id },
+      function(err, yes) {
         assert(!err && yes);
       });
 
-      Role.isInRole(Role.EVERYONE, {principalType: ACL.USER, principalId: null}, function(err, yes) {
+      Role.isInRole(Role.EVERYONE, { principalType: ACL.USER, principalId: null },
+      function(err, yes) {
         assert(!err && yes);
       });
 
       // console.log('User: ', user.id);
-      Album.create({name: 'Album 1', userId: user.id}, function(err, album1) {
-        Role.isInRole(Role.OWNER, {principalType: ACL.USER, principalId: user.id, model: Album, id: album1.id}, function(err, yes) {
+      Album.create({ name: 'Album 1', userId: user.id }, function(err, album1) {
+        var role = { principalType: ACL.USER, principalId: user.id, model: Album, id: album1.id };
+        Role.isInRole(Role.OWNER, role, function(err, yes) {
           assert(!err && yes);
         });
-        Album.create({name: 'Album 2'}, function(err, album2) {
-          Role.isInRole(Role.OWNER, {principalType: ACL.USER, principalId: user.id, model: Album, id: album2.id}, function(err, yes) {
+        Album.create({ name: 'Album 2' }, function(err, album2) {
+          role = { principalType: ACL.USER, principalId: user.id, model: Album, id: album2.id };
+          Role.isInRole(Role.OWNER, role, function(err, yes) {
             assert(!err && !yes);
           });
         });
@@ -225,35 +237,35 @@ describe('role model', function() {
       User.create({
         username: 'john',
         email: 'john@gmail.com',
-        password: 'jpass'
+        password: 'jpass',
       }, function(err, u) {
         if (err) return done(err);
         user = u;
         User.create({
           username: 'mary',
           email: 'mary@gmail.com',
-          password: 'mpass'
+          password: 'mpass',
         }, function(err, u) {
           if (err) return done(err);
           Application.create({
-            name: 'demo'
+            name: 'demo',
           }, function(err, a) {
             if (err) return done(err);
             app = a;
             Role.create({
-              name: 'admin'
+              name: 'admin',
             }, function(err, r) {
               if (err) return done(err);
               role = r;
               var principals = [
                 {
                   principalType: ACL.USER,
-                  principalId: user.id
+                  principalId: user.id,
                 },
                 {
                   principalType: ACL.APP,
-                  principalId: app.id
-                }
+                  principalId: app.id,
+                },
               ];
               async.each(principals, function(p, done) {
                 role.principals.create(p, done);
@@ -344,7 +356,6 @@ describe('role model', function() {
         done();
       });
     });
-
   });
 
   describe('listByPrincipalType', function() {
@@ -371,9 +382,10 @@ describe('role model', function() {
 
       mappings.forEach(function(principalType) {
         var Model = principalTypesToModels[principalType];
-        Model.create({name:'test', email:'x@y.com', password: 'foobar'}, function(err, model) {
-          Role.create({name:'testRole'}, function(err, role) {
-            role.principals.create({principalType: principalType, principalId: model.id}, function(err, p) {
+        Model.create({ name: 'test', email: 'x@y.com', password: 'foobar' }, function(err, model) {
+          Role.create({ name: 'testRole' }, function(err, role) {
+            role.principals.create({ principalType: principalType, principalId: model.id },
+            function(err, p) {
               var pluralName = Model.pluralModelName.toLowerCase();
               role[pluralName](function(err, models) {
                 assert(!err);
@@ -389,10 +401,11 @@ describe('role model', function() {
     });
 
     it('should apply query', function(done) {
-      User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
-        Role.create({name: 'userRole'}, function(err, role) {
-          role.principals.create({principalType: RoleMapping.USER, principalId: user.id}, function(err, p) {
-            var query = {fields:['id', 'name']};
+      User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+        Role.create({ name: 'userRole' }, function(err, role) {
+          role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+          function(err, p) {
+            var query = { fields: ['id', 'name'] };
             sandbox.spy(User, 'find');
             role.users(query, function(err, users) {
               assert(!err);
@@ -406,5 +419,4 @@ describe('role model', function() {
       });
     });
   });
-
 });

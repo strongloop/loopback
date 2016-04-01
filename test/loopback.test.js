@@ -105,7 +105,7 @@ describe('loopback', function() {
         'urlNotFound',
         'urlencoded',
         'version',
-        'vhost'
+        'vhost',
       ];
 
       var actual = Object.getOwnPropertyNames(loopback);
@@ -135,7 +135,7 @@ describe('loopback', function() {
   describe('loopback.createDataSource(options)', function() {
     it('Create a data source with a connector.', function() {
       var dataSource = loopback.createDataSource({
-        connector: loopback.Memory
+        connector: loopback.Memory,
       });
       assert(dataSource.connector);
     });
@@ -144,7 +144,7 @@ describe('loopback', function() {
   describe('data source created by loopback', function() {
     it('should create model extending Model by default', function() {
       var dataSource = loopback.createDataSource({
-        connector: loopback.Memory
+        connector: loopback.Memory,
       });
       var m1 = dataSource.createModel('m1', {});
       assert(m1.prototype instanceof loopback.Model);
@@ -161,14 +161,14 @@ describe('loopback', function() {
   describe('loopback.autoAttach', function() {
     it('doesn\'t overwrite model with datasource configured', function() {
       var ds1 = loopback.createDataSource('db1', {
-        connector: loopback.Memory
+        connector: loopback.Memory,
       });
 
       // setup default data sources
       loopback.setDefaultDataSourceForType('db', ds1);
 
       var ds2 = loopback.createDataSource('db2', {
-        connector: loopback.Memory
+        connector: loopback.Memory,
       });
 
       var model1 = ds2.createModel('m1', {});
@@ -186,7 +186,7 @@ describe('loopback', function() {
 
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
     it('Setup a remote method.', function() {
-      var Product = loopback.createModel('product', {price: Number});
+      var Product = loopback.createModel('product', { price: Number });
 
       Product.stats = function(fn) {
         // ...
@@ -195,8 +195,8 @@ describe('loopback', function() {
       loopback.remoteMethod(
         Product.stats,
         {
-          returns: {arg: 'stats', type: 'array'},
-          http: {path: '/info', verb: 'get'}
+          returns: { arg: 'stats', type: 'array' },
+          http: { path: '/info', verb: 'get' },
         }
       );
 
@@ -213,14 +213,14 @@ describe('loopback', function() {
       it('should extend from options.base', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
           foo: {
-            bar: 'bat'
-          }
+            bar: 'bat',
+          },
         });
         var MyCustomModel = loopback.createModel('MyCustomModel', {}, {
           base: 'MyModel',
           foo: {
-            bat: 'baz'
-          }
+            bat: 'baz',
+          },
         });
         assert(MyCustomModel.super_ === MyModel);
         assert.deepEqual(MyCustomModel.settings.foo, { bar: 'bat', bat: 'baz' });
@@ -232,14 +232,14 @@ describe('loopback', function() {
       it('should be able to get model by name', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
           foo: {
-            bar: 'bat'
-          }
+            bar: 'bat',
+          },
         });
         var MyCustomModel = loopback.createModel('MyCustomModel', {}, {
           base: 'MyModel',
           foo: {
-            bat: 'baz'
-          }
+            bat: 'baz',
+          },
         });
         assert(loopback.getModel('MyModel') === MyModel);
         assert(loopback.getModel('MyCustomModel') === MyCustomModel);
@@ -249,14 +249,14 @@ describe('loopback', function() {
       it('should be able to get model by type', function() {
         var MyModel = loopback.createModel('MyModel', {}, {
           foo: {
-            bar: 'bat'
-          }
+            bar: 'bat',
+          },
         });
         var MyCustomModel = loopback.createModel('MyCustomModel', {}, {
           base: 'MyModel',
           foo: {
-            bat: 'baz'
-          }
+            bat: 'baz',
+          },
         });
         assert(loopback.getModelByType(MyModel) === MyCustomModel);
         assert(loopback.getModelByType(MyCustomModel) === MyCustomModel);
@@ -273,13 +273,13 @@ describe('loopback', function() {
         methods: {
           staticMethod: {
             isStatic: true,
-            http: { path: '/static' }
+            http: { path: '/static' },
           },
           instanceMethod: {
             isStatic: false,
-            http: { path: '/instance' }
-          }
-        }
+            http: { path: '/instance' },
+          },
+        },
       });
 
       var methodNames = TestModel.sharedClass.methods().map(function(m) {
@@ -288,7 +288,7 @@ describe('loopback', function() {
 
       expect(methodNames).to.include.members([
         'staticMethod',
-        'prototype.instanceMethod'
+        'prototype.instanceMethod',
       ]);
     });
   });
@@ -296,7 +296,7 @@ describe('loopback', function() {
   describe('loopback.createModel(config)', function() {
     it('creates the model', function() {
       var model = loopback.createModel({
-        name: uniqueModelName
+        name: uniqueModelName,
       });
 
       expect(model.prototype).to.be.instanceof(loopback.Model);
@@ -305,7 +305,7 @@ describe('loopback', function() {
     it('interprets extra first-level keys as options', function() {
       var model = loopback.createModel({
         name: uniqueModelName,
-        base: 'User'
+        base: 'User',
       });
 
       expect(model.prototype).to.be.instanceof(loopback.User);
@@ -316,8 +316,8 @@ describe('loopback', function() {
         name: uniqueModelName,
         base: 'User',
         options: {
-          base: 'Application'
-        }
+          base: 'Application',
+        },
       });
 
       expect(model.prototype).to.be.instanceof(loopback.Application);
@@ -333,9 +333,9 @@ describe('loopback', function() {
         relations: {
           owner: {
             type: 'belongsTo',
-            model: 'User'
-          }
-        }
+            model: 'User',
+          },
+        },
       });
 
       expect(model.settings.relations).to.have.property('owner');
@@ -346,23 +346,23 @@ describe('loopback', function() {
         relations: {
           owner: {
             type: 'belongsTo',
-            model: 'User'
-          }
-        }
+            model: 'User',
+          },
+        },
       });
 
       loopback.configureModel(model, {
         dataSource: false,
         relations: {
           owner: {
-            model: 'Application'
-          }
-        }
+            model: 'Application',
+          },
+        },
       });
 
       expect(model.settings.relations.owner).to.eql({
         type: 'belongsTo',
-        model: 'Application'
+        model: 'Application',
       });
     });
 
@@ -375,9 +375,9 @@ describe('loopback', function() {
         relations: {
           owner: {
             type: 'belongsTo',
-            model: 'User'
-          }
-        }
+            model: 'User',
+          },
+        },
       });
 
       var owner = model.prototype.owner;
@@ -393,9 +393,9 @@ describe('loopback', function() {
             accessType: 'EXECUTE',
             principalType: 'ROLE',
             principalId: '$everyone',
-            permission: 'DENY'
-          }
-        ]
+            permission: 'DENY',
+          },
+        ],
       });
 
       loopback.configureModel(model, {
@@ -406,9 +406,9 @@ describe('loopback', function() {
             accessType: 'EXECUTE',
             principalType: 'ROLE',
             principalId: 'admin',
-            permission: 'ALLOW'
-          }
-        ]
+            permission: 'ALLOW',
+          },
+        ],
       });
 
       expect(model.settings.acls).eql([
@@ -417,15 +417,15 @@ describe('loopback', function() {
           accessType: 'EXECUTE',
           principalType: 'ROLE',
           principalId: '$everyone',
-          permission: 'DENY'
+          permission: 'DENY',
         },
         {
           property: 'find',
           accessType: 'EXECUTE',
           principalType: 'ROLE',
           principalId: 'admin',
-          permission: 'ALLOW'
-        }
+          permission: 'ALLOW',
+        },
       ]);
     });
 
@@ -437,9 +437,9 @@ describe('loopback', function() {
             accessType: 'EXECUTE',
             principalType: 'ROLE',
             principalId: '$everyone',
-            permission: 'DENY'
-          }
-        ]
+            permission: 'DENY',
+          },
+        ],
       });
 
       loopback.configureModel(model, {
@@ -450,9 +450,9 @@ describe('loopback', function() {
             accessType: 'EXECUTE',
             principalType: 'ROLE',
             principalId: '$everyone',
-            permission: 'ALLOW'
-          }
-        ]
+            permission: 'ALLOW',
+          },
+        ],
       });
 
       expect(model.settings.acls).eql([
@@ -461,15 +461,15 @@ describe('loopback', function() {
           accessType: 'EXECUTE',
           principalType: 'ROLE',
           principalId: '$everyone',
-          permission: 'ALLOW'
-        }
+          permission: 'ALLOW',
+        },
       ]);
     });
 
     it('updates existing settings', function() {
       var model = loopback.Model.extend(uniqueModelName, {}, {
         ttl: 10,
-        emailVerificationRequired: false
+        emailVerificationRequired: false,
       });
 
       var baseName = model.settings.base.name;
@@ -479,8 +479,8 @@ describe('loopback', function() {
         options: {
           ttl: 20,
           realmRequired: true,
-          base: 'X'
-        }
+          base: 'X',
+        },
       });
 
       expect(model.settings).to.have.property('ttl', 20);
@@ -499,13 +499,13 @@ describe('loopback', function() {
         methods: {
           staticMethod: {
             isStatic: true,
-            http: { path: '/static' }
+            http: { path: '/static' },
           },
           instanceMethod: {
             isStatic: false,
-            http: { path: '/instance' }
-          }
-        }
+            http: { path: '/instance' },
+          },
+        },
       });
 
       var methodNames = TestModel.sharedClass.methods().map(function(m) {
@@ -514,7 +514,7 @@ describe('loopback', function() {
 
       expect(methodNames).to.include.members([
         'staticMethod',
-        'prototype.instanceMethod'
+        'prototype.instanceMethod',
       ]);
     });
   });
@@ -538,7 +538,7 @@ describe('loopback', function() {
         'ACL',
         'Scope',
         'Change',
-        'Checkpoint'
+        'Checkpoint',
       ];
 
       expect(Object.keys(loopback)).to.include.members(expectedModelNames);
@@ -551,8 +551,7 @@ describe('loopback', function() {
   });
 
   describe.onServer('loopback.getCurrentContext', function() {
-    var runInOtherDomain;
-    var runnerInterval;
+    var runInOtherDomain, runnerInterval;
 
     before(function setupRunInOtherDomain() {
       var emitterInOtherDomain = new EventEmitter();
@@ -594,7 +593,7 @@ describe('loopback', function() {
       TestModel.remoteMethod('test', {
         accepts: { arg: 'inst', type: uniqueModelName },
         returns: { root: true },
-        http: { path: '/test', verb: 'get' }
+        http: { path: '/test', verb: 'get' },
       });
 
       // after remote hook
@@ -602,7 +601,7 @@ describe('loopback', function() {
         var tmpCtx = loopback.getCurrentContext();
         if (tmpCtx) {
           ctxx.result.data = tmpCtx.get('data');
-        }else {
+        } else {
           ctxx.result.data = 'context not available';
         }
         next();
@@ -645,9 +644,9 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           staticMethod: {
-            http: { path: '/static' }
-          }
-        }
+            http: { path: '/static' },
+          },
+        },
       });
 
       var methodNames = getAllMethodNamesWithoutClassName(TestModel);
@@ -661,9 +660,9 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           'prototype.instanceMethod': {
-            http: { path: '/instance' }
-          }
-        }
+            http: { path: '/instance' },
+          },
+        },
       });
 
       var methodNames = getAllMethodNamesWithoutClassName(TestModel);
@@ -673,15 +672,17 @@ describe('loopback', function() {
 
     it('throws an error when "isStatic:true" and method name starts with "prototype."', function() {
       var TestModel = loopback.createModel(uniqueModelName);
-      expect(function() { loopback.configureModel(TestModel, {
-        dataSource: null,
-        methods: {
-          'prototype.instanceMethod': {
-            isStatic: true,
-            http: { path: '/instance' }
-          }
-        }
-      });}).to.throw(Error, new Error('Remoting metadata for' + TestModel.modelName +
+      expect(function() {
+        loopback.configureModel(TestModel, {
+          dataSource: null,
+          methods: {
+            'prototype.instanceMethod': {
+              isStatic: true,
+              http: { path: '/instance' },
+            },
+          },
+        });
+      }).to.throw(Error, new Error('Remoting metadata for' + TestModel.modelName +
       ' "isStatic" does not match new method name-based style.'));
     });
 
@@ -692,9 +693,9 @@ describe('loopback', function() {
         methods: {
           staticMethod: {
             isStatic: true,
-            http: { path: '/static' }
-          }
-        }
+            http: { path: '/static' },
+          },
+        },
       });
 
       var methodNames = getAllMethodNamesWithoutClassName(TestModel);
@@ -709,9 +710,9 @@ describe('loopback', function() {
         methods: {
           'prototype.instanceMethod': {
             isStatic: false,
-            http: { path: '/instance' }
-          }
-        }
+            http: { path: '/instance' },
+          },
+        },
       });
 
       var methodNames = getAllMethodNamesWithoutClassName(TestModel);

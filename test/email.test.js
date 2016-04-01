@@ -5,34 +5,33 @@ var MailConnector = require('../lib/connectors/mail');
 
 describe('Email connector', function() {
   it('should set up SMTP', function() {
-    var connector = new MailConnector({transports: [
-      {type: 'smtp', service: 'gmail'}
-    ]});
+    var connector = new MailConnector({ transports: [
+      { type: 'smtp', service: 'gmail' },
+    ] });
     assert(connector.transportForName('smtp'));
   });
 
   it('should set up DIRECT', function() {
-    var connector = new MailConnector({transports: [
-      {type: 'direct', name: 'localhost'}
-    ]});
+    var connector = new MailConnector({ transports: [
+      { type: 'direct', name: 'localhost' },
+    ] });
     assert(connector.transportForName('direct'));
   });
 
   it('should set up STUB', function() {
-    var connector = new MailConnector({transports: [
-      {type: 'stub', service: 'gmail'}
-    ]});
+    var connector = new MailConnector({ transports: [
+      { type: 'stub', service: 'gmail' },
+    ] });
     assert(connector.transportForName('stub'));
   });
 
-  it('should set up a single transport for SMTP' , function() {
-    var connector = new MailConnector({transport:
-        {type: 'smtp', service: 'gmail'}
+  it('should set up a single transport for SMTP', function() {
+    var connector = new MailConnector({ transport:
+      { type: 'smtp', service: 'gmail' },
     });
 
     assert(connector.transportForName('smtp'));
   });
-
 });
 
 describe('Email and SMTP', function() {
@@ -53,7 +52,7 @@ describe('Email and SMTP', function() {
         from: 'from@from.com',
         subject: 'subject',
         text: 'text',
-        html: '<h1>html</h1>'
+        html: '<h1>html</h1>',
       };
 
       MyEmail.send(options, function(err, mail) {
@@ -71,7 +70,7 @@ describe('Email and SMTP', function() {
         from: 'from@from.com',
         subject: 'subject',
         text: 'text',
-        html: '<h1>html</h1>'
+        html: '<h1>html</h1>',
       });
 
       message.send(function(err, mail) {

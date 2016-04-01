@@ -26,7 +26,7 @@ module.exports = function(config) {
       'test/replication.test.js',
       'test/change.test.js',
       'test/checkpoint.test.js',
-      'test/app.test.js'
+      'test/app.test.js',
     ],
 
     // list of files / patterns to exclude
@@ -52,7 +52,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      'Chrome'
+      'Chrome',
     ],
 
     // Which plugins to enable
@@ -61,16 +61,16 @@ module.exports = function(config) {
       'karma-mocha',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher',
-      'karma-junit-reporter'
+      'karma-junit-reporter',
     ],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,
 
     // to avoid DISCONNECTED messages
-    browserDisconnectTimeout : 10000, // default 2000
-    browserDisconnectTolerance : 1, // default 0
-    browserNoActivityTimeout : 60000, //default 10000
+    browserDisconnectTimeout: 10000, // default 2000
+    browserDisconnectTolerance: 1, // default 0
+    browserNoActivityTimeout: 60000, //default 10000
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
@@ -97,7 +97,7 @@ module.exports = function(config) {
         'passport',
         'passport-local',
         'superagent',
-        'supertest'
+        'supertest',
       ],
       // transform: ['coffeeify'],
       debug: true,
@@ -106,6 +106,6 @@ module.exports = function(config) {
     },
 
     // Add browserify to preprocessors
-    preprocessors: {'test/*': ['browserify']}
+    preprocessors: { 'test/*': ['browserify'] },
   });
 };

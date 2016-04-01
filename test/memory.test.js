@@ -7,22 +7,22 @@ describe('Memory Connector', function() {
     // or create it using the standard
     // data source creation api
     memory = loopback.createDataSource({
-      connector: loopback.Memory
+      connector: loopback.Memory,
     });
 
     // create a model using the
     // memory data source
     var properties = {
       name: String,
-      price: Number
+      price: Number,
     };
 
     var Product = memory.createModel('product', properties);
 
     Product.create([
-      {name: 'apple', price: 0.79},
-      {name: 'pear', price: 1.29},
-      {name: 'orange', price: 0.59},
+      { name: 'apple', price: 0.79 },
+      { name: 'pear', price: 1.29 },
+      { name: 'orange', price: 0.59 },
     ], count);
 
     function count() {
