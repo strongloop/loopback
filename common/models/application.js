@@ -108,7 +108,9 @@ module.exports = function(Application) {
    * @param {String} owner Owner's user ID.
    * @param {String} name  Name of the application
    * @param {Object} options  Other options
-   * @param {Function} callback  Callback function
+   * @callback {Function} callback  Callback function
+   * @param {Error} err
+   * @promise
    */
   Application.register = function(owner, name, options, cb) {
     assert(owner, 'owner is required');
@@ -150,6 +152,7 @@ module.exports = function(Application) {
    * @param {Any} appId
    * @callback {Function} callback
    * @param {Error} err
+   * @promise
    */
   Application.resetKeys = function(appId, cb) {
     cb = cb || utils.createPromiseCallback();
@@ -176,7 +179,7 @@ module.exports = function(Application) {
    * - restApiKey
    * - windowsKey
    * - masterKey
-   *
+   * @promise
    */
   Application.authenticate = function(appId, key, cb) {
     cb = cb || utils.createPromiseCallback();

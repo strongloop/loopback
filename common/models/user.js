@@ -79,6 +79,7 @@ module.exports = function(User) {
    * @callback {Function} cb The callback function
    * @param {String|Error} err The error string or object
    * @param {AccessToken} token The generated access token object
+   * @promise
    */
   User.prototype.createAccessToken = function(ttl, options, cb) {
     if (cb === undefined && typeof options === 'function') {
@@ -169,6 +170,7 @@ module.exports = function(User) {
    * @callback {Function} callback Callback function
    * @param {Error} err Error object
    * @param {AccessToken} token Access token if login is successful
+   * @promise
    */
 
   User.login = function(credentials, include, fn) {
@@ -281,6 +283,7 @@ module.exports = function(User) {
    * @param {String} accessTokenID
    * @callback {Function} callback
    * @param {Error} err
+   * @promise
    */
 
   User.logout = function(tokenId, fn) {
@@ -304,6 +307,7 @@ module.exports = function(User) {
    * @callback {Function} callback Callback function
    * @param {Error} err Error object
    * @param {Boolean} isMatch Returns true if the given `password` matches record
+   * @promise
    */
 
   User.prototype.hasPassword = function(plain, fn) {
@@ -350,6 +354,10 @@ module.exports = function(User) {
    *  callback function. This function should NOT add the token to the user
    *  object, instead simply execute the callback with the token! User saving
    *  and email sending will be handled in the `verify()` method.
+   * @callback {Function} fn Callback function.
+   * @param {Error} err Error object.
+   * @param {Object} object Contains email, token, uid.
+   * @promise
    */
 
   User.prototype.verify = function(options, fn) {
@@ -463,6 +471,7 @@ module.exports = function(User) {
    * @param {String} redirect URL to redirect the user to once confirmed
    * @callback {Function} callback
    * @param {Error} err
+   * @promise
    */
   User.confirm = function(uid, token, redirect, fn) {
     fn = fn || utils.createPromiseCallback();
@@ -505,6 +514,7 @@ module.exports = function(User) {
    * @prop {String} email The user's email address
    * @callback {Function} callback
    * @param {Error} err
+   * @promise
    */
 
   User.resetPassword = function(options, cb) {
