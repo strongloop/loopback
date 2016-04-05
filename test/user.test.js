@@ -112,7 +112,7 @@ describe('User', function() {
         assert.equal(err.details.context, User.modelName);
         assert.deepEqual(err.details.codes.email, [
           'presence',
-          'format.null'
+          'custom.isemail'
         ]);
 
         done();
