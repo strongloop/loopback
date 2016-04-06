@@ -108,7 +108,7 @@ function token(options) {
         rewriteUserLiteral(req, currentUserLiteral);
         return next();
       }
-      if (req.accessToken.id && !overwriteExistingToken) {
+      if (req.accessToken && req.accessToken.id && !overwriteExistingToken) {
         // req.accessToken.id is defined, which means that some other middleware has identified a valid user.
         // when overwriteExistingToken is not set to a truthy value, skip searching for credentials.
         rewriteUserLiteral(req, currentUserLiteral);
