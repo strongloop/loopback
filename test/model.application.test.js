@@ -7,7 +7,7 @@ describe('Application', function() {
 
   it('honors `application.register` - promise variant', function(done) {
     Application.register('rfeng', 'MyTestApp',
-      {description: 'My test application'}, function(err, result) {
+      { description: 'My test application' }, function(err, result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyTestApp');
@@ -18,7 +18,7 @@ describe('Application', function() {
 
   it('honors `application.register` - promise variant', function(done) {
     Application.register('rfeng', 'MyTestApp',
-      {description: 'My test application'})
+      { description: 'My test application' })
       .then(function(result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
@@ -32,9 +32,9 @@ describe('Application', function() {
   });
 
   it('Create a new application', function(done) {
-    Application.create({owner: 'rfeng',
+    Application.create({ owner: 'rfeng',
       name: 'MyApp1',
-      description: 'My first mobile application'}, function(err, result) {
+      description: 'My first mobile application' }, function(err, result) {
       var app = result;
       assert.equal(app.owner, 'rfeng');
       assert.equal(app.name, 'MyApp1');
@@ -52,7 +52,7 @@ describe('Application', function() {
   });
 
   it('Create a new application with push settings', function(done) {
-    Application.create({owner: 'rfeng',
+    Application.create({ owner: 'rfeng',
         name: 'MyAppWithPush',
         description: 'My push mobile application',
         pushSettings: {
@@ -62,18 +62,18 @@ describe('Application', function() {
             keyData: 'key',
             pushOptions: {
               gateway: 'gateway.sandbox.push.apple.com',
-              port: 2195
+              port: 2195,
             },
             feedbackOptions: {
               gateway: 'feedback.sandbox.push.apple.com',
               port: 2196,
               interval: 300,
-              batchFeedback: true
-            }
+              batchFeedback: true,
+            },
           },
           gcm: {
-            serverApiKey: 'serverKey'
-          }
+            serverApiKey: 'serverKey',
+          },
         }},
       function(err, result) {
         var app = result;
@@ -84,18 +84,18 @@ describe('Application', function() {
             keyData: 'key',
             pushOptions: {
               gateway: 'gateway.sandbox.push.apple.com',
-              port: 2195
+              port: 2195,
             },
             feedbackOptions: {
               gateway: 'feedback.sandbox.push.apple.com',
               port: 2196,
               interval: 300,
-              batchFeedback: true
-            }
+              batchFeedback: true,
+            },
           },
           gcm: {
-            serverApiKey: 'serverKey'
-          }
+            serverApiKey: 'serverKey',
+          },
         });
         done(err, result);
       });
@@ -103,7 +103,7 @@ describe('Application', function() {
 
   beforeEach(function(done) {
     Application.register('rfeng', 'MyApp2',
-      {description: 'My second mobile application'}, function(err, result) {
+      { description: 'My second mobile application' }, function(err, result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp2');
@@ -211,10 +211,10 @@ describe('Application', function() {
     function(done) {
       Application.authenticate(registeredApp.id, registeredApp.clientKey)
       .then(function(result) {
-          assert.equal(result.application.id, registeredApp.id);
-          assert.equal(result.keyType, 'clientKey');
-          done();
-        })
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'clientKey');
+        done();
+      })
       .catch(function(err) {
         done(err);
       });
@@ -280,10 +280,10 @@ describe('Application', function() {
 describe('Application subclass', function() {
   it('should use subclass model name', function(done) {
     var MyApp = Application.extend('MyApp');
-    var ds = loopback.createDataSource({connector: loopback.Memory});
+    var ds = loopback.createDataSource({ connector: loopback.Memory });
     MyApp.attachTo(ds);
     MyApp.register('rfeng', 'MyApp123',
-      {description: 'My 123 mobile application'}, function(err, result) {
+      { description: 'My 123 mobile application' }, function(err, result) {
         var app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp123');

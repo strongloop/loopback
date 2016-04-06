@@ -4,7 +4,7 @@ var _beforeEach = {};
 var helpers = {
   describe: _describe,
   it: _it,
-  beforeEach: _beforeEach
+  beforeEach: _beforeEach,
 };
 module.exports = helpers;
 
@@ -119,7 +119,7 @@ _beforeEach.givenAnUnauthenticatedToken = function(attrs, optionalHandler) {
 };
 
 _beforeEach.givenAnAnonymousToken = function(attrs, optionalHandler) {
-  _beforeEach.givenModel('accessToken', {id: '$anonymous'}, optionalHandler);
+  _beforeEach.givenModel('accessToken', { id: '$anonymous' }, optionalHandler);
 };
 
 _describe.whenCalledRemotely = function(verb, url, data, cb) {
@@ -145,7 +145,9 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
       if (methodForVerb === 'delete') methodForVerb = 'del';
 
       if (this.request === undefined) {
-        throw new Error('App is not specified. Please use lt.beforeEach.withApp to specify the app.');
+        var msg = 'App is not specified. ' +
+          'Please use lt.beforeEach.withApp to specify the app.';
+        throw new Error(msg);
       }
 
       this.http = this.request[methodForVerb](this.url);

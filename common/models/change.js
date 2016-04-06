@@ -6,7 +6,7 @@ var PersistedModel = require('../../lib/loopback').PersistedModel;
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
 var crypto = require('crypto');
-var CJSON = {stringify: require('canonical-json')};
+var CJSON = { stringify: require('canonical-json') };
 var async = require('async');
 var assert = require('assert');
 var debug = require('debug')('loopback:change');
@@ -31,7 +31,6 @@ var deprecate = require('depd')('loopback');
  */
 
 module.exports = function(Change) {
-
   /*!
    * Constants
    */
@@ -154,7 +153,7 @@ module.exports = function(Change) {
         var ch = new Change({
           id: id,
           modelName: modelName,
-          modelId: modelId
+          modelId: modelId,
         });
         ch.debug('creating change');
         Change.updateOrCreate(ch, callback);
@@ -400,7 +399,7 @@ module.exports = function(Change) {
     callback = callback || utils.createPromiseCallback();
 
     if (!Array.isArray(remoteChanges) || remoteChanges.length === 0) {
-      callback(null, {deltas: [], conflicts: []});
+      callback(null, { deltas: [], conflicts: [] });
       return callback.promise;
     }
     var remoteChangeIndex = {};
@@ -415,8 +414,8 @@ module.exports = function(Change) {
     this.find({
       where: {
         modelName: modelName,
-        modelId: {inq: modelIds}
-      }
+        modelId: { inq: modelIds },
+      },
     }, function(err, allLocalChanges) {
       if (err) return callback(err);
       var deltas = [];
@@ -462,7 +461,7 @@ module.exports = function(Change) {
 
       callback(null, {
         deltas: deltas,
-        conflicts: conflicts
+        conflicts: conflicts,
       });
     });
     return callback.promise;
@@ -586,12 +585,11 @@ module.exports = function(Change) {
     var conflict = this;
     var SourceModel = this.SourceModel;
     var TargetModel = this.TargetModel;
-    var source;
-    var target;
+    var source, target;
 
     async.parallel([
       getSourceModel,
-      getTargetModel
+      getTargetModel,
     ], done);
 
     function getSourceModel(cb) {
@@ -627,12 +625,11 @@ module.exports = function(Change) {
 
   Conflict.prototype.changes = function(cb) {
     var conflict = this;
-    var sourceChange;
-    var targetChange;
+    var sourceChange, targetChange;
 
     async.parallel([
       getSourceChange,
-      getTargetChange
+      getTargetChange,
     ], done);
 
     function getSourceChange(cb) {

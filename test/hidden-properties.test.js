@@ -5,7 +5,7 @@ describe('hidden properties', function() {
     var app = this.app = loopback();
     var Product = this.Product = loopback.PersistedModel.extend('product',
       {},
-      {hidden: ['secret']}
+      { hidden: ['secret'] }
     );
     Product.attachTo(loopback.memory());
 
@@ -18,11 +18,11 @@ describe('hidden properties', function() {
     app.use(loopback.rest());
 
     Category.create({
-      name: 'my category'
+      name: 'my category',
     }, function(err, category) {
       category.products.create({
         name: 'pencil',
-        secret: 'a secret'
+        secret: 'a secret',
       }, done);
     });
   });

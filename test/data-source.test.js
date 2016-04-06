@@ -3,7 +3,7 @@ describe('DataSource', function() {
 
   beforeEach(function() {
     memory = loopback.createDataSource({
-      connector: loopback.Memory
+      connector: loopback.Memory,
     });
 
     assertValidDataSource(memory);
@@ -11,7 +11,7 @@ describe('DataSource', function() {
 
   describe('dataSource.createModel(name, properties, settings)', function() {
     it('Define a model and attach it to a `DataSource`', function() {
-      var Color = memory.createModel('color', {name: String});
+      var Color = memory.createModel('color', { name: String });
       assert.isFunc(Color, 'find');
       assert.isFunc(Color, 'findById');
       assert.isFunc(Color, 'findOne');
@@ -36,13 +36,13 @@ describe('DataSource', function() {
 
     it('should honor settings.base', function() {
       var Base = memory.createModel('base');
-      var Color = memory.createModel('color', {name: String}, {base: Base});
+      var Color = memory.createModel('color', { name: String }, { base: Base });
       assert(Color.prototype instanceof Base);
       assert.equal(Color.base, Base);
     });
 
     it('should use loopback.PersistedModel as the base for DBs', function() {
-      var Color = memory.createModel('color', {name: String});
+      var Color = memory.createModel('color', { name: String });
       assert(Color.prototype instanceof loopback.PersistedModel);
       assert.equal(Color.base, loopback.PersistedModel);
     });
@@ -56,14 +56,13 @@ describe('DataSource', function() {
       };
 
       var ds = loopback.createDataSource({
-        connector: new Connector()
+        connector: new Connector(),
       });
 
-      var Color = ds.createModel('color', {name: String});
+      var Color = ds.createModel('color', { name: String });
       assert(Color.prototype instanceof Color.registry.getModel('Model'));
       assert.equal(Color.base.modelName, 'PersistedModel');
     });
-
   });
 
   describe.skip('PersistedModel Methods', function() {
@@ -103,7 +102,9 @@ describe('DataSource', function() {
         var fn = scope[name];
         var actuallyEnabled = Model.getRemoteMethod(name);
         assert(fn, name + ' should be defined!');
-        assert(actuallyEnabled === isRemoteEnabled, name + ' ' + (isRemoteEnabled ? 'should' : 'should not') + ' be remote enabled');
+        assert(actuallyEnabled === isRemoteEnabled,
+          name + ' ' + (isRemoteEnabled ? 'should' : 'should not') +
+            ' be remote enabled');
       }
     });
   });

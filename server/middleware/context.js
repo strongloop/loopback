@@ -44,7 +44,7 @@ function context(options) {
       // Run the code in the context of the namespace
       if (enableHttpContext) {
         // Set up the transport context
-        ns.set('http', {req: req, res: res});
+        ns.set('http', { req: req, res: res });
       }
       next();
     });

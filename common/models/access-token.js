@@ -27,7 +27,6 @@ var DEFAULT_TOKEN_LEN = 64;
  */
 
 module.exports = function(AccessToken) {
-
   // Workaround for https://github.com/strongloop/loopback/issues/292
   AccessToken.definition.rawProperties.created.default =
   AccessToken.definition.properties.created.default = function() {
@@ -42,7 +41,7 @@ module.exports = function(AccessToken) {
    * ```
    */
 
-  AccessToken.ANONYMOUS = new AccessToken({id: '$anonymous'});
+  AccessToken.ANONYMOUS = new AccessToken({ id: '$anonymous' });
 
   /**
    * Create a cryptographically random access token id.
@@ -165,8 +164,7 @@ module.exports = function(AccessToken) {
     var headers = options.headers || [];
     var cookies = options.cookies || [];
     var i = 0;
-    var length;
-    var id;
+    var length, id;
 
     // https://github.com/strongloop/loopback/issues/1326
     if (options.searchDefaultTokenKeys !== false) {

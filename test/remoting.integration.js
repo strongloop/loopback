@@ -6,7 +6,6 @@ var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
 
 describe('remoting - integration', function() {
-
   lt.beforeEach.withApp(app);
   lt.beforeEach.givenModel('store');
 
@@ -17,8 +16,8 @@ describe('remoting - integration', function() {
   describe('app.remotes.options', function() {
     it('should load remoting options', function() {
       var remotes = app.remotes();
-      assert.deepEqual(remotes.options, {'json': {'limit': '1kb', 'strict': false},
-        'urlencoded': {'limit': '8kb', 'extended': true}});
+      assert.deepEqual(remotes.options, { 'json': { 'limit': '1kb', 'strict': false },
+        'urlencoded': { 'limit': '8kb', 'extended': true }});
     });
 
     it('rest handler', function() {
@@ -34,7 +33,7 @@ describe('remoting - integration', function() {
       }
       this.http = this.post('/api/stores');
       this.http.send({
-        'name': name
+        'name': name,
       });
       this.http.end(function(err) {
         if (err) return done(err);
@@ -53,7 +52,7 @@ describe('remoting - integration', function() {
       }
       this.http = this.post('/api/stores');
       this.http.send({
-        'name': name
+        'name': name,
       });
       this.http.end(function(err) {
         if (err) return done(err);
@@ -88,7 +87,7 @@ describe('remoting - integration', function() {
         ' ',
         m.getHttpMethod(),
         ' ',
-        m.getFullPath()
+        m.getFullPath(),
       ].join('');
     }
 
@@ -121,7 +120,7 @@ describe('remoting - integration', function() {
         'deleteById(id:any):object DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
         'prototype.updateAttributes(data:object):store PUT /stores/:id',
-        'createChangeStream(options:object):ReadableStream POST /stores/change-stream'
+        'createChangeStream(options:object):ReadableStream POST /stores/change-stream',
       ];
 
       // The list of methods is from docs:
@@ -143,7 +142,7 @@ describe('remoting - integration', function() {
         '__get__superStores(filter:object):store GET /stores/superStores',
         '__create__superStores(data:store):store POST /stores/superStores',
         '__delete__superStores() DELETE /stores/superStores',
-        '__count__superStores(where:object):number GET /stores/superStores/count'
+        '__count__superStores(where:object):number GET /stores/superStores/count',
       ];
 
       expect(methods).to.include.members(expectedMethods);
@@ -151,7 +150,6 @@ describe('remoting - integration', function() {
 
     it('should have correct signatures for belongsTo methods',
       function() {
-
         var widgetClass = findClass('widget');
         var methods = widgetClass.methods
           .filter(function(m) {
@@ -162,15 +160,14 @@ describe('remoting - integration', function() {
           });
 
         var expectedMethods = [
-            'prototype.__get__store(refresh:boolean):store ' +
-            'GET /widgets/:id/store'
+          'prototype.__get__store(refresh:boolean):store ' +
+            'GET /widgets/:id/store',
         ];
         expect(methods).to.include.members(expectedMethods);
       });
 
     it('should have correct signatures for hasMany methods',
       function() {
-
         var physicianClass = findClass('store');
         var methods = physicianClass.methods
           .filter(function(m) {
@@ -181,29 +178,28 @@ describe('remoting - integration', function() {
           });
 
         var expectedMethods = [
-              'prototype.__findById__widgets(fk:any):widget ' +
+          'prototype.__findById__widgets(fk:any):widget ' +
               'GET /stores/:id/widgets/:fk',
-              'prototype.__destroyById__widgets(fk:any) ' +
+          'prototype.__destroyById__widgets(fk:any) ' +
               'DELETE /stores/:id/widgets/:fk',
-              'prototype.__updateById__widgets(fk:any,data:widget):widget ' +
+          'prototype.__updateById__widgets(fk:any,data:widget):widget ' +
               'PUT /stores/:id/widgets/:fk',
-              'prototype.__get__widgets(filter:object):widget ' +
+          'prototype.__get__widgets(filter:object):widget ' +
               'GET /stores/:id/widgets',
-              'prototype.__create__widgets(data:widget):widget ' +
+          'prototype.__create__widgets(data:widget):widget ' +
               'POST /stores/:id/widgets',
-              'prototype.__delete__widgets() ' +
+          'prototype.__delete__widgets() ' +
               'DELETE /stores/:id/widgets',
-              'prototype.__count__widgets(where:object):number ' +
-              'GET /stores/:id/widgets/count'
+          'prototype.__count__widgets(where:object):number ' +
+              'GET /stores/:id/widgets/count',
         ];
         expect(methods).to.include.members(expectedMethods);
       });
 
     it('should have correct signatures for hasMany-through methods',
       function() { // jscs:disable validateIndentation
-
-      var physicianClass = findClass('physician');
-      var methods = physicianClass.methods
+        var physicianClass = findClass('physician');
+        var methods = physicianClass.methods
         .filter(function(m) {
           return m.name.indexOf('prototype.__') === 0;
         })
@@ -211,7 +207,7 @@ describe('remoting - integration', function() {
           return formatMethod(m);
         });
 
-      var expectedMethods = [
+        var expectedMethods = [
           'prototype.__findById__patients(fk:any):patient ' +
           'GET /physicians/:id/patients/:fk',
           'prototype.__destroyById__patients(fk:any) ' +
@@ -231,10 +227,9 @@ describe('remoting - integration', function() {
           'prototype.__delete__patients() ' +
           'DELETE /physicians/:id/patients',
           'prototype.__count__patients(where:object):number ' +
-          'GET /physicians/:id/patients/count'
-      ];
-      expect(methods).to.include.members(expectedMethods);
-    });
+          'GET /physicians/:id/patients/count',
+        ];
+        expect(methods).to.include.members(expectedMethods);
+      });
   });
-
 });

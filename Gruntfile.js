@@ -1,6 +1,5 @@
 /*global module:false*/
 module.exports = function(grunt) {
-
   // Do not report warnings from unit-tests exercising deprecated paths
   process.env.NO_DEPRECATION = 'loopback';
 
@@ -18,58 +17,59 @@ module.exports = function(grunt) {
     // Task configuration.
     uglify: {
       options: {
-        banner: '<%= banner %>'
+        banner: '<%= banner %>',
       },
       dist: {
         files: {
-          'dist/loopback.min.js': ['dist/loopback.js']
-        }
-      }
-    },
-    jshint: {
-      options: {
-        jshintrc: true
+          'dist/loopback.min.js': ['dist/loopback.js'],
+        },
       },
+    },
+    eslint: {
       gruntfile: {
-        src: 'Gruntfile.js'
+        src: 'Gruntfile.js',
       },
       lib: {
-        src: ['lib/**/*.js']
+        src: ['lib/**/*.js'],
       },
       common: {
-        src: ['common/**/*.js']
+        src: ['common/**/*.js'],
       },
       browser: {
-        src: ['browser/**/*.js']
+        src: ['browser/**/*.js'],
       },
       server: {
-        src: ['server/**/*.js']
+        src: ['server/**/*.js'],
       },
       test: {
-        src: ['test/**/*.js']
-      }
-    },
-    jscs: {
-      gruntfile: 'Gruntfile.js',
-      lib: ['lib/**/*.js'],
-      common: ['common/**/*.js'],
-      server: ['server/**/*.js'],
-      browser: ['browser/**/*.js'],
-      test: ['test/**/*.js']
+        src: ['test/**/*.js'],
+      },
     },
     watch: {
       gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
+        files: '<%= eslint.gruntfile.src %>',
+        tasks: ['eslint:gruntfile'],
+      },
+      browser: {
+        files: ['<%= eslint.browser.src %>'],
+        tasks: ['eslint:browser'],
+      },
+      common: {
+        files: ['<%= eslint.common.src %>'],
+        tasks: ['eslint:common'],
       },
       lib: {
-        files: ['<%= jshint.lib.src %>'],
-        tasks: ['jshint:lib']
+        files: ['<%= eslint.lib.src %>'],
+        tasks: ['eslint:lib'],
+      },
+      server: {
+        files: ['<%= eslint.server.src %>'],
+        tasks: ['eslint:server'],
       },
       test: {
-        files: ['<%= jshint.test.src %>'],
-        tasks: ['jshint:test']
-      }
+        files: ['<%= eslint.test.src %>'],
+        tasks: ['eslint:test'],
+      },
     },
     browserify: {
       dist: {
@@ -78,24 +78,24 @@ module.exports = function(grunt) {
         },
         options: {
           ignore: ['nodemailer', 'passport', 'bcrypt'],
-          standalone: 'loopback'
-        }
-      }
+          standalone: 'loopback',
+        },
+      },
     },
     mochaTest: {
       'unit': {
         src: 'test/*.js',
         options: {
           reporter: 'dot',
-        }
+        },
       },
       'unit-xml': {
         src: 'test/*.js',
         options: {
           reporter: 'xunit',
-          captureFile: 'xunit.xml'
-        }
-      }
+          captureFile: 'xunit.xml',
+        },
+      },
     },
     karma: {
       'unit-once': {
@@ -109,7 +109,7 @@ module.exports = function(grunt) {
 
         // CI friendly test output
         junitReporter: {
-          outputFile: 'karma-xunit.xml'
+          outputFile: 'karma-xunit.xml',
         },
 
         browserify: {
@@ -117,8 +117,8 @@ module.exports = function(grunt) {
           // Fatal error: Maximum call stack size exceeded
           debug: false,
           // Disable watcher, grunt will exit after the first run
-          watch: false
-        }
+          watch: false,
+        },
       },
       unit: {
         configFile: 'test/karma.conf.js',
@@ -134,7 +134,7 @@ module.exports = function(grunt) {
           // list of files / patterns to load in the browser
           files: [
             'test/e2e/remote-connector.e2e.js',
-            'test/e2e/replication.e2e.js'
+            'test/e2e/replication.e2e.js',
           ],
 
           // list of files to exclude
@@ -171,7 +171,7 @@ module.exports = function(grunt) {
           // - PhantomJS
           // - IE (only Windows)
           browsers: [
-            'Chrome'
+            'Chrome',
           ],
 
           // If browser does not capture in given timeout [ms], kill it
@@ -190,7 +190,7 @@ module.exports = function(grunt) {
               'passport-local',
               'superagent',
               'supertest',
-              'bcrypt'
+              'bcrypt',
             ],
             // transform: ['coffeeify'],
             // debug: true,
@@ -199,19 +199,18 @@ module.exports = function(grunt) {
           },
 
           // Add browserify to preprocessors
-          preprocessors: {'test/e2e/*': ['browserify']}
-        }
-      }
-    }
+          preprocessors: { 'test/e2e/*': ['browserify'] },
+        },
+      },
+    },
 
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('e2e-server', function() {
@@ -229,10 +228,9 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['browserify']);
 
   grunt.registerTask('test', [
-    'jscs',
-    'jshint',
+    'eslint',
     process.env.JENKINS_HOME ? 'mochaTest:unit-xml' : 'mochaTest:unit',
-   'karma:unit-once']);
+    'karma:unit-once']);
 
   // alias for sl-ci-run and `npm test`
   grunt.registerTask('mocha-and-karma', ['test']);

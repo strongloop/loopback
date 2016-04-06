@@ -10,10 +10,12 @@ describe('Replication over REST', function() {
   var PETER = { id: 'p', username: 'peter', email: 'p@t.io', password: 'p' };
   var EMERY = { id: 'e', username: 'emery', email: 'e@t.io', password: 'p' };
 
+  /* eslint-disable one-var */
   var serverApp, serverUrl, ServerUser, ServerCar, serverCars;
   var aliceId, peterId, aliceToken, peterToken, emeryToken, request;
   var clientApp, LocalUser, LocalCar, RemoteUser, RemoteCar, clientCars;
   var conflictedCarId;
+  /* eslint-enable one-var */
 
   before(setupServer);
   before(setupClient);
@@ -322,7 +324,7 @@ describe('Replication over REST', function() {
               .to.have.property('fullname', 'Alice Smith');
             next();
           });
-        }
+        },
       ], done);
     });
 
@@ -347,7 +349,7 @@ describe('Replication over REST', function() {
               .to.not.have.property('fullname');
             next();
           });
-        }
+        },
       ], done);
     });
 
@@ -367,7 +369,7 @@ describe('Replication over REST', function() {
   });
 
   var USER_PROPS = {
-    id: { type: 'string', id: true }
+    id: { type: 'string', id: true },
   };
 
   var USER_OPTS = {
@@ -375,13 +377,13 @@ describe('Replication over REST', function() {
     plural: 'Users', // use the same REST path in all models
     trackChanges: true,
     strict: 'throw',
-    persistUndefinedAsNull: true
+    persistUndefinedAsNull: true,
   };
 
   var CAR_PROPS = {
     id: { type: 'string', id: true, defaultFn: 'guid' },
     model: { type: 'string', required: true },
-    maker: { type: 'string' }
+    maker: { type: 'string' },
   };
 
   var CAR_OPTS = {
@@ -395,30 +397,30 @@ describe('Replication over REST', function() {
       {
         principalType: 'ROLE',
         principalId: '$everyone',
-        permission: 'DENY'
+        permission: 'DENY',
       },
       // allow all authenticated users to read data
       {
         principalType: 'ROLE',
         principalId: '$authenticated',
         permission: 'ALLOW',
-        accessType: 'READ'
+        accessType: 'READ',
       },
       // allow Alice to pull changes
       {
         principalType: 'USER',
         principalId: ALICE.id,
         permission: 'ALLOW',
-        accessType: 'REPLICATE'
+        accessType: 'REPLICATE',
       },
       // allow Peter to write data
       {
         principalType: 'USER',
         principalId: PETER.id,
         permission: 'ALLOW',
-        accessType: 'WRITE'
-      }
-    ]
+        accessType: 'WRITE',
+      },
+    ],
   };
 
   function setupServer(done) {
@@ -435,9 +437,9 @@ describe('Replication over REST', function() {
         user: {
           type: 'belongsTo',
           model: 'ServerUser',
-          foreignKey: 'userId'
-        }
-      }
+          foreignKey: 'userId',
+        },
+      },
     });
     serverApp.model(ServerToken, { dataSource: 'db', public: false });
     serverApp.model(loopback.ACL, { dataSource: 'db', public: false });
@@ -448,7 +450,7 @@ describe('Replication over REST', function() {
     serverApp.model(ServerUser, {
       dataSource: 'db',
       public: true,
-      relations: { accessTokens: { model: 'ServerToken' } }
+      relations: { accessTokens: { model: 'ServerToken' }},
     });
 
     ServerCar = loopback.createModel('ServerCar', CAR_PROPS, CAR_OPTS);
@@ -476,7 +478,7 @@ describe('Replication over REST', function() {
     clientApp.dataSource('db', { connector: 'memory' });
     clientApp.dataSource('remote', {
       connector: 'remote',
-      url: serverUrl
+      url: serverUrl,
     });
 
     // NOTE(bajtos) At the moment, all models share the same Checkpoint
@@ -510,7 +512,7 @@ describe('Replication over REST', function() {
       trackChanges: false,
       // Enable remote replication in order to get remoting API metadata
       // used by the remoting connector
-      enableRemoteReplication: true
+      enableRemoteReplication: true,
     });
   }
 
@@ -548,14 +550,14 @@ describe('Replication over REST', function() {
         ServerCar.create(
           [
             { id: 'Ford-Mustang',  maker: 'Ford', model: 'Mustang' },
-            { id: 'Audi-R8', maker: 'Audi', model: 'R8' }
+            { id: 'Audi-R8', maker: 'Audi', model: 'R8' },
           ],
           function(err, cars) {
             if (err) return next(err);
             serverCars = cars.map(carToString);
             next();
           });
-      }
+      },
     ], done);
   }
 
@@ -600,7 +602,7 @@ describe('Replication over REST', function() {
   function setAccessToken(token) {
     clientApp.dataSources.remote.connector.remotes.auth = {
       bearer: new Buffer(token).toString('base64'),
-      sendImmediately: true
+      sendImmediately: true,
     };
   }
 

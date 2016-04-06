@@ -5,11 +5,11 @@ describe('Registry', function() {
       var appBar = loopback();
       var modelName = 'MyModel';
       var subModelName = 'Sub' + modelName;
-      var settings = {base: 'PersistedModel'};
+      var settings = { base: 'PersistedModel' };
       appFoo.set('perAppRegistries', true);
       appBar.set('perAppRegistries', true);
-      var dsFoo = appFoo.dataSource('dsFoo', {connector: 'memory'});
-      var dsBar = appFoo.dataSource('dsBar', {connector: 'memory'});
+      var dsFoo = appFoo.dataSource('dsFoo', { connector: 'memory' });
+      var dsBar = appFoo.dataSource('dsBar', { connector: 'memory' });
 
       var FooModel = appFoo.model(modelName, settings);
       var FooSubModel = appFoo.model(subModelName, settings);
@@ -26,9 +26,9 @@ describe('Registry', function() {
 
       expect(appFoo.models[modelName]).to.not.equal(appBar.models[modelName]);
 
-      BarModel.create({name: 'bar'}, function(err, bar) {
+      BarModel.create({ name: 'bar' }, function(err, bar) {
         assert(!err);
-        bar.subMyModels.create({parent: 'bar'}, function(err) {
+        bar.subMyModels.create({ parent: 'bar' }, function(err) {
           assert(!err);
           FooSubModel.find(function(err, foos) {
             assert(!err);

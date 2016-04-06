@@ -1,20 +1,19 @@
 var async = require('async');
 var expect = require('chai').expect;
 
-var Change;
-var TestModel;
+var Change, TestModel;
 
 describe('Change', function() {
   beforeEach(function() {
     var memory = loopback.createDataSource({
-      connector: loopback.Memory
+      connector: loopback.Memory,
     });
     TestModel = loopback.PersistedModel.extend('ChangeTestModel',
       {
-        id: { id: true, type: 'string', defaultFn: 'guid' }
+        id: { id: true, type: 'string', defaultFn: 'guid' },
       },
       {
-        trackChanges: true
+        trackChanges: true,
       });
     this.modelName = TestModel.modelName;
     TestModel.attachTo(memory);
@@ -24,7 +23,7 @@ describe('Change', function() {
   beforeEach(function(done) {
     var test = this;
     test.data = {
-      foo: 'bar'
+      foo: 'bar',
     };
     TestModel.create(test.data, function(err, model) {
       if (err) return done(err);
@@ -46,7 +45,7 @@ describe('Change', function() {
       var change = new Change({
         rev: 'abc',
         modelName: 'foo',
-        modelId: 'bar'
+        modelId: 'bar',
       });
 
       var hash = Change.hash([change.modelName, change.modelId].join('-'));
@@ -115,7 +114,6 @@ describe('Change', function() {
   });
 
   describe('Change.findOrCreateChange(modelName, modelId, callback)', function() {
-
     describe('when a change doesnt exist', function() {
       beforeEach(function(done) {
         var test = this;
@@ -162,7 +160,7 @@ describe('Change', function() {
         var test = this;
         Change.create({
           modelName: test.modelName,
-          modelId: test.modelId
+          modelId: test.modelId,
         }, function(err, change) {
           test.existingChange = change;
           done();
@@ -192,7 +190,7 @@ describe('Change', function() {
       Change.findOrCreate(
         {
           modelName: this.modelName,
-          modelId: this.modelId
+          modelId: this.modelId,
         },
         function(err, ch) {
           change = ch;
@@ -228,7 +226,7 @@ describe('Change', function() {
           expect(change.prev, 'prev').to.equal(originalRev);
           expect(change.rev, 'rev').to.equal(test.revisionForModel);
           next();
-        }
+        },
       ], done);
 
       function rectify(next) {
@@ -299,7 +297,7 @@ describe('Change', function() {
       var test = this;
       var change = new Change({
         modelName: this.modelName,
-        modelId: this.modelId
+        modelId: this.modelId,
       });
 
       change.currentRevision(function(err, rev) {
@@ -314,7 +312,7 @@ describe('Change', function() {
       var test = this;
       var change = new Change({
         modelName: this.modelName,
-        modelId: this.modelId
+        modelId: this.modelId,
       });
 
       change.currentRevision()
@@ -341,14 +339,14 @@ describe('Change', function() {
       var a = {
         b: {
           b: ['c', 'd'],
-          c: ['d', 'e']
-        }
+          c: ['d', 'e'],
+        },
       };
       var b = {
         b: {
           c: ['d', 'e'],
-          b: ['c', 'd']
-        }
+          b: ['c', 'd'],
+        },
       };
 
       var aRev = Change.revisionForInst(a);
@@ -360,20 +358,20 @@ describe('Change', function() {
   describe('change.type()', function() {
     it('CREATE', function() {
       var change = new Change({
-        rev: this.revisionForModel
+        rev: this.revisionForModel,
       });
       assert.equal(Change.CREATE, change.type());
     });
     it('UPDATE', function() {
       var change = new Change({
         rev: this.revisionForModel,
-        prev: this.revisionForModel
+        prev: this.revisionForModel,
       });
       assert.equal(Change.UPDATE, change.type());
     });
     it('DELETE', function() {
       var change = new Change({
-        prev: this.revisionForModel
+        prev: this.revisionForModel,
       });
       assert.equal(Change.DELETE, change.type());
     });
@@ -386,7 +384,7 @@ describe('Change', function() {
   describe('change.getModelCtor()', function() {
     it('should get the correct model class', function() {
       var change = new Change({
-        modelName: this.modelName
+        modelName: this.modelName,
       });
 
       assert.equal(change.getModelCtor(), TestModel);
@@ -396,11 +394,11 @@ describe('Change', function() {
   describe('change.equals(otherChange)', function() {
     it('should return true when the change is equal', function() {
       var change = new Change({
-        rev: this.revisionForModel
+        rev: this.revisionForModel,
       });
 
       var otherChange = new Change({
-        rev: this.revisionForModel
+        rev: this.revisionForModel,
       });
 
       assert.equal(change.equals(otherChange), true);
@@ -415,7 +413,7 @@ describe('Change', function() {
 
       var otherChange = new Change({
         rev: undefined,
-        prev: REV
+        prev: REV,
       });
 
       assert.equal(change.type(), Change.DELETE);
@@ -428,11 +426,11 @@ describe('Change', function() {
   describe('change.isBasedOn(otherChange)', function() {
     it('should return true when the change is based on the other', function() {
       var change = new Change({
-        prev: this.revisionForModel
+        prev: this.revisionForModel,
       });
 
       var otherChange = new Change({
-        rev: this.revisionForModel
+        rev: this.revisionForModel,
       });
 
       assert.equal(change.isBasedOn(otherChange), true);
@@ -442,20 +440,20 @@ describe('Change', function() {
   describe('Change.diff(modelName, since, remoteChanges, callback)', function() {
     beforeEach(function(done) {
       Change.create([
-        {rev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
-        {rev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
-        {rev: 'bat', modelName: this.modelName, modelId: 11, checkpoint: 1},
+        { rev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1 },
+        { rev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1 },
+        { rev: 'bat', modelName: this.modelName, modelId: 11, checkpoint: 1 },
       ], done);
     });
 
     it('should return delta and conflict lists', function(done) {
       var remoteChanges = [
         // an update => should result in a delta
-        {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
+        { rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1 },
         // no change => should not result in a delta / conflict
-        {rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
+        { rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1 },
         // a conflict => should result in a conflict
-        {rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1},
+        { rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1 },
       ];
 
       Change.diff(this.modelName, 0, remoteChanges, function(err, diff) {
@@ -469,11 +467,11 @@ describe('Change', function() {
     it('should return delta and conflict lists - promise variant', function(done) {
       var remoteChanges = [
         // an update => should result in a delta
-        {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
+        { rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1 },
         // no change => should not result in a delta / conflict
-        {rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
+        { rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1 },
         // a conflict => should result in a conflict
-        {rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1},
+        { rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1 },
       ];
 
       Change.diff(this.modelName, 0, remoteChanges)
@@ -491,7 +489,7 @@ describe('Change', function() {
         prev: 'foo',
         modelName: this.modelName,
         modelId: '9',
-        checkpoint: 2
+        checkpoint: 2,
       };
       Change.diff(this.modelName, 0, [updateRecord], function(err, diff) {
         if (err) return done(err);
@@ -516,7 +514,7 @@ describe('Change', function() {
         prev: 'foo-prev',
         modelName: this.modelName,
         modelId: '9',
-        checkpoint: 2
+        checkpoint: 2,
       };
       // IMPORTANT: the diff call excludes the local change
       // with rev=foo CP=1
@@ -543,7 +541,7 @@ describe('Change', function() {
         prev: 'new-prev',
         modelName: this.modelName,
         modelId: 'new-id',
-        checkpoint: 2
+        checkpoint: 2,
       };
 
       Change.diff(this.modelName, 0, [updateRecord], function(err, diff) {

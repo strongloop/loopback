@@ -69,7 +69,6 @@ var debug = require('debug')('loopback:user');
  */
 
 module.exports = function(User) {
-
   /**
    * Create access token for the logged in user. This method can be overridden to
    * customize how access tokens are generated
@@ -99,7 +98,7 @@ module.exports = function(User) {
     var userModel = this.constructor;
     ttl = Math.min(ttl || userModel.settings.ttl, userModel.settings.maxTTL);
     this.accessTokens.create({
-      ttl: ttl
+      ttl: ttl,
     }, cb);
     return cb.promise;
   };
@@ -216,7 +215,7 @@ module.exports = function(User) {
       return fn.promise;
     }
 
-    self.findOne({where: query}, function(err, user) {
+    self.findOne({ where: query }, function(err, user) {
       var defaultError = new Error('login failed');
       defaultError.statusCode = 401;
       defaultError.code = 'LOGIN_FAILED';
@@ -369,11 +368,14 @@ module.exports = function(User) {
     assert(typeof options === 'object', 'options required when calling user.verify()');
     assert(options.type, 'You must supply a verification type (options.type)');
     assert(options.type === 'email', 'Unsupported verification type');
-    assert(options.to || this.email, 'Must include options.to when calling user.verify() or the user must have an email property');
+    assert(options.to || this.email,
+      'Must include options.to when calling user.verify() ' +
+      'or the user must have an email property');
     assert(options.from, 'Must include options.from when calling user.verify()');
 
     options.redirect = options.redirect || '/';
-    options.template = path.resolve(options.template || path.join(__dirname, '..', '..', 'templates', 'verify.ejs'));
+    var defaultTemplate = path.join(__dirname, '..', '..', 'templates', 'verify.ejs');
+    options.template = path.resolve(options.template || defaultTemplate);
     options.user = this;
     options.protocol = options.protocol || 'http';
 
@@ -423,7 +425,8 @@ module.exports = function(User) {
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
 
-      options.text = options.text || 'Please verify your email by opening this link in a web browser:\n\t{href}';
+      options.text = options.text || 'Please verify your email by opening ' +
+        'this link in a web browser:\n\t{href}';
 
       options.text = options.text.replace('{href}', options.verifyHref);
 
@@ -440,7 +443,7 @@ module.exports = function(User) {
         if (err) {
           fn(err);
         } else {
-          fn(null, {email: email, token: user.verificationToken, uid: user.id});
+          fn(null, { email: email, token: user.verificationToken, uid: user.id });
         }
       });
     }
@@ -531,7 +534,7 @@ module.exports = function(User) {
       return cb.promise;
     }
 
-    UserModel.findOne({ where: {email: options.email} }, function(err, user) {
+    UserModel.findOne({ where: { email: options.email }}, function(err, user) {
       if (err) {
         return cb(err);
       }
@@ -543,7 +546,7 @@ module.exports = function(User) {
       }
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
-      user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
+      user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
         if (err) {
           return cb(err);
         }
@@ -551,7 +554,7 @@ module.exports = function(User) {
         UserModel.emit('resetPasswordRequest', {
           email: options.email,
           accessToken: accessToken,
-          user: user
+          user: user,
         });
       });
     });
@@ -633,10 +636,10 @@ module.exports = function(User) {
       {
         description: 'Login a user with username/email and password.',
         accepts: [
-          {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
-          {arg: 'include', type: ['string'], http: {source: 'query' },
+          { arg: 'credentials', type: 'object', required: true, http: { source: 'body' }},
+          { arg: 'include', type: ['string'], http: { source: 'query' },
             description: 'Related objects to include in the response. ' +
-            'See the description of return value for more details.'}
+            'See the description of return value for more details.' },
         ],
         returns: {
           arg: 'accessToken', type: 'object', root: true,
@@ -644,9 +647,9 @@ module.exports = function(User) {
             'The response body contains properties of the AccessToken created on login.\n' +
             'Depending on the value of `include` parameter, the body may contain ' +
             'additional properties:\n\n' +
-            '  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n'
+            '  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n',
         },
-        http: {verb: 'post'}
+        http: { verb: 'post' },
       }
     );
 
@@ -655,17 +658,17 @@ module.exports = function(User) {
       {
         description: 'Logout a user with access token.',
         accepts: [
-          {arg: 'access_token', type: 'string', required: true, http: function(ctx) {
+          { arg: 'access_token', type: 'string', required: true, http: function(ctx) {
             var req = ctx && ctx.req;
             var accessToken = req && req.accessToken;
             var tokenID = accessToken && accessToken.id;
 
             return tokenID;
           }, description: 'Do not supply this argument, it is automatically extracted ' +
-            'from request headers.'
-          }
+            'from request headers.',
+          },
         ],
-        http: {verb: 'all'}
+        http: { verb: 'all' },
       }
     );
 
@@ -674,11 +677,11 @@ module.exports = function(User) {
       {
         description: 'Confirm a user registration with email verification token.',
         accepts: [
-          {arg: 'uid', type: 'string', required: true},
-          {arg: 'token', type: 'string', required: true},
-          {arg: 'redirect', type: 'string'}
+          { arg: 'uid', type: 'string', required: true },
+          { arg: 'token', type: 'string', required: true },
+          { arg: 'redirect', type: 'string' },
         ],
-        http: {verb: 'get', path: '/confirm'}
+        http: { verb: 'get', path: '/confirm' },
       }
     );
 
@@ -687,9 +690,9 @@ module.exports = function(User) {
       {
         description: 'Reset password for a user with email.',
         accepts: [
-          {arg: 'options', type: 'object', required: true, http: {source: 'body'}}
+          { arg: 'options', type: 'object', required: true, http: { source: 'body' }},
         ],
-        http: {verb: 'post', path: '/reset'}
+        http: { verb: 'post', path: '/reset' },
       }
     );
 
@@ -714,12 +717,12 @@ module.exports = function(User) {
     // email validation regex
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    UserModel.validatesFormatOf('email', {with: re, message: 'Must provide a valid email'});
+    UserModel.validatesFormatOf('email', { with: re, message: 'Must provide a valid email' });
 
     // FIXME: We need to add support for uniqueness of composite keys in juggler
     if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
-      UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
-      UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
+      UserModel.validatesUniquenessOf('email', { message: 'Email already exists' });
+      UserModel.validatesUniquenessOf('username', { message: 'User already exists' });
     }
 
     return UserModel;
@@ -730,5 +733,4 @@ module.exports = function(User) {
    */
 
   User.setup();
-
 };

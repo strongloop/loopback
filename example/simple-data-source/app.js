@@ -4,17 +4,17 @@ var app = loopback();
 app.use(loopback.rest());
 
 
-var dataSource = app.dataSource('db', {adapter: 'memory'});
+var dataSource = app.dataSource('db', { adapter: 'memory' });
 
 var Color = dataSource.define('color', {
-  'name': String
+  'name': String,
 });
 
-Color.create({name: 'red'});
-Color.create({name: 'green'});
-Color.create({name: 'blue'});
+Color.create({ name: 'red' });
+Color.create({ name: 'green' });
+Color.create({ name: 'blue' });
 
-Color.all(function () {
+Color.all(function() {
   console.log(arguments);
 });
 

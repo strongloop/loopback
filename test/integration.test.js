@@ -24,7 +24,7 @@ describe('loopback application', function() {
     function setupAppWithStreamingMethod() {
       app.dataSource('db', {
         connector: loopback.Memory,
-        defaultForType: 'db'
+        defaultForType: 'db',
       });
       var db = app.datasources.db;
 
@@ -52,9 +52,9 @@ describe('loopback application', function() {
       loopback.remoteMethod(Streamer.read, {
         http: { method: 'post' },
         accepts: [
-          { arg: 'req', type: 'Object', http: { source: 'req' } },
-          { arg: 'res', type: 'Object', http: { source: 'res' } }
-        ]
+          { arg: 'req', type: 'Object', http: { source: 'req' }},
+          { arg: 'res', type: 'Object', http: { source: 'res' }},
+        ],
       });
 
       app.enableAuth();

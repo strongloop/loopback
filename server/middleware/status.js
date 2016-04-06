@@ -23,7 +23,7 @@ function status() {
   return function(req, res) {
     res.send({
       started: started,
-      uptime: (Date.now() - Number(started)) / 1000
+      uptime: (Date.now() - Number(started)) / 1000,
     });
   };
 }

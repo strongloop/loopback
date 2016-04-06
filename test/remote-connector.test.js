@@ -2,8 +2,7 @@ var loopback = require('../');
 var defineModelTestsWithDataSource = require('./util/model-tests');
 
 describe('RemoteConnector', function() {
-  var remoteApp;
-  var remote;
+  var remoteApp, remote;
 
   defineModelTestsWithDataSource({
     beforeEach: function(done) {
@@ -14,7 +13,7 @@ describe('RemoteConnector', function() {
         test.dataSource = loopback.createDataSource({
           host: 'localhost',
           port: remoteApp.get('port'),
-          connector: loopback.Remote
+          connector: loopback.Remote,
         });
         done();
       });
@@ -23,10 +22,10 @@ describe('RemoteConnector', function() {
       var RemoteModel = Model.extend('Remote' + Model.modelName, {},
         { plural: Model.pluralModelName });
       RemoteModel.attachTo(loopback.createDataSource({
-        connector: loopback.Memory
+        connector: loopback.Memory,
       }));
       remoteApp.model(RemoteModel);
-    }
+    },
   });
 
   beforeEach(function(done) {
@@ -41,7 +40,7 @@ describe('RemoteConnector', function() {
       test.remote = loopback.createDataSource({
         host: 'localhost',
         port: remoteApp.get('port'),
-        connector: loopback.Remote
+        connector: loopback.Remote,
       });
       done();
     });
@@ -62,7 +61,7 @@ describe('RemoteConnector', function() {
 
     ServerModel.setupRemoting();
 
-    var m = new RemoteModel({foo: 'bar'});
+    var m = new RemoteModel({ foo: 'bar' });
     m.save(function(err, inst) {
       if (err) return done(err);
       assert(inst instanceof RemoteModel);

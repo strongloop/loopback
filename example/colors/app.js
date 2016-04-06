@@ -4,16 +4,16 @@ var app = loopback();
 app.use(loopback.rest());
 
 var schema = {
-  name: String
+  name: String,
 };
 
 var Color = app.model('color', schema);
 
-app.dataSource('db', {adapter: 'memory'}).attach(Color);
+app.dataSource('db', { adapter: 'memory' }).attach(Color);
 
-Color.create({name: 'red'});
-Color.create({name: 'green'});
-Color.create({name: 'blue'});
+Color.create({ name: 'red' });
+Color.create({ name: 'green' });
+Color.create({ name: 'blue' });
 
 app.listen(3000);
 

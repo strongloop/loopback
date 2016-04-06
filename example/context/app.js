@@ -14,7 +14,7 @@ app.use(function saveHostToContext(req, res, next) {
 app.use(loopback.rest());
 
 var Color = loopback.createModel('color', { 'name': String });
-Color.beforeRemote('**', function (ctx, unused, next) {
+Color.beforeRemote('**', function(ctx, unused, next) {
   // Inside LoopBack code, you can read the property from the context
   var ns = loopback.getCurrentContext();
   console.log('Request to host', ns && ns.get('host'));
