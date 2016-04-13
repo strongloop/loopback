@@ -131,10 +131,15 @@ describe('Replication over REST', function() {
         setAccessToken(peterToken);
       });
 
+      var pushSince = -1;
+      var pullSince = -1;
+
       it('allows pull from server', function(done) {
-        RemoteCar.replicate(LocalCar, function(err, conflicts, cps) {
+        RemoteCar.replicate(LocalCar, pullSince, function(err, conflicts, cps) {
           if (err) return done(err);
           if (conflicts.length) return done(conflictError(conflicts));
+
+          pullSince = cps;
 
           LocalCar.find(function(err, list) {
             if (err) return done(err);
@@ -145,9 +150,11 @@ describe('Replication over REST', function() {
       });
 
       it('allows push to the server', function(done) {
-        LocalCar.replicate(RemoteCar, function(err, conflicts, cps) {
+        LocalCar.replicate(RemoteCar, pushSince, function(err, conflicts, cps) {
           if (err) return done(err);
           if (conflicts.length) return done(conflictError(conflicts));
+
+          pushSince = cps;
 
           ServerCar.find(function(err, list) {
             if (err) return done(err);
@@ -155,6 +162,48 @@ describe('Replication over REST', function() {
             done();
           });
         });
+      });
+
+      it('allows second push to the server', function(done) {
+        LocalCar.create(
+            [{ maker: 'Local', model: 'Another' }],
+            function(err, cars) {
+              if (err) return done(err);
+              clientCars = cars.map(carToString);
+
+              LocalCar.replicate(RemoteCar, pushSince, function(err, conflicts, cps) {
+                if (err) return done(err);
+                if (conflicts.length) return done(conflictError(conflicts));
+
+                ServerCar.find(function(err, list) {
+                  if (err) return done(err);
+                  expect(list.map(carToString)).to.include.members(clientCars);
+                  done();
+                });
+              });
+            });
+      });
+
+      it('allows second pull from the server', function(done) {
+        ServerCar.create(
+            [{ maker: 'Remote', model: 'Yet Another' }],
+            function(err, cars) {
+              if (err) return done(err);
+              serverCars = cars.map(carToString);
+
+              RemoteCar.replicate(LocalCar, pullSince, function(err, conflicts, cps) {
+                if (err) return done(err);
+                if (conflicts.length) return done(conflictError(conflicts));
+
+                pullSince = cps;
+
+                LocalCar.find(function(err, list) {
+                  if (err) return done(err);
+                  expect(list.map(carToString)).to.include.members(serverCars);
+                  done();
+                });
+              });
+            });
       });
     });
   });
