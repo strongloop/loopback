@@ -249,6 +249,39 @@ describe('loopback.token(options)', function() {
         });
     });
 
+    it('should overwrite invalid existing token (is !== undefined and has no "id" property) ' +
+      ' when enableDoubkecheck is true',
+    function(done) {
+      var token = this.token;
+
+      app.use(function(req, res, next) {
+        req.accessToken = null;
+        next();
+      });
+
+      app.use(loopback.token({
+        model: Token,
+        enableDoublecheck: true,
+      }));
+
+      app.get('/', function(req, res, next) {
+        res.send(req.accessToken);
+      });
+
+      request(app).get('/')
+        .set('Authorization', token.id)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.eql({
+            id: token.id,
+            ttl: token.ttl,
+            userId: token.userId,
+            created: token.created.toJSON(),
+          });
+          done();
+        });
+    });
     it('should overwrite existing token when enableDoublecheck ' +
       'and overwriteExistingToken options are truthy',
     function(done) {
