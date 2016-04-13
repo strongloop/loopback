@@ -282,6 +282,7 @@ describe('loopback.token(options)', function() {
           done();
         });
     });
+
     it('should overwrite existing token when enableDoublecheck ' +
       'and overwriteExistingToken options are truthy',
     function(done) {
