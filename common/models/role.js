@@ -128,8 +128,9 @@ module.exports = function(Role) {
   /**
    * Add custom handler for roles.
    * @param {String} role Name of role.
-   * @param {Function} resolver Function that determines if a principal is in the specified role.
-   * Signature must be `function(role, context, callback)`
+   * @param {Function} resolver Function that determines
+   * if a principal is in the specified role.
+   * Should provide a callback or return a promise.
    */
   Role.registerResolver = function(role, resolver) {
     if (!Role.resolvers) {
@@ -295,7 +296,14 @@ module.exports = function(Role) {
     var resolver = Role.resolvers[role];
     if (resolver) {
       debug('Custom resolver found for role %s', role);
-      resolver(role, context, callback);
+
+      var promise = resolver(role, context, callback);
+      if (promise && typeof promise.then === 'function') {
+        promise.then(
+          function(result) { callback(null, result); },
+          callback
+        );
+      }
       return;
     }
 
