@@ -36,6 +36,7 @@ describe('Model / PersistedModel', function() {
 
       var joe = new User({ email: 'joe@joe.com' });
       var joe2 = new User({ email: 'joe@joe.com' });
+
       joe.save(function() {
         joe2.save(function(err) {
           assert(err, 'should get a validation error');
