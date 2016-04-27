@@ -10,7 +10,10 @@ module.exports = helpers;
 
 var assert = require('assert');
 var request = require('supertest');
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var sinon = require('sinon');
+chai.use(require('sinon-chai'));
 
 _beforeEach.withApp = function(app) {
   if (app.models.User) {
