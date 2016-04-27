@@ -85,6 +85,7 @@
     "loopback-testing": "~1.1.0",
     "mocha": "^2.1.0",
     "sinon": "^1.13.0",
+    "sinon-chai": "^2.8.0",
     "strong-task-emitter": "^0.0.6",
     "supertest": "^0.15.0"
   },
