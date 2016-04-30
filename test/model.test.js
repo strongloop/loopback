@@ -1,9 +1,13 @@
 var async = require('async');
+var chai = require('chai');
+var expect = chai.expect;
 var loopback = require('../');
 var ACL = loopback.ACL;
 var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
+var sinonChai = require('sinon-chai');
+chai.use(sinonChai);
 
 var describe = require('./util/describe');
 
@@ -617,6 +621,20 @@ describe.onServer('Remote Methods', function() {
         'prototype.updateAttributes',
         'createChangeStream'
       ]);
+    });
+
+    it('emits a `remoteMethodDisabled` event', function() {
+      var app = loopback();
+      var model = PersistedModel.extend('TestModelForDisablingRemoteMethod');
+      app.dataSource('db', { connector: 'memory' });
+      app.model(model, { dataSource: 'db' });
+
+      var callbackSpy = require('sinon').spy();
+      var TestModel = app.models.TestModelForDisablingRemoteMethod;
+      TestModel.on('remoteMethodDisabled', callbackSpy);
+      TestModel.disableRemoteMethod('findOne');
+
+      expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass, 'findOne');
     });
   });
 

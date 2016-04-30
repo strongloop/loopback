@@ -606,6 +606,22 @@ describe('app', function() {
       expect(remotedClass).to.eql(Color.sharedClass);
     });
 
+    it('emits a `remoteMethodDisabled` event', function() {
+      var Color = PersistedModel.extend('color', { name: String });
+      Color.shared = true;
+      var remoteMethodDisabledClass, disabledRemoteMethod;
+      app.on('remoteMethodDisabled', function(sharedClass, methodName) {
+        remoteMethodDisabledClass = sharedClass;
+        disabledRemoteMethod = methodName;
+      });
+      app.model(Color);
+      app.models.Color.disableRemoteMethod('findOne');
+      expect(remoteMethodDisabledClass).to.exist;
+      expect(remoteMethodDisabledClass).to.eql(Color.sharedClass);
+      expect(disabledRemoteMethod).to.exist;
+      expect(disabledRemoteMethod).to.eql('findOne');
+    });
+
     it.onServer('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
