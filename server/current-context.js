@@ -98,7 +98,6 @@ module.exports = function(loopback) {
    * context, try the parent one
    * @param {String} name Name of the context property
    * @returns {*} Value of the context property
-   * @private
    */
   ChainedContext.prototype.get = function(name) {
     var val = this.child && this.child.get(name);
