@@ -1,3 +1,17 @@
+2016-05-02, Version 2.28.0
+==========================
+
+ * Add new feature to emit a `remoteMethodDisabled` event when disabling a remote method. (Supasate Choochaisri)
+
+ * Fix typo in Model.nestRemoting (Tim Needham)
+
+ * Allow built-in token middleware to run repeatedly (Benjamin Kröger)
+
+ * Improve error message on connector init error (Miroslav Bajtoš)
+
+ * application: correct spelling of "cannont" (Sam Roberts)
+
+
 2016-02-19, Version 2.27.0
 ==========================
 
