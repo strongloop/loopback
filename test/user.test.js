@@ -1,12 +1,6 @@
 require('./support');
 var loopback = require('../');
-var User;
-var AccessToken;
-var MailConnector = require('../lib/connectors/mail');
-
-var userMemory = loopback.createDataSource({
-  connector: 'memory'
-});
+var User, AccessToken;
 
 describe('User', function() {
   var validCredentialsEmail = 'foo@bar.com';
@@ -19,42 +13,56 @@ describe('User', function() {
   var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
   var incompleteCredentials = {password: 'bar1'};
 
-  var defaultApp;
+  // Create a local app variable to prevent clashes with the global
+  // variable shared by all tests. While this should not be necessary if
+  // the tests were written correctly, it turns out that's not the case :(
+  var app;
 
-  beforeEach(function() {
-    // FIXME: [rfeng] Remove loopback.User.app so that remote hooks don't go
-    // to the wrong app instance
-    defaultApp = loopback.User.app;
-    loopback.User.app = null;
-    User = loopback.User.extend('TestUser', {}, {http: {path: 'test-users'}});
-    AccessToken = loopback.AccessToken.extend('TestAccessToken');
-    User.email = loopback.Email.extend('email');
-    loopback.autoAttach();
+  beforeEach(function setupAppAndModels(done) {
+    // override the global app object provided by test/support.js
+    // and create a local one that does not share state with other tests
+    app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    app.dataSource('db', { connector: 'memory' });
+
+    // setup Email model, it's needed by User tests
+    app.dataSource('email', {
+      connector: loopback.Mail,
+      transports: [{ type: 'STUB' }],
+    });
+    var Email = app.registry.getModel('Email');
+    app.model(Email, { dataSource: 'email' });
+
+    // attach User and related models
+    User = app.registry.createModel('TestUser', {}, {
+      base: 'User',
+      http: { path: 'test-users' },
+    });
+    app.model(User, { dataSource: 'db' });
+
+    AccessToken = app.registry.getModel('AccessToken');
+    app.model(AccessToken, { dataSource: 'db' });
+
+    User.email = Email;
 
     // Update the AccessToken relation to use the subclass of User
     AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
     User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
 
+    // Speed up the password hashing algorithm
+    // for tests using the built-in User model
+    User.settings.saltWorkFactor = 4;
+
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
 
-  });
-
-  beforeEach(function(done) {
-    app.enableAuth();
-    app.use(loopback.token({model: AccessToken}));
+    app.enableAuth({ dataSource: 'db' });
+    app.use(loopback.token({ model: AccessToken }));
     app.use(loopback.rest());
     app.model(User);
 
     User.create(validCredentials, function(err, user) {
+      if (err) return done(err);
       User.create(validCredentialsEmailVerified, done);
-    });
-  });
-
-  afterEach(function(done) {
-    loopback.User.app = defaultApp;
-    User.destroyAll(function(err) {
-      User.accessToken.destroyAll(done);
     });
   });
 
@@ -694,12 +702,19 @@ describe('User', function() {
     var User;
     var AccessToken;
 
-    before(function() {
-      User = loopback.User.extend('RealmUser', {},
-        {realmRequired: true, realmDelimiter: ':'});
-      AccessToken = loopback.AccessToken.extend('RealmAccessToken');
+    beforeEach(function() {
+      User = app.registry.createModel('RealmUser', {}, {
+        base: 'TestUser',
+        realmRequired: true,
+        realmDelimiter: ':',
+      });
 
-      loopback.autoAttach();
+      AccessToken = app.registry.createModel('RealmAccessToken', {}, {
+        base: 'AccessToken',
+      });
+
+      app.model(AccessToken, { dataSource: 'db' });
+      app.model(User, { dataSource: 'db' });
 
       // Update the AccessToken relation to use the subclass of User
       AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
@@ -770,15 +785,6 @@ describe('User', function() {
       });
     });
 
-    afterEach(function(done) {
-      User.deleteAll({realm: 'realm1'}, function(err) {
-        if (err) {
-          return done(err);
-        }
-        User.deleteAll({realm: 'realm2'}, done);
-      });
-    });
-
     it('rejects a user by without realm', function(done) {
       User.login(credentialWithoutRealm, function(err, accessToken) {
         assert(err);
@@ -828,11 +834,11 @@ describe('User', function() {
     });
 
     describe('User.login with realmRequired but no realmDelimiter', function() {
-      before(function() {
+      beforeEach(function() {
         User.settings.realmDelimiter = undefined;
       });
 
-      after(function() {
+      afterEach(function() {
         User.settings.realmDelimiter = ':';
       });
 
@@ -1534,7 +1540,7 @@ describe('User', function() {
   describe('ctor', function() {
     it('exports default Email model', function() {
       expect(User.email, 'User.email').to.be.a('function');
-      expect(User.email.modelName, 'modelName').to.eql('email');
+      expect(User.email.modelName, 'modelName').to.eql('Email');
     });
 
     it('exports default AccessToken model', function() {
