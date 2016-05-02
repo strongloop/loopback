@@ -145,12 +145,10 @@ module.exports = function(Role) {
   });
 
   function isUserClass(modelClass) {
-    if (modelClass) {
-      return modelClass === loopback.User ||
-        modelClass.prototype instanceof loopback.User;
-    } else {
-      return false;
-    }
+    if (!modelClass) return false;
+    var User = modelClass.modelBuilder.models.User;
+    if (!User) return false;
+    return modelClass == User || modelClass.prototype instanceof User;
   }
 
   /*!
