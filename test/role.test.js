@@ -8,6 +8,7 @@ var Application = loopback.Application;
 var ACL = loopback.ACL;
 var async = require('async');
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 
 function checkResult(err, result) {
   // console.log(err, result);
@@ -172,6 +173,14 @@ describe('role model', function() {
   });
 
   it('should support owner role resolver', function() {
+    Role.registerResolver('returnPromise', function(role, context) {
+      return new Promise(function(resolve) {
+        process.nextTick(function() {
+          resolve(true);
+        });
+      });
+    });
+
     var Album = ds.createModel('Album', {
       name: String,
       userId: Number,
@@ -186,10 +195,16 @@ describe('role model', function() {
     });
 
     User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+      Role.isInRole('returnPromise', { principalType: ACL.USER, principalId: user.id },
+      function(err, yes) {
+        assert(!err && yes);
+      });
+
       Role.isInRole(Role.AUTHENTICATED, { principalType: ACL.USER, principalId: user.id },
       function(err, yes) {
         assert(!err && yes);
       });
+
       Role.isInRole(Role.AUTHENTICATED, { principalType: ACL.USER, principalId: null },
       function(err, yes) {
         assert(!err && !yes);
