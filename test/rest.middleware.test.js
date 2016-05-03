@@ -1,11 +1,15 @@
 var path = require('path');
 
 describe('loopback.rest', function() {
-  var MyModel;
+  var app, MyModel;
+
   beforeEach(function() {
-    var ds = app.dataSource('db', { connector: loopback.Memory });
-    MyModel = ds.createModel('MyModel', { name: String });
-    loopback.autoAttach();
+    // override the global app object provided by test/support.js
+    // and create a local one that does not share state with other tests
+    app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    var db = app.dataSource('db', { connector: 'memory' });
+    MyModel = app.registry.createModel('MyModel');
+    MyModel.attachTo(db);
   });
 
   it('works out-of-the-box', function(done) {
@@ -101,7 +105,7 @@ describe('loopback.rest', function() {
   });
 
   it('should honour `remoting.rest.supportedTypes`', function(done) {
-    var app = loopback();
+    var app = loopback({ localRegistry: true });
 
     // NOTE it is crucial to set `remoting` before creating any models
     var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
@@ -117,26 +121,24 @@ describe('loopback.rest', function() {
   });
 
   it('allows models to provide a custom HTTP path', function(done) {
-    var ds = app.dataSource('db', { connector: loopback.Memory });
-    var CustomModel = ds.createModel('CustomModel',
+    var CustomModel = app.registry.createModel('CustomModel',
       { name: String },
       { http: { 'path': 'domain1/CustomModelPath' },
     });
 
-    app.model(CustomModel);
+    app.model(CustomModel, { dataSource: 'db' });
     app.use(loopback.rest());
 
     request(app).get('/domain1/CustomModelPath').expect(200).end(done);
   });
 
   it('should report 200 for url-encoded HTTP path', function(done) {
-    var ds = app.dataSource('db', { connector: loopback.Memory });
-    var CustomModel = ds.createModel('CustomModel',
+    var CustomModel = app.registry.createModel('CustomModel',
       { name: String },
       { http: { path: 'domain%20one/CustomModelPath' },
     });
 
-    app.model(CustomModel);
+    app.model(CustomModel, { dataSource: 'db' });
     app.use(loopback.rest());
 
     request(app).get('/domain%20one/CustomModelPath').expect(200).end(done);
@@ -144,12 +146,12 @@ describe('loopback.rest', function() {
 
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
-    app.enableAuth();
+    app.enableAuth({ dataSource: 'db' });
     app.use(loopback.rest());
 
     givenLoggedInUser(function(err, token) {
       if (err) return done(err);
-      expect(token).instanceOf(app.models.accessToken);
+      expect(token).instanceOf(app.models.AccessToken);
       request(app).get('/users/' + token.userId)
         .set('Authorization', token.id)
         .expect(200)
@@ -268,14 +270,14 @@ describe('loopback.rest', function() {
 
     it('should enable context using loopback.context', function(done) {
       app.use(loopback.context({ enableHttpContext: true }));
-      app.enableAuth();
+      app.enableAuth({ dataSource: 'db' });
       app.use(loopback.rest());
 
       invokeGetToken(done);
     });
 
     it('should enable context with loopback.rest', function(done) {
-      app.enableAuth();
+      app.enableAuth({ dataSource: 'db' });
       app.set('remoting', { context: { enableHttpContext: true }});
       app.use(loopback.rest());
 
@@ -283,10 +285,10 @@ describe('loopback.rest', function() {
     });
 
     it('should support explicit context', function(done) {
-      app.enableAuth();
+      app.enableAuth({ dataSource: 'db' });
       app.use(loopback.context());
       app.use(loopback.token(
-        { model: loopback.getModelByType(loopback.AccessToken) }));
+        { model: app.registry.getModelByType('AccessToken') }));
       app.use(function(req, res, next) {
         loopback.getCurrentContext().set('accessToken', req.accessToken);
         next();
@@ -321,32 +323,26 @@ describe('loopback.rest', function() {
   });
 
   function givenUserModelWithAuth() {
-    // NOTE(bajtos) It is important to create a custom AccessToken model here,
-    // in order to overwrite the entry created by previous tests in
-    // the global model registry
-    app.model('accessToken', {
-      options: {
-        base: 'AccessToken',
-      },
-      dataSource: 'db',
-    });
-    return app.model('user', {
-      options: {
-        base: 'User',
-        relations: {
-          accessTokens: {
-            model: 'accessToken',
-            type: 'hasMany',
-            foreignKey: 'userId',
-          },
-        },
-      },
-      dataSource: 'db',
-    });
+    var AccessToken = app.registry.getModel('AccessToken');
+    app.model(AccessToken, { dataSource: 'db' });
+    var User = app.registry.getModel('User');
+    app.model(User, { dataSource: 'db' });
+
+    // NOTE(bajtos) This is puzzling to me. The built-in User & AccessToken
+    // models should come with both relations already set up, i.e. the
+    // following two lines should not be neccessary.
+    // And it does behave that way when only tests in this file are run.
+    // However, when I run the full test suite (all files), the relations
+    // get broken.
+    AccessToken.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+    User.hasMany(AccessToken, { as: 'accessTokens', foreignKey: 'userId' });
+
+    return User;
   }
+
   function givenLoggedInUser(cb, done) {
     var credentials = { email: 'user@example.com', password: 'pwd' };
-    var User = app.models.user;
+    var User = app.models.User;
     User.create(credentials,
       function(err, user) {
         if (err) return done(err);

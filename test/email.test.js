@@ -37,7 +37,11 @@ describe('Email connector', function() {
 describe('Email and SMTP', function() {
   beforeEach(function() {
     MyEmail = loopback.Email.extend('my-email');
-    loopback.autoAttach();
+    var ds = loopback.createDataSource('email', {
+      connector: loopback.Mail,
+      transports: [{ type: 'STUB' }],
+    });
+    MyEmail.attachTo(ds);
   });
 
   it('should have a send method', function() {

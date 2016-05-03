@@ -5,6 +5,10 @@ var Application = loopback.Application;
 describe('Application', function() {
   var registeredApp = null;
 
+  before(function attachToMemory() {
+    Application.attachTo(loopback.memory());
+  });
+
   it('honors `application.register` - promise variant', function(done) {
     Application.register('rfeng', 'MyTestApp',
       { description: 'My test application' }, function(err, result) {

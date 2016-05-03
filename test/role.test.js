@@ -434,4 +434,28 @@ describe('role model', function() {
       });
     });
   });
+
+  describe('isOwner', function() {
+    it('supports app-local model registry', function(done) {
+      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      app.dataSource('db', { connector: 'memory' });
+      // attach all auth-related models to 'db' datasource
+      app.enableAuth({ dataSource: 'db' });
+
+      var Role = app.models.Role;
+      var User = app.models.User;
+
+      var u = app.registry.findModel('User');
+      var credentials = { email: 'test@example.com', password: 'pass' };
+      User.create(credentials, function(err, user) {
+        if (err) return done(err);
+
+        Role.isOwner(User, user.id, user.id, function(err, result) {
+          if (err) return done(err);
+          expect(result, 'isOwner result').to.equal(true);
+          done();
+        });
+      });
+    });
+  });
 });
