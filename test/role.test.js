@@ -10,7 +10,6 @@ var async = require('async');
 var expect = require('chai').expect;
 
 function checkResult(err, result) {
-  // console.log(err, result);
   assert(!err);
 }
 
@@ -61,7 +60,6 @@ describe('role model', function() {
 
   it('should define role/user relations', function() {
     User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
-      // console.log('User: ', user.id);
       Role.create({ name: 'userRole' }, function(err, role) {
         role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
         function(err, p) {
@@ -72,7 +70,6 @@ describe('role model', function() {
           });
           role.principals(function(err, principals) {
             assert(!err);
-            // console.log(principals);
             assert.equal(principals.length, 1);
             assert.equal(principals[0].principalType, RoleMapping.USER);
             assert.equal(principals[0].principalId, user.id);
@@ -105,7 +102,6 @@ describe('role model', function() {
 
   it('should automatically generate role id', function() {
     User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
-      // console.log('User: ', user.id);
       Role.create({ name: 'userRole' }, function(err, role) {
         assert(role.id);
         role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
@@ -119,7 +115,6 @@ describe('role model', function() {
           });
           role.principals(function(err, principals) {
             assert(!err);
-            // console.log(principals);
             assert.equal(principals.length, 1);
             assert.equal(principals[0].principalType, RoleMapping.USER);
             assert.equal(principals[0].principalId, user.id);
@@ -136,12 +131,9 @@ describe('role model', function() {
 
   it('should support getRoles() and isInRole()', function() {
     User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
-      // console.log('User: ', user.id);
       Role.create({ name: 'userRole' }, function(err, role) {
         role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
         function(err, p) {
-          // Role.find(console.log);
-          // role.principals(console.log);
           Role.isInRole('userRole', { principalType: RoleMapping.USER, principalId: user.id },
           function(err, exists) {
             assert(!err && exists === true);
@@ -230,7 +222,6 @@ describe('role model', function() {
         assert(!err && yes);
       });
 
-      // console.log('User: ', user.id);
       Album.create({ name: 'Album 1', userId: user.id }, function(err, album1) {
         var role = { principalType: ACL.USER, principalId: user.id, model: Album, id: album1.id };
         Role.isInRole(Role.OWNER, role, function(err, yes) {
