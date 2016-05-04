@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 describe('GeoPoint', function() {
   describe('geoPoint.distanceTo(geoPoint, options)', function() {
     it('Get the distance to another `GeoPoint`', function() {
