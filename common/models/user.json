@@ -11,23 +11,12 @@
       "type": "string",
       "required": true
     },
-    "credentials": {
-      "type": "object",
-      "deprecated": true
-    },
-    "challenges": {
-      "type": "object",
-      "deprecated": true
-    },
     "email": {
       "type": "string",
       "required": true
     },
     "emailVerified": "boolean",
-    "verificationToken": "string",
-    "status": "string",
-    "created": "date",
-    "lastUpdated": "date"
+    "verificationToken": "string"
   },
   "options": {
     "caseSensitiveEmail": true
