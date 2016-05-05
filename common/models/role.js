@@ -449,4 +449,6 @@ module.exports = function(Role) {
       if (callback) callback(err, roles);
     });
   };
+
+  Role.validatesUniquenessOf('name', { message: 'already exists' });
 };
