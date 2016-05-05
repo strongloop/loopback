@@ -45,6 +45,7 @@ describe('remoting - integration', function() {
         this.req = this.http.req;
         this.res = this.http.res;
         assert.equal(this.res.statusCode, 200);
+
         done();
       }.bind(this));
     });
@@ -65,6 +66,7 @@ describe('remoting - integration', function() {
         this.res = this.http.res;
         // Request is rejected with 413
         assert.equal(this.res.statusCode, 413);
+
         done();
       }.bind(this));
     });

@@ -260,6 +260,7 @@ describe('role model', function() {
         password: 'jpass',
       }, function(err, u) {
         if (err) return done(err);
+
         user = u;
         User.create({
           username: 'mary',
@@ -267,15 +268,18 @@ describe('role model', function() {
           password: 'mpass',
         }, function(err, u) {
           if (err) return done(err);
+
           Application.create({
             name: 'demo',
           }, function(err, a) {
             if (err) return done(err);
+
             app = a;
             Role.create({
               name: 'admin',
             }, function(err, r) {
               if (err) return done(err);
+
               role = r;
               var principals = [
                 {
@@ -299,7 +303,9 @@ describe('role model', function() {
     it('should resolve user by id', function(done) {
       ACL.resolvePrincipal(ACL.USER, user.id, function(err, u) {
         if (err) return done(err);
+
         expect(u.id).to.eql(user.id);
+
         done();
       });
     });
@@ -307,7 +313,9 @@ describe('role model', function() {
     it('should resolve user by username', function(done) {
       ACL.resolvePrincipal(ACL.USER, user.username, function(err, u) {
         if (err) return done(err);
+
         expect(u.username).to.eql(user.username);
+
         done();
       });
     });
@@ -315,7 +323,9 @@ describe('role model', function() {
     it('should resolve user by email', function(done) {
       ACL.resolvePrincipal(ACL.USER, user.email, function(err, u) {
         if (err) return done(err);
+
         expect(u.email).to.eql(user.email);
+
         done();
       });
     });
@@ -323,7 +333,9 @@ describe('role model', function() {
     it('should resolve app by id', function(done) {
       ACL.resolvePrincipal(ACL.APP, app.id, function(err, a) {
         if (err) return done(err);
+
         expect(a.id).to.eql(app.id);
+
         done();
       });
     });
@@ -331,7 +343,9 @@ describe('role model', function() {
     it('should resolve app by name', function(done) {
       ACL.resolvePrincipal(ACL.APP, app.name, function(err, a) {
         if (err) return done(err);
+
         expect(a.name).to.eql(app.name);
+
         done();
       });
     });
@@ -339,7 +353,9 @@ describe('role model', function() {
     it('should report isMappedToRole by user.username', function(done) {
       ACL.isMappedToRole(ACL.USER, user.username, 'admin', function(err, flag) {
         if (err) return done(err);
+
         expect(flag).to.eql(true);
+
         done();
       });
     });
@@ -347,7 +363,9 @@ describe('role model', function() {
     it('should report isMappedToRole by user.email', function(done) {
       ACL.isMappedToRole(ACL.USER, user.email, 'admin', function(err, flag) {
         if (err) return done(err);
+
         expect(flag).to.eql(true);
+
         done();
       });
     });
@@ -356,7 +374,9 @@ describe('role model', function() {
       function(done) {
         ACL.isMappedToRole(ACL.USER, 'mary', 'admin', function(err, flag) {
           if (err) return done(err);
+
           expect(flag).to.eql(false);
+
           done();
         });
       });
@@ -364,7 +384,9 @@ describe('role model', function() {
     it('should report isMappedToRole by app.name', function(done) {
       ACL.isMappedToRole(ACL.APP, app.name, 'admin', function(err, flag) {
         if (err) return done(err);
+
         expect(flag).to.eql(true);
+
         done();
       });
     });
@@ -372,7 +394,9 @@ describe('role model', function() {
     it('should report isMappedToRole by app.name', function(done) {
       ACL.isMappedToRole(ACL.APP, app.name, 'admin', function(err, flag) {
         if (err) return done(err);
+
         expect(flag).to.eql(true);
+
         done();
       });
     });
@@ -432,6 +456,7 @@ describe('role model', function() {
               assert.equal(users.length, 1);
               assert.equal(users[0].id, user.id);
               assert(User.find.calledWith(query));
+
               done();
             });
           });
@@ -457,7 +482,9 @@ describe('role model', function() {
 
         Role.isOwner(User, user.id, user.id, function(err, result) {
           if (err) return done(err);
+
           expect(result, 'isOwner result').to.equal(true);
+
           done();
         });
       });

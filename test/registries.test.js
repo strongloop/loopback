@@ -43,6 +43,7 @@ describe('Registry', function() {
               expect(bars.map(function(f) {
                 return f.parent;
               })).to.eql(['bar']);
+
               done();
             });
           });

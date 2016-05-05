@@ -32,8 +32,10 @@ describe('Replication', function() {
     }, function(err, created) {
       LocalTestModel.replicate(0, TestModel, function() {
         if (err) return done(err);
+
         TestModel.findOne({ n: RANDOM }, function(err, found) {
           assert.equal(created.id, found.id);
+
           done();
         });
       });

@@ -24,7 +24,9 @@ describe('RemoteConnector', function() {
       foo: 'bar',
     }, function(err, inst) {
       if (err) return done(err);
+
       assert(inst.id);
+
       done();
     });
   });
@@ -35,7 +37,9 @@ describe('RemoteConnector', function() {
     });
     m.save(function(err, data) {
       if (err) return done(err);
+
       assert(data.foo === 'bar');
+
       done();
     });
   });

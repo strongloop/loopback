@@ -46,8 +46,10 @@ describe('hidden properties', function() {
        .expect(200)
        .end(function(err, res) {
          if (err) return done(err);
+
          var product = res.body[0];
          assert.equal(product.secret, undefined);
+
          done();
        });
   });
@@ -60,9 +62,11 @@ describe('hidden properties', function() {
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err);
+
         var category = res.body[0];
         var product = category.products[0];
         assert.equal(product.secret, undefined);
+
         done();
       });
   });

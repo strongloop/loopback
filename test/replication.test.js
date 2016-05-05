@@ -50,6 +50,7 @@ describe('Replication / Change APIs', function() {
     this.createInitalData = function(cb) {
       SourceModel.create({ name: 'foo' }, function(err, inst) {
         if (err) return cb(err);
+
         test.model = inst;
         SourceModel.replicate(TargetModel, cb);
       });
@@ -74,7 +75,9 @@ describe('Replication / Change APIs', function() {
       var calls = mockSourceModelRectify();
       SourceModel.destroyAll({ name: 'John' }, function(err, data) {
         if (err) return done(err);
+
         expect(calls).to.eql(['rectifyAllChanges']);
+
         done();
       });
     });
@@ -84,7 +87,9 @@ describe('Replication / Change APIs', function() {
       var newData = { 'name': 'Janie' };
       SourceModel.update({ name: 'Jane' }, newData, function(err, data) {
         if (err) return done(err);
+
         expect(calls).to.eql(['rectifyAllChanges']);
+
         done();
       });
     });
@@ -102,7 +107,9 @@ describe('Replication / Change APIs', function() {
         },
       ], function(err, results) {
         if (err) return done(err);
+
         expect(calls).to.eql(['rectifyChange']);
+
         done();
       });
     });
@@ -121,7 +128,9 @@ describe('Replication / Change APIs', function() {
         },
       ], function(err, result) {
         if (err) return done(err);
+
         expect(calls).to.eql(['rectifyChange']);
+
         done();
       });
     });
@@ -140,7 +149,9 @@ describe('Replication / Change APIs', function() {
         },
       ], function(err, result) {
         if (err) return done(err);
+
         expect(calls).to.eql(['rectifyChange']);
+
         done();
       });
     });
@@ -183,9 +194,11 @@ describe('Replication / Change APIs', function() {
       var test = this;
       this.SourceModel.create({ name: 'foo' }, function(err) {
         if (err) return done(err);
+
         setTimeout(function() {
           test.SourceModel.changes(test.startingCheckpoint, {}, function(err, changes) {
             assert.equal(changes.length, 1);
+
             done();
           });
         }, 1);
@@ -199,7 +212,9 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
         SourceModel.changes(FUTURE_CHECKPOINT, {}, function(err, changes) {
           if (err) return done(err);
+
           expect(changes).to.be.empty;
+
           done();
         });
       });
@@ -216,6 +231,7 @@ describe('Replication / Change APIs', function() {
         function(cb) {
           sourceModel.find(function(err, result) {
             if (err) return cb(err);
+
             sourceData = result;
             cb();
           });
@@ -223,6 +239,7 @@ describe('Replication / Change APIs', function() {
         function(cb) {
           targetModel.find(function(err, result) {
             if (err) return cb(err);
+
             targetData = result;
             cb();
           });
@@ -231,6 +248,7 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
 
         assert.deepEqual(sourceData, targetData);
+
         done();
       });
     }
@@ -241,6 +259,7 @@ describe('Replication / Change APIs', function() {
 
       this.SourceModel.create({ name: 'foo' }, function(err) {
         if (err) return done(err);
+
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options, function(err, conflicts) {
           if (err) return done(err);
@@ -257,6 +276,7 @@ describe('Replication / Change APIs', function() {
 
       this.SourceModel.create({ name: 'foo' }, function(err) {
         if (err) return done(err);
+
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
         options)
           .then(function(conflicts) {
@@ -291,6 +311,7 @@ describe('Replication / Change APIs', function() {
             if (err) return done(err);
             // '1' should be skipped by replication
             expect(getIds(list)).to.eql(['2']);
+
             next();
           });
         },
@@ -323,6 +344,7 @@ describe('Replication / Change APIs', function() {
             if (err) return done(err);
             // '1' should be skipped by replication
             expect(getIds(list)).to.eql(['2']);
+
             next();
           });
         },
@@ -338,7 +360,9 @@ describe('Replication / Change APIs', function() {
 
       SourceModel.replicate(10, TargetModel, function(err) {
         if (err) return done(err);
+
         expect(diffSince).to.eql([10]);
+
         done();
       });
     });
@@ -353,6 +377,7 @@ describe('Replication / Change APIs', function() {
       SourceModel.replicate(10, TargetModel, {})
         .then(function() {
           expect(diffSince).to.eql([10]);
+
           done();
         })
         .catch(function(err) {
@@ -370,8 +395,10 @@ describe('Replication / Change APIs', function() {
       var since = { source: 1, target: 2 };
       SourceModel.replicate(since, TargetModel, function(err) {
         if (err) return done(err);
+
         expect(sourceSince).to.eql([1]);
         expect(targetSince).to.eql([2]);
+
         done();
       });
     });
@@ -388,6 +415,7 @@ describe('Replication / Change APIs', function() {
         .then(function() {
           expect(sourceSince).to.eql([1]);
           expect(targetSince).to.eql([2]);
+
           done();
         })
         .catch(function(err) {
@@ -410,7 +438,9 @@ describe('Replication / Change APIs', function() {
         function getLastCp(next) {
           SourceModel.currentCheckpoint(function(err, cp) {
             if (err) return done(err);
+
             lastCp = cp;
+
             next();
           });
         },
@@ -425,6 +455,7 @@ describe('Replication / Change APIs', function() {
             TargetModel.find(function(err, list) {
               expect(getIds(list), 'target ids after first sync')
                 .to.include.members(['init']);
+
               next();
             });
           });
@@ -435,6 +466,7 @@ describe('Replication / Change APIs', function() {
         function verify(next) {
           TargetModel.find(function(err, list) {
             expect(getIds(list), 'target ids').to.eql(['init', 'racer']);
+
             next();
           });
         },
@@ -454,11 +486,13 @@ describe('Replication / Change APIs', function() {
             TargetModel,
             function(err, conflicts, newCheckpoints) {
               if (err) return cb(err);
+
               expect(conflicts, 'conflicts').to.eql([]);
               expect(newCheckpoints, 'currentCheckpoints').to.eql({
                 source: sourceCp + 1,
                 target: targetCp + 1,
               });
+
               cb();
             });
         },
@@ -467,7 +501,9 @@ describe('Replication / Change APIs', function() {
       function bumpSourceCheckpoint(cb) {
         SourceModel.checkpoint(function(err, inst) {
           if (err) return cb(err);
+
           sourceCp = inst.seq;
+
           cb();
         });
       }
@@ -475,7 +511,9 @@ describe('Replication / Change APIs', function() {
       function bumpTargetCheckpoint(cb) {
         TargetModel.checkpoint(function(err, inst) {
           if (err) return cb(err);
+
           targetCp = inst.seq;
+
           cb();
         });
       }
@@ -490,11 +528,14 @@ describe('Replication / Change APIs', function() {
         function verify(next) {
           TargetModel.currentCheckpoint(function(err, cp) {
             if (err) return next(err);
+
             TargetModel.getChangeModel().find(
               { where: { checkpoint: { gte: cp }}},
               function(err, changes) {
                 if (err) return done(err);
+
                 expect(changes).to.have.length(0);
+
                 done();
               });
           });
@@ -658,6 +699,7 @@ describe('Replication / Change APIs', function() {
                   cb);
               }
             });
+
             next();
           },
           replicateExpectingSuccess(),
@@ -693,10 +735,13 @@ describe('Replication / Change APIs', function() {
           },
         ], function(err) {
           if (err) return done(err);
+
           SourceModel.replicate(TargetModel, function(err, conflicts) {
             if (err) return done(err);
+
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
+
             done();
           });
         });
@@ -709,6 +754,7 @@ describe('Replication / Change APIs', function() {
     it('type should be UPDATE', function(done) {
       this.conflict.type(function(err, type) {
         assert.equal(type, Change.UPDATE);
+
         done();
       });
     });
@@ -720,6 +766,7 @@ describe('Replication / Change APIs', function() {
         assert.equal(test.model.getId(), sourceChange.getModelId());
         assert.equal(sourceChange.type(), Change.UPDATE);
         assert.equal(targetChange.type(), Change.UPDATE);
+
         done();
       });
     });
@@ -734,6 +781,7 @@ describe('Replication / Change APIs', function() {
           id: test.model.id,
           name: 'target update',
         });
+
         done();
       });
     });
@@ -752,6 +800,7 @@ describe('Replication / Change APIs', function() {
           function(cb) {
             SourceModel.findOne(function(err, inst) {
               if (err) return cb(err);
+
               test.model = inst;
               inst.remove(cb);
             });
@@ -759,16 +808,20 @@ describe('Replication / Change APIs', function() {
           function(cb) {
             TargetModel.findOne(function(err, inst) {
               if (err) return cb(err);
+
               inst.name = 'target update';
               inst.save(cb);
             });
           },
         ], function(err) {
           if (err) return done(err);
+
           SourceModel.replicate(TargetModel, function(err, conflicts) {
             if (err) return done(err);
+
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
+
             done();
           });
         });
@@ -781,6 +834,7 @@ describe('Replication / Change APIs', function() {
     it('type should be DELETE', function(done) {
       this.conflict.type(function(err, type) {
         assert.equal(type, Change.DELETE);
+
         done();
       });
     });
@@ -792,6 +846,7 @@ describe('Replication / Change APIs', function() {
         assert.equal(test.model.getId(), sourceChange.getModelId());
         assert.equal(sourceChange.type(), Change.DELETE);
         assert.equal(targetChange.type(), Change.UPDATE);
+
         done();
       });
     });
@@ -803,6 +858,7 @@ describe('Replication / Change APIs', function() {
           id: test.model.id,
           name: 'target update',
         });
+
         done();
       });
     });
@@ -829,15 +885,19 @@ describe('Replication / Change APIs', function() {
           function(cb) {
             TargetModel.findOne(function(err, inst) {
               if (err) return cb(err);
+
               inst.remove(cb);
             });
           },
         ], function(err) {
           if (err) return done(err);
+
           SourceModel.replicate(TargetModel, function(err, conflicts) {
             if (err) return done(err);
+
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
+
             done();
           });
         });
@@ -850,6 +910,7 @@ describe('Replication / Change APIs', function() {
     it('type should be DELETE', function(done) {
       this.conflict.type(function(err, type) {
         assert.equal(type, Change.DELETE);
+
         done();
       });
     });
@@ -861,6 +922,7 @@ describe('Replication / Change APIs', function() {
         assert.equal(test.model.getId(), sourceChange.getModelId());
         assert.equal(sourceChange.type(), Change.UPDATE);
         assert.equal(targetChange.type(), Change.DELETE);
+
         done();
       });
     });
@@ -872,6 +934,7 @@ describe('Replication / Change APIs', function() {
           id: test.model.id,
           name: 'source update',
         });
+
         done();
       });
     });
@@ -890,6 +953,7 @@ describe('Replication / Change APIs', function() {
           function(cb) {
             SourceModel.findOne(function(err, inst) {
               if (err) return cb(err);
+
               test.model = inst;
               inst.remove(cb);
             });
@@ -897,15 +961,19 @@ describe('Replication / Change APIs', function() {
           function(cb) {
             TargetModel.findOne(function(err, inst) {
               if (err) return cb(err);
+
               inst.remove(cb);
             });
           },
         ], function(err) {
           if (err) return done(err);
+
           SourceModel.replicate(TargetModel, function(err, conflicts) {
             if (err) return done(err);
+
             test.conflicts = conflicts;
             test.conflict = conflicts[0];
+
             done();
           });
         });
@@ -921,6 +989,7 @@ describe('Replication / Change APIs', function() {
     it('detects "create"', function(done) {
       SourceModel.create({}, function(err, inst) {
         if (err) return done(err);
+
         assertChangeRecordedForId(inst.id, done);
       });
     });
@@ -928,10 +997,12 @@ describe('Replication / Change APIs', function() {
     it('detects "updateOrCreate"', function(done) {
       givenReplicatedInstance(function(err, created) {
         if (err) return done(err);
+
         var data = created.toObject();
         created.name = 'updated';
         SourceModel.updateOrCreate(created, function(err, inst) {
           if (err) return done(err);
+
           assertChangeRecordedForId(inst.id, done);
         });
       });
@@ -945,6 +1016,7 @@ describe('Replication / Change APIs', function() {
             this.all(model, query, function(err, list) {
               if (err || (list && list[0]))
                 return callback(err, list && list[0], false);
+
               this.create(model, data, function(err) {
                 callback(err, data, true);
               });
@@ -954,6 +1026,7 @@ describe('Replication / Change APIs', function() {
             this.all(model, query, {}, function(err, list) {
               if (err || (list && list[0]))
                 return callback(err, list && list[0], false);
+
               this.create(model, data, {}, function(err) {
                 callback(err, data, true);
               });
@@ -966,6 +1039,7 @@ describe('Replication / Change APIs', function() {
         { name: 'created' },
         function(err, inst) {
           if (err) return done(err);
+
           assertChangeRecordedForId(inst.id, done);
         });
     });
@@ -973,6 +1047,7 @@ describe('Replication / Change APIs', function() {
     it('detects "deleteById"', function(done) {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
+
         SourceModel.deleteById(inst.id, function(err) {
           assertChangeRecordedForId(inst.id, done);
         });
@@ -982,8 +1057,10 @@ describe('Replication / Change APIs', function() {
     it('detects "deleteAll"', function(done) {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
+
         SourceModel.deleteAll({ name: inst.name }, function(err) {
           if (err) return done(err);
+
           assertChangeRecordedForId(inst.id, done);
         });
       });
@@ -992,11 +1069,13 @@ describe('Replication / Change APIs', function() {
     it('detects "updateAll"', function(done) {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
+
         SourceModel.updateAll(
           { name: inst.name },
           { name: 'updated' },
           function(err) {
             if (err) return done(err);
+
             assertChangeRecordedForId(inst.id, done);
           });
       });
@@ -1005,9 +1084,11 @@ describe('Replication / Change APIs', function() {
     it('detects "prototype.save"', function(done) {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
+
         inst.name = 'updated';
         inst.save(function(err) {
           if (err) return done(err);
+
           assertChangeRecordedForId(inst.id, done);
         });
       });
@@ -1016,8 +1097,10 @@ describe('Replication / Change APIs', function() {
     it('detects "prototype.updateAttributes"', function(done) {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
+
         inst.updateAttributes({ name: 'updated' }, function(err) {
           if (err) return done(err);
+
           assertChangeRecordedForId(inst.id, done);
         });
       });
@@ -1026,6 +1109,7 @@ describe('Replication / Change APIs', function() {
     it('detects "prototype.delete"', function(done) {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
+
         inst.delete(function(err) {
           assertChangeRecordedForId(inst.id, done);
         });
@@ -1035,8 +1119,10 @@ describe('Replication / Change APIs', function() {
     function givenReplicatedInstance(cb) {
       SourceModel.create({ name: 'a-name' }, function(err, inst) {
         if (err) return cb(err);
+
         SourceModel.checkpoint(function(err) {
           if (err) return cb(err);
+
           cb(null, inst);
         });
       });
@@ -1046,8 +1132,10 @@ describe('Replication / Change APIs', function() {
       SourceModel.getChangeModel().getCheckpointModel()
         .current(function(err, cp) {
           if (err) return cb(err);
+
           SourceModel.changes(cp - 1, {}, function(err, pendingChanges) {
             if (err) return cb(err);
+
             expect(pendingChanges, 'list of changes').to.have.length(1);
             var change = pendingChanges[0].toObject();
             expect(change).to.have.property('checkpoint', cp); // sanity check
@@ -1055,6 +1143,7 @@ describe('Replication / Change APIs', function() {
             // NOTE(bajtos) Change.modelId is always String
             // regardless of the type of the changed model's id property
             expect(change).to.have.property('modelId', '' + id);
+
             cb();
           });
         });
@@ -1070,6 +1159,7 @@ describe('Replication / Change APIs', function() {
           SourceModel.create({ id: 'test-instance' }, function(err, result) {
             sourceInstance = result;
             sourceInstanceId = result.id;
+
             next(err);
           });
         },
@@ -1108,7 +1198,9 @@ describe('Replication / Change APIs', function() {
         function verifyTargetModelWasDeleted(next) {
           TargetModel.find(function(err, list) {
             if (err) return next(err);
+
             expect(getIds(list)).to.not.contain(sourceInstance.id);
+
             next();
           });
         },
@@ -1374,6 +1466,7 @@ describe('Replication / Change APIs', function() {
         return function updateInstanceB(next) {
           ClientB.findById(sourceInstanceId, function(err, instance) {
             if (err) return next(err);
+
             instance.name = name;
             instance.save(next);
           });
@@ -1405,6 +1498,7 @@ describe('Replication / Change APIs', function() {
         debug('delete source instance', value);
         sourceInstance.remove(function(err) {
           sourceInstance = null;
+
           next(err);
         });
       };
@@ -1412,11 +1506,14 @@ describe('Replication / Change APIs', function() {
 
     function verifySourceWasReplicated(target) {
       if (!target) target = TargetModel;
+
       return function verify(next) {
         target.findById(sourceInstanceId, function(err, targetInstance) {
           if (err) return next(err);
+
           expect(targetInstance && targetInstance.toObject())
             .to.eql(sourceInstance && sourceInstance.toObject());
+
           next();
         });
       };
@@ -1442,9 +1539,11 @@ describe('Replication / Change APIs', function() {
 
     source.replicate(since, target, function(err, conflicts, cps) {
       if (err) return next(err);
+
       if (conflicts.length === 0) {
         _since[sinceIx] = cps;
       }
+
       next(err, conflicts, cps);
     });
   }
@@ -1462,10 +1561,12 @@ describe('Replication / Change APIs', function() {
     return function doReplicate(next) {
       replicate(source, target, since, function(err, conflicts, cps) {
         if (err) return next(err);
+
         if (conflicts.length) {
           return next(new Error('Unexpected conflicts\n' +
             conflicts.map(JSON.stringify).join('\n')));
         }
+
         next();
       });
     };
@@ -1479,6 +1580,7 @@ describe('Replication / Change APIs', function() {
       var self = this;
       fn(function(err) {
         if (err) return cb(err);
+
         bulkUpdate.call(self, data, cb);
       });
 
@@ -1491,11 +1593,14 @@ describe('Replication / Change APIs', function() {
     return function verify(next) {
       source.findById(id, function(err, expected) {
         if (err) return next(err);
+
         target.findById(id, function(err, actual) {
           if (err) return next(err);
+
           expect(actual && actual.toObject())
             .to.eql(expected && expected.toObject());
           debug('replicated instance: %j', actual);
+
           next();
         });
       });

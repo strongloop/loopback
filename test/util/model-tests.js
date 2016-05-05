@@ -127,6 +127,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
         user.isValid(function(valid) {
           assert(valid === false);
           assert(user.errors.age, 'model should have age error');
+
           done();
         });
       });
@@ -137,6 +138,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
       function(done) {
         User.create({ first: 'Joe', last: 'Bob' }, function(err, user) {
           assert(user instanceof User);
+
           done();
         });
       });
@@ -149,6 +151,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
           assert(user.id);
           assert(!err);
           assert(!user.errors);
+
           done();
         });
       });
@@ -168,6 +171,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
             assert.equal(updatedUser.first, 'updatedFirst');
             assert.equal(updatedUser.last, 'updatedLast');
             assert.equal(updatedUser.age, 100);
+
             done();
           });
         });
@@ -183,6 +187,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
           User.upsert({ first: 'bob', id: 7 }, function(err, updatedUser) {
             assert(!err);
             assert.equal(updatedUser.first, 'bob');
+
             done();
           });
         });
@@ -194,12 +199,16 @@ module.exports = function defineModelTestsWithDataSource(options) {
         User.create({ first: 'joe', last: 'bob' }, function(err, user) {
           User.findById(user.id, function(err, foundUser) {
             if (err) return done(err);
+
             assert.equal(user.id, foundUser.id);
             User.deleteById(foundUser.id, function(err) {
               if (err) return done(err);
+
               User.find({ where: { id: user.id }}, function(err, found) {
                 if (err) return done(err);
+
                 assert.equal(found.length, 0);
+
                 done();
               });
             });
@@ -214,6 +223,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
           User.deleteById(user.id, function(err) {
             User.findById(user.id, function(err, notFound) {
               assert.equal(notFound, null);
+
               done();
             });
           });
@@ -228,6 +238,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
             assert.equal(user.id, 23);
             assert.equal(user.first, 'michael');
             assert.equal(user.last, 'jordan');
+
             done();
           });
         });
@@ -245,6 +256,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
           .on('done', function() {
             User.count({ age: { gt: 99 }}, function(err, count) {
               assert.equal(count, 2);
+
               done();
             });
           });

@@ -20,6 +20,7 @@ describe('loopback.errorHandler(options)', function() {
       .get('/url-does-not-exist')
       .end(function(err, res) {
         assert.ok(res.error.text.match(/<ul id="stacktrace"><li> &nbsp; &nbsp;at raiseUrlNotFoundError/));
+
         done();
       });
   });
@@ -35,6 +36,7 @@ describe('loopback.errorHandler(options)', function() {
       .get('/url-does-not-exist')
       .end(function(err, res) {
         assert.ok(res.error.text.match(/<ul id="stacktrace"><\/ul>/));
+
         done();
       });
   });
@@ -58,6 +60,7 @@ describe('loopback.errorHandler(options)', function() {
       //assert
       expect(errorLogged)
         .to.have.property('message', 'Cannot GET /url-does-not-exist');
+
       done();
     });
   });
