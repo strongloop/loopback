@@ -39,10 +39,12 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql([
           'initial', 'session', 'auth', 'parse',
           'main', 'routes', 'files', 'final'
         ]);
+
         done();
       });
     });
@@ -53,7 +55,9 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(['first', 'second']);
+
         done();
       });
     });
@@ -65,7 +69,9 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(['routes:before', 'main', 'routes:after']);
+
         done();
       });
     });
@@ -85,7 +91,9 @@ describe('app', function() {
       expect(found).have.property('phase', 'routes:before');
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(['my-handler', 'extra-handler']);
+
         done();
       });
     });
@@ -103,7 +111,9 @@ describe('app', function() {
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
           if (err) return done(err);
+
           expect(steps).to.eql(['my-handler']);
+
           done();
         });
       });
@@ -121,7 +131,9 @@ describe('app', function() {
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
           if (err) return done(err);
+
           expect(steps).to.eql(['my-handler']);
+
           done();
         });
       });
@@ -131,6 +143,7 @@ describe('app', function() {
 
       app.middleware('initial', function(req, res, next) {
         steps.push('initial');
+
         next(expectedError);
       });
 
@@ -138,12 +151,15 @@ describe('app', function() {
       app.use(function errorHandler(err, req, res, next) {
         expect(err).to.equal(expectedError);
         steps.push('error');
+
         next();
       });
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(['initial', 'error']);
+
         done();
       });
     });
@@ -157,6 +173,7 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, function(err) {
         expect(err).to.equal(expectedError);
+
         done();
       });
     });
@@ -175,12 +192,15 @@ describe('app', function() {
 
       app.middleware('initial', function(err, req, res, next) {
         handledError = err;
+
         next();
       });
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(handledError).to.equal(expectedError);
+
         done();
       });
     });
@@ -193,7 +213,9 @@ describe('app', function() {
         function(url, next) { executeMiddlewareHandlers(app, url, next); },
         function(err) {
           if (err) return done(err);
+
           expect(steps).to.eql(['/scope', '/scope/item']);
+
           done();
         });
     });
@@ -206,7 +228,9 @@ describe('app', function() {
         function(url, next) { executeMiddlewareHandlers(app, url, next); },
         function(err) {
           if (err) return done(err);
+
           expect(steps).to.eql(['/a', '/b']);
+
           done();
         });
     });
@@ -219,7 +243,9 @@ describe('app', function() {
         function(url, next) { executeMiddlewareHandlers(app, url, next); },
         function(err) {
           if (err) return done(err);
+
           expect(steps).to.eql(['/a', '/b', '/scope']);
+
           done();
         });
     });
@@ -227,12 +253,15 @@ describe('app', function() {
     it('sets req.url to a sub-path', function(done) {
       app.middleware('initial', ['/scope'], function(req, res, next) {
         steps.push(req.url);
+
         next();
       });
 
       executeMiddlewareHandlers(app, '/scope/id', function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(['/id']);
+
         done();
       });
     });
@@ -244,11 +273,13 @@ describe('app', function() {
       app.middleware('initial', function(rq, rs, next) {
         req = rq;
         res = rs;
+
         next();
       });
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(getObjectAndPrototypeKeys(req), 'request').to.include.members([
           'accepts',
           'get',
@@ -278,12 +309,15 @@ describe('app', function() {
       var reqProps;
       app.middleware('initial', function(req, res, next) {
         reqProps = { baseUrl: req.baseUrl, originalUrl: req.originalUrl };
+
         next();
       });
 
       executeMiddlewareHandlers(app, '/test/url', function(err) {
         if (err) return done(err);
+
         expect(reqProps).to.eql({ baseUrl: '', originalUrl: '/test/url' });
+
         done();
       });
     });
@@ -295,7 +329,9 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, '/test', function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(['route', 'files']);
+
         done();
       });
     });
@@ -315,7 +351,9 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done;
+
         expect(steps).to.eql(numbers);
+
         done();
       });
     });
@@ -329,6 +367,7 @@ describe('app', function() {
           mountpath: req.app.mountpath,
           parent: req.app.parent
         };
+
         next();
       });
       subapp.on('mount', function() { mountWasEmitted = true; });
@@ -337,11 +376,13 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, '/mountpath/test', function(err) {
         if (err) return done(err);
+
         expect(mountWasEmitted, 'mountWasEmitted').to.be.true;
         expect(data).to.eql({
           mountpath: '/mountpath',
           parent: app
         });
+
         done();
       });
     });
@@ -355,25 +396,30 @@ describe('app', function() {
       subapp.use(function verifyTestAssumptions(req, res, next) {
         expect(req.__proto__).to.not.equal(expected.req);
         expect(res.__proto__).to.not.equal(expected.res);
+
         next();
       });
 
       app.middleware('initial', function saveOriginalValues(req, res, next) {
         expected.req = req.__proto__;
         expected.res = res.__proto__;
+
         next();
       });
       app.middleware('routes', subapp);
       app.middleware('final', function saveActualValues(req, res, next) {
         actual.req = req.__proto__;
         actual.res = res.__proto__;
+
         next();
       });
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(actual.req, 'req').to.equal(expected.req);
         expect(actual.res, 'res').to.equal(expected.res);
+
         done();
       });
     });
@@ -388,6 +434,7 @@ describe('app', function() {
     function pathSavingHandler() {
       return function(req, res, next) {
         steps.push(req.originalUrl);
+
         next();
       };
     }
@@ -411,6 +458,7 @@ describe('app', function() {
         var args = Array.prototype.slice.apply(arguments);
         return function(req, res, next) {
           steps.push(args);
+
           next();
         };
       };
@@ -461,12 +509,14 @@ describe('app', function() {
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql([
           ['before'],
           [expectedConfig],
           ['after', 2],
           [{x: 1}]
         ]);
+
         done();
       });
     });
@@ -477,6 +527,7 @@ describe('app', function() {
         function factory() {
           return function(req, res, next) {
             steps.push(req.originalUrl);
+
             next();
           };
         },
@@ -490,7 +541,9 @@ describe('app', function() {
         function(url, next) { executeMiddlewareHandlers(app, url, next); },
         function(err) {
           if (err) return done(err);
+
           expect(steps).to.eql(['/a', '/b', '/scope']);
+
           done();
         });
     });
@@ -547,13 +600,16 @@ describe('app', function() {
       names.forEach(function(it) {
         app.middleware(it, function(req, res, next) {
           steps.push(it);
+
           next();
         });
       });
 
       executeMiddlewareHandlers(app, function(err) {
         if (err) return done(err);
+
         expect(steps).to.eql(names);
+
         done();
       });
     }
@@ -786,6 +842,7 @@ describe('app', function() {
 
       app.listen(function() {
         expect(app.get('port'), 'port').to.not.equal(0);
+
         done();
       });
     });
@@ -799,6 +856,7 @@ describe('app', function() {
         var host = process.platform === 'win32' ? 'localhost' : app.get('host');
         var expectedUrl = 'http://' + host + ':' + app.get('port') + '/';
         expect(app.get('url'), 'url').to.equal(expectedUrl);
+
         done();
       });
     });
@@ -809,6 +867,7 @@ describe('app', function() {
       app.listen(0, '127.0.0.1', function() {
         expect(app.get('port'), 'port').to.not.equal(0).and.not.equal(1);
         expect(this.address().address).to.equal('127.0.0.1');
+
         done();
       });
     });
@@ -819,6 +878,7 @@ describe('app', function() {
         app.set('port', 1);
         app.listen(0).on('listening', function() {
           expect(app.get('port'), 'port') .to.not.equal(0).and.not.equal(1);
+
           done();
         });
       }
@@ -833,6 +893,7 @@ describe('app', function() {
       app.listen()
         .on('listening', function() {
           expect(this.address().address).to.equal('127.0.0.1');
+
           done();
         });
     });

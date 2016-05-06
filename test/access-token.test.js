@@ -149,7 +149,8 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, {userId: userId});
+          assert.deepEqual(res.body, { userId: userId });
+
           done();
         });
     });
@@ -164,7 +165,8 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, {userId: userId, state: 1});
+          assert.deepEqual(res.body, { userId: userId, state: 1 });
+
           done();
         });
     });
@@ -179,7 +181,8 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, {userId: userId, state: 1});
+          assert.deepEqual(res.body, { userId: userId, state: 1 });
+
           done();
         });
     });
@@ -188,6 +191,7 @@ describe('loopback.token(options)', function() {
     var tokenStub = { id: 'stub id' };
     app.use(function(req, res, next) {
       req.accessToken = tokenStub;
+
       next();
     });
     app.use(loopback.token({ model: Token }));
@@ -200,7 +204,9 @@ describe('loopback.token(options)', function() {
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err);
+
         expect(res.body).to.eql(tokenStub);
+
         done();
       });
   });
@@ -211,6 +217,7 @@ describe('loopback.token(options)', function() {
       var tokenStub = { id: 'stub id' };
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
+
         next();
       });
       app.use(loopback.token({ model: Token }));
@@ -223,7 +230,9 @@ describe('loopback.token(options)', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.eql(tokenStub);
+
           done();
         });
     });
@@ -234,6 +243,7 @@ describe('loopback.token(options)', function() {
       var tokenStub = { id: 'stub id' };
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
+
         next();
       });
       app.use(loopback.token({
@@ -249,7 +259,9 @@ describe('loopback.token(options)', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.eql(tokenStub);
+
           done();
         });
     });
@@ -262,6 +274,7 @@ describe('loopback.token(options)', function() {
 
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
+
         next();
       });
       app.use(loopback.token({
@@ -278,12 +291,14 @@ describe('loopback.token(options)', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.eql({
             id: token.id,
             ttl: token.ttl,
             userId: token.userId,
             created: token.created.toJSON(),
           });
+
           done();
         });
     });
@@ -306,6 +321,7 @@ describe('AccessToken', function() {
   it('should be validateable', function(done) {
     this.token.validate(function(err, isValid) {
       assert(isValid);
+
       done();
     });
   });
@@ -321,7 +337,9 @@ describe('AccessToken', function() {
 
       Token.findForRequest(req, function(err, token) {
         if (err) return done(err);
+
         expect(token.id).to.eql(expectedTokenId);
+
         done();
       });
     });
@@ -355,9 +373,11 @@ describe('app.enableAuth()', function() {
         if (err) {
           return done(err);
         }
+
         var errorResponse = res.body.error;
         assert(errorResponse);
         assert.equal(errorResponse.code, 'AUTHORIZATION_REQUIRED');
+
         done();
       });
   });
@@ -371,9 +391,11 @@ describe('app.enableAuth()', function() {
         if (err) {
           return done(err);
         }
+
         var errorResponse = res.body.error;
         assert(errorResponse);
         assert.equal(errorResponse.code, 'ACCESS_DENIED');
+
         done();
       });
   });
@@ -387,9 +409,11 @@ describe('app.enableAuth()', function() {
         if (err) {
           return done(err);
         }
+
         var errorResponse = res.body.error;
         assert(errorResponse);
         assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+
         done();
       });
   });
@@ -403,9 +427,11 @@ describe('app.enableAuth()', function() {
         if (err) {
           return done(err);
         }
+
         var errorResponse = res.body.error;
         assert(errorResponse);
         assert.equal(errorResponse.code, 'AUTHORIZATION_REQUIRED');
+
         done();
       });
   });
@@ -436,7 +462,9 @@ describe('app.enableAuth()', function() {
       .expect('Content-Type', /json/)
       .end(function(err, res) {
         if (err) return done(err);
+
         expect(res.body.token.id).to.eql(token.id);
+
         done();
       });
   });
@@ -446,7 +474,9 @@ function createTestingToken(done) {
   var test = this;
   Token.create({userId: '123'}, function(err, token) {
     if (err) return done(err);
+
     test.token = token;
+
     done();
   });
 }

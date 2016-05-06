@@ -464,7 +464,9 @@ describe('role model', function() {
 
         Role.isOwner(User, user.id, user.id, function(err, result) {
           if (err) return done(err);
+
           expect(result, 'isOwner result').to.equal(true);
+
           done();
         });
       });

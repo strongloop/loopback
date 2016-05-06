@@ -114,11 +114,14 @@ describe('Replication over REST', function() {
       it('allows pull from server', function(done) {
         RemoteCar.replicate(LocalCar, function(err, conflicts, cps) {
           if (err) return done(err);
+
           if (conflicts.length) return done(conflictError(conflicts));
 
           LocalCar.find(function(err, list) {
             if (err) return done(err);
+
             expect(list.map(carToString)).to.include.members(serverCars);
+
             done();
           });
         });
@@ -137,11 +140,14 @@ describe('Replication over REST', function() {
       it('allows pull from server', function(done) {
         RemoteCar.replicate(LocalCar, function(err, conflicts, cps) {
           if (err) return done(err);
+
           if (conflicts.length) return done(conflictError(conflicts));
 
           LocalCar.find(function(err, list) {
             if (err) return done(err);
+
             expect(list.map(carToString)).to.include.members(serverCars);
+
             done();
           });
         });
@@ -150,11 +156,14 @@ describe('Replication over REST', function() {
       it('allows push to the server', function(done) {
         LocalCar.replicate(RemoteCar, function(err, conflicts, cps) {
           if (err) return done(err);
+
           if (conflicts.length) return done(conflictError(conflicts));
 
           ServerCar.find(function(err, list) {
             if (err) return done(err);
+
             expect(list.map(carToString)).to.include.members(clientCars);
+
             done();
           });
         });
@@ -224,6 +233,7 @@ describe('Replication over REST', function() {
       it('allows reverse resolve() on the client', function(done) {
         RemoteCar.replicate(LocalCar, function(err, conflicts) {
           if (err) return done(err);
+
           expect(conflicts, 'conflicts').to.have.length(1);
 
           // By default, conflicts are always resolved by modifying
@@ -238,7 +248,9 @@ describe('Replication over REST', function() {
 
             RemoteCar.replicate(LocalCar, function(err, conflicts) {
               if (err) return done(err);
+
               if (conflicts.length) return done(conflictError(conflicts));
+
               done();
             });
           });
@@ -248,6 +260,7 @@ describe('Replication over REST', function() {
       it('rejects resolve() on the server', function(done) {
         RemoteCar.replicate(LocalCar, function(err, conflicts) {
           if (err) return done(err);
+
           expect(conflicts, 'conflicts').to.have.length(1);
           conflicts[0].resolveUsingSource(expectHttpError(401, done));
         });
@@ -262,13 +275,17 @@ describe('Replication over REST', function() {
       it('allows resolve() on the client', function(done) {
         LocalCar.replicate(RemoteCar, function(err, conflicts) {
           if (err) return done(err);
+
           expect(conflicts).to.have.length(1);
 
           conflicts[0].resolveUsingSource(function(err) {
             if (err) return done(err);
+
             LocalCar.replicate(RemoteCar, function(err, conflicts) {
               if (err) return done(err);
+
               if (conflicts.length) return done(conflictError(conflicts));
+
               done();
             });
           });
@@ -278,13 +295,17 @@ describe('Replication over REST', function() {
       it('allows resolve() on the server', function(done) {
         RemoteCar.replicate(LocalCar, function(err, conflicts) {
           if (err) return done(err);
+
           expect(conflicts).to.have.length(1);
 
           conflicts[0].resolveUsingSource(function(err) {
             if (err) return done(err);
+
             RemoteCar.replicate(LocalCar, function(err, conflicts) {
               if (err) return done(err);
+
               if (conflicts.length) return done(conflictError(conflicts));
+
               done();
             });
           });
@@ -298,10 +319,13 @@ describe('Replication over REST', function() {
       setAccessToken(aliceToken);
       RemoteUser.replicate(LocalUser, function(err, conflicts, cps) {
         if (err) return done(err);
+
         if (conflicts.length) return done(conflictError(conflicts));
+
         LocalUser.find(function(err, users) {
           var userNames = users.map(function(u) { return u.username; });
           expect(userNames).to.eql([ALICE.username]);
+
           done();
         });
       });
@@ -315,7 +339,9 @@ describe('Replication over REST', function() {
           setAccessToken(aliceToken);
           LocalUser.replicate(RemoteUser, function(err, conflicts) {
             if (err) return next(err);
+
             if (conflicts.length) return next(conflictError(conflicts));
+
             next();
           });
         },
@@ -323,8 +349,10 @@ describe('Replication over REST', function() {
         function verify(next) {
           RemoteUser.findById(aliceId, function(err, found) {
             if (err) return next(err);
+
             expect(found.toObject())
               .to.have.property('fullname', 'Alice Smith');
+
             next();
           });
         }
@@ -340,7 +368,9 @@ describe('Replication over REST', function() {
           LocalUser.replicate(RemoteUser, function(err, conflicts) {
             if (!err)
               return next(new Error('Replicate should have failed.'));
+
             expect(err).to.have.property('statusCode', 401); // or 403?
+
             next();
           });
         },
@@ -348,8 +378,10 @@ describe('Replication over REST', function() {
         function verify(next) {
           ServerUser.findById(aliceId, function(err, found) {
             if (err) return next(err);
+
             expect(found.toObject())
               .to.not.have.property('fullname');
+
             next();
           });
         }
@@ -461,6 +493,7 @@ describe('Replication over REST', function() {
 
     serverApp.use(function(req, res, next) {
       debug(req.method + ' ' + req.path);
+
       next();
     });
     serverApp.use(loopback.token({ model: ServerToken }));
@@ -472,6 +505,7 @@ describe('Replication over REST', function() {
     serverApp.listen(function() {
       serverUrl = serverApp.get('url').replace(/\/+$/, '');
       request = supertest(serverUrl);
+
       done();
     });
   }
@@ -527,18 +561,22 @@ describe('Replication over REST', function() {
       function(next) {
         ServerUser.create([ALICE, PETER, EMERY], function(err, created) {
           if (err) return next(err);
+
           aliceId = created[0].id;
           peterId = created[1].id;
+
           next();
         });
       },
       function(next) {
         ServerUser.login(ALICE, function(err, token) {
           if (err) return next(err);
+
           aliceToken = token.id;
 
           ServerUser.login(PETER, function(err, token) {
             if (err) return next(err);
+
             peterToken = token.id;
 
             ServerUser.login(EMERY, function(err, token) {
@@ -557,7 +595,9 @@ describe('Replication over REST', function() {
           ],
           function(err, cars) {
             if (err) return next(err);
+
             serverCars = cars.map(carToString);
+
             next();
           });
       }
@@ -574,7 +614,9 @@ describe('Replication over REST', function() {
           [{ maker: 'Local', model: 'Custom' }],
           function(err, cars) {
             if (err) return next(err);
+
             clientCars = cars.map(carToString);
+
             next();
           });
       },
@@ -584,9 +626,12 @@ describe('Replication over REST', function() {
   function seedConflict(done) {
     LocalCar.replicate(ServerCar, function(err, conflicts) {
       if (err) return done(err);
+
       if (conflicts.length) return done(conflictError(conflicts));
+
       ServerCar.replicate(LocalCar, function(err, conflicts) {
         if (err) return done(err);
+
         if (conflicts.length) return done(conflictError(conflicts));
 
         // Hard-coded, see the seed data above
@@ -595,6 +640,7 @@ describe('Replication over REST', function() {
         new LocalCar({ id: conflictedCarId })
           .updateAttributes({ model: 'Client' }, function(err, c) {
             if (err) return done(err);
+
             new ServerCar({ id: conflictedCarId })
               .updateAttributes({ model: 'Server' }, done);
           });
@@ -612,7 +658,9 @@ describe('Replication over REST', function() {
   function expectHttpError(code, done) {
     return function(err) {
       if (!err) return done(new Error('The method should have failed.'));
+
       expect(err).to.have.property('statusCode', code);
+
       done();
     };
   }
@@ -620,7 +668,9 @@ describe('Replication over REST', function() {
   function replicateServerToLocal(next) {
     ServerUser.replicate(LocalUser, function(err, conflicts) {
       if (err) return next(err);
+
       if (conflicts.length) return next(conflictError(conflicts));
+
       next();
     });
   }
