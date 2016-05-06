@@ -22,6 +22,7 @@ describe('PersistedModel.createChangeStream()', function() {
         changes.on('data', function(change) {
           expect(change.type).to.equal('create');
           changes.destroy();
+
           done();
         });
 
@@ -36,6 +37,7 @@ describe('PersistedModel.createChangeStream()', function() {
           changes.on('data', function(change) {
             expect(change.type).to.equal('update');
             changes.destroy();
+
             done();
           });
           newScore.updateAttributes({
@@ -52,6 +54,7 @@ describe('PersistedModel.createChangeStream()', function() {
           changes.on('data', function(change) {
             expect(change.type).to.equal('remove');
             changes.destroy();
+
             done();
           });
 

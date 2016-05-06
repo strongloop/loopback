@@ -30,10 +30,13 @@ describe('users - integration', function() {
     app.models.AccessToken.belongsTo(app.models.User);
     app.models.User.destroyAll(function(err) {
       if (err) return done(err);
+
       app.models.post.destroyAll(function(err) {
         if (err) return done(err);
+
         app.models.blog.destroyAll(function(err) {
           if (err) return done(err);
+
           done();
         });
       });
@@ -49,8 +52,10 @@ describe('users - integration', function() {
         .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.id).to.exist;
           userId = res.body.id;
+
           done();
         });
     });
@@ -61,11 +66,11 @@ describe('users - integration', function() {
       this.post(url)
         .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.id).to.exist;
           accessToken = res.body.id;
+
           done();
         });
     });
@@ -75,12 +80,12 @@ describe('users - integration', function() {
       this.post(url)
         .send({title: 'T1', content: 'C1'})
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.title).to.be.eql('T1');
           expect(res.body.content).to.be.eql('C1');
           expect(res.body.userId).to.be.eql(userId);
+
           done();
         });
     });
@@ -91,13 +96,13 @@ describe('users - integration', function() {
       var url = '/api/posts?filter={"include":{"user":"accessTokens"}}';
       this.get(url)
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body).to.have.property('length', 1);
           var post = res.body[0];
           expect(post.user).to.have.property('username', 'x');
           expect(post.user).to.not.have.property('accessTokens');
+
           done();
         });
     });
@@ -113,11 +118,11 @@ describe('users - integration', function() {
       this.post(url)
         .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.id).to.exist;
           userId = res.body.id;
+
           done();
         });
     });
@@ -128,11 +133,11 @@ describe('users - integration', function() {
       this.post(url)
         .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.id).to.exist;
           accessToken = res.body.id;
+
           done();
         });
     });
@@ -146,9 +151,11 @@ describe('users - integration', function() {
             console.error(err);
             return done(err);
           }
+
           expect(res.body.title).to.be.eql('T1');
           expect(res.body.content).to.be.eql('C1');
           expect(res.body.userId).to.be.eql(userId);
+
           done();
         });
     });
@@ -157,13 +164,13 @@ describe('users - integration', function() {
       var url = '/api/blogs?filter={"include":{"user":"accessTokens"}}';
       this.get(url)
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body).to.have.property('length', 1);
           var blog = res.body[0];
           expect(blog.user).to.have.property('username', 'x');
           expect(blog.user).to.not.have.property('accessTokens');
+
           done();
         });
     });

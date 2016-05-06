@@ -137,6 +137,7 @@ describe('access control - integration', function() {
     var userCounter;
     function newUserData() {
       userCounter = userCounter ? ++userCounter : 1;
+
       return {
         email: 'new-' + userCounter + '@test.test',
         password: 'test'
@@ -214,6 +215,7 @@ describe('access control - integration', function() {
           balance: 100
         }, function(err, act) {
           self.url = '/api/accounts/' + act.id;
+
           done();
         });
 

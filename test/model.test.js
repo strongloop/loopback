@@ -148,6 +148,7 @@ describe.onServer('Remote Methods', function() {
             User.destroyAll(function() {
               User.count(function(err, count) {
                 assert.equal(count, 0);
+
                 done();
               });
             });
@@ -164,7 +165,9 @@ describe.onServer('Remote Methods', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           assert.equal(res.body, 123);
+
           done();
         });
     });
@@ -174,12 +177,12 @@ describe.onServer('Remote Methods', function() {
         .get('/users/not-found')
         .expect(404)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var errorResponse = res.body.error;
           assert(errorResponse);
           assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+
           done();
         });
     });
@@ -192,6 +195,7 @@ describe.onServer('Remote Methods', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           var userId = res.body.id;
           assert(userId);
           request(app)
@@ -200,8 +204,10 @@ describe.onServer('Remote Methods', function() {
             .expect(200)
             .end(function(err, res) {
               if (err) return done(err);
+
               assert.equal(res.body.first, 'x', 'first should be x');
               assert(res.body.last === undefined, 'last should not be present');
+
               done();
             });
         });
@@ -215,6 +221,7 @@ describe.onServer('Remote Methods', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           var userId = res.body.id;
           assert(userId);
           request(app)
@@ -224,6 +231,7 @@ describe.onServer('Remote Methods', function() {
             .expect(200)
             .end(function(err, res) {
               if (err) return done(err);
+
               var post = res.body;
               request(app)
                 .get('/users/' + userId + '?filter[include]=posts')
@@ -231,9 +239,11 @@ describe.onServer('Remote Methods', function() {
                 .expect(200)
                 .end(function(err, res) {
                   if (err) return done(err);
+
                   assert.equal(res.body.first, 'x', 'first should be x');
                   assert.equal(res.body.last, 'y', 'last should be y');
                   assert.deepEqual(post, res.body.posts[0]);
+
                   done();
                 });
             });
@@ -248,6 +258,7 @@ describe.onServer('Remote Methods', function() {
 
       User.beforeRemote('create', function(ctx, user, next) {
         hookCalled = true;
+
         next();
       });
 
@@ -259,7 +270,9 @@ describe.onServer('Remote Methods', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           assert(hookCalled, 'hook wasnt called');
+
           done();
         });
     });
@@ -273,11 +286,13 @@ describe.onServer('Remote Methods', function() {
       User.beforeRemote('create', function(ctx, user, next) {
         assert(!afterCalled);
         beforeCalled = true;
+
         next();
       });
       User.afterRemote('create', function(ctx, user, next) {
         assert(beforeCalled);
         afterCalled = true;
+
         next();
       });
 
@@ -289,8 +304,10 @@ describe.onServer('Remote Methods', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           assert(beforeCalled, 'before hook was not called');
           assert(afterCalled, 'after hook was not called');
+
           done();
         });
     });
@@ -301,14 +318,17 @@ describe.onServer('Remote Methods', function() {
       var actualError = 'hook not called';
       User.afterRemoteError('login', function(ctx, next) {
         actualError = ctx.error;
+
         next();
       });
 
       request(app).get('/users/sign-in?username=bob&password=123')
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(actualError)
             .to.have.property('message', 'bad username and password!');
+
           done();
         });
     });
@@ -327,6 +347,7 @@ describe.onServer('Remote Methods', function() {
           assert(ctx.res);
           assert(ctx.res.write);
           assert(ctx.res.end);
+
           next();
         });
 
@@ -338,7 +359,9 @@ describe.onServer('Remote Methods', function() {
           .expect(200)
           .end(function(err, res) {
             if (err) return done(err);
+
             assert(hookCalled);
+
             done();
           });
       });
@@ -356,6 +379,7 @@ describe.onServer('Remote Methods', function() {
           assert(ctx.res);
           assert(ctx.res.write);
           assert(ctx.res.end);
+
           next();
         });
 
@@ -367,7 +391,9 @@ describe.onServer('Remote Methods', function() {
           .expect(200)
           .end(function(err, res) {
             if (err) return done(err);
+
             assert(hookCalled);
+
             done();
           });
       });
@@ -392,6 +418,7 @@ describe.onServer('Remote Methods', function() {
               book.chapters({where: {title: 'Chapter 1'}}, function(err, chapters) {
                 assert.equal(chapters.length, 1);
                 assert.equal(chapters[0].title, 'Chapter 1');
+
                 done();
               });
             });
@@ -537,6 +564,7 @@ describe.onServer('Remote Methods', function() {
     it('Get the Source Id', function(done) {
       User.getSourceId(function(err, id) {
         assert.equal('memory-user', id);
+
         done();
       });
     });
@@ -556,6 +584,7 @@ describe.onServer('Remote Methods', function() {
         if (err) return done(err);
 
         assert.equal(result, current + 1);
+
         done();
       });
 
@@ -655,7 +684,9 @@ describe.onServer('Remote Methods', function() {
       app.model(TestModel, { dataSource: 'db' });
       TestModel.getApp(function(err, a) {
         if (err) return done(err);
+
         expect(a).to.equal(app);
+
         done();
       });
       // fails on time-out when not implemented correctly
@@ -664,7 +695,9 @@ describe.onServer('Remote Methods', function() {
     it('calls the callback after attached', function(done) {
       TestModel.getApp(function(err, a) {
         if (err) return done(err);
+
         expect(a).to.equal(app);
+
         done();
       });
       app.model(TestModel, { dataSource: 'db' });

@@ -67,6 +67,7 @@ describe('User', function() {
 
     User.create(validCredentials, function(err, user) {
       if (err) return done(err);
+
       User.create(validCredentialsEmailVerified, done);
     });
   });
@@ -77,6 +78,7 @@ describe('User', function() {
         assert(!err);
         assert(user.id);
         assert(user.email);
+
         done();
       });
     });
@@ -85,8 +87,10 @@ describe('User', function() {
       User.settings.caseSensitiveEmail = false;
       User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
         if (err) return done(err);
+
         assert(user.id);
         assert.equal(user.email, user.email.toLowerCase());
+
         done();
       });
     });
@@ -94,9 +98,11 @@ describe('User', function() {
     it('Create a new user (email case-sensitive)', function(done) {
       User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
         if (err) return done(err);
+
         assert(user.id);
         assert(user.email);
         assert.notEqual(user.email, user.email.toLowerCase());
+
         done();
       });
     });
@@ -110,8 +116,9 @@ describe('User', function() {
         User.findById(user.id, function(err, user) {
           assert(user.id);
           assert(user.email);
-          assert.deepEqual(user.credentials, {cert: 'xxxxx', key: '111'});
-          assert.deepEqual(user.challenges, {x: 'X', a: 1});
+          assert.deepEqual(user.credentials, { cert: 'xxxxx', key: '111' });
+          assert.deepEqual(user.challenges, { x: 'X', a: 1 });
+
           done();
         });
       });
@@ -138,6 +145,7 @@ describe('User', function() {
 
       User.create({email: 'c@d.com'}, function(err) {
         assert(err);
+
         done();
       });
     });
@@ -145,6 +153,7 @@ describe('User', function() {
     it('Requires a valid email', function(done) {
       User.create({email: 'foo@', password: '123'}, function(err) {
         assert(err);
+
         done();
       });
     });
@@ -153,6 +162,7 @@ describe('User', function() {
       User.create({email: 'a@b.com', password: 'foobar'}, function() {
         User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
           assert(err, 'should error because the email is not unique!');
+
           done();
         });
       });
@@ -162,8 +172,10 @@ describe('User', function() {
       User.settings.caseSensitiveEmail = false;
       User.create({email: 'A@b.com', password: 'foobar'}, function(err) {
         if (err) return done(err);
-        User.create({email: 'a@b.com', password: 'batbaz'}, function(err) {
+
+        User.create({ email: 'a@b.com', password: 'batbaz' }, function(err) {
           assert(err, 'should error because the email is not unique!');
+
           done();
         });
       });
@@ -173,7 +185,9 @@ describe('User', function() {
       User.create({email: 'A@b.com', password: 'foobar'}, function(err, user1) {
         User.create({email: 'a@b.com', password: 'batbaz'}, function(err, user2) {
           if (err) return done(err);
+
           assert.notEqual(user1.email, user2.email);
+
           done();
         });
       });
@@ -183,6 +197,7 @@ describe('User', function() {
       User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function() {
         User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function(err) {
           assert(err, 'should error because the username is not unique!');
+
           done();
         });
       });
@@ -194,6 +209,7 @@ describe('User', function() {
           assert(!accessToken, 'should not create a accessToken without a valid password');
           assert(err, 'should not login without a password');
           assert.equal(err.code, 'LOGIN_FAILED');
+
           done();
         });
       });
@@ -258,10 +274,10 @@ describe('User', function() {
         .expect(200)
         .send(validCredentialsEmailVerifiedOverREST)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           assert(!res.body.emailVerified);
+
           done();
         });
     });
@@ -271,6 +287,7 @@ describe('User', function() {
     it('Should not throw an error if the query does not contain {where: }', function(done) {
       User.find({}, function(err) {
         if (err) done(err);
+
         done();
       });
     });
@@ -279,8 +296,10 @@ describe('User', function() {
       User.settings.caseSensitiveEmail = false;
       User.find({where:{email: validMixedCaseEmailCredentials.email}}, function(err, result) {
         if (err) done(err);
+
         assert(result[0], 'The query did not find the user');
         assert.equal(result[0].email, validCredentialsEmail);
+
         done();
       });
     });
@@ -303,6 +322,7 @@ describe('User', function() {
         assert(accessToken.userId);
         assert(accessToken.id);
         assert.equal(accessToken.id.length, 64);
+
         done();
       });
     });
@@ -310,6 +330,7 @@ describe('User', function() {
     it('Try to login with invalid email case', function(done) {
       User.login(validMixedCaseEmailCredentials, function(err, accessToken) {
         assert(err);
+
         done();
       });
     });
@@ -336,6 +357,7 @@ describe('User', function() {
             assert(accessToken.id);
             assert.equal(accessToken.ttl, 120);
             assert.equal(accessToken.id.length, 64);
+
             done();
           });
         });
@@ -354,6 +376,7 @@ describe('User', function() {
               assert(accessToken.id);
               assert.equal(accessToken.ttl, 120);
               assert.equal(accessToken.id.length, 64);
+
               done();
             })
             .catch(function(err) {
@@ -384,6 +407,7 @@ describe('User', function() {
             assert.equal(accessToken.id.length, 64);
             // Restore create access token
             User.prototype.createAccessToken = createToken;
+
             done();
           });
         });
@@ -414,6 +438,7 @@ describe('User', function() {
               assert.equal(accessToken.scopes, 'default');
               // Restore create access token
               User.prototype.createAccessToken = createToken;
+
               done();
             });
           });
@@ -425,6 +450,7 @@ describe('User', function() {
         assert(err);
         assert.equal(err.code, 'LOGIN_FAILED');
         assert(!accessToken);
+
         done();
       });
     });
@@ -433,11 +459,13 @@ describe('User', function() {
       User.login(invalidCredentials)
         .then(function(accessToken) {
           assert(!accessToken);
+
           done();
         })
         .catch(function(err) {
           assert(err);
           assert.equal(err.code, 'LOGIN_FAILED');
+
           done();
         });
     });
@@ -446,6 +474,7 @@ describe('User', function() {
       User.login(incompleteCredentials, function(err, accessToken) {
         assert(err);
         assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
+
         done();
       });
     });
@@ -454,11 +483,13 @@ describe('User', function() {
       User.login(incompleteCredentials)
         .then(function(accessToken) {
           assert(!accessToken);
+
           done();
         })
         .catch(function(err) {
           assert(err);
           assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
+
           done();
         });
     });
@@ -470,9 +501,8 @@ describe('User', function() {
         .expect(200)
         .send(validCredentials)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var accessToken = res.body;
 
           assert(accessToken.userId);
@@ -491,11 +521,11 @@ describe('User', function() {
         .expect(401)
         .send(invalidCredentials)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var errorResponse = res.body.error;
           assert.equal(errorResponse.code, 'LOGIN_FAILED');
+
           done();
         });
     });
@@ -507,11 +537,11 @@ describe('User', function() {
         .expect(400)
         .send(incompleteCredentials)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var errorResponse = res.body.error;
           assert.equal(errorResponse.code, 'USERNAME_EMAIL_REQUIRED');
+
           done();
         });
     });
@@ -524,11 +554,11 @@ describe('User', function() {
         .expect(400)
         .send(JSON.stringify(validCredentials))
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var errorResponse = res.body.error;
           assert.equal(errorResponse.code, 'USERNAME_EMAIL_REQUIRED');
+
           done();
         });
     });
@@ -540,13 +570,13 @@ describe('User', function() {
         .expect(200)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var token = res.body;
           expect(token.user, 'body.user').to.not.equal(undefined);
           expect(token.user, 'body.user')
             .to.have.property('email', validCredentials.email);
+
           done();
         });
     });
@@ -558,13 +588,13 @@ describe('User', function() {
         .expect(200)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var token = res.body;
           expect(token.user, 'body.user').to.not.equal(undefined);
           expect(token.user, 'body.user')
             .to.have.property('email', validCredentials.email);
+
           done();
         });
     });
@@ -591,6 +621,7 @@ describe('User', function() {
         // error message should be "login failed" and not "login failed as the email has not been verified"
         assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
         assert.equal(err.code, 'LOGIN_FAILED');
+
         done();
       });
     });
@@ -605,6 +636,7 @@ describe('User', function() {
         // error message should be "login failed" and not "login failed as the email has not been verified"
         assert(err && !/verified/.test(err.message), ('expecting "login failed" error message, received: "' + err.message + '"'));
         assert.equal(err.code, 'LOGIN_FAILED');
+
         done();
       });
     });
@@ -613,6 +645,7 @@ describe('User', function() {
       User.login(validCredentials, function(err, accessToken) {
         assert(err);
         assert.equal(err.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
+
         done();
       });
     });
@@ -625,6 +658,7 @@ describe('User', function() {
         .catch(function(err) {
           assert(err);
           assert.equal(err.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
+
           done();
         });
     });
@@ -632,6 +666,7 @@ describe('User', function() {
     it('Login a user by with email verification', function(done) {
       User.login(validCredentialsEmailVerified, function(err, accessToken) {
         assertGoodToken(accessToken);
+
         done();
       });
     });
@@ -640,6 +675,7 @@ describe('User', function() {
       User.login(validCredentialsEmailVerified)
         .then(function(accessToken) {
           assertGoodToken(accessToken);
+
           done();
         })
         .catch(function(err) {
@@ -654,9 +690,8 @@ describe('User', function() {
         .expect(200)
         .send(validCredentialsEmailVerified)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var accessToken = res.body;
 
           assertGoodToken(accessToken);
@@ -673,14 +708,14 @@ describe('User', function() {
         .expect(401)
         .send({ email: validCredentialsEmail })
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           // strongloop/loopback#931
           // error message should be "login failed" and not "login failed as the email has not been verified"
           var errorResponse = res.body.error;
           assert(errorResponse && !/verified/.test(errorResponse.message), ('expecting "login failed" error message, received: "' + errorResponse.message + '"'));
           assert.equal(errorResponse.code, 'LOGIN_FAILED');
+
           done();
         });
     });
@@ -692,11 +727,11 @@ describe('User', function() {
         .expect(401)
         .send(validCredentials)
         .end(function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           var errorResponse = res.body.error;
           assert.equal(errorResponse.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
+
           done();
         });
     });
@@ -782,9 +817,8 @@ describe('User', function() {
     var user1;
     beforeEach(function(done) {
       User.create(realm1User, function(err, u) {
-        if (err) {
-          return done(err);
-        }
+        if (err) return done(err);
+
         user1 = u;
         User.create(realm2User, done);
       });
@@ -794,6 +828,7 @@ describe('User', function() {
       User.login(credentialWithoutRealm, function(err, accessToken) {
         assert(err);
         assert.equal(err.code, 'REALM_REQUIRED');
+
         done();
       });
     });
@@ -802,6 +837,7 @@ describe('User', function() {
       User.login(credentialWithBadRealm, function(err, accessToken) {
         assert(err);
         assert.equal(err.code, 'LOGIN_FAILED');
+
         done();
       });
     });
@@ -810,6 +846,7 @@ describe('User', function() {
       User.login(credentialWithBadPass, function(err, accessToken) {
         assert(err);
         assert.equal(err.code, 'LOGIN_FAILED');
+
         done();
       });
     });
@@ -818,6 +855,7 @@ describe('User', function() {
       User.login(credentialWithRealm, function(err, accessToken) {
         assertGoodToken(accessToken);
         assert.equal(accessToken.userId, user1.id);
+
         done();
       });
     });
@@ -826,6 +864,7 @@ describe('User', function() {
       User.login(credentialRealmInUsername, function(err, accessToken) {
         assertGoodToken(accessToken);
         assert.equal(accessToken.userId, user1.id);
+
         done();
       });
     });
@@ -834,6 +873,7 @@ describe('User', function() {
       User.login(credentialRealmInEmail, function(err, accessToken) {
         assertGoodToken(accessToken);
         assert.equal(accessToken.userId, user1.id);
+
         done();
       });
     });
@@ -851,6 +891,7 @@ describe('User', function() {
         User.login(credentialWithRealm, function(err, accessToken) {
           assertGoodToken(accessToken);
           assert.equal(accessToken.userId, user1.id);
+
           done();
         });
       });
@@ -860,6 +901,7 @@ describe('User', function() {
           User.login(credentialRealmInEmail, function(err, accessToken) {
             assert(err);
             assert.equal(err.code, 'REALM_REQUIRED');
+
             done();
           });
         });
@@ -904,9 +946,8 @@ describe('User', function() {
           .expect(200)
           .send({email: 'foo@bar.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
+
             var accessToken = res.body;
 
             assert(accessToken.userId);
@@ -929,12 +970,11 @@ describe('User', function() {
       assert(token);
 
       return function(err) {
-        if (err) {
-          return done(err);
-        }
+        if (err) return done(err);
 
         AccessToken.findById(token, function(err, accessToken) {
           assert(!accessToken, 'accessToken should not exist after logging out');
+
           done(err);
         });
       };
@@ -946,6 +986,7 @@ describe('User', function() {
       var u = new User({username: 'foo', password: 'bar'});
       u.hasPassword('bar', function(err, isMatch) {
         assert(isMatch, 'password doesnt match');
+
         done();
       });
     });
@@ -955,6 +996,7 @@ describe('User', function() {
       u.hasPassword('bar')
         .then(function(isMatch) {
           assert(isMatch, 'password doesnt match');
+
           done();
         })
         .catch(function(err) {
@@ -969,6 +1011,7 @@ describe('User', function() {
         User.findById(user.id, function(err, uu) {
           uu.hasPassword('b', function(err, isMatch) {
             assert(isMatch);
+
             done();
           });
         });
@@ -988,6 +1031,7 @@ describe('User', function() {
                 User.findById(user.id, function(err, uu) {
                   uu.hasPassword('baz2', function(err, isMatch) {
                     assert(isMatch);
+
                     done();
                   });
                 });
@@ -1022,6 +1066,7 @@ describe('User', function() {
             var msg = result.email.response.toString('utf-8');
             assert(~msg.indexOf('/api/test-users/confirm'));
             assert(~msg.indexOf('To: bar@bat.com'));
+
             done();
           });
         });
@@ -1032,9 +1077,7 @@ describe('User', function() {
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
           });
       });
 
@@ -1059,6 +1102,7 @@ describe('User', function() {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('/api/test-users/confirm'));
               assert(~msg.indexOf('To: bar@bat.com'));
+
               done();
             })
             .catch(function(err) {
@@ -1072,9 +1116,7 @@ describe('User', function() {
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
           });
       });
 
@@ -1095,6 +1137,7 @@ describe('User', function() {
           user.verify(options, function(err, result) {
             assert(result.email);
             assert.equal(result.email.messageId, 'custom-header-value');
+
             done();
           });
         });
@@ -1105,9 +1148,7 @@ describe('User', function() {
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
           });
       });
 
@@ -1141,6 +1182,7 @@ describe('User', function() {
             assert.equal(result.token, 'token-123456');
             var msg = result.email.response.toString('utf-8');
             assert(~msg.indexOf('token-123456'));
+
             done();
           });
         });
@@ -1151,9 +1193,7 @@ describe('User', function() {
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
           });
       });
 
@@ -1180,6 +1220,7 @@ describe('User', function() {
             assert(err);
             assert.equal(err.message, 'Fake error');
             assert.equal(result, undefined);
+
             done();
           });
         });
@@ -1190,9 +1231,7 @@ describe('User', function() {
           .expect(200)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
           });
       });
 
@@ -1214,6 +1253,7 @@ describe('User', function() {
             user.verify(options, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('http://myapp.org:3000/'));
+
               done();
             });
           });
@@ -1224,9 +1264,7 @@ describe('User', function() {
             .expect(200)
             .send({email: 'bar@bat.com', password: 'bar'})
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
             });
         });
 
@@ -1247,6 +1285,7 @@ describe('User', function() {
             user.verify(options, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('http://myapp.org/'));
+
               done();
             });
           });
@@ -1257,9 +1296,7 @@ describe('User', function() {
             .expect(200)
             .send({email: 'bar@bat.com', password: 'bar'})
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
             });
         });
 
@@ -1280,6 +1317,7 @@ describe('User', function() {
             user.verify(options, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('https://myapp.org:3000/'));
+
               done();
             });
           });
@@ -1290,9 +1328,7 @@ describe('User', function() {
             .expect(200)
             .send({email: 'bar@bat.com', password: 'bar'})
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
             });
         });
 
@@ -1313,6 +1349,7 @@ describe('User', function() {
             user.verify(options, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('https://myapp.org/'));
+
               done();
             });
           });
@@ -1323,9 +1360,7 @@ describe('User', function() {
             .expect(200)
             .send({email: 'bar@bat.com', password: 'bar'})
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
             });
         });
       });
@@ -1334,6 +1369,7 @@ describe('User', function() {
         var user = new User({email: 'bar@bat.com', password: 'bar', verificationToken: 'a-token' });
         var data = user.toJSON();
         assert(!('verificationToken' in data));
+
         done();
       });
     });
@@ -1355,9 +1391,8 @@ describe('User', function() {
           };
 
           user.verify(options, function(err, result) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
+
             testFunc(result, done);
           });
         });
@@ -1368,9 +1403,7 @@ describe('User', function() {
           .expect(302)
           .send({email: 'bar@bat.com', password: 'bar'})
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
           });
       }
 
@@ -1382,9 +1415,8 @@ describe('User', function() {
               '&redirect=' + encodeURIComponent(options.redirect))
             .expect(302)
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
+
               done();
             });
         }, done);
@@ -1420,12 +1452,12 @@ describe('User', function() {
                '&redirect=' + encodeURIComponent(options.redirect))
             .expect(404)
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
+
               var errorResponse = res.body.error;
               assert(errorResponse);
               assert.equal(errorResponse.code, 'USER_NOT_FOUND');
+
               done();
             });
         }, done);
@@ -1439,12 +1471,12 @@ describe('User', function() {
               '&redirect=' + encodeURIComponent(options.redirect))
             .expect(400)
             .end(function(err, res) {
-              if (err) {
-                return done(err);
-              }
+              if (err) return done(err);
+
               var errorResponse = res.body.error;
               assert(errorResponse);
               assert.equal(errorResponse.code, 'INVALID_TOKEN');
+
               done();
             });
         }, done);
@@ -1460,6 +1492,7 @@ describe('User', function() {
         User.resetPassword({ }, function(err) {
           assert(err);
           assert.equal(err.code, 'EMAIL_REQUIRED');
+
           done();
         });
       });
@@ -1472,6 +1505,7 @@ describe('User', function() {
           .catch(function(err) {
             assert(err);
             assert.equal(err.code, 'EMAIL_REQUIRED');
+
             done();
           });
       });
@@ -1481,6 +1515,7 @@ describe('User', function() {
           assert(err);
           assert.equal(err.code, 'EMAIL_NOT_FOUND');
           assert.equal(err.statusCode, 404);
+
           done();
         });
       });
@@ -1502,7 +1537,9 @@ describe('User', function() {
           assert(calledBack);
           info.accessToken.user(function(err, user) {
             if (err) return done(err);
+
             assert.equal(user.email, email);
+
             done();
           });
         });
@@ -1515,12 +1552,12 @@ describe('User', function() {
           .expect(400)
           .send({ })
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
+
             var errorResponse = res.body.error;
             assert(errorResponse);
             assert.equal(errorResponse.code, 'EMAIL_REQUIRED');
+
             done();
           });
       });
@@ -1532,10 +1569,10 @@ describe('User', function() {
           .expect(204)
           .send({ email: email })
           .end(function(err, res) {
-            if (err) {
-              return done(err);
-            }
+            if (err) return done(err);
+
             assert.deepEqual(res.body, { });
+
             done();
           });
       });

@@ -611,6 +611,7 @@ describe('loopback', function() {
         }else {
           ctxx.result.data = 'context not available';
         }
+
         next();
       });
 
@@ -618,7 +619,9 @@ describe('loopback', function() {
         .get('/TestModels/test')
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body.data).to.equal('a value stored in context');
+
           done();
         });
     });
@@ -632,6 +635,7 @@ describe('loopback', function() {
           var ctx = loopback.getCurrentContext();
           expect(ctx).is.an('object');
           expect(ctx.get('test-key')).to.equal('test-value');
+
           done();
         });
       });

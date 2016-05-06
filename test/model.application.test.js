@@ -17,6 +17,7 @@ describe('Application', function() {
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyTestApp');
         assert.equal(app.description, 'My test application');
+
         done(err, result);
       });
   });
@@ -29,6 +30,7 @@ describe('Application', function() {
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyTestApp');
         assert.equal(app.description, 'My test application');
+
         done();
       })
       .catch(function(err) {
@@ -52,6 +54,7 @@ describe('Application', function() {
       assert(app.created);
       assert(app.modified);
       assert.equal(typeof app.id, 'string');
+
       done(err, result);
     });
   });
@@ -102,6 +105,7 @@ describe('Application', function() {
             serverApiKey: 'serverKey'
           }
         });
+
         done(err, result);
       });
   });
@@ -121,6 +125,7 @@ describe('Application', function() {
         assert(app.created);
         assert(app.modified);
         registeredApp = app;
+
         done(err, result);
       });
   });
@@ -146,6 +151,7 @@ describe('Application', function() {
       assert(app.created);
       assert(app.modified);
       registeredApp = app;
+
       done(err, result);
     });
   });
@@ -172,6 +178,7 @@ describe('Application', function() {
       assert(app.created);
       assert(app.modified);
       registeredApp = app;
+
       done();
     })
     .catch(function(err) {
@@ -185,6 +192,7 @@ describe('Application', function() {
       assert(app.id);
       assert(app.id === registeredApp.id);
       registeredApp = app;
+
       done(err, result);
     });
   });
@@ -196,6 +204,7 @@ describe('Application', function() {
       assert(app.id);
       assert(app.id === registeredApp.id);
       registeredApp = app;
+
       done();
     })
     .catch(function(err) {
@@ -208,6 +217,7 @@ describe('Application', function() {
       function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'clientKey');
+
         done(err, result);
       });
   });
@@ -216,10 +226,11 @@ describe('Application', function() {
     function(done) {
       Application.authenticate(registeredApp.id, registeredApp.clientKey)
       .then(function(result) {
-          assert.equal(result.application.id, registeredApp.id);
-          assert.equal(result.keyType, 'clientKey');
-          done();
-        })
+        assert.equal(result.application.id, registeredApp.id);
+        assert.equal(result.keyType, 'clientKey');
+
+        done();
+      })
       .catch(function(err) {
         done(err);
       });
@@ -230,6 +241,7 @@ describe('Application', function() {
       function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'javaScriptKey');
+
         done(err, result);
       });
   });
@@ -239,6 +251,7 @@ describe('Application', function() {
       function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'restApiKey');
+
         done(err, result);
       });
   });
@@ -248,6 +261,7 @@ describe('Application', function() {
       function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'masterKey');
+
         done(err, result);
       });
   });
@@ -257,6 +271,7 @@ describe('Application', function() {
       function(err, result) {
         assert.equal(result.application.id, registeredApp.id);
         assert.equal(result.keyType, 'windowsKey');
+
         done(err, result);
       });
   });
@@ -265,6 +280,7 @@ describe('Application', function() {
     Application.authenticate(registeredApp.id, 'invalid-key',
       function(err, result) {
         assert(!result);
+
         done(err, result);
       });
   });
@@ -273,6 +289,7 @@ describe('Application', function() {
     Application.authenticate(registeredApp.id, 'invalid-key')
     .then(function(result) {
       assert(!result);
+
       done();
     })
     .catch(function(err) {
@@ -309,6 +326,7 @@ describe('Application subclass', function() {
             Application.findById(app.id, function(err, myApp) {
               assert(!err);
               assert(myApp === null);
+
               done(err, myApp);
             });
           });

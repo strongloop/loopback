@@ -66,6 +66,7 @@ describe('Email and SMTP', function() {
         assert(mail.response);
         assert(mail.envelope);
         assert(mail.messageId);
+
         done(err);
       });
     });
@@ -83,6 +84,7 @@ describe('Email and SMTP', function() {
         assert(mail.response);
         assert(mail.envelope);
         assert(mail.messageId);
+
         done(err);
       });
     });

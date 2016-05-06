@@ -21,6 +21,7 @@ describe('RemoteConnector', function() {
           port: remoteApp.get('port'),
           connector: loopback.Remote
         });
+
         done();
       });
     },
@@ -48,6 +49,7 @@ describe('RemoteConnector', function() {
         port: remoteApp.get('port'),
         connector: loopback.Remote
       });
+
       done();
     });
   });
@@ -70,8 +72,10 @@ describe('RemoteConnector', function() {
     var m = new RemoteModel({foo: 'bar'});
     m.save(function(err, inst) {
       if (err) return done(err);
+
       assert(inst instanceof RemoteModel);
       assert(calledServerCreate);
+
       done();
     });
   });
