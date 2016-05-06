@@ -32,9 +32,11 @@ describe('Change', function() {
     };
     TestModel.create(test.data, function(err, model) {
       if (err) return done(err);
+
       test.model = model;
       test.modelId = model.id;
       test.revisionForModel = Change.revisionForInst(model);
+
       done();
     });
   });
@@ -65,6 +67,7 @@ describe('Change', function() {
         var test = this;
         Change.rectifyModelChanges(this.modelName, [this.modelId], function(err, trackedChanges) {
           if (err) return done(err);
+
           done();
         });
       });
@@ -73,6 +76,7 @@ describe('Change', function() {
         var test = this;
         Change.find(function(err, trackedChanges) {
           assert.equal(trackedChanges[0].modelId, test.modelId.toString());
+
           done();
         });
       });
@@ -80,6 +84,7 @@ describe('Change', function() {
       it('should only create one change', function(done) {
         Change.count(function(err, count) {
           assert.equal(count, 1);
+
           done();
         });
       });
@@ -102,6 +107,7 @@ describe('Change', function() {
         Change.find()
           .then(function(trackedChanges) {
             assert.equal(trackedChanges[0].modelId, test.modelId.toString());
+
             done();
           })
           .catch(done);
@@ -111,6 +117,7 @@ describe('Change', function() {
         Change.count()
           .then(function(count) {
             assert.equal(count, 1);
+
             done();
           })
           .catch(done);
@@ -124,7 +131,9 @@ describe('Change', function() {
         var test = this;
         Change.findOrCreateChange(this.modelName, this.modelId, function(err, result) {
           if (err) return done(err);
+
           test.result = result;
+
           done();
         });
       });
@@ -133,7 +142,9 @@ describe('Change', function() {
         var test = this;
         Change.findById(this.result.id, function(err, change) {
           if (err) return done(err);
+
           assert.equal(change.id, test.result.id);
+
           done();
         });
       });
@@ -145,6 +156,7 @@ describe('Change', function() {
         Change.findOrCreateChange(this.modelName, this.modelId)
         .then(function(result) {
           test.result = result;
+
           done();
         })
         .catch(done);
@@ -154,7 +166,9 @@ describe('Change', function() {
         var test = this;
         Change.findById(this.result.id, function(err, change) {
           if (err) return done(err);
+
           assert.equal(change.id, test.result.id);
+
           done();
         });
       });
@@ -168,6 +182,7 @@ describe('Change', function() {
           modelId: test.modelId,
         }, function(err, change) {
           test.existingChange = change;
+
           done();
         });
       });
@@ -176,7 +191,9 @@ describe('Change', function() {
         var test = this;
         Change.findOrCreateChange(this.modelName, this.modelId, function(err, result) {
           if (err) return done(err);
+
           test.result = result;
+
           done();
         });
       });
@@ -184,6 +201,7 @@ describe('Change', function() {
       it('should find the entry', function(done) {
         var test = this;
         assert.equal(test.existingChange.id, test.result.id);
+
         done();
       });
     });
@@ -199,6 +217,7 @@ describe('Change', function() {
         },
         function(err, ch) {
           change = ch;
+
           done(err);
         });
     });
@@ -207,6 +226,7 @@ describe('Change', function() {
       var test = this;
       change.rectify(function(err, ch) {
         assert.equal(ch.rev, test.revisionForModel);
+
         done();
       });
     });
@@ -230,6 +250,7 @@ describe('Change', function() {
           expect(change.type(), 'type').to.equal('update');
           expect(change.prev, 'prev').to.equal(originalRev);
           expect(change.rev, 'rev').to.equal(test.revisionForModel);
+
           next();
         },
       ], done);
@@ -241,7 +262,9 @@ describe('Change', function() {
       function checkpoint(next) {
         TestModel.checkpoint(function(err, inst) {
           if (err) return next(err);
+
           cp = inst.seq;
+
           next();
         });
       }
@@ -252,6 +275,7 @@ describe('Change', function() {
         model.name += 'updated';
         model.save(function(err) {
           test.revisionForModel = Change.revisionForInst(model);
+
           next(err);
         });
       }
@@ -267,8 +291,10 @@ describe('Change', function() {
 
         change.rectify(function(err, c) {
           if (err) return done(err);
+
           expect(c.rev, 'rev').to.equal(originalRev); // sanity check
           expect(c.checkpoint, 'checkpoint').to.equal(originalCheckpoint);
+
           done();
         });
       });
@@ -281,6 +307,7 @@ describe('Change', function() {
       Change.findOrCreateChange(this.modelName, this.modelId)
         .then(function(ch) {
           change = ch;
+
           done();
         })
         .catch(done);
@@ -291,6 +318,7 @@ describe('Change', function() {
       change.rectify()
         .then(function(ch) {
           assert.equal(ch.rev, test.revisionForModel);
+
           done();
         })
         .catch(done);
@@ -307,6 +335,7 @@ describe('Change', function() {
 
       change.currentRevision(function(err, rev) {
         assert.equal(rev, test.revisionForModel);
+
         done();
       });
     });
@@ -323,6 +352,7 @@ describe('Change', function() {
       change.currentRevision()
       .then(function(rev) {
         assert.equal(rev, test.revisionForModel);
+
         done();
       })
       .catch(done);
@@ -463,8 +493,10 @@ describe('Change', function() {
 
       Change.diff(this.modelName, 0, remoteChanges, function(err, diff) {
         if (err) return done(err);
+
         assert.equal(diff.deltas.length, 1);
         assert.equal(diff.conflicts.length, 1);
+
         done();
       });
     });
@@ -483,6 +515,7 @@ describe('Change', function() {
         .then(function(diff) {
           assert.equal(diff.deltas.length, 1);
           assert.equal(diff.conflicts.length, 1);
+
           done();
         })
         .catch(done);
@@ -498,6 +531,7 @@ describe('Change', function() {
       };
       Change.diff(this.modelName, 0, [updateRecord], function(err, diff) {
         if (err) return done(err);
+
         expect(diff.conflicts, 'conflicts').to.have.length(0);
         expect(diff.deltas, 'deltas').to.have.length(1);
         var actual = diff.deltas[0].toObject();
@@ -509,6 +543,7 @@ describe('Change', function() {
           prev: 'foo', // this is the current local revision
           rev: 'foo-new',
         });
+
         done();
       });
     });
@@ -525,6 +560,7 @@ describe('Change', function() {
       // with rev=foo CP=1
       Change.diff(this.modelName, 2, [updateRecord], function(err, diff) {
         if (err) return done(err);
+
         expect(diff.conflicts, 'conflicts').to.have.length(0);
         expect(diff.deltas, 'deltas').to.have.length(1);
         var actual = diff.deltas[0].toObject();
@@ -536,6 +572,7 @@ describe('Change', function() {
           prev: 'foo', // this is the current local revision
           rev: 'foo-new',
         });
+
         done();
       });
     });
@@ -551,6 +588,7 @@ describe('Change', function() {
 
       Change.diff(this.modelName, 0, [updateRecord], function(err, diff) {
         if (err) return done(err);
+
         expect(diff.conflicts).to.have.length(0);
         expect(diff.deltas).to.have.length(1);
         var actual = diff.deltas[0].toObject();
@@ -562,6 +600,7 @@ describe('Change', function() {
           prev: null, // this is the current local revision
           rev: 'new-rev',
         });
+
         done();
       });
     });

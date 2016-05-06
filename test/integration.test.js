@@ -21,7 +21,9 @@ describe('loopback application', function() {
           'X',
         function(err, res) {
           if (err) return done(err);
+
           expect(res).to.match(/\nX$/);
+
           done();
         });
     });

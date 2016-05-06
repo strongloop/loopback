@@ -32,7 +32,9 @@ describe('remoting coercion', function() {
       })
       .end(function(err) {
         if (err) return done(err);
+
         assert(called);
+
         done();
       });
   });

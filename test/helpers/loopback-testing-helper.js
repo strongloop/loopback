@@ -37,6 +37,7 @@ _beforeEach.withApp = function(app) {
     if (app.booting) {
       return app.once('booted', done);
     }
+
     done();
   });
 };
@@ -78,9 +79,11 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
       if (err) {
         console.error(err.message);
         if (err.details) console.error(err.details);
+
         done(err);
       } else {
         test[modelKey] = result;
+
         done();
       }
     });
@@ -107,6 +110,7 @@ _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
         done(err);
       } else {
         test.loggedInAccessToken = token;
+
         done();
       }
     });
@@ -116,7 +120,9 @@ _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
     var test = this;
     this.loggedInAccessToken.destroy(function(err) {
       if (err) return done(err);
+
       test.loggedInAccessToken = undefined;
+
       done();
     });
   });
@@ -176,6 +182,7 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
         test.req = test.http.req;
         test.res = test.http.res;
         delete test.url;
+
         cb();
       });
     });
@@ -187,6 +194,7 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
 _describe.whenLoggedInAsUser = function(credentials, cb) {
   describe('when logged in as user', function() {
     _beforeEach.givenLoggedInUser(credentials);
+
     cb();
   });
 };

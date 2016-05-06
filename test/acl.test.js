@@ -417,7 +417,9 @@ describe('access check', function() {
     MyTestModel.beforeRemote('find', function(ctx, next) {
       // ensure this is called after checkAccess
       if (!checkAccessCalled) return done(new Error('incorrect order'));
+
       beforeHookCalled = true;
+
       next();
     });
 
@@ -426,6 +428,7 @@ describe('access check', function() {
       .end(function(err, result) {
         assert(beforeHookCalled, 'the before hook should be called');
         assert(checkAccessCalled, 'checkAccess should have been called');
+
         done();
       });
   });

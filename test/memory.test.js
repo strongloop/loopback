@@ -33,6 +33,7 @@ describe('Memory Connector', function() {
     function count() {
       Product.count(function(err, count) {
         assert.equal(count, 3);
+
         done();
       });
     }

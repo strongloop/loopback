@@ -34,6 +34,7 @@ describe('loopback.rest', function() {
         .del('/mymodels/' + inst.id)
         .expect(200, function(err, res) {
           expect(res.body.count).to.equal(1);
+
           done();
         });
     });
@@ -45,12 +46,12 @@ describe('loopback.rest', function() {
     request(app).get('/mymodels/1')
       .expect(404)
       .end(function(err, res) {
-        if (err) {
-          return done(err);
-        }
+        if (err) return done(err);
+
         var errorResponse = res.body.error;
         assert(errorResponse);
         assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
+
         done();
       });
   });
@@ -70,7 +71,9 @@ describe('loopback.rest', function() {
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err);
+
         expect(res.body).to.eql({ exists: false });
+
         done();
       });
   });
@@ -103,7 +106,9 @@ describe('loopback.rest', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.eql({ exists: true });
+
           done();
         });
     });
@@ -177,12 +182,15 @@ describe('loopback.rest', function() {
     app.use(loopback.rest());
     givenLoggedInUser(function(err, token) {
       if (err) return done(err);
+
       request(app).get('/users/getToken')
         .set('Authorization', token.id)
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body.id).to.equal(null);
+
           done();
         });
     }, done);
@@ -194,7 +202,9 @@ describe('loopback.rest', function() {
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err);
+
         expect(res.body).to.eql([]);
+
         done();
       });
   });
@@ -205,7 +215,9 @@ describe('loopback.rest', function() {
       .expect(200)
       .end(function(err, res) {
         if (err) return done(err);
+
         expect(res.body).to.eql({});
+
         done();
       });
   });
@@ -262,12 +274,15 @@ describe('loopback.rest', function() {
     function invokeGetToken(done) {
       givenLoggedInUser(function(err, token) {
         if (err) return done(err);
+
         request(app).get('/users/getToken')
           .set('Authorization', token.id)
           .expect(200)
           .end(function(err, res) {
             if (err) return done(err);
+
             expect(res.body.id).to.equal(token.id);
+
             done();
           });
       });
@@ -296,6 +311,7 @@ describe('loopback.rest', function() {
         { model: app.registry.getModelByType('AccessToken') }));
       app.use(function(req, res, next) {
         loopback.getCurrentContext().set('accessToken', req.accessToken);
+
         next();
       });
       app.use(loopback.rest());
@@ -351,6 +367,7 @@ describe('loopback.rest', function() {
     User.create(credentials,
       function(err, user) {
         if (err) return done(err);
+
         User.login(credentials, cb);
       });
   }
@@ -399,7 +416,9 @@ describe('loopback.rest', function() {
             .expect(200)
             .end(function(err, res) {
               if (err) return done(err);
+
               expect(res.body.count).to.equal(3);
+
               done();
             });
         });
@@ -445,7 +464,9 @@ describe('loopback.rest', function() {
             .expect(200)
             .end(function(err, res) {
               if (err) return done(err);
+
               expect(res.body.count).to.equal(3);
+
               done();
             });
         });
