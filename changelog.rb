@@ -15,7 +15,7 @@ today = Date.current
 last_week = today.last_week
 
 sprints = [
-  [Date.parse('May 5, 2015'), Date.parse('May 18, 2015'), 70]
+  [Date.parse('February 9, 2016'), Date.parse('February 22, 2016'), 3]
 ]
 while sprints.last[1] < today do
   prev = sprints.last
@@ -23,12 +23,12 @@ while sprints.last[1] < today do
 end
 weeks = sprints.last(4).reverse
 
-token = ENV['GITHUB_TOKEN']
-if token.nil? or token.empty?
-  token = `git config github.token`.strip
+gh_token = ENV['GITHUB_TOKEN']
+if gh_token.nil? or gh_token.empty?
+  gh_token = `git config github.token`.strip
 end
 
-if token.empty?
+if gh_token.empty?
   STDERR.puts 'Please visit https://github.com/settings/tokens/new to generate a token'
   STDERR.puts "Once you have your token, run 'git config github.token <token>'"
   exit 1
@@ -64,12 +64,12 @@ stack = Faraday::RackBuilder.new do |builder|
 end
 #npm = Faraday.new(url: 'https://registry.npmjs.org', builder: stack)
 
-gh = Octokit::Client.new(access_token: token, auto_paginate: true, middleware: stack)
+gh = Octokit::Client.new(access_token: gh_token, auto_paginate: true, middleware: stack)
 if not gh.user_authenticated?
   STDERR.puts "Unauthenticated connection to GitHub, private repos will be invisible"
 end
 
-starting = gh.rate_limit!.remaining
+gh_starting = gh.rate_limit!.remaining
 STDERR.puts "GitHub API: #{gh.rate_limit}"
 
 $commitsToSkip = Hash.new {|h,k| h[k] = []}
@@ -78,16 +78,23 @@ def maybe_pr(gh, path, number)
   gh.pull_request(path, number) rescue false
 end
 
+def tryto(tries=3, dflt=nil)
+  yield
+rescue
+  retry unless (tries -= 1).zero?
+  dflt
+end
+
 def pp_commit(gh, r, commit)
   msg = commit.commit.message.lines.first.strip
   if $commitsToSkip[r.full_name].include? commit.sha
     nil
   elsif msg =~ /\AMerge pull request #(\d+) from/ and pr = maybe_pr(gh, r.full_name, $~[1])
-    gh.pull_request_commits(r.full_name, pr.number).each do |c|
+    tryto(2,[]){gh.pull_request_commits(r.full_name, pr.number)}.each do |c|
       $commitsToSkip[r.full_name] << c.sha
     end
     "[PR##{pr.number}](#{pr.html_url}) #{pr.title} ([#{pr.user.login}](#{pr.user.html_url}))"
-  elsif msg =~ /\Av?\d+\.\d+\.\d+\Z/
+  elsif msg =~ /\Av?\d+\.\d+\.\d+(:?-[a-z0-9]+)?\Z/
     c = commit
     gc = commit.commit # lower level git info
     author = gc.author.name
@@ -122,7 +129,7 @@ def downloads_badge(repo)
         "https://npmjs.com/package/#{repo.npm_name}")
 end
 
-def pp_week(gh, week, repos)
+def pp_week(week, repos)
   repos.group_by { |r|
     if r.name =~ /connector/
       [1, 'Connectors']
@@ -142,7 +149,7 @@ def pp_week(gh, week, repos)
                   c.commit.committer.date <= week[0] or
                   c.commit.committer.date >= week[1]
                 }.map {|c|
-                  pp_commit(gh, repo, c)
+                  pp_commit(repo.gh, repo, c)
                 }.compact
       next if commits.empty?
       heading = repo.npm_name || repo.name
@@ -186,12 +193,21 @@ REPOS = [
   'strong-task-emitter',
 ]
 
-repos = repo_types
-  .flat_map {|t| gh.org_repos('strongloop', type: t) }
-  .select { |r| REPOS.any? {|pat| File.fnmatch?(pat, r.name) } }
-  .map { |r|
+def get_repos(gh, orgs, repo_types, weeks)
+  orgs.flat_map { |o|
+    repo_types.flat_map { |t|
+      gh.org_repos(o, type: t)
+    }
+  }.select { |r|
+    REPOS.any? {|pat| File.fnmatch?(pat, r.name) }
+  }.map { |r|
     r.tap { |r|
-      r.pkg_json_c = gh.contents(r.full_name, path: 'package.json') rescue nil
+      r.gh = gh
+      if r.name == 'strongops'
+        r.pkg_json_c = gh.contents(r.full_name, path: 'agent/package.json') rescue nil
+      else
+        r.pkg_json_c = gh.contents(r.full_name, path: 'package.json') rescue nil
+      end
       if r.pkg_json_c and r.pkg_json_c.type == 'file' and r.pkg_json_c.encoding == 'base64'
         r.pkg_json = Base64.decode64(r.pkg_json_c.content)
         r.pkg = YAML.load(r.pkg_json)
@@ -210,11 +226,19 @@ repos = repo_types
         r.npm_releases = {}
         r.npm_info = {}
       end
-      r.commits = gh.commits_between(r.full_name, weeks.last[0], weeks.first[1]) rescue []
+      if r.pkg_name == 'strong-agent'
+        r.commits = gh.commits_between(r.full_name, weeks.last[0], weeks.first[1], path: 'agent')
+      else
+        r.commits = gh.commits_between(r.full_name, weeks.last[0], weeks.first[1]) rescue []
+      end
       r.shas = r.commits.map(&:sha)
     }
   }
-STDERR.puts "gathering repos used: #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
+end
+
+repos = get_repos(gh, ['strongloop'], repo_types, weeks)
+
+STDERR.puts "[GH] gathering repos used: #{gh_starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
 
 weeks = []
 dates = [Date.current - 8.weeks, Date.current]
@@ -225,19 +249,19 @@ puts 'layout: page'
 puts "since: (from #{dates[0]} to #{dates[1]})"
 puts '---'
 
+
 weeks.each do |week|
   heading = "Sprint #{week[2]} (#{week[0]} to #{week[1]})"
   if week[1].future?
     heading << ' so far'
   end
   puts "## #{heading}\n"
-  pp_week(gh, week, repos)
-  STDERR.puts "post pp_week(#{week[0]}) used: #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
+  pp_week(week, repos)
+  STDERR.puts "[GH] post pp_week(#{week[0]}) used: #{gh_starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
   puts '----'
   puts
 end
 
-pp_week(gh, dates, repos)
-STDERR.puts "post pp_week(#{dates[0]}) used: #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
+pp_week(dates, repos)
 
-STDERR.puts "Used #{starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
+STDERR.puts "[GH] Used #{gh_starting - gh.rate_limit!.remaining} requests (#{gh.rate_limit})"
