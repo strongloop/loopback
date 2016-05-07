@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-03-11 to 2016-05-06)
+since: (from 2016-03-12 to 2016-05-07)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [@8fbdb0d](https://github.com/strongloop/generator-loopback/commit/8fbdb0da7ce203d387ee00096f7cfade37a0d3d9) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#177](https://github.com/strongloop/generator-loopback/pull/177) Add warning when no datasource available ([0candy](https://github.com/0candy))
  * **Released 1.20.6** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#175](https://github.com/strongloop/generator-loopback/pull/175) Fix accept and return to end with empty input ([jannyHou](https://github.com/jannyHou))
@@ -19,7 +20,7 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback
- * [@04e26fa](https://github.com/strongloop/loopback/commit/04e26fae5cf8da8128e926c1d7bd88818ca31937) Separate error-checking and next/done logic from other logic in the test suite ([Supasate Choochaisri](https://github.com/supasate))
+ * [PR#2297](https://github.com/strongloop/loopback/pull/2297) Separate error-checking and next/done logic from other logic ([supasate](https://github.com/supasate))
  * [PR#2269](https://github.com/strongloop/loopback/pull/2269) Add feature to not allow duplicate role name ([supasate](https://github.com/supasate))
  * [@6964914](https://github.com/strongloop/loopback/commit/6964914bab64496c789c434fec39d2914231ee23) update copyright statements ([Ryan Graham](https://github.com/rmg))
  * [@8acac40](https://github.com/strongloop/loopback/commit/8acac40ec347bdb0458c04ee52f7c3f58ab29666) relicense as MIT only ([Ryan Graham](https://github.com/rmg))
@@ -41,6 +42,7 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-boot
+ * [@5eaa909](https://github.com/strongloop/loopback-boot/commit/5eaa9090068ea99676ca081fc177e2a877ef9337) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#185](https://github.com/strongloop/loopback-boot/pull/185) Add flag var lazyConnect to ds config ([jannyHou](https://github.com/jannyHou))
  * **Released 2.18.1** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#183](https://github.com/strongloop/loopback-boot/pull/183) parse config: should ignore null values ([LoicMahieu](https://github.com/LoicMahieu))
@@ -74,10 +76,19 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-filters
+ * **Released 0.1.2** ([Ryan Graham](https://github.com/rmg))
+ * [@2f44e21](https://github.com/strongloop/loopback-filters/commit/2f44e21a9b6140c8e1d9708e7e0fd2578bd481d5) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#4](https://github.com/strongloop/loopback-filters/pull/4) Feature/eslint ([Amir-61](https://github.com/Amir-61))
 
 
+### loopback-phase
+ * **Released 1.3.1** ([Ryan Graham](https://github.com/rmg))
+ * [@fc2cf3d](https://github.com/strongloop/loopback-phase/commit/fc2cf3d74cca03d07bfa3c239339f5535070ad0c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
+
+
 ### loopback-swagger
+ * **Released 2.4.3** ([Ryan Graham](https://github.com/rmg))
+ * [@a0aa29a](https://github.com/strongloop/loopback-swagger/commit/a0aa29a531db4ad29b5bf6d863cbdf0bb01ea4d5) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 2.4.2** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#38](https://github.com/strongloop/loopback-swagger/pull/38) Do not generate required if no item is present ([raymondfeng](https://github.com/raymondfeng))
  * [PR#37](https://github.com/strongloop/loopback-swagger/pull/37) Add eslint infrastructure ([Amir-61](https://github.com/Amir-61))
@@ -109,6 +120,7 @@ since: (from 2016-03-11 to 2016-05-06)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * [@fc458cb](https://github.com/strongloop/loopback-connector-cloudant/commit/fc458cb8171b15da15a661c39f1a1ce7b8466015) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 1.0.10** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#16](https://github.com/strongloop/loopback-connector-cloudant/pull/16) Lazy connect when booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * **Released 1.0.9** ([Anthony Ffrench](https://github.com/tonyffrench))
@@ -118,6 +130,7 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-connector-db2
+ * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#29](https://github.com/strongloop/loopback-connector-db2/pull/29) Add DB2 for z/OS support and a fix for issues #28 ([qpresley](https://github.com/qpresley))
  * **Released 1.0.14** ([Quentin Presley](https://github.com/qpresley))
  * [PR#27](https://github.com/strongloop/loopback-connector-db2/pull/27) Add SQL file for dashDB ([qpresley](https://github.com/qpresley))
@@ -145,6 +158,7 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-connector-mssql
+ * [@eb2b07d](https://github.com/strongloop/loopback-connector-mssql/commit/eb2b07de4417df3e4177631b9feffaede07c6849) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#80](https://github.com/strongloop/loopback-connector-mssql/pull/80) Lazy connect when booting app ([jannyHou](https://github.com/jannyHou))
  * [@9d9c025](https://github.com/strongloop/loopback-connector-mssql/commit/9d9c025e438a8c54f88531abbfe5b5c8ad1b5057) Add feature/eslint ([Amir-61](https://github.com/Amir-61))
  * [@4564714](https://github.com/strongloop/loopback-connector-mssql/commit/4564714345b571ad8b65bab4b4854369ec3c75ee) Fix linting errors ([Amir Jafarian](https://github.com/Amir-61))
@@ -166,6 +180,7 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-connector-oracle
+ * [@6c0ce51](https://github.com/strongloop/loopback-connector-oracle/commit/6c0ce51ac93533800d395639902b6dc45057fb85) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#64](https://github.com/strongloop/loopback-connector-oracle/pull/64) Lazy connect when booting from swagger generator ([jannyHou](https://github.com/jannyHou))
 
 
@@ -177,6 +192,8 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-connector-remote
+ * **Released 1.3.1** ([Ryan Graham](https://github.com/rmg))
+ * [@17e60c9](https://github.com/strongloop/loopback-connector-remote/commit/17e60c9351630929a448b8560fa27e09241bb485) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 1.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#44](https://github.com/strongloop/loopback-connector-remote/pull/44) Add promise support ([doublemarked](https://github.com/doublemarked))
  * [PR#41](https://github.com/strongloop/loopback-connector-remote/pull/41) Remove .sl-blip.js ([superkhau](https://github.com/superkhau))
@@ -192,10 +209,21 @@ since: (from 2016-03-11 to 2016-05-06)
  * [@7a6bc5b](https://github.com/strongloop/loopback-connector-rest/commit/7a6bc5b7d1df12cb79346709c7199d780d756bdd) Add a test for header var ([Raymond Feng](https://github.com/raymondfeng))
 
 
+### loopback-connector-soap
+ * **Released 2.4.1** ([Ryan Graham](https://github.com/rmg))
+ * [@f5447c5](https://github.com/strongloop/loopback-connector-soap/commit/f5447c5870603dd2a35cd5df9cfebda3eb3a1dd6) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
+
+
+### loopback-connector-sqlite3
+ * **Released 1.1.2** ([Ryan Graham](https://github.com/rmg))
+ * [@5cdc819](https://github.com/strongloop/loopback-connector-sqlite3/commit/5cdc8191f3f2ce45590de745aef74bb6e03503e3) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
+
+
 
 ## SDKs
 
 ### loopback-sdk-angular
+ * [@279c810](https://github.com/strongloop/loopback-sdk-angular/commit/279c810747d4061c11f126c19c3e34a67812aa8f) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#178](https://github.com/strongloop/loopback-sdk-angular/pull/178) Clear data logout interceptor ([mrbatista](https://github.com/mrbatista))
  * [@1b5eba8](https://github.com/strongloop/loopback-sdk-angular/commit/1b5eba874936bed4b15229c895d4d331190c1b1e) Clear user data when logout returns error response ([Matteo Padovano](https://github.com/mrbatista))
  * [PR#218](https://github.com/strongloop/loopback-sdk-angular/pull/218) Linting generated code ([davidcheung](https://github.com/davidcheung))
@@ -204,13 +232,24 @@ since: (from 2016-03-11 to 2016-05-06)
 
 
 ### loopback-sdk-angular-cli
+ * [@a11ba8b](https://github.com/strongloop/loopback-sdk-angular-cli/commit/a11ba8b19a5095780bd8d55550d425f3b8818971) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#41](https://github.com/strongloop/loopback-sdk-angular-cli/pull/41) Update test's regex to reflect SDK change ([davidcheung](https://github.com/davidcheung))
+
+
+### loopback-sdk-ios
+ * [@f9fe9d3](https://github.com/strongloop/loopback-sdk-ios/commit/f9fe9d37557185a0b12d54a625564ad4152294cf) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
+
+
+### loopback-sdk-xm
+ * [@3c4bf47](https://github.com/strongloop/loopback-sdk-xamarin/commit/3c4bf473d1c1b4d1f1e319585b91b8012824e158) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
 
 
 
 ## Components
 
 ### loopback-component-explorer
+ * [PR#159](https://github.com/strongloop/loopback-component-explorer/pull/159) Upgrade loopback devDependency ([supasate](https://github.com/supasate))
+ * [@cb6eafd](https://github.com/strongloop/loopback-component-explorer/commit/cb6eafd5929170c96490d660eb483ed5e0046431) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#142](https://github.com/strongloop/loopback-component-explorer/pull/142) examples launch fix ([Coobaha](https://github.com/Coobaha))
  * **Released 2.5.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#157](https://github.com/strongloop/loopback-component-explorer/pull/157) Allow disabling remote method after initialize explorer ([supasate](https://github.com/supasate))
@@ -219,7 +258,13 @@ since: (from 2016-03-11 to 2016-05-06)
  * [PR#156](https://github.com/strongloop/loopback-component-explorer/pull/156) Feature/eslint ([Amir-61](https://github.com/Amir-61))
 
 
+### loopback-component-oauth2
+ * **Released 2.4.1** ([Ryan Graham](https://github.com/rmg))
+ * [@cf2277b](https://github.com/strongloop/loopback-component-oauth2/commit/cf2277b560fc8857bcf634d9e2095e7fa5d2ea65) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
+
+
 ### loopback-component-passport
+ * [@1e25a09](https://github.com/strongloop/loopback-component-passport/commit/1e25a093eee87cee7b771056990b7ed1576c6444) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#140](https://github.com/strongloop/loopback-component-passport/pull/140) Return the configured strategy ([ernie58](https://github.com/ernie58))
  * [PR#142](https://github.com/strongloop/loopback-component-passport/pull/142) adds error to redirect URL ([ernie58](https://github.com/ernie58))
  * [PR#136](https://github.com/strongloop/loopback-component-passport/pull/136) Issue746 ([loay](https://github.com/loay))
