@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-03-12 to 2016-05-07)
+since: (from 2016-03-13 to 2016-05-08)
 ---
 
 ## Core
@@ -120,6 +120,8 @@ since: (from 2016-03-12 to 2016-05-07)
 ## Connectors
 
 ### loopback-connector-cloudant
+ * [@ca6fb34](https://github.com/strongloop/loopback-connector-cloudant/commit/ca6fb3408bd0d19902ff52fddcd355b1659456a3) fix whitespace ([Ryan Graham](https://github.com/rmg))
+ * **Released 1.0.11** ([Ryan Graham](https://github.com/rmg))
  * [@fc458cb](https://github.com/strongloop/loopback-connector-cloudant/commit/fc458cb8171b15da15a661c39f1a1ce7b8466015) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 1.0.10** ([Anthony Ffrench](https://github.com/tonyffrench))
  * [PR#16](https://github.com/strongloop/loopback-connector-cloudant/pull/16) Lazy connect when booting from swagger generator ([jannyHou](https://github.com/jannyHou))
