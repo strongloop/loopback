@@ -426,6 +426,7 @@ module.exports = function(User) {
 
     // TODO - support more verification types
     function sendEmail(user) {
+      //add redirect here to allow hashed paths
       options.verifyHref += '&token=' + user.verificationToken +
        '&redirect=' + options.redirect;
 
