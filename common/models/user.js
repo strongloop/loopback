@@ -426,8 +426,8 @@ module.exports = function(User) {
 
     // TODO - support more verification types
     function sendEmail(user) {
-      options.verifyHref += '&token=' + user.verificationToken+ 
-      '&redirect=' + options.redirect;
+      options.verifyHref += '&token=' + user.verificationToken +
+        '&redirect=' + options.redirect;
 
       options.text = options.text || 'Please verify your email by opening ' +
         'this link in a web browser:\n\t{href}';
