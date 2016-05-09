@@ -143,6 +143,13 @@ since: (from 2016-03-14 to 2016-05-09)
  * [@535df25](https://github.com/strongloop/loopback-connector-db2/commit/535df251eb44b7e89afd17d9df179c53eaf4d6f1) Update schema to default to this.username ([Quentin Presley](https://github.com/qpresley))
 
 
+### loopback-connector-informix
+ * [@b44065b](https://github.com/strongloop/loopback-connector-informix/commit/b44065bae234af2496b140a37a53d294586bd519) Significant rewrite of many functions/tests ([Quentin Presley](https://github.com/qpresley))
+ * [@e299957](https://github.com/strongloop/loopback-connector-informix/commit/e299957322ad53a8c1a929037bb5acdf5cc6da4d) Fixed multiple issues causing tests to fail ([Quentin Presley](https://github.com/qpresley))
+ * [@7ac33c4](https://github.com/strongloop/loopback-connector-informix/commit/7ac33c48ce8aa8144a563fd3ff6a5e146002d2ee) Second push of informix code ([Quentin Presley](https://github.com/qpresley))
+ * [@db78d43](https://github.com/strongloop/loopback-connector-informix/commit/db78d43b07b3d58990f1656f5929dbaa34bb050a) Initial addition of files ([Quentin Presley](https://github.com/qpresley))
+
+
 ### loopback-connector-jsonrpc
  * **Released 1.0.4** ([Ryan Graham](https://github.com/rmg))
  * [@6fb035a](https://github.com/strongloop/loopback-connector-jsonrpc/commit/6fb035a0305a232647dcb8edc210de048be34317) update/insert copyright notices ([Ryan Graham](https://github.com/rmg))
