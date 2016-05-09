@@ -19,5 +19,6 @@
       "principalType": "ROLE",
       "principalId": "$everyone"
     }
-  ]
+  ],
+  "replaceOnPUT": false  
 }

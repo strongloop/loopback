@@ -38,6 +38,14 @@
     "public": true,
     "dataSource": "db"
   },
+  "storeWithReplaceOnPUTfalse": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "storeWithReplaceOnPUTtrue": {
+    "public": true,
+    "dataSource": "db"
+  },
   "physician": {
     "dataSource": "db",
     "public": true
