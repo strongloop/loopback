@@ -251,6 +251,8 @@ since: (from 2016-03-14 to 2016-05-09)
 
 ### loopback-component-explorer
  * [PR#159](https://github.com/strongloop/loopback-component-explorer/pull/159) Upgrade loopback devDependency ([supasate](https://github.com/supasate))
+ * [@702117d](https://github.com/strongloop/loopback-component-explorer/commit/702117dbea73e68308cdb10eac224a0a5acc3fbe) Add blank lines to separate error-checking and done logic from other logic ([Supasate Choochaisri](https://github.com/supasate))
+ * [@c3fe27a](https://github.com/strongloop/loopback-component-explorer/commit/c3fe27a5fe50dc585fb0c79b434d0cb9201cfdd9) Ignore copyright in dummy swagger-ui test ([Supasate Choochaisri](https://github.com/supasate))
  * [@cb6eafd](https://github.com/strongloop/loopback-component-explorer/commit/cb6eafd5929170c96490d660eb483ed5e0046431) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#142](https://github.com/strongloop/loopback-component-explorer/pull/142) examples launch fix ([Coobaha](https://github.com/Coobaha))
  * **Released 2.5.0** ([Miroslav Bajtoš](https://github.com/bajtos))
