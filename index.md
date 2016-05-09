@@ -20,6 +20,7 @@ since: (from 2016-03-14 to 2016-05-09)
 
 
 ### loopback
+ * [@341390a](https://github.com/strongloop/loopback/commit/341390a74ebb48eef1de73a43154288fe09e67c5) Update user.js ([Rik](https://github.com/ambrt))
  * [PR#2297](https://github.com/strongloop/loopback/pull/2297) Separate error-checking and next/done logic from other logic ([supasate](https://github.com/supasate))
  * [PR#2269](https://github.com/strongloop/loopback/pull/2269) Add feature to not allow duplicate role name ([supasate](https://github.com/supasate))
  * [@6964914](https://github.com/strongloop/loopback/commit/6964914bab64496c789c434fec39d2914231ee23) update copyright statements ([Ryan Graham](https://github.com/rmg))
