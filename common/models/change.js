@@ -15,7 +15,6 @@ var CJSON = { stringify: require('canonical-json') };
 var async = require('async');
 var assert = require('assert');
 var debug = require('debug')('loopback:change');
-var deprecate = require('depd')('loopback');
 
 /**
  * Change list entry.
@@ -505,15 +504,6 @@ module.exports = function(Change) {
       ' is not attached to a dataSource');
     checkpointModel.attachTo(this.dataSource);
     return checkpointModel;
-  };
-
-  Change.handleError = function(err) {
-    deprecate('Change.handleError is deprecated, ' +
-      'you should pass errors to your callback instead.');
-
-    if (!this.settings.ignoreErrors) {
-      throw err;
-    }
   };
 
   Change.prototype.debug = function() {
