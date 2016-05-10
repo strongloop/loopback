@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-03-14 to 2016-05-09)
+since: (from 2016-03-15 to 2016-05-10)
 ---
 
 ## Core
@@ -20,7 +20,8 @@ since: (from 2016-03-14 to 2016-05-09)
 
 
 ### loopback
- * [@341390a](https://github.com/strongloop/loopback/commit/341390a74ebb48eef1de73a43154288fe09e67c5) Update user.js ([Rik](https://github.com/ambrt))
+ * [PR#2310](https://github.com/strongloop/loopback/pull/2310) Update user.js ([ambrt](https://github.com/ambrt))
+ * [PR#2308](https://github.com/strongloop/loopback/pull/2308) Remove Change.handleError ([0candy](https://github.com/0candy))
  * [PR#2297](https://github.com/strongloop/loopback/pull/2297) Separate error-checking and next/done logic from other logic ([supasate](https://github.com/supasate))
  * [PR#2269](https://github.com/strongloop/loopback/pull/2269) Add feature to not allow duplicate role name ([supasate](https://github.com/supasate))
  * [@6964914](https://github.com/strongloop/loopback/commit/6964914bab64496c789c434fec39d2914231ee23) update copyright statements ([Ryan Graham](https://github.com/rmg))
@@ -145,6 +146,8 @@ since: (from 2016-03-14 to 2016-05-09)
 
 
 ### loopback-connector-informix
+ * [@0b49093](https://github.com/strongloop/loopback-connector-informix/commit/0b49093a41c9f2f5b2645f365fc6441fec240b9f) Fix module name ([Raymond Feng](https://github.com/raymondfeng))
+ * [@adcf182](https://github.com/strongloop/loopback-connector-informix/commit/adcf1824a362fa0989614ee7804f1e56ff5d0487) Update LICENSE ([Quentin Presley](https://github.com/qpresley))
  * [@b44065b](https://github.com/strongloop/loopback-connector-informix/commit/b44065bae234af2496b140a37a53d294586bd519) Significant rewrite of many functions/tests ([Quentin Presley](https://github.com/qpresley))
  * [@e299957](https://github.com/strongloop/loopback-connector-informix/commit/e299957322ad53a8c1a929037bb5acdf5cc6da4d) Fixed multiple issues causing tests to fail ([Quentin Presley](https://github.com/qpresley))
  * [@7ac33c4](https://github.com/strongloop/loopback-connector-informix/commit/7ac33c48ce8aa8144a563fd3ff6a5e146002d2ee) Second push of informix code ([Quentin Presley](https://github.com/qpresley))
@@ -258,9 +261,8 @@ since: (from 2016-03-14 to 2016-05-09)
 ## Components
 
 ### loopback-component-explorer
+ * [PR#160](https://github.com/strongloop/loopback-component-explorer/pull/160) [Fix] `overrides-swagger-ui files` test ignores copyright in dummy file.  ([supasate](https://github.com/supasate))
  * [PR#159](https://github.com/strongloop/loopback-component-explorer/pull/159) Upgrade loopback devDependency ([supasate](https://github.com/supasate))
- * [@702117d](https://github.com/strongloop/loopback-component-explorer/commit/702117dbea73e68308cdb10eac224a0a5acc3fbe) Add blank lines to separate error-checking and done logic from other logic ([Supasate Choochaisri](https://github.com/supasate))
- * [@c3fe27a](https://github.com/strongloop/loopback-component-explorer/commit/c3fe27a5fe50dc585fb0c79b434d0cb9201cfdd9) Ignore copyright in dummy swagger-ui test ([Supasate Choochaisri](https://github.com/supasate))
  * [@cb6eafd](https://github.com/strongloop/loopback-component-explorer/commit/cb6eafd5929170c96490d660eb483ed5e0046431) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#142](https://github.com/strongloop/loopback-component-explorer/pull/142) examples launch fix ([Coobaha](https://github.com/Coobaha))
  * **Released 2.5.0** ([Miroslav Bajtoš](https://github.com/bajtos))
