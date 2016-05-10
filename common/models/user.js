@@ -53,9 +53,6 @@ var debug = require('debug')('loopback:user');
  * @property {Boolean} emailVerified Set when a user's email has been verified via `confirm()`.
  * @property {String} verificationToken Set when `verify()` is called.
  * @property {String} realm The namespace the user belongs to. See [Partitioning users with realms](https://docs.strongloop.com/display/public/LB/Partitioning+users+with+realms) for details.
- * @property {Date} created The property is not used by LoopBack, you are free to use it for your own purposes.
- * @property {Date} lastUpdated The property is not used by LoopBack, you are free to use it for your own purposes.
- * @property {String} status The property is not used by LoopBack, you are free to use it for your own purposes.
  * @property {Object} settings Extends the `Model.settings` object.
  * @property {Boolean} settings.emailVerificationRequired Require the email verification
  * process before allowing a login.
