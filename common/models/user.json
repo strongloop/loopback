@@ -87,7 +87,13 @@
       "permission": "ALLOW",
       "property": "resetPassword",
       "accessType": "EXECUTE"
-    }
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "replaceById"
+    }    
   ],
   "relations": {
     "accessTokens": {
