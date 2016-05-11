@@ -122,12 +122,15 @@ describe('remoting - integration', function() {
         .map(function(m) {
           return formatMethod(m);
         });
-
+      // This is the list of expected default endpoints
+      // for LB 3.X (They are different for LB 2.X)
       var expectedMethods = [
         'create(data:object):store POST /stores',
         'upsert(data:object):store PUT /stores',
+        'replaceOrCreate(data:object):store PATCH /stores',
         'exists(id:any):boolean GET /stores/:id/exists',
         'findById(id:any,filter:object):store GET /stores/:id',
+        'replaceById(id:any,data:object):store PATCH /stores/:id',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
         'updateAll(where:object,data:object):object POST /stores/update',
