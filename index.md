@@ -20,6 +20,7 @@ since: (from 2016-03-16 to 2016-05-11)
 
 
 ### loopback
+ * [@e723d8b](https://github.com/strongloop/loopback/commit/e723d8b6418f306b4cbd347a44a11d52837280fc) Throw error upon extending unknown model ([David Cheung](https://github.com/davidcheung))
  * [PR#2299](https://github.com/strongloop/loopback/pull/2299) [SEMVER-MAJOR] Removed unused user properties ([davidcheung](https://github.com/davidcheung))
  * [PR#2310](https://github.com/strongloop/loopback/pull/2310) Update user.js ([ambrt](https://github.com/ambrt))
  * [PR#2308](https://github.com/strongloop/loopback/pull/2308) Remove Change.handleError ([0candy](https://github.com/0candy))
