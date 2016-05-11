@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-03-15 to 2016-05-10)
+since: (from 2016-03-16 to 2016-05-11)
 ---
 
 ## Core
@@ -20,6 +20,7 @@ since: (from 2016-03-15 to 2016-05-10)
 
 
 ### loopback
+ * [PR#2299](https://github.com/strongloop/loopback/pull/2299) [SEMVER-MAJOR] Removed unused user properties ([davidcheung](https://github.com/davidcheung))
  * [PR#2310](https://github.com/strongloop/loopback/pull/2310) Update user.js ([ambrt](https://github.com/ambrt))
  * [PR#2308](https://github.com/strongloop/loopback/pull/2308) Remove Change.handleError ([0candy](https://github.com/0candy))
  * [PR#2297](https://github.com/strongloop/loopback/pull/2297) Separate error-checking and next/done logic from other logic ([supasate](https://github.com/supasate))
@@ -54,6 +55,8 @@ since: (from 2016-03-15 to 2016-05-10)
 
 
 ### loopback-datasource-juggler
+ * [PR#926](https://github.com/strongloop/loopback-datasource-juggler/pull/926) Set ESLint as devdep ([superkhau](https://github.com/superkhau))
+ * [PR#924](https://github.com/strongloop/loopback-datasource-juggler/pull/924) Use mocha instead of Makefile for testing ([superkhau](https://github.com/superkhau))
  * [PR#918](https://github.com/strongloop/loopback-datasource-juggler/pull/918) [SEMVER-MAJOR] DAO.create: don't return the instance ([bajtos](https://github.com/bajtos))
  * [PR#917](https://github.com/strongloop/loopback-datasource-juggler/pull/917) RELEASE-NOTES: describe 30283291 ([bajtos](https://github.com/bajtos))
  * [PR#911](https://github.com/strongloop/loopback-datasource-juggler/pull/911) Implement operation hooks for EmbedsMany methods ([bajtos](https://github.com/bajtos))
@@ -134,6 +137,7 @@ since: (from 2016-03-15 to 2016-05-10)
 
 
 ### loopback-connector-db2
+ * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#29](https://github.com/strongloop/loopback-connector-db2/pull/29) Add DB2 for z/OS support and a fix for issues #28 ([qpresley](https://github.com/qpresley))
  * **Released 1.0.14** ([Quentin Presley](https://github.com/qpresley))
@@ -193,6 +197,7 @@ since: (from 2016-03-15 to 2016-05-10)
 
 
 ### loopback-connector-oracle
+ * [PR#66](https://github.com/strongloop/loopback-connector-oracle/pull/66) Handle connect error in datasource-juggler instead of connector ([jannyHou](https://github.com/jannyHou))
  * [@6c0ce51](https://github.com/strongloop/loopback-connector-oracle/commit/6c0ce51ac93533800d395639902b6dc45057fb85) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#64](https://github.com/strongloop/loopback-connector-oracle/pull/64) Lazy connect when booting from swagger generator ([jannyHou](https://github.com/jannyHou))
 
