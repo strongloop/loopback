@@ -15,9 +15,7 @@
      "allowComments": true,
      "allowRegex": true
   },
-  "validateJSDoc": {
-    "checkParamNames": false,
-    "checkRedundantParams": false,
+  "jsDoc": {
     "requireParamTypes": true
   }
 }
