@@ -141,6 +141,8 @@ since: (from 2016-03-18 to 2016-05-13)
 
 
 ### loopback-connector-db2
+ * [@0577dbe](https://github.com/strongloop/loopback-connector-db2/commit/0577dbe06ff7ba44dd61c8a14ddc38febb8abdd0) Fix done ([jannyHou](https://github.com/jannyHou))
+ * [@85db793](https://github.com/strongloop/loopback-connector-db2/commit/85db79353ed24fa8f5f109c7df887b10962911a3) Check dsn in config before throw error ([jannyHou](https://github.com/jannyHou))
  * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#29](https://github.com/strongloop/loopback-connector-db2/pull/29) Add DB2 for z/OS support and a fix for issues #28 ([qpresley](https://github.com/qpresley))
@@ -193,6 +195,7 @@ since: (from 2016-03-18 to 2016-05-13)
 
 
 ### loopback-connector-mysql
+ * [@658635e](https://github.com/strongloop/loopback-connector-mysql/commit/658635e72cfa16fee5879bb5dddd0ff64fe852b7) Add function connect ([juehou](https://github.com/jannyHou))
  * [@340a4eb](https://github.com/strongloop/loopback-connector-mysql/commit/340a4eb0f6599bf4a31b013f4ef7097a19d401b8) insert/update copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@c442f57](https://github.com/strongloop/loopback-connector-mysql/commit/c442f572c7a2f17babe38d9d487b3b24c7612d76) relicense as MIT only ([Ryan Graham](https://github.com/rmg))
  * [PR#156](https://github.com/strongloop/loopback-connector-mysql/pull/156) Use url to override other settings if url provided ([jannyHou](https://github.com/jannyHou))
