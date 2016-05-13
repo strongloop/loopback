@@ -122,6 +122,11 @@ describe('access control - integration', function() {
         });
       });
       lt.describe.whenCalledRemotely('PUT', '/api/users/:id', function() {
+        beforeEach(function(done) {
+          app.models.user.settings.replaceOnPUT = false;
+          app.models.user.setup();
+          done();
+        });
         lt.it.shouldBeAllowed();
       });
     });
@@ -208,7 +213,8 @@ describe('access control - integration', function() {
     lt.describe.whenLoggedInAsUser(CURRENT_USER, function() {
       beforeEach(function(done) {
         var self = this;
-
+        app.models.account.settings.replaceOnPUT = true;
+        app.models.account.setup();
         // Create an account under the given user
         app.models.account.create({
           userId: self.user.id,
@@ -220,6 +226,10 @@ describe('access control - integration', function() {
         });
 
       });
+      //
+      // TODO: How to check Model.settings.options.replaceOnPUT
+      // to decide whether the following test should be for
+      // (POST for replace and (PATCH AND PUT) for update) OR (PUT for replace and PATCH for update)
       lt.describe.whenCalledRemotely('PUT', '/api/accounts/:id', function() {
         lt.it.shouldBeAllowed();
       });
