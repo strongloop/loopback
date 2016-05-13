@@ -22,6 +22,7 @@ since: (from 2016-03-18 to 2016-05-13)
 ### loopback
  * [PR#2336](https://github.com/strongloop/loopback/pull/2336) Fix JSCS unsupported rule error ([jasonwoan](https://github.com/jasonwoan))
  * [PR#2301](https://github.com/strongloop/loopback/pull/2301) Remove unused condition for checking non-existent model ([davidcheung](https://github.com/davidcheung))
+ * [@09da46a](https://github.com/strongloop/loopback/commit/09da46a34d8ecb48643585ac5229c17fbd891afa) Remove env.json and strong-pm dir ([Ritchie Martori](https://github.com/ritch))
  * [PR#2299](https://github.com/strongloop/loopback/pull/2299) [SEMVER-MAJOR] Removed unused user properties ([davidcheung](https://github.com/davidcheung))
  * [PR#2310](https://github.com/strongloop/loopback/pull/2310) Update user.js ([ambrt](https://github.com/ambrt))
  * [PR#2308](https://github.com/strongloop/loopback/pull/2308) Remove Change.handleError ([0candy](https://github.com/0candy))
