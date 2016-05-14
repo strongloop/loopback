@@ -401,8 +401,7 @@ module.exports = function(User) {
       userModel.sharedClass.findMethodByName('confirm').http.path +
       '?uid=' +
       options.user.id +
-      '&redirect=' +
-      options.redirect;
+      '&redirect=' + encodeURIComponent(options.redirect);
 
     // Email model
     var Email = options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
@@ -426,6 +425,7 @@ module.exports = function(User) {
     // TODO - support more verification types
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
+
 
       options.text = options.text || 'Please verify your email by opening ' +
         'this link in a web browser:\n\t{href}';
@@ -703,7 +703,7 @@ module.exports = function(User) {
         if (!ctx.res) {
           return next(new Error('The transport does not support HTTP redirects.'));
         }
-        ctx.res.location(ctx.args.redirect);
+        ctx.res.location(decodeURIComponent(ctx.args.redirect));
         ctx.res.status(302);
       }
       next();
