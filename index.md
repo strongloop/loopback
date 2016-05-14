@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-03-18 to 2016-05-13)
+since: (from 2016-03-19 to 2016-05-14)
 ---
 
 ## Core
@@ -20,9 +20,9 @@ since: (from 2016-03-18 to 2016-05-13)
 
 
 ### loopback
+ * [PR#2327](https://github.com/strongloop/loopback/pull/2327) Remove env.json and strong-pm dir ([ritch](https://github.com/ritch))
  * [PR#2336](https://github.com/strongloop/loopback/pull/2336) Fix JSCS unsupported rule error ([jasonwoan](https://github.com/jasonwoan))
  * [PR#2301](https://github.com/strongloop/loopback/pull/2301) Remove unused condition for checking non-existent model ([davidcheung](https://github.com/davidcheung))
- * [@09da46a](https://github.com/strongloop/loopback/commit/09da46a34d8ecb48643585ac5229c17fbd891afa) Remove env.json and strong-pm dir ([Ritchie Martori](https://github.com/ritch))
  * [PR#2299](https://github.com/strongloop/loopback/pull/2299) [SEMVER-MAJOR] Removed unused user properties ([davidcheung](https://github.com/davidcheung))
  * [PR#2310](https://github.com/strongloop/loopback/pull/2310) Update user.js ([ambrt](https://github.com/ambrt))
  * [PR#2308](https://github.com/strongloop/loopback/pull/2308) Remove Change.handleError ([0candy](https://github.com/0candy))
@@ -141,8 +141,7 @@ since: (from 2016-03-18 to 2016-05-13)
 
 
 ### loopback-connector-db2
- * [@0577dbe](https://github.com/strongloop/loopback-connector-db2/commit/0577dbe06ff7ba44dd61c8a14ddc38febb8abdd0) Fix done ([jannyHou](https://github.com/jannyHou))
- * [@85db793](https://github.com/strongloop/loopback-connector-db2/commit/85db79353ed24fa8f5f109c7df887b10962911a3) Check dsn in config before throw error ([jannyHou](https://github.com/jannyHou))
+ * [PR#35](https://github.com/strongloop/loopback-connector-db2/pull/35) Check dsn in config before throw error ([jannyHou](https://github.com/jannyHou))
  * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#29](https://github.com/strongloop/loopback-connector-db2/pull/29) Add DB2 for z/OS support and a fix for issues #28 ([qpresley](https://github.com/qpresley))
@@ -156,6 +155,7 @@ since: (from 2016-03-18 to 2016-05-13)
 
 
 ### loopback-connector-informix
+ * **Released 1.0.0** ([Quentin Presley](https://github.com/qpresley))
  * [@0b49093](https://github.com/strongloop/loopback-connector-informix/commit/0b49093a41c9f2f5b2645f365fc6441fec240b9f) Fix module name ([Raymond Feng](https://github.com/raymondfeng))
  * [@adcf182](https://github.com/strongloop/loopback-connector-informix/commit/adcf1824a362fa0989614ee7804f1e56ff5d0487) Update LICENSE ([Quentin Presley](https://github.com/qpresley))
  * [@b44065b](https://github.com/strongloop/loopback-connector-informix/commit/b44065bae234af2496b140a37a53d294586bd519) Significant rewrite of many functions/tests ([Quentin Presley](https://github.com/qpresley))
@@ -195,7 +195,7 @@ since: (from 2016-03-18 to 2016-05-13)
 
 
 ### loopback-connector-mysql
- * [@658635e](https://github.com/strongloop/loopback-connector-mysql/commit/658635e72cfa16fee5879bb5dddd0ff64fe852b7) Add function connect ([juehou](https://github.com/jannyHou))
+ * [PR#166](https://github.com/strongloop/loopback-connector-mysql/pull/166) Add function connect ([jannyHou](https://github.com/jannyHou))
  * [@340a4eb](https://github.com/strongloop/loopback-connector-mysql/commit/340a4eb0f6599bf4a31b013f4ef7097a19d401b8) insert/update copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@c442f57](https://github.com/strongloop/loopback-connector-mysql/commit/c442f572c7a2f17babe38d9d487b3b24c7612d76) relicense as MIT only ([Ryan Graham](https://github.com/rmg))
  * [PR#156](https://github.com/strongloop/loopback-connector-mysql/pull/156) Use url to override other settings if url provided ([jannyHou](https://github.com/jannyHou))
@@ -214,6 +214,10 @@ since: (from 2016-03-18 to 2016-05-13)
  * [@0facead](https://github.com/strongloop/loopback-connector-postgresql/commit/0facead0dbb46c9e72c95800d3e656523ee3576b) update/insert copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@5d5458b](https://github.com/strongloop/loopback-connector-postgresql/commit/5d5458bd9e6e2f8a8545a7c016b7f067ba2418ca) relicense as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
  * [PR#137](https://github.com/strongloop/loopback-connector-postgresql/pull/137) Fix typo in SET NOT NULL migration. ([hyatt03](https://github.com/hyatt03))
+
+
+### loopback-connector-redis
+ * [@934f308](https://github.com/strongloop/loopback-connector-redis/commit/934f3088267ab94190593cd45487ba8534837416) update license text ([Ryan Graham](https://github.com/rmg))
 
 
 ### loopback-connector-remote
