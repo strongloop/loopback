@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-03-22 to 2016-05-17)
+since: (from 2016-03-23 to 2016-05-18)
 ---
 
 ## Core
@@ -15,6 +15,7 @@ since: (from 2016-03-22 to 2016-05-17)
 
 
 ### loopback
+ * [PR#2349](https://github.com/strongloop/loopback/pull/2349) Make the doc clear for `findORCreate` cb ([Amir-61](https://github.com/Amir-61))
  * [PR#2327](https://github.com/strongloop/loopback/pull/2327) Remove env.json and strong-pm dir ([ritch](https://github.com/ritch))
  * [PR#2336](https://github.com/strongloop/loopback/pull/2336) Fix JSCS unsupported rule error ([jasonwoan](https://github.com/jasonwoan))
  * [PR#2301](https://github.com/strongloop/loopback/pull/2301) Remove unused condition for checking non-existent model ([davidcheung](https://github.com/davidcheung))
