@@ -51,6 +51,7 @@ since: (from 2016-03-25 to 2016-05-20)
 
 
 ### loopback-datasource-juggler
+ * [@0e89a9c](https://github.com/strongloop/loopback-datasource-juggler/commit/0e89a9c837db402fd05a5294cd9fc3753e3ab632) fix avoid duplicate record on scope with promise ([Alex Pitigoi](https://github.com/alexpit))
  * [PR#922](https://github.com/strongloop/loopback-datasource-juggler/pull/922) Document promise support for DAO::find ([Sequoia](https://github.com/Sequoia))
  * [PR#926](https://github.com/strongloop/loopback-datasource-juggler/pull/926) Set ESLint as devdep ([superkhau](https://github.com/superkhau))
  * [PR#924](https://github.com/strongloop/loopback-datasource-juggler/pull/924) Use mocha instead of Makefile for testing ([superkhau](https://github.com/superkhau))
