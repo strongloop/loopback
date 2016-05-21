@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-03-25 to 2016-05-20)
+since: (from 2016-03-26 to 2016-05-21)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#187](https://github.com/strongloop/generator-loopback/pull/187) fix/update-to-promise-support ([jannyHou](https://github.com/jannyHou))
  * [@8fbdb0d](https://github.com/strongloop/generator-loopback/commit/8fbdb0da7ce203d387ee00096f7cfade37a0d3d9) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#177](https://github.com/strongloop/generator-loopback/pull/177) Add warning when no datasource available ([0candy](https://github.com/0candy))
  * **Released 1.20.6** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -15,6 +16,7 @@ since: (from 2016-03-25 to 2016-05-20)
 
 
 ### loopback
+ * [PR#2360](https://github.com/strongloop/loopback/pull/2360) Docuemtation for `replace*` methods ([Amir-61](https://github.com/Amir-61))
  * [PR#2349](https://github.com/strongloop/loopback/pull/2349) Make the doc clear for `findORCreate` cb ([Amir-61](https://github.com/Amir-61))
  * [PR#2327](https://github.com/strongloop/loopback/pull/2327) Remove env.json and strong-pm dir ([ritch](https://github.com/ritch))
  * [PR#2336](https://github.com/strongloop/loopback/pull/2336) Fix JSCS unsupported rule error ([jasonwoan](https://github.com/jasonwoan))
@@ -51,7 +53,7 @@ since: (from 2016-03-25 to 2016-05-20)
 
 
 ### loopback-datasource-juggler
- * [@0e89a9c](https://github.com/strongloop/loopback-datasource-juggler/commit/0e89a9c837db402fd05a5294cd9fc3753e3ab632) fix avoid duplicate record on scope with promise ([Alex Pitigoi](https://github.com/alexpit))
+ * [PR#937](https://github.com/strongloop/loopback-datasource-juggler/pull/937) fix avoid duplicate record on scope with promise ([alexpit](https://github.com/alexpit))
  * [PR#922](https://github.com/strongloop/loopback-datasource-juggler/pull/922) Document promise support for DAO::find ([Sequoia](https://github.com/Sequoia))
  * [PR#926](https://github.com/strongloop/loopback-datasource-juggler/pull/926) Set ESLint as devdep ([superkhau](https://github.com/superkhau))
  * [PR#924](https://github.com/strongloop/loopback-datasource-juggler/pull/924) Use mocha instead of Makefile for testing ([superkhau](https://github.com/superkhau))
@@ -99,6 +101,7 @@ since: (from 2016-03-25 to 2016-05-20)
 
 
 ### strong-remoting
+ * [PR#303](https://github.com/strongloop/strong-remoting/pull/303) travis: add v4 and v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [@aa391d2](https://github.com/strongloop/strong-remoting/commit/aa391d2e65460196ae2a59493f9dd4844622f35d) update copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@d568588](https://github.com/strongloop/strong-remoting/commit/d5685889827b498cc0873e922e55c86560ff821e) relicense as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
  * [PR#291](https://github.com/strongloop/strong-remoting/pull/291) Doc/hook return promise ([jannyHou](https://github.com/jannyHou))
@@ -205,6 +208,7 @@ since: (from 2016-03-25 to 2016-05-20)
 
 
 ### loopback-connector-remote
+ * [PR#47](https://github.com/strongloop/loopback-connector-remote/pull/47) Do not use native promises in tests ([superkhau](https://github.com/superkhau))
  * **Released 1.3.1** ([Ryan Graham](https://github.com/rmg))
  * [@17e60c9](https://github.com/strongloop/loopback-connector-remote/commit/17e60c9351630929a448b8560fa27e09241bb485) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 1.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
