@@ -7,6 +7,7 @@ since: (from 2016-03-28 to 2016-05-23)
 
 ### generator-loopback
  * [PR#187](https://github.com/strongloop/generator-loopback/pull/187) fix/update-to-promise-support ([jannyHou](https://github.com/jannyHou))
+ * [@d5addca](https://github.com/strongloop/generator-loopback/commit/d5addcaa79c0e25d7a0483457fdb7782ee2c9e93) remove glob devDep ([Eddie Monge](https://github.com/eddiemonge))
  * [@8fbdb0d](https://github.com/strongloop/generator-loopback/commit/8fbdb0da7ce203d387ee00096f7cfade37a0d3d9) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#177](https://github.com/strongloop/generator-loopback/pull/177) Add warning when no datasource available ([0candy](https://github.com/0candy))
  * **Released 1.20.6** ([Miroslav Bajtoš](https://github.com/bajtos))
