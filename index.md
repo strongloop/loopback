@@ -1,13 +1,13 @@
 ---
 layout: page
-since: (from 2016-03-28 to 2016-05-23)
+since: (from 2016-03-29 to 2016-05-24)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#184](https://github.com/strongloop/generator-loopback/pull/184) remove glob devDep ([eddiemonge](https://github.com/eddiemonge))
  * [PR#187](https://github.com/strongloop/generator-loopback/pull/187) fix/update-to-promise-support ([jannyHou](https://github.com/jannyHou))
- * [@d5addca](https://github.com/strongloop/generator-loopback/commit/d5addcaa79c0e25d7a0483457fdb7782ee2c9e93) remove glob devDep ([Eddie Monge](https://github.com/eddiemonge))
  * [@8fbdb0d](https://github.com/strongloop/generator-loopback/commit/8fbdb0da7ce203d387ee00096f7cfade37a0d3d9) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#177](https://github.com/strongloop/generator-loopback/pull/177) Add warning when no datasource available ([0candy](https://github.com/0candy))
  * **Released 1.20.6** ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -54,6 +54,7 @@ since: (from 2016-03-28 to 2016-05-23)
 
 
 ### loopback-datasource-juggler
+ * [PR#943](https://github.com/strongloop/loopback-datasource-juggler/pull/943) travis: add v4, v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [PR#937](https://github.com/strongloop/loopback-datasource-juggler/pull/937) fix avoid duplicate record on scope with promise ([alexpit](https://github.com/alexpit))
  * [PR#922](https://github.com/strongloop/loopback-datasource-juggler/pull/922) Document promise support for DAO::find ([Sequoia](https://github.com/Sequoia))
  * [PR#926](https://github.com/strongloop/loopback-datasource-juggler/pull/926) Set ESLint as devdep ([superkhau](https://github.com/superkhau))
