@@ -125,6 +125,7 @@ describe.onServer('Remote Methods', function() {
     );
 
     app = loopback();
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
     app.use(loopback.rest());
     app.model(User);
   });

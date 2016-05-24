@@ -462,6 +462,7 @@ describe('Replication over REST', function() {
 
   function setupServer(done) {
     serverApp = loopback();
+    serverApp.set('remoting', { errorHandler: { debug: true, log: false }});
     serverApp.enableAuth();
 
     serverApp.dataSource('db', { connector: 'memory' });

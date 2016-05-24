@@ -396,6 +396,7 @@ describe('access check', function() {
   var app;
   before(function() {
     app = loopback();
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
     app.use(loopback.rest());
     app.enableAuth();
     app.dataSource('test', { connector: 'memory' });

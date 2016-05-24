@@ -67,6 +67,8 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
     var test = this;
     var app = this.app;
     var model = app.models[modelName];
+
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
     assert(model, 'cannot get model of name ' + modelName + ' from app.models');
     assert(model.dataSource, 'cannot test model ' + modelName +
         ' without attached dataSource');
