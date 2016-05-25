@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-03-29 to 2016-05-24)
+since: (from 2016-03-30 to 2016-05-25)
 ---
 
 ## Core
@@ -193,6 +193,7 @@ since: (from 2016-03-29 to 2016-05-24)
 
 
 ### loopback-connector-oracle
+ * [PR#63](https://github.com/strongloop/loopback-connector-oracle/pull/63) [SEMVER-MAJOR] Use oracledb module as the underlying Node.js driver for Oracle DBs ([raymondfeng](https://github.com/raymondfeng))
  * [PR#66](https://github.com/strongloop/loopback-connector-oracle/pull/66) Handle connect error in datasource-juggler instead of connector ([jannyHou](https://github.com/jannyHou))
  * [@6c0ce51](https://github.com/strongloop/loopback-connector-oracle/commit/6c0ce51ac93533800d395639902b6dc45057fb85) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#64](https://github.com/strongloop/loopback-connector-oracle/pull/64) Lazy connect when booting from swagger generator ([jannyHou](https://github.com/jannyHou))
