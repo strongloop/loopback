@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-03-30 to 2016-05-25)
+since: (from 2016-03-31 to 2016-05-26)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.20.7** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#184](https://github.com/strongloop/generator-loopback/pull/184) remove glob devDep ([eddiemonge](https://github.com/eddiemonge))
  * [PR#187](https://github.com/strongloop/generator-loopback/pull/187) fix/update-to-promise-support ([jannyHou](https://github.com/jannyHou))
  * [@8fbdb0d](https://github.com/strongloop/generator-loopback/commit/8fbdb0da7ce203d387ee00096f7cfade37a0d3d9) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
@@ -89,6 +90,7 @@ since: (from 2016-03-30 to 2016-05-25)
 
 
 ### loopback-swagger
+ * [PR#39](https://github.com/strongloop/loopback-swagger/pull/39) Add custom definition to swagger file ([jannyHou](https://github.com/jannyHou))
  * **Released 2.4.3** ([Ryan Graham](https://github.com/rmg))
  * [@a0aa29a](https://github.com/strongloop/loopback-swagger/commit/a0aa29a531db4ad29b5bf6d863cbdf0bb01ea4d5) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 2.4.2** ([Raymond Feng](https://github.com/raymondfeng))
@@ -193,6 +195,8 @@ since: (from 2016-03-30 to 2016-05-25)
 
 
 ### loopback-connector-oracle
+ * [@6bdc764](https://github.com/strongloop/loopback-connector-oracle/commit/6bdc7642815426de373c02b47ef861c84c8b6397) Fix package.json to use oracle installer ([Raymond Feng](https://github.com/raymondfeng))
+ * [@86e0530](https://github.com/strongloop/loopback-connector-oracle/commit/86e0530f007498835f724f2ef73625804e051ec3) Update dependencies ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#63](https://github.com/strongloop/loopback-connector-oracle/pull/63) [SEMVER-MAJOR] Use oracledb module as the underlying Node.js driver for Oracle DBs ([raymondfeng](https://github.com/raymondfeng))
  * [PR#66](https://github.com/strongloop/loopback-connector-oracle/pull/66) Handle connect error in datasource-juggler instead of connector ([jannyHou](https://github.com/jannyHou))
  * [@6c0ce51](https://github.com/strongloop/loopback-connector-oracle/commit/6c0ce51ac93533800d395639902b6dc45057fb85) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
