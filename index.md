@@ -1,12 +1,12 @@
 ---
 layout: page
-since: (from 2016-04-01 to 2016-05-27)
+since: (from 2016-04-02 to 2016-05-28)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@2aec87d](https://github.com/strongloop/generator-loopback/commit/2aec87dffe2996703d6d9a73496a75ba6af8996b) fix failing relation name test ([Eddie Monge](https://github.com/eddiemonge))
+ * [PR#190](https://github.com/strongloop/generator-loopback/pull/190) Fix failing relation name test ([eddiemonge](https://github.com/eddiemonge))
  * **Released 1.20.7** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#184](https://github.com/strongloop/generator-loopback/pull/184) remove glob devDep ([eddiemonge](https://github.com/eddiemonge))
  * [PR#187](https://github.com/strongloop/generator-loopback/pull/187) fix/update-to-promise-support ([jannyHou](https://github.com/jannyHou))
