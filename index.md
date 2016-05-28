@@ -56,6 +56,7 @@ since: (from 2016-04-02 to 2016-05-28)
 
 
 ### loopback-datasource-juggler
+ * [@d9a3f62](https://github.com/strongloop/loopback-datasource-juggler/commit/d9a3f6226aafc3c0ab0f760121248631b2938fa6) Fix incompatibility between different connectors ([Amir Jafarian](https://github.com/Amir-61))
  * [PR#943](https://github.com/strongloop/loopback-datasource-juggler/pull/943) travis: add v4, v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [PR#937](https://github.com/strongloop/loopback-datasource-juggler/pull/937) fix avoid duplicate record on scope with promise ([alexpit](https://github.com/alexpit))
  * [PR#922](https://github.com/strongloop/loopback-datasource-juggler/pull/922) Document promise support for DAO::find ([Sequoia](https://github.com/Sequoia))
