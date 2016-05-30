@@ -137,6 +137,16 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#14](https://github.com/strongloop/loopback-connector-cloudant/pull/14) Use the Cloudant Query selector syntax to associate models to ([tonyffrench](https://github.com/tonyffrench))
 
 
+### loopback-connector-dashdb
+ * [@c08aa32](https://github.com/strongloop/loopback-connector-dashdb/commit/c08aa325cd2ed435ca1e73b9ce23b3878ac07b2a) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
+ * [@6e60214](https://github.com/strongloop/loopback-connector-dashdb/commit/6e60214133df3c1798a5de800d0c389d93f58fa2) Update to move most functionality to loopback-connector-ibmdb ([Quentin Presley](https://github.com/qpresley))
+ * [@1943f99](https://github.com/strongloop/loopback-connector-dashdb/commit/1943f99dee021f562a3f5c5e6afcc18637e05912) Remove DB2 from package.json ([Quentin Presley](https://github.com/qpresley))
+ * [@fdfb3b5](https://github.com/strongloop/loopback-connector-dashdb/commit/fdfb3b58e5389fe44a485675240cf6944804107e) Collapsing for simplicity ([Quentin Presley](https://github.com/qpresley))
+ * [@8c519c0](https://github.com/strongloop/loopback-connector-dashdb/commit/8c519c01488ad1c69fb1160fa70c4809643100e5) Get tests functioning ([Quentin Presley](https://github.com/qpresley))
+ * [@787c77c](https://github.com/strongloop/loopback-connector-dashdb/commit/787c77c730ea575aacc517f4e199c67c480dd9ed) Initial commit ([Quentin Presley](https://github.com/qpresley))
+ * [@48336bc](https://github.com/strongloop/loopback-connector-dashdb/commit/48336bc23a133bf05c4fe15c22d9238c8c406e01) Initial commit ([Quentin Presley](https://github.com/qpresley))
+
+
 ### loopback-connector-db2
  * [PR#35](https://github.com/strongloop/loopback-connector-db2/pull/35) Check dsn in config before throw error ([jannyHou](https://github.com/jannyHou))
  * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
@@ -146,6 +156,13 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#27](https://github.com/strongloop/loopback-connector-db2/pull/27) Add SQL file for dashDB ([qpresley](https://github.com/qpresley))
  * [PR#26](https://github.com/strongloop/loopback-connector-db2/pull/26) properly identify and fail with missing credentials ([svennam92](https://github.com/svennam92))
  * [PR#24](https://github.com/strongloop/loopback-connector-db2/pull/24) Change test command back ([jannyHou](https://github.com/jannyHou))
+
+
+### loopback-connector-db2z
+ * [@8519471](https://github.com/strongloop/loopback-connector-db2z/commit/8519471ab5e2795a9a7b2c1412f558c9aadda17a) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
+ * [@d973433](https://github.com/strongloop/loopback-connector-db2z/commit/d97343327bad8089d7cb511e1f9f6ce38da740ba) Add DB2z code ([Quentin Presley](https://github.com/qpresley))
+ * [@f72fbe2](https://github.com/strongloop/loopback-connector-db2z/commit/f72fbe2fb7da6b7f5a8e5385ede5fdba929f10d2) Initial code drop ([Quentin Presley](https://github.com/qpresley))
+ * [@d444f2f](https://github.com/strongloop/loopback-connector-db2z/commit/d444f2ffa0a11eab2eb359bc98c12a86a4c2d587) Initial commit ([Quentin Presley](https://github.com/qpresley))
 
 
 ### loopback-connector-informix
