@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-04 to 2016-05-30)
+since: (from 2016-04-05 to 2016-05-31)
 ---
 
 ## Core
@@ -13,9 +13,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * [@8fbdb0d](https://github.com/strongloop/generator-loopback/commit/8fbdb0da7ce203d387ee00096f7cfade37a0d3d9) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#177](https://github.com/strongloop/generator-loopback/pull/177) Add warning when no datasource available ([0candy](https://github.com/0candy))
  * **Released 1.20.6** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#175](https://github.com/strongloop/generator-loopback/pull/175) Fix accept and return to end with empty input ([jannyHou](https://github.com/jannyHou))
- * **Released 1.20.5** ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#172](https://github.com/strongloop/generator-loopback/pull/172) Fix how default base model is set ([raymondfeng](https://github.com/raymondfeng))
 
 
 ### loopback
@@ -38,21 +35,11 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#2272](https://github.com/strongloop/loopback/pull/2272) Fix for `remoteMethodDisabled` PR ([superkhau](https://github.com/superkhau))
  * [PR#2266](https://github.com/strongloop/loopback/pull/2266) Emit a remoteMethodDisabled event when disabling a remote method ([supasate](https://github.com/supasate))
  * [PR#2245](https://github.com/strongloop/loopback/pull/2245) Fix typo in Model.nestRemoting ([bajtos](https://github.com/bajtos))
- * [@58f32dd](https://github.com/strongloop/loopback/commit/58f32dd70e14d9286dd8be095b3134fbca5e39e2) Update loopback.js ([Rand McKinney](https://github.com/crandmck))
- * [PR#2155](https://github.com/strongloop/loopback/pull/2155) Fix inconsistencies in JSDoc ([sghung](https://github.com/sghung))
- * [PR#2108](https://github.com/strongloop/loopback/pull/2108) Allow built-in token middleware to run repeatedly ([benkroeger](https://github.com/benkroeger))
- * [@9e0405d](https://github.com/strongloop/loopback/commit/9e0405de9fb8039ee608641c370c03569d81694a) Allow built-in token middleware to run repeatedly (Benjamin Kröger)
- * [PR#2193](https://github.com/strongloop/loopback/pull/2193) Use eslint with loopback config ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-boot
  * [@5eaa909](https://github.com/strongloop/loopback-boot/commit/5eaa9090068ea99676ca081fc177e2a877ef9337) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#185](https://github.com/strongloop/loopback-boot/pull/185) Add flag var lazyConnect to ds config ([jannyHou](https://github.com/jannyHou))
- * **Released 2.18.1** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#183](https://github.com/strongloop/loopback-boot/pull/183) parse config: should ignore null values ([LoicMahieu](https://github.com/LoicMahieu))
- * **Released 2.18.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#177](https://github.com/strongloop/loopback-boot/pull/177) Dynamic configuration ([davidcheung](https://github.com/davidcheung))
- * [PR#178](https://github.com/strongloop/loopback-boot/pull/178) Use eslint with loopback config ([bajtos](https://github.com/bajtos))
 
 
 ### loopback-datasource-juggler
@@ -67,23 +54,11 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#911](https://github.com/strongloop/loopback-datasource-juggler/pull/911) Implement operation hooks for EmbedsMany methods ([bajtos](https://github.com/bajtos))
  * [PR#904](https://github.com/strongloop/loopback-datasource-juggler/pull/904) Implement operation hooks for EmbedsOne methods ([bajtos](https://github.com/bajtos))
  * [PR#909](https://github.com/strongloop/loopback-datasource-juggler/pull/909) eslint config 2.0 + remove extra empty lines ([bajtos](https://github.com/bajtos))
- * [PR#893](https://github.com/strongloop/loopback-datasource-juggler/pull/893) Test coverages for hashed password ([Amir-61](https://github.com/Amir-61))
- * [PR#896](https://github.com/strongloop/loopback-datasource-juggler/pull/896) Fix `forceId` check for `replaceById` ([Amir-61](https://github.com/Amir-61))
- * [PR#898](https://github.com/strongloop/loopback-datasource-juggler/pull/898) Fix notify for find method ([Amir-61](https://github.com/Amir-61))
- * [PR#902](https://github.com/strongloop/loopback-datasource-juggler/pull/902) test: extract context-test-helpers ([bajtos](https://github.com/bajtos))
- * [PR#888](https://github.com/strongloop/loopback-datasource-juggler/pull/888) Define `patch` aliases ([Amir-61](https://github.com/Amir-61))
- * [@1e8fe6a](https://github.com/strongloop/loopback-datasource-juggler/commit/1e8fe6a0d7b5c84a3f67ad4d6a05ddaa8d1229ba) 3.0.0-alpha.4 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#786](https://github.com/strongloop/loopback-datasource-juggler/pull/786) Partition by foreign key for pagination ([raymondfeng](https://github.com/raymondfeng))
- * [@e321baf](https://github.com/strongloop/loopback-datasource-juggler/commit/e321bafdf99c4fcb1cc2f1741d7dc900bbbdfea2) Fix style errors ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#860](https://github.com/strongloop/loopback-datasource-juggler/pull/860) fix nin support for in memory datasource ([horiaradu](https://github.com/horiaradu))
- * [PR#886](https://github.com/strongloop/loopback-datasource-juggler/pull/886) Use eslint with loopback config ([bajtos](https://github.com/bajtos))
- * [PR#887](https://github.com/strongloop/loopback-datasource-juggler/pull/887) Relicense as MIT only ([rmg](https://github.com/rmg))
 
 
 ### loopback-filters
  * **Released 0.1.2** ([Ryan Graham](https://github.com/rmg))
  * [@2f44e21](https://github.com/strongloop/loopback-filters/commit/2f44e21a9b6140c8e1d9708e7e0fd2578bd481d5) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
- * [PR#4](https://github.com/strongloop/loopback-filters/pull/4) Feature/eslint ([Amir-61](https://github.com/Amir-61))
 
 
 ### loopback-phase
@@ -95,15 +70,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#39](https://github.com/strongloop/loopback-swagger/pull/39) Add custom definition to swagger file ([jannyHou](https://github.com/jannyHou))
  * **Released 2.4.3** ([Ryan Graham](https://github.com/rmg))
  * [@a0aa29a](https://github.com/strongloop/loopback-swagger/commit/a0aa29a531db4ad29b5bf6d863cbdf0bb01ea4d5) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
- * **Released 2.4.2** ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#38](https://github.com/strongloop/loopback-swagger/pull/38) Do not generate required if no item is present ([raymondfeng](https://github.com/raymondfeng))
- * [PR#37](https://github.com/strongloop/loopback-swagger/pull/37) Add eslint infrastructure ([Amir-61](https://github.com/Amir-61))
- * **Released 2.4.1** ([Raymond Feng](https://github.com/raymondfeng))
- * [@73dce7c](https://github.com/strongloop/loopback-swagger/commit/73dce7c4b84cbb9d5a4f58ae7e6958fbbf350223) Disable the warning as it prints messages during loopback scaffolding ([Raymond Feng](https://github.com/raymondfeng))
- * **Released 2.4.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#28](https://github.com/strongloop/loopback-swagger/pull/28) Improve schema generation for return object ([hideya](https://github.com/hideya))
- * [@9667793](https://github.com/strongloop/loopback-swagger/commit/9667793b903b5eb8e4e18c2e9b63a98c7da17ae5) improve scheme generation for return object ([hideya kawahara](https://github.com/hideya))
- * [PR#32](https://github.com/strongloop/loopback-swagger/pull/32) Support default status codes ([0candy](https://github.com/0candy))
 
 
 ### strong-remoting
@@ -113,8 +79,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#291](https://github.com/strongloop/strong-remoting/pull/291) Doc/hook return promise ([jannyHou](https://github.com/jannyHou))
  * [PR#295](https://github.com/strongloop/strong-remoting/pull/295) Remove reference to jshintrc ([0candy](https://github.com/0candy))
  * [PR#294](https://github.com/strongloop/strong-remoting/pull/294) Set to no compression when using change stream ([0candy](https://github.com/0candy))
- * [PR#289](https://github.com/strongloop/strong-remoting/pull/289) Handle array of errors. ([richardpringle](https://github.com/richardpringle))
- * [PR#288](https://github.com/strongloop/strong-remoting/pull/288) Use eslint with loopback config ([gunjpan](https://github.com/gunjpan))
 
 
 ### strong-task-emitter
@@ -138,6 +102,10 @@ since: (from 2016-04-04 to 2016-05-30)
 
 
 ### loopback-connector-dashdb
+ * **Released 1.0.15** ([Quentin Presley](https://github.com/qpresley))
+ * [@66bdf04](https://github.com/strongloop/loopback-connector-dashdb/commit/66bdf042899d5d35e20e7ec2be52b6e8a32297fb) Update loopback-ibmdb version ([Quentin Presley](https://github.com/qpresley))
+ * [@23d8ef6](https://github.com/strongloop/loopback-connector-dashdb/commit/23d8ef6b3fa87d1099371219eeb2e6c66a7f6f8e) Update README.md ([Quentin Presley](https://github.com/qpresley))
+ * [@11d4ca0](https://github.com/strongloop/loopback-connector-dashdb/commit/11d4ca03170a32af15284af2f025beecd09a1d87) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
  * [@c08aa32](https://github.com/strongloop/loopback-connector-dashdb/commit/c08aa325cd2ed435ca1e73b9ce23b3878ac07b2a) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
  * [@6e60214](https://github.com/strongloop/loopback-connector-dashdb/commit/6e60214133df3c1798a5de800d0c389d93f58fa2) Update to move most functionality to loopback-connector-ibmdb ([Quentin Presley](https://github.com/qpresley))
  * [@1943f99](https://github.com/strongloop/loopback-connector-dashdb/commit/1943f99dee021f562a3f5c5e6afcc18637e05912) Remove DB2 from package.json ([Quentin Presley](https://github.com/qpresley))
@@ -152,13 +120,17 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#29](https://github.com/strongloop/loopback-connector-db2/pull/29) Add DB2 for z/OS support and a fix for issues #28 ([qpresley](https://github.com/qpresley))
- * **Released 1.0.14** ([Quentin Presley](https://github.com/qpresley))
- * [PR#27](https://github.com/strongloop/loopback-connector-db2/pull/27) Add SQL file for dashDB ([qpresley](https://github.com/qpresley))
- * [PR#26](https://github.com/strongloop/loopback-connector-db2/pull/26) properly identify and fail with missing credentials ([svennam92](https://github.com/svennam92))
- * [PR#24](https://github.com/strongloop/loopback-connector-db2/pull/24) Change test command back ([jannyHou](https://github.com/jannyHou))
 
 
 ### loopback-connector-db2z
+ * **Released 1.0.2** ([Quentin Presley](https://github.com/qpresley))
+ * [@bc4c343](https://github.com/strongloop/loopback-connector-db2z/commit/bc4c3435619fe9946ab89aafa654514f7a79adfa) Update README.md ([Quentin Presley](https://github.com/qpresley))
+ * [@73c08f8](https://github.com/strongloop/loopback-connector-db2z/commit/73c08f8f665853ea2de59716cf84268ec361354a) Update loopback-ibmdb version ([Quentin Presley](https://github.com/qpresley))
+ * [@342a7f0](https://github.com/strongloop/loopback-connector-db2z/commit/342a7f0c0987268a084f93d33dc40213c2bc8c49) Ignore travis ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.1** ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.0** ([Quentin Presley](https://github.com/qpresley))
+ * [@c21f3e2](https://github.com/strongloop/loopback-connector-db2z/commit/c21f3e2b99f48d3c12287308b2e6d219be3b2cf9) Update README.md ([Quentin Presley](https://github.com/qpresley))
+ * [@c970f95](https://github.com/strongloop/loopback-connector-db2z/commit/c970f952f2ac85c533587229accd7fbfa794f9e2) Change to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
  * [@8519471](https://github.com/strongloop/loopback-connector-db2z/commit/8519471ab5e2795a9a7b2c1412f558c9aadda17a) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
  * [@d973433](https://github.com/strongloop/loopback-connector-db2z/commit/d97343327bad8089d7cb511e1f9f6ce38da740ba) Add DB2z code ([Quentin Presley](https://github.com/qpresley))
  * [@f72fbe2](https://github.com/strongloop/loopback-connector-db2z/commit/f72fbe2fb7da6b7f5a8e5385ede5fdba929f10d2) Initial code drop ([Quentin Presley](https://github.com/qpresley))
@@ -169,9 +141,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * **Released 1.0.0** ([Quentin Presley](https://github.com/qpresley))
  * [@0b49093](https://github.com/strongloop/loopback-connector-informix/commit/0b49093a41c9f2f5b2645f365fc6441fec240b9f) Fix module name ([Raymond Feng](https://github.com/raymondfeng))
  * [@adcf182](https://github.com/strongloop/loopback-connector-informix/commit/adcf1824a362fa0989614ee7804f1e56ff5d0487) Update LICENSE ([Quentin Presley](https://github.com/qpresley))
- * [@b44065b](https://github.com/strongloop/loopback-connector-informix/commit/b44065bae234af2496b140a37a53d294586bd519) Significant rewrite of many functions/tests ([Quentin Presley](https://github.com/qpresley))
- * [@e299957](https://github.com/strongloop/loopback-connector-informix/commit/e299957322ad53a8c1a929037bb5acdf5cc6da4d) Fixed multiple issues causing tests to fail ([Quentin Presley](https://github.com/qpresley))
- * [@7ac33c4](https://github.com/strongloop/loopback-connector-informix/commit/7ac33c48ce8aa8144a563fd3ff6a5e146002d2ee) Second push of informix code ([Quentin Presley](https://github.com/qpresley))
 
 
 ### loopback-connector-jsonrpc
@@ -189,7 +158,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * **Released 1.15.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#241](https://github.com/strongloop/loopback-connector-mongodb/pull/241) Lazy connect when booting app ([jannyHou](https://github.com/jannyHou))
  * [PR#68](https://github.com/strongloop/loopback-connector-mongodb/pull/68) Support for geoNear queries ([timosaikkonen](https://github.com/timosaikkonen))
- * [PR#240](https://github.com/strongloop/loopback-connector-mongodb/pull/240) Add eslint infrastructure ([Amir-61](https://github.com/Amir-61))
 
 
 ### loopback-connector-mssql
@@ -199,18 +167,12 @@ since: (from 2016-04-04 to 2016-05-30)
  * [@4564714](https://github.com/strongloop/loopback-connector-mssql/commit/4564714345b571ad8b65bab4b4854369ec3c75ee) Fix linting errors ([Amir Jafarian](https://github.com/Amir-61))
  * [@add7e21](https://github.com/strongloop/loopback-connector-mssql/commit/add7e21ddc2cb7f53601d428217ec64a632264ce) Auto-update by eslint --fix ([Amir Jafarian](https://github.com/Amir-61))
  * [@1febd1c](https://github.com/strongloop/loopback-connector-mssql/commit/1febd1cf6f623ee5d13fb1e2ac604ad38b276bed) Add eslint infrastructure ([Amir Jafarian](https://github.com/Amir-61))
- * **Released 2.7.1** ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#78](https://github.com/strongloop/loopback-connector-mssql/pull/78) Keep float numbers ([raymondfeng](https://github.com/raymondfeng))
- * [PR#75](https://github.com/strongloop/loopback-connector-mssql/pull/75) use url to override settings if url provided ([jannyHou](https://github.com/jannyHou))
- * **Released 2.7.0** ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#76](https://github.com/strongloop/loopback-connector-mssql/pull/76) Use request.input to avoid SQL injection ([raymondfeng](https://github.com/raymondfeng))
 
 
 ### loopback-connector-mysql
  * [PR#166](https://github.com/strongloop/loopback-connector-mysql/pull/166) Add function connect ([jannyHou](https://github.com/jannyHou))
  * [@340a4eb](https://github.com/strongloop/loopback-connector-mysql/commit/340a4eb0f6599bf4a31b013f4ef7097a19d401b8) insert/update copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@c442f57](https://github.com/strongloop/loopback-connector-mysql/commit/c442f572c7a2f17babe38d9d487b3b24c7612d76) relicense as MIT only ([Ryan Graham](https://github.com/rmg))
- * [PR#156](https://github.com/strongloop/loopback-connector-mysql/pull/156) Use url to override other settings if url provided ([jannyHou](https://github.com/jannyHou))
 
 
 ### loopback-connector-oracle
@@ -226,7 +188,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#140](https://github.com/strongloop/loopback-connector-postgresql/pull/140) Lazy connect when booting from swagger ([jannyHou](https://github.com/jannyHou))
  * [@0facead](https://github.com/strongloop/loopback-connector-postgresql/commit/0facead0dbb46c9e72c95800d3e656523ee3576b) update/insert copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@5d5458b](https://github.com/strongloop/loopback-connector-postgresql/commit/5d5458bd9e6e2f8a8545a7c016b7f067ba2418ca) relicense as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
- * [PR#137](https://github.com/strongloop/loopback-connector-postgresql/pull/137) Fix typo in SET NOT NULL migration. ([hyatt03](https://github.com/hyatt03))
 
 
 ### loopback-connector-redis
@@ -239,16 +200,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * [@17e60c9](https://github.com/strongloop/loopback-connector-remote/commit/17e60c9351630929a448b8560fa27e09241bb485) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * **Released 1.3.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#44](https://github.com/strongloop/loopback-connector-remote/pull/44) Add promise support ([doublemarked](https://github.com/doublemarked))
-
-
-### loopback-connector-rest
- * [@dab5a1d](https://github.com/strongloop/loopback-connector-rest/commit/dab5a1ddf9d17c8648380566d30d2a38804a62af) Add Eslint infrastructure ([Amir-61](https://github.com/Amir-61))
- * [@aa20170](https://github.com/strongloop/loopback-connector-rest/commit/aa2017020969fbb4899f0e1e2ebed42f4c7c81ac) Fix linting errors ([Amir Jafarian](https://github.com/Amir-61))
- * [@39bf2c3](https://github.com/strongloop/loopback-connector-rest/commit/39bf2c371e678fadf4cc626ac94c24b39ade8e47) Auto-update by eslint --fix ([Amir Jafarian](https://github.com/Amir-61))
- * [@e2ff959](https://github.com/strongloop/loopback-connector-rest/commit/e2ff9595942d29ea9b14733ac8ae1f6cfb7c3b3a) Add eslint infrastructure ([Amir Jafarian](https://github.com/Amir-61))
- * [@5a1b1f9](https://github.com/strongloop/loopback-connector-rest/commit/5a1b1f9bcf809a26ba7ffdfc6c1e35b024abf4c9) relicense as MIT only ([Ryan Graham](https://github.com/rmg))
- * [@2de4e5e](https://github.com/strongloop/loopback-connector-rest/commit/2de4e5e5e8e0294eb126b75c5f16cbbcee85dd43) insert IBM copyrights ([Ryan Graham](https://github.com/rmg))
- * [@7a6bc5b](https://github.com/strongloop/loopback-connector-rest/commit/7a6bc5b7d1df12cb79346709c7199d780d756bdd) Add a test for header var ([Raymond Feng](https://github.com/raymondfeng))
 
 
 ### loopback-connector-soap
@@ -269,13 +220,10 @@ since: (from 2016-04-04 to 2016-05-30)
  * [PR#178](https://github.com/strongloop/loopback-sdk-angular/pull/178) Clear data logout interceptor ([mrbatista](https://github.com/mrbatista))
  * [@1b5eba8](https://github.com/strongloop/loopback-sdk-angular/commit/1b5eba874936bed4b15229c895d4d331190c1b1e) Clear user data when logout returns error response ([Matteo Padovano](https://github.com/mrbatista))
  * [PR#218](https://github.com/strongloop/loopback-sdk-angular/pull/218) Linting generated code ([davidcheung](https://github.com/davidcheung))
- * [PR#217](https://github.com/strongloop/loopback-sdk-angular/pull/217) Use ESlint in replace of jshint ([davidcheung](https://github.com/davidcheung))
- * [PR#209](https://github.com/strongloop/loopback-sdk-angular/pull/209) Added getter for AuthHeader value in LoopBackResource ([martinjuhasz](https://github.com/martinjuhasz))
 
 
 ### loopback-sdk-angular-cli
  * [@a11ba8b](https://github.com/strongloop/loopback-sdk-angular-cli/commit/a11ba8b19a5095780bd8d55550d425f3b8818971) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
- * [PR#41](https://github.com/strongloop/loopback-sdk-angular-cli/pull/41) Update test's regex to reflect SDK change ([davidcheung](https://github.com/davidcheung))
 
 
 ### loopback-sdk-ios
@@ -310,7 +258,6 @@ since: (from 2016-04-04 to 2016-05-30)
  * [@1e25a09](https://github.com/strongloop/loopback-component-passport/commit/1e25a093eee87cee7b771056990b7ed1576c6444) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#140](https://github.com/strongloop/loopback-component-passport/pull/140) Return the configured strategy ([ernie58](https://github.com/ernie58))
  * [PR#142](https://github.com/strongloop/loopback-component-passport/pull/142) adds error to redirect URL ([ernie58](https://github.com/ernie58))
- * [PR#136](https://github.com/strongloop/loopback-component-passport/pull/136) Issue746 ([loay](https://github.com/loay))
 
 
 ### loopback-component-push
