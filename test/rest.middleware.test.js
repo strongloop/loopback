@@ -17,6 +17,9 @@ describe('loopback.rest', function() {
     MyModel.attachTo(db);
   });
 
+  if (process.env.CI)
+    this.timeout(3000);
+
   it('works out-of-the-box', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
