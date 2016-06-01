@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-04-05 to 2016-05-31)
+since: (from 2016-04-06 to 2016-06-01)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#173](https://github.com/strongloop/generator-loopback/pull/173) Allow defining remote method without isStatic flag ([0candy](https://github.com/0candy))
  * [PR#190](https://github.com/strongloop/generator-loopback/pull/190) Fix failing relation name test ([eddiemonge](https://github.com/eddiemonge))
  * **Released 1.20.7** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#184](https://github.com/strongloop/generator-loopback/pull/184) remove glob devDep ([eddiemonge](https://github.com/eddiemonge))
@@ -43,6 +44,7 @@ since: (from 2016-04-05 to 2016-05-31)
 
 
 ### loopback-datasource-juggler
+ * [PR#944](https://github.com/strongloop/loopback-datasource-juggler/pull/944) [SEMVER-MAJOR] throw error for undefined mixin ([alexpit](https://github.com/alexpit))
  * [PR#938](https://github.com/strongloop/loopback-datasource-juggler/pull/938) Fix incompatibility between different connectors for replace methods ([Amir-61](https://github.com/Amir-61))
  * [PR#943](https://github.com/strongloop/loopback-datasource-juggler/pull/943) travis: add v4, v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [PR#937](https://github.com/strongloop/loopback-datasource-juggler/pull/937) fix avoid duplicate record on scope with promise ([alexpit](https://github.com/alexpit))
