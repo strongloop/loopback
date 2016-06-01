@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var cookieParser = require('cookie-parser');
 var loopback = require('../');
 var extend = require('util')._extend;
 var Token = loopback.AccessToken.extend('MyToken');
@@ -500,7 +501,7 @@ function createTestApp(testToken, settings, done) {
 
   var app = loopback();
 
-  app.use(loopback.cookieParser('secret'));
+  app.use(cookieParser('secret'));
   app.use(loopback.token(tokenSettings));
   app.get('/token', function(req, res) {
     res.cookie('authorization', testToken.id, { signed: true });
