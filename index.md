@@ -224,6 +224,7 @@ since: (from 2016-04-07 to 2016-06-02)
 ## SDKs
 
 ### loopback-sdk-angular
+ * [@61b3641](https://github.com/strongloop/loopback-sdk-angular/commit/61b36412bb02f4153d30ca797b068c065e7eb45f) Describe model schema in generated $resource ([Miroslav Bajtos](https://github.com/bajtos))
  * [@279c810](https://github.com/strongloop/loopback-sdk-angular/commit/279c810747d4061c11f126c19c3e34a67812aa8f) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#178](https://github.com/strongloop/loopback-sdk-angular/pull/178) Clear data logout interceptor ([mrbatista](https://github.com/mrbatista))
  * [@1b5eba8](https://github.com/strongloop/loopback-sdk-angular/commit/1b5eba874936bed4b15229c895d4d331190c1b1e) Clear user data when logout returns error response ([Matteo Padovano](https://github.com/mrbatista))
