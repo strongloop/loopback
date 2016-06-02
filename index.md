@@ -47,6 +47,7 @@ since: (from 2016-04-07 to 2016-06-02)
 
 
 ### loopback-datasource-juggler
+ * [@cae44f0](https://github.com/strongloop/loopback-datasource-juggler/commit/cae44f0458172c256db91c233126271f84d020b5) Fix error message ([Amir Jafarian](https://github.com/Amir-61))
  * [PR#954](https://github.com/strongloop/loopback-datasource-juggler/pull/954) Retun err for UPSERT if the connector returns err ([Amir-61](https://github.com/Amir-61))
  * [PR#955](https://github.com/strongloop/loopback-datasource-juggler/pull/955) ModelBuilder: add new setting strictEmbeddedModels ([bajtos](https://github.com/bajtos))
  * [PR#950](https://github.com/strongloop/loopback-datasource-juggler/pull/950) Add test's description ([Amir-61](https://github.com/Amir-61))
