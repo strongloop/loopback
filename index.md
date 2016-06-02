@@ -221,6 +221,10 @@ since: (from 2016-04-07 to 2016-06-02)
  * [@5cdc819](https://github.com/strongloop/loopback-connector-sqlite3/commit/5cdc8191f3f2ce45590de745aef74bb6e03503e3) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
 
 
+### loopback-connector-swagger
+ * [PR#2](https://github.com/strongloop/loopback-connector-swagger/pull/2) Develop basic connector ([gunjpan](https://github.com/gunjpan))
+
+
 
 ## SDKs
 
