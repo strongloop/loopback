@@ -1,14 +1,14 @@
 ---
 layout: page
-since: (from 2016-04-06 to 2016-06-01)
+since: (from 2016-04-07 to 2016-06-02)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.21.0** ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#192](https://github.com/strongloop/generator-loopback/pull/192) Fix/revert promise ([jannyHou](https://github.com/jannyHou))
  * [PR#173](https://github.com/strongloop/generator-loopback/pull/173) Allow defining remote method without isStatic flag ([0candy](https://github.com/0candy))
- * [@aa10cda](https://github.com/strongloop/generator-loopback/commit/aa10cda9d1c535e35c51a9975fcf63b3a3b35b85) Revert "fix failing relation name test" ([jannyHou](https://github.com/jannyHou))
- * [@62d21e3](https://github.com/strongloop/generator-loopback/commit/62d21e3cc1f1593f3673bda8a5f2fef6aa304887) Revert "fix/update-to-promise-support" ([jannyHou](https://github.com/jannyHou))
  * [PR#190](https://github.com/strongloop/generator-loopback/pull/190) Fix failing relation name test ([eddiemonge](https://github.com/eddiemonge))
  * **Released 1.20.7** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#184](https://github.com/strongloop/generator-loopback/pull/184) remove glob devDep ([eddiemonge](https://github.com/eddiemonge))
@@ -19,7 +19,7 @@ since: (from 2016-04-06 to 2016-06-01)
 
 
 ### loopback
- * [@8d295b7](https://github.com/strongloop/loopback/commit/8d295b70f63ee572323f1f4b2dadcf36debbe776) Remove legacy express 3.x middleware getters ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#2394](https://github.com/strongloop/loopback/pull/2394) [SEMVER-MAJOR] Remove legacy express 3.x middleware getters ([bajtos](https://github.com/bajtos))
  * [PR#2360](https://github.com/strongloop/loopback/pull/2360) Docuemtation for `replace*` methods ([Amir-61](https://github.com/Amir-61))
  * [PR#2349](https://github.com/strongloop/loopback/pull/2349) Make the doc clear for `findORCreate` cb ([Amir-61](https://github.com/Amir-61))
  * [PR#2327](https://github.com/strongloop/loopback/pull/2327) Remove env.json and strong-pm dir ([ritch](https://github.com/ritch))
@@ -47,8 +47,10 @@ since: (from 2016-04-06 to 2016-06-01)
 
 
 ### loopback-datasource-juggler
+ * [PR#954](https://github.com/strongloop/loopback-datasource-juggler/pull/954) Retun err for UPSERT if the connector returns err ([Amir-61](https://github.com/Amir-61))
+ * [PR#955](https://github.com/strongloop/loopback-datasource-juggler/pull/955) ModelBuilder: add new setting strictEmbeddedModels ([bajtos](https://github.com/bajtos))
+ * [PR#950](https://github.com/strongloop/loopback-datasource-juggler/pull/950) Add test's description ([Amir-61](https://github.com/Amir-61))
  * [PR#944](https://github.com/strongloop/loopback-datasource-juggler/pull/944) [SEMVER-MAJOR] throw error for undefined mixin ([alexpit](https://github.com/alexpit))
- * [@2b6ced0](https://github.com/strongloop/loopback-datasource-juggler/commit/2b6ced06a1749331e03a5661b1b76bf83090275e) Add test's description ([Amir Jafarian](https://github.com/Amir-61))
  * [PR#938](https://github.com/strongloop/loopback-datasource-juggler/pull/938) Fix incompatibility between different connectors for replace methods ([Amir-61](https://github.com/Amir-61))
  * [PR#943](https://github.com/strongloop/loopback-datasource-juggler/pull/943) travis: add v4, v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [PR#937](https://github.com/strongloop/loopback-datasource-juggler/pull/937) fix avoid duplicate record on scope with promise ([alexpit](https://github.com/alexpit))
