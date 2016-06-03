@@ -617,11 +617,11 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app;
-    var db;
+    var app, db, MyTestModel;
     beforeEach(function() {
       app = loopback();
-      db = loopback.createDataSource({connector: loopback.Memory});
+      db = loopback.createDataSource({ connector: loopback.Memory });
+      MyTestModel = app.registry.createModel('MyTestModel', {}, {base: 'Model'});
     });
 
     it('Expose a `Model` to remote clients', function() {
@@ -632,8 +632,8 @@ describe('app', function() {
       expect(app.models()).to.eql([Color]);
     });
 
-    it('uses singlar name as app.remoteObjects() key', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+    it('uses singular name as app.remoteObjects() key', function() {
+      var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({ color: Color });
@@ -695,18 +695,22 @@ describe('app', function() {
       });
     });
 
-    it('accepts null dataSource', function() {
-      app.model('MyTestModel', { dataSource: null });
+    it('accepts null dataSource', function(done) {
+      app.model(MyTestModel, { dataSource: null });
+      expect(MyTestModel.dataSource).to.eql(null);
+      done();
     });
 
-    it('accepts false dataSource', function() {
-      app.model('MyTestModel', { dataSource: false });
+    it('accepts false dataSource', function(done) {
+      app.model(MyTestModel, { dataSource: false });
+      expect(MyTestModel.getDataSource()).to.eql(null);
+      done();
     });
 
-    it('should not require dataSource', function() {
-      app.model('MyTestModel', {});
+    it('does not require dataSource', function(done) {
+      app.model(MyTestModel);
+      done();
     });
-
   });
 
   describe('app.model(name, config)', function() {
@@ -767,7 +771,6 @@ describe('app', function() {
       expect(app.models.foo.app).to.equal(app);
       expect(app.models.foo.shared).to.equal(true);
     });
-
   });
 
   describe('app.model(ModelCtor, config)', function() {
@@ -780,7 +783,8 @@ describe('app', function() {
       }
 
       assert(!previousModel || !previousModel.dataSource);
-      app.model('TestModel', { dataSource: 'db' });
+      var TestModel = app.registry.createModel('TestModel');
+      app.model(TestModel, { dataSource: 'db' });
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
   });
@@ -788,7 +792,8 @@ describe('app', function() {
   describe('app.models', function() {
     it('is unique per app instance', function() {
       app.dataSource('db', { connector: 'memory' });
-      var Color = app.model('Color', { dataSource: 'db' });
+      var Color = app.registry.createModel('Color');
+      app.model(Color, { dataSource: 'db' });
       expect(app.models.Color).to.equal(Color);
       var anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);

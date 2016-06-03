@@ -41,24 +41,14 @@ describe('relations - integration', function() {
   describe('polymorphicHasMany', function() {
 
     before(function defineProductAndCategoryModels() {
-      var Team = app.model(
-        'Team',
-        { properties: { name: 'string' },
-          dataSource: 'db'
-        }
-      );
-      var Reader = app.model(
-        'Reader',
-        { properties: { name: 'string' },
-          dataSource: 'db'
-        }
-      );
-      var Picture = app.model(
-        'Picture',
-        { properties: { name: 'string', imageableId: 'number', imageableType: 'string'},
-          dataSource: 'db'
-        }
-      );
+      var Team = app.registry.createModel('Team', { name: 'string' });
+      var Reader = app.registry.createModel('Reader', { name: 'string' });
+      var Picture = app.registry.createModel('Picture',
+        { name: 'string', imageableId: 'number', imageableType: 'string' });
+
+      app.model(Team, { dataSource: 'db' });
+      app.model(Reader, { dataSource: 'db' });
+      app.model(Picture, { dataSource: 'db' });
 
       Reader.hasMany(Picture, { polymorphic: { // alternative syntax
         as: 'imageable', // if not set, default to: reference
@@ -684,15 +674,17 @@ describe('relations - integration', function() {
 
   describe('hasAndBelongsToMany', function() {
     beforeEach(function defineProductAndCategoryModels() {
-      var product = app.model(
-        'product',
-        { properties: { id: 'string', name: 'string' }, dataSource: 'db' }
-
+      var product = app.registry.createModel(
+         'product',
+         { id: 'string', name: 'string' }
       );
-      var category = app.model(
+      var category = app.registry.createModel(
         'category',
-        { properties: { id: 'string', name: 'string' }, dataSource: 'db' }
+        { id: 'string', name: 'string' }
       );
+      app.model(product, { dataSource: 'db' });
+      app.model(category, { dataSource: 'db' });
+
       product.hasAndBelongsToMany(category);
       category.hasAndBelongsToMany(product);
     });
@@ -807,17 +799,18 @@ describe('relations - integration', function() {
   describe('embedsOne', function() {
 
     before(function defineGroupAndPosterModels() {
-      var group = app.model(
-        'group',
-        { properties: { name: 'string' },
-          dataSource: 'db',
-          plural: 'groups'
-        }
+      var group = app.registry.createModel('group',
+        { name: 'string' },
+        { plural: 'groups' }
       );
-      var poster = app.model(
+      app.model(group, { dataSource: 'db' });
+
+      var poster = app.registry.createModel(
         'poster',
-        { properties: { url: 'string' }, dataSource: 'db' }
+        { url: 'string' }
       );
+      app.model(poster, { dataSource: 'db' });
+
       group.embedsOne(poster, { as: 'cover' });
     });
 
@@ -924,17 +917,18 @@ describe('relations - integration', function() {
   describe('embedsMany', function() {
 
     before(function defineProductAndCategoryModels() {
-      var todoList = app.model(
+      var todoList = app.registry.createModel(
         'todoList',
-        { properties: { name: 'string' },
-          dataSource: 'db',
-          plural: 'todo-lists'
-        }
+        { name: 'string' },
+        { plural: 'todo-lists' }
       );
-      var todoItem = app.model(
+      app.model(todoList, { dataSource: 'db' });
+
+      var todoItem = app.registry.createModel(
         'todoItem',
-        { properties: { content: 'string' }, dataSource: 'db' }
+        { content: 'string' }, { forceId: false }
       );
+      app.model(todoItem, { dataSource: 'db' });
       todoList.embedsMany(todoItem, { as: 'items' });
     });
 
@@ -1112,18 +1106,24 @@ describe('relations - integration', function() {
   describe('referencesMany', function() {
 
     before(function defineProductAndCategoryModels() {
-      var recipe = app.model(
+      var recipe = app.registry.createModel(
         'recipe',
-        { properties: { name: 'string' }, dataSource: 'db' }
+        { name: 'string' }
       );
-      var ingredient = app.model(
+      app.model(recipe, { dataSource: 'db' });
+
+      var ingredient = app.registry.createModel(
         'ingredient',
-        { properties: { name: 'string' }, dataSource: 'db' }
+       { name: 'string' }
       );
-      var photo = app.model(
+      app.model(ingredient, { dataSource: 'db' });
+
+      var photo = app.registry.createModel(
         'photo',
-        { properties: { name: 'string' }, dataSource: 'db' }
+        { name: 'string' }
       );
+      app.model(photo, { dataSource: 'db' });
+
       recipe.referencesMany(ingredient);
       // contrived example for test:
       recipe.hasOne(photo, { as: 'picture', options: {
@@ -1460,31 +1460,41 @@ describe('relations - integration', function() {
   describe('nested relations', function() {
 
     before(function defineModels() {
-      var Book = app.model(
+      var Book = app.registry.createModel(
         'Book',
-        { properties: { name: 'string' }, dataSource: 'db',
-        plural: 'books' }
+        { name: 'string' },
+        { plural: 'books' }
       );
-      var Page = app.model(
+      app.model(Book, { dataSource: 'db' });
+
+      var Page = app.registry.createModel(
         'Page',
-        { properties: { name: 'string' }, dataSource: 'db',
-        plural: 'pages' }
+        { name: 'string' },
+        { plural: 'pages' }
       );
-      var Image = app.model(
+      app.model(Page, { dataSource: 'db' });
+
+      var Image = app.registry.createModel(
         'Image',
-        { properties: { name: 'string' }, dataSource: 'db',
-        plural: 'images' }
+        { name: 'string' },
+        { plural: 'images' }
       );
-      var Note = app.model(
+      app.model(Image, { dataSource: 'db' });
+
+      var Note = app.registry.createModel(
         'Note',
-        { properties: { text: 'string' }, dataSource: 'db',
-        plural: 'notes' }
+        { text: 'string' },
+        { plural: 'notes' }
       );
-      var Chapter = app.model(
+      app.model(Note, { dataSource: 'db' });
+
+      var Chapter = app.registry.createModel(
         'Chapter',
-        { properties: { name: 'string' }, dataSource: 'db',
-          plural: 'chapters' }
+        { name: 'string' },
+        { plural: 'chapters' }
       );
+      app.model(Chapter, { dataSource: 'db' });
+
       Book.hasMany(Page);
       Book.hasMany(Chapter);
       Page.hasMany(Note);
