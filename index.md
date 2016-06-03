@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-07 to 2016-06-02)
+since: (from 2016-04-08 to 2016-06-03)
 ---
 
 ## Core
@@ -47,7 +47,7 @@ since: (from 2016-04-07 to 2016-06-02)
 
 
 ### loopback-datasource-juggler
- * [@cae44f0](https://github.com/strongloop/loopback-datasource-juggler/commit/cae44f0458172c256db91c233126271f84d020b5) Fix error message ([Amir Jafarian](https://github.com/Amir-61))
+ * [PR#953](https://github.com/strongloop/loopback-datasource-juggler/pull/953) Fix error message ([Amir-61](https://github.com/Amir-61))
  * [PR#954](https://github.com/strongloop/loopback-datasource-juggler/pull/954) Retun err for UPSERT if the connector returns err ([Amir-61](https://github.com/Amir-61))
  * [PR#955](https://github.com/strongloop/loopback-datasource-juggler/pull/955) ModelBuilder: add new setting strictEmbeddedModels ([bajtos](https://github.com/bajtos))
  * [PR#950](https://github.com/strongloop/loopback-datasource-juggler/pull/950) Add test's description ([Amir-61](https://github.com/Amir-61))
@@ -229,7 +229,7 @@ since: (from 2016-04-07 to 2016-06-02)
 ## SDKs
 
 ### loopback-sdk-angular
- * [@61b3641](https://github.com/strongloop/loopback-sdk-angular/commit/61b36412bb02f4153d30ca797b068c065e7eb45f) Describe model schema in generated $resource ([Miroslav Bajtos](https://github.com/bajtos))
+ * [PR#223](https://github.com/strongloop/loopback-sdk-angular/pull/223) Describe model schema in generated $resource ([bajtos](https://github.com/bajtos))
  * [@279c810](https://github.com/strongloop/loopback-sdk-angular/commit/279c810747d4061c11f126c19c3e34a67812aa8f) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#178](https://github.com/strongloop/loopback-sdk-angular/pull/178) Clear data logout interceptor ([mrbatista](https://github.com/mrbatista))
  * [@1b5eba8](https://github.com/strongloop/loopback-sdk-angular/commit/1b5eba874936bed4b15229c895d4d331190c1b1e) Clear user data when logout returns error response ([Matteo Padovano](https://github.com/mrbatista))
