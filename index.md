@@ -1,11 +1,14 @@
 ---
 layout: page
-since: (from 2016-04-08 to 2016-06-03)
+since: (from 2016-04-09 to 2016-06-04)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.21.1** ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#195](https://github.com/strongloop/generator-loopback/pull/195) Fix generator prompt validate error ([0candy](https://github.com/0candy))
+ * [PR#188](https://github.com/strongloop/generator-loopback/pull/188) remote-method: make prompts more descriptive ([bajtos](https://github.com/bajtos))
  * **Released 1.21.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#192](https://github.com/strongloop/generator-loopback/pull/192) Fix/revert promise ([jannyHou](https://github.com/jannyHou))
  * [PR#173](https://github.com/strongloop/generator-loopback/pull/173) Allow defining remote method without isStatic flag ([0candy](https://github.com/0candy))
