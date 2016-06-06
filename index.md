@@ -50,7 +50,7 @@ since: (from 2016-04-11 to 2016-06-06)
 
 
 ### loopback-datasource-juggler
- * [PR#964](https://github.com/strongloop/loopback-datasource-juggler/pull/964) Fix ([Amir-61](https://github.com/Amir-61))
+ * [PR#964](https://github.com/strongloop/loopback-datasource-juggler/pull/964) Fix `disableInclude` for hasAndBelongsToMany relation ([Amir-61](https://github.com/Amir-61))
  * [PR#953](https://github.com/strongloop/loopback-datasource-juggler/pull/953) Fix error message ([Amir-61](https://github.com/Amir-61))
  * [PR#954](https://github.com/strongloop/loopback-datasource-juggler/pull/954) Retun err for UPSERT if the connector returns err ([Amir-61](https://github.com/Amir-61))
  * [PR#955](https://github.com/strongloop/loopback-datasource-juggler/pull/955) ModelBuilder: add new setting strictEmbeddedModels ([bajtos](https://github.com/bajtos))
