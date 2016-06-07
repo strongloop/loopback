@@ -1,3 +1,45 @@
+2016-06-07, Version 2.29.0
+==========================
+
+ * test: increase timeouts on CI (Miroslav Bajtoš)
+
+ * jscsrc: remove jsDoc rule (Miroslav Bajtoš)
+
+ * Deprecate getters for express 3.x middleware (Miroslav Bajtoš)
+
+ * Remove env.json and strong-pm dir (Ritchie Martori)
+
+ * Fix JSCS unsupported rule error (Jason)
+
+ * Resolver support return promise (juehou)
+
+ * Update user.js (Rik)
+
+ * Backport separate error checking and done logic (Simon Ho)
+
+ * Clean up by removing unnecessary comments (Supasate Choochaisri)
+
+ * Add feature to not allow duplicate role name (Supasate Choochaisri)
+
+ * update/insert copyright notices (Ryan Graham)
+
+ * relicense as MIT only (Ryan Graham)
+
+ * Upgrade phantomjs to 2.x (Miroslav Bajtoš)
+
+ * app: send port:0 instead of port:undefined (Miroslav Bajtoš)
+
+ * travis: drop node@5, add node@6 (Miroslav Bajtoš)
+
+ * Disable DEBUG output for eslint on Jenkins CI (Miroslav Bajtoš)
+
+ * test/rest.middleware: use local registry (Miroslav Bajtoš)
+
+ * Fix role.isOwner to support app-local registry (Miroslav Bajtoš)
+
+ * test/user: use local registry (Miroslav Bajtoš)
+
+
 2016-05-02, Version 2.28.0
 ==========================
 
