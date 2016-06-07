@@ -36,6 +36,8 @@
 
  */
 
+var g = require('strong-globalize')();
+
 var loopback = require('../../lib/loopback');
 var async = require('async');
 var assert = require('assert');
@@ -535,7 +537,7 @@ module.exports = function(ACL) {
         break;
       default:
         process.nextTick(function() {
-          var err = new Error('Invalid principal type: ' + type);
+          var err = new Error(g.f('Invalid principal type: %s', type));
           err.statusCode = 400;
           cb(err);
         });

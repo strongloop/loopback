@@ -50,6 +50,7 @@
     "nodemailer-stub-transport": "^1.0.0",
     "serve-favicon": "^2.2.0",
     "stable": "^0.1.5",
+    "strong-globalize": "^2.6.2",
     "strong-remoting": "^2.21.0",
     "uid2": "0.0.3",
     "underscore.string": "^3.0.3"
