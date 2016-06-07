@@ -613,6 +613,7 @@ describe('app', function() {
     var app, db;
     beforeEach(function() {
       app = loopback();
+      app.set('remoting', { errorHandler: { debug: true, log: false }});
       db = loopback.createDataSource({ connector: loopback.Memory });
     });
 

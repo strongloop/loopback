@@ -20,7 +20,8 @@
     },
     "cors": false,
     "errorHandler": {
-      "disableStackTrace": false
+      "debug": true,
+      "log": false
     },
     "sharedMethods": {
       "find": true

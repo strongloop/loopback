@@ -13,6 +13,7 @@ describe('RemoteConnector', function() {
     beforeEach: function(done) {
       var test = this;
       remoteApp = loopback();
+      remoteApp.set('remoting', { errorHandler: { debug: true, log: false }});
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
         test.dataSource = loopback.createDataSource({

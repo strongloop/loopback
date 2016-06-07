@@ -503,6 +503,7 @@ function createTestApp(testToken, settings, done) {
 
   app.use(cookieParser('secret'));
   app.use(loopback.token(tokenSettings));
+  app.set('remoting', { errorHandler: { debug: true, log: false }});
   app.get('/token', function(req, res) {
     res.cookie('authorization', testToken.id, { signed: true });
     res.cookie('access_token', testToken.id, { signed: true });

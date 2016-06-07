@@ -22,7 +22,8 @@ describe('remoting - integration', function() {
     it('should load remoting options', function() {
       var remotes = app.remotes();
       assert.deepEqual(remotes.options, { 'json': { 'limit': '1kb', 'strict': false },
-        'urlencoded': { 'limit': '8kb', 'extended': true }});
+        'urlencoded': { 'limit': '8kb', 'extended': true },
+        'errorHandler': { 'debug': true, log: false }});
     });
 
     it('rest handler', function() {

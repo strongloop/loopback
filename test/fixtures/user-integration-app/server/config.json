@@ -9,6 +9,10 @@
     },
     "urlencoded": {
       "limit": "8kb"
+    },
+    "errorHandler": {
+      "debug": true,
+      "log": false
     }
   },
   "legacyExplorer": false
