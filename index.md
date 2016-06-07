@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-11 to 2016-06-06)
+since: (from 2016-04-12 to 2016-06-07)
 ---
 
 ## Core
@@ -86,6 +86,7 @@ since: (from 2016-04-11 to 2016-06-06)
 
 
 ### strong-remoting
+ * [PR#305](https://github.com/strongloop/strong-remoting/pull/305) Implement getEndpoints ([Amir-61](https://github.com/Amir-61))
  * [PR#303](https://github.com/strongloop/strong-remoting/pull/303) travis: add v4 and v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [@aa391d2](https://github.com/strongloop/strong-remoting/commit/aa391d2e65460196ae2a59493f9dd4844622f35d) update copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@d568588](https://github.com/strongloop/strong-remoting/commit/d5685889827b498cc0873e922e55c86560ff821e) relicense as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
