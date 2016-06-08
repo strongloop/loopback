@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-12 to 2016-06-07)
+since: (from 2016-04-13 to 2016-06-08)
 ---
 
 ## Core
@@ -22,6 +22,7 @@ since: (from 2016-04-12 to 2016-06-07)
 
 
 ### loopback
+ * [PR#2375](https://github.com/strongloop/loopback/pull/2375) [SEMVER-MAJOR] Fix remoting strong-error-handler ([davidcheung](https://github.com/davidcheung))
  * [PR#2394](https://github.com/strongloop/loopback/pull/2394) [SEMVER-MAJOR] Remove legacy express 3.x middleware getters ([bajtos](https://github.com/bajtos))
  * [PR#2360](https://github.com/strongloop/loopback/pull/2360) Docuemtation for `replace*` methods ([Amir-61](https://github.com/Amir-61))
  * [PR#2349](https://github.com/strongloop/loopback/pull/2349) Make the doc clear for `findORCreate` cb ([Amir-61](https://github.com/Amir-61))
@@ -50,6 +51,7 @@ since: (from 2016-04-12 to 2016-06-07)
 
 
 ### loopback-datasource-juggler
+ * [@ea2266e](https://github.com/strongloop/loopback-datasource-juggler/commit/ea2266e453220208b204d3817a866ea7f0b42410) Persist changes on parent for embedsOne ([Dimitris Halatsis](https://github.com/mitsos1os))
  * [PR#964](https://github.com/strongloop/loopback-datasource-juggler/pull/964) Fix `disableInclude` for hasAndBelongsToMany relation ([Amir-61](https://github.com/Amir-61))
  * [PR#953](https://github.com/strongloop/loopback-datasource-juggler/pull/953) Fix error message ([Amir-61](https://github.com/Amir-61))
  * [PR#954](https://github.com/strongloop/loopback-datasource-juggler/pull/954) Retun err for UPSERT if the connector returns err ([Amir-61](https://github.com/Amir-61))
@@ -86,6 +88,7 @@ since: (from 2016-04-12 to 2016-06-07)
 
 
 ### strong-remoting
+ * [PR#302](https://github.com/strongloop/strong-remoting/pull/302) [SEMVER-MAJOR] Implement strong error handler for rest-adapter ([davidcheung](https://github.com/davidcheung))
  * [PR#305](https://github.com/strongloop/strong-remoting/pull/305) Implement getEndpoints ([Amir-61](https://github.com/Amir-61))
  * [PR#303](https://github.com/strongloop/strong-remoting/pull/303) travis: add v4 and v6, drop io.js ([bajtos](https://github.com/bajtos))
  * [@aa391d2](https://github.com/strongloop/strong-remoting/commit/aa391d2e65460196ae2a59493f9dd4844622f35d) update copyright notices ([Ryan Graham](https://github.com/rmg))
