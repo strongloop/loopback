@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var it = require('./util/it');
 var describe = require('./util/describe');
 var Domain = require('domain');
@@ -53,37 +58,24 @@ describe('loopback', function() {
         'ValidationError',
         'application',
         'arguments',
-        'autoAttach',
-        'autoAttachModel',
-        'bodyParser',
         'caller',
-        'compress',
         'configureModel',
         'context',
-        'cookieParser',
-        'cookieSession',
         'createContext',
         'createDataSource',
         'createModel',
-        'csrf',
         'defaultDataSources',
-        'directory',
         'errorHandler',
         'favicon',
         'faviconFile',
         'findModel',
         'getCurrentContext',
-        'getDefaultDataSourceForType',
         'getModel',
         'getModelByType',
         'isBrowser',
         'isServer',
-        'json',
         'length',
-        'logger',
         'memory',
-        'methodOverride',
-        'mime',
         'modelBuilder',
         'name',
         'prototype',
@@ -92,20 +84,14 @@ describe('loopback', function() {
         'remoteMethod',
         'request',
         'response',
-        'responseTime',
         'rest',
         'runInContext',
-        'session',
-        'setDefaultDataSourceForType',
         'static',
         'status',
         'template',
-        'timeout',
         'token',
         'urlNotFound',
-        'urlencoded',
         'version',
-        'vhost',
       ];
 
       var actual = Object.getOwnPropertyNames(loopback);
@@ -155,32 +141,6 @@ describe('loopback', function() {
     it('should extend from Model by default', function() {
       var m1 = loopback.createModel('m1', {});
       assert(m1.prototype instanceof loopback.Model);
-    });
-  });
-
-  describe('loopback.autoAttach', function() {
-    it('doesn\'t overwrite model with datasource configured', function() {
-      var ds1 = loopback.createDataSource('db1', {
-        connector: loopback.Memory,
-      });
-
-      // setup default data sources
-      loopback.setDefaultDataSourceForType('db', ds1);
-
-      var ds2 = loopback.createDataSource('db2', {
-        connector: loopback.Memory,
-      });
-
-      var model1 = ds2.createModel('m1', {});
-
-      var model2 = loopback.createModel('m2');
-      model2.autoAttach = 'db';
-
-      // auto attach data sources to models
-      loopback.autoAttach();
-
-      assert(model1.dataSource === ds2);
-      assert(model2.dataSource === ds1);
     });
   });
 
@@ -369,6 +329,14 @@ describe('loopback', function() {
     it('updates relations before attaching to a dataSource', function() {
       var db = loopback.createDataSource({ connector: loopback.Memory });
       var model = loopback.Model.extend(uniqueModelName);
+
+      // This test used to work because User model was already attached
+      // by other tests via `loopback.autoAttach()`
+      // Now that autoAttach is gone, it turns out the tested functionality
+      // does not work exactly as intended. To keep this change narrowly
+      // focused on removing autoAttach, we are attaching the User model
+      // to simulate the old test setup.
+      loopback.User.attachTo(db);
 
       loopback.configureModel(model, {
         dataSource: db,
@@ -604,6 +572,7 @@ describe('loopback', function() {
         } else {
           ctxx.result.data = 'context not available';
         }
+
         next();
       });
 
@@ -611,7 +580,9 @@ describe('loopback', function() {
         .get('/TestModels/test')
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body.data).to.equal('a value stored in context');
+
           done();
         });
     });
@@ -625,6 +596,7 @@ describe('loopback', function() {
           var ctx = loopback.getCurrentContext();
           expect(ctx).is.an('object');
           expect(ctx.get('test-key')).to.equal('test-value');
+
           done();
         });
       });

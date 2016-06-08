@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../');
 var MyEmail;
 var assert = require('assert');
@@ -37,7 +42,11 @@ describe('Email connector', function() {
 describe('Email and SMTP', function() {
   beforeEach(function() {
     MyEmail = loopback.Email.extend('my-email');
-    loopback.autoAttach();
+    var ds = loopback.createDataSource('email', {
+      connector: loopback.Mail,
+      transports: [{ type: 'STUB' }],
+    });
+    MyEmail.attachTo(ds);
   });
 
   it('should have a send method', function() {
@@ -60,6 +69,7 @@ describe('Email and SMTP', function() {
         assert(mail.response);
         assert(mail.envelope);
         assert(mail.messageId);
+
         done(err);
       });
     });
@@ -77,6 +87,7 @@ describe('Email and SMTP', function() {
         assert(mail.response);
         assert(mail.envelope);
         assert(mail.messageId);
+
         done(err);
       });
     });

@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 describe('Memory Connector', function() {
   it('Create a model using the memory connector', function(done) {
     // use the built in memory function
@@ -28,6 +33,7 @@ describe('Memory Connector', function() {
     function count() {
       Product.count(function(err, count) {
         assert.equal(count, 3);
+
         done();
       });
     }

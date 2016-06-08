@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var path = require('path');
 var loopback = require('../../');
 var models = require('../fixtures/e2e/models');
@@ -27,8 +32,10 @@ describe('Replication', function() {
     }, function(err, created) {
       LocalTestModel.replicate(0, TestModel, function() {
         if (err) return done(err);
+
         TestModel.findOne({ n: RANDOM }, function(err, found) {
           assert.equal(created.id, found.id);
+
           done();
         });
       });

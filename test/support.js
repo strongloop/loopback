@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 /**
  * loopback test setup and support.
  */
@@ -18,18 +23,6 @@ loopback.User.settings.saltWorkFactor = 4;
 
 beforeEach(function() {
   this.app = app = loopback();
-
-  // setup default data sources
-  loopback.setDefaultDataSourceForType('db', {
-    connector: loopback.Memory,
-  });
-
-  loopback.setDefaultDataSourceForType('mail', {
-    connector: loopback.Mail,
-    transports: [
-      { type: 'STUB' },
-    ],
-  });
 });
 
 assertValidDataSource = function(dataSource) {

@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 /*!
  * Module Dependencies.
  */
@@ -48,9 +53,6 @@ var debug = require('debug')('loopback:user');
  * @property {Boolean} emailVerified Set when a user's email has been verified via `confirm()`.
  * @property {String} verificationToken Set when `verify()` is called.
  * @property {String} realm The namespace the user belongs to. See [Partitioning users with realms](https://docs.strongloop.com/display/public/LB/Partitioning+users+with+realms) for details.
- * @property {Date} created The property is not used by LoopBack, you are free to use it for your own purposes.
- * @property {Date} lastUpdated The property is not used by LoopBack, you are free to use it for your own purposes.
- * @property {String} status The property is not used by LoopBack, you are free to use it for your own purposes.
  * @property {Object} settings Extends the `Model.settings` object.
  * @property {Boolean} settings.emailVerificationRequired Require the email verification
  * process before allowing a login.
@@ -428,7 +430,7 @@ module.exports = function(User) {
       options.text = options.text || 'Please verify your email by opening ' +
         'this link in a web browser:\n\t{href}';
 
-      options.text = options.text.replace('{href}', options.verifyHref);
+      options.text = options.text.replace(/\{href\}/g, options.verifyHref);
 
       options.to = options.to || user.email;
 

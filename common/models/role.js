@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../../lib/loopback');
 var debug = require('debug')('loopback:security:role');
 var assert = require('assert');
@@ -120,8 +125,9 @@ module.exports = function(Role) {
   /**
    * Add custom handler for roles.
    * @param {String} role Name of role.
-   * @param {Function} resolver Function that determines if a principal is in the specified role.
-   * Signature must be `function(role, context, callback)`
+   * @param {Function} resolver Function that determines
+   * if a principal is in the specified role.
+   * Should provide a callback or return a promise.
    */
   Role.registerResolver = function(role, resolver) {
     if (!Role.resolvers) {
@@ -144,12 +150,10 @@ module.exports = function(Role) {
   });
 
   function isUserClass(modelClass) {
-    if (modelClass) {
-      return modelClass === loopback.User ||
-        modelClass.prototype instanceof loopback.User;
-    } else {
-      return false;
-    }
+    if (!modelClass) return false;
+    var User = modelClass.modelBuilder.models.User;
+    if (!User) return false;
+    return modelClass == User || modelClass.prototype instanceof User;
   }
 
   /*!
@@ -289,7 +293,14 @@ module.exports = function(Role) {
     var resolver = Role.resolvers[role];
     if (resolver) {
       debug('Custom resolver found for role %s', role);
-      resolver(role, context, callback);
+
+      var promise = resolver(role, context, callback);
+      if (promise && typeof promise.then === 'function') {
+        promise.then(
+          function(result) { callback(null, result); },
+          callback
+        );
+      }
       return;
     }
 
@@ -438,4 +449,6 @@ module.exports = function(Role) {
       if (callback) callback(err, roles);
     });
   };
+
+  Role.validatesUniquenessOf('name', { message: 'already exists' });
 };

@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../');
 var defineModelTestsWithDataSource = require('./util/model-tests');
 
@@ -8,6 +13,7 @@ describe('RemoteConnector', function() {
     beforeEach: function(done) {
       var test = this;
       remoteApp = loopback();
+      remoteApp.set('remoting', { errorHandler: { debug: true, log: false }});
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
         test.dataSource = loopback.createDataSource({
@@ -15,6 +21,7 @@ describe('RemoteConnector', function() {
           port: remoteApp.get('port'),
           connector: loopback.Remote,
         });
+
         done();
       });
     },
@@ -42,6 +49,7 @@ describe('RemoteConnector', function() {
         port: remoteApp.get('port'),
         connector: loopback.Remote,
       });
+
       done();
     });
   });
@@ -64,8 +72,10 @@ describe('RemoteConnector', function() {
     var m = new RemoteModel({ foo: 'bar' });
     m.save(function(err, inst) {
       if (err) return done(err);
+
       assert(inst instanceof RemoteModel);
       assert(calledServerCreate);
+
       done();
     });
   });

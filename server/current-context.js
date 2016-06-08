@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2015,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var juggler = require('loopback-datasource-juggler');
 var remoting = require('strong-remoting');
 var cls = require('continuation-local-storage');
@@ -98,7 +103,6 @@ module.exports = function(loopback) {
    * context, try the parent one
    * @param {String} name Name of the context property
    * @returns {*} Value of the context property
-   * @private
    */
   ChainedContext.prototype.get = function(name) {
     var val = this.child && this.child.get(name);

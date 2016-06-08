@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2015,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var _describe = {};
 var _it = {};
 var _beforeEach = {};
@@ -10,7 +15,10 @@ module.exports = helpers;
 
 var assert = require('assert');
 var request = require('supertest');
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var sinon = require('sinon');
+chai.use(require('sinon-chai'));
 
 _beforeEach.withApp = function(app) {
   if (app.models.User) {
@@ -29,6 +37,7 @@ _beforeEach.withApp = function(app) {
     if (app.booting) {
       return app.once('booted', done);
     }
+
     done();
   });
 };
@@ -58,6 +67,8 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
     var test = this;
     var app = this.app;
     var model = app.models[modelName];
+
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
     assert(model, 'cannot get model of name ' + modelName + ' from app.models');
     assert(model.dataSource, 'cannot test model ' + modelName +
         ' without attached dataSource');
@@ -70,9 +81,11 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
       if (err) {
         console.error(err.message);
         if (err.details) console.error(err.details);
+
         done(err);
       } else {
         test[modelKey] = result;
+
         done();
       }
     });
@@ -99,6 +112,7 @@ _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
         done(err);
       } else {
         test.loggedInAccessToken = token;
+
         done();
       }
     });
@@ -108,7 +122,9 @@ _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
     var test = this;
     this.loggedInAccessToken.destroy(function(err) {
       if (err) return done(err);
+
       test.loggedInAccessToken = undefined;
+
       done();
     });
   });
@@ -168,6 +184,7 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
         test.req = test.http.req;
         test.res = test.http.res;
         delete test.url;
+
         cb();
       });
     });
@@ -179,6 +196,7 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
 _describe.whenLoggedInAsUser = function(credentials, cb) {
   describe('when logged in as user', function() {
     _beforeEach.givenLoggedInUser(credentials);
+
     cb();
   });
 };

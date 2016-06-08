@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -64,10 +69,12 @@ describe('relations - integration', function() {
       app.models.Team.create({ name: 'Team 1' },
         function(err, team) {
           if (err) return done(err);
+
           test.team = team;
           app.models.Reader.create({ name: 'Reader 1' },
           function(err, reader) {
             if (err) return done(err);
+
             test.reader = reader;
             reader.pictures.create({ name: 'Picture 1' });
             reader.pictures.create({ name: 'Picture 2' });
@@ -88,12 +95,13 @@ describe('relations - integration', function() {
         .query({ 'filter': { 'include': 'pictures' }})
         .expect(200, function(err, res) {
           if (err) return done(err);
-          // console.log(res.body);
+
           expect(res.body.name).to.be.equal('Reader 1');
           expect(res.body.pictures).to.be.eql([
             { name: 'Picture 1', id: 1, imageableId: 1, imageableType: 'Reader' },
             { name: 'Picture 2', id: 2, imageableId: 1, imageableType: 'Reader' },
           ]);
+
           done();
         });
     });
@@ -104,10 +112,11 @@ describe('relations - integration', function() {
         .query({ 'filter': { 'include': 'imageable' }})
         .expect(200, function(err, res) {
           if (err) return done(err);
-          // console.log(res.body);
+
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
           expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1, teamId: 1 });
+
           done();
         });
     });
@@ -121,10 +130,12 @@ describe('relations - integration', function() {
         }}})
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
           expect(res.body[0].imageable.name).to.be.eql('Reader 1');
           expect(res.body[0].imageable.team).to.be.eql({ name: 'Team 1', id: 1 });
+
           done();
         });
     });
@@ -135,7 +146,9 @@ describe('relations - integration', function() {
       this.get('/api/stores/superStores')
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.array;
+
           done();
         });
     });
@@ -185,8 +198,10 @@ describe('relations - integration', function() {
         this.http.send(this.newWidget);
         this.http.end(function(err) {
           if (err) return done(err);
+
           this.req = this.http.req;
           this.res = this.http.res;
+
           done();
         }.bind(this));
       });
@@ -212,7 +227,9 @@ describe('relations - integration', function() {
           storeId: this.store.id,
         }, function(err, count) {
           if (err) return done(err);
+
           assert.equal(count, 2);
+
           done();
         });
       });
@@ -227,6 +244,7 @@ describe('relations - integration', function() {
       }, function(err, widget) {
         self.widget = widget;
         self.url = '/api/stores/' + self.store.id + '/widgets/' + widget.id;
+
         done();
       });
     });
@@ -245,7 +263,7 @@ describe('relations - integration', function() {
     lt.describe.whenCalledRemotely('GET', '/stores/:id/widgets/:fk', function() {
       it('should fail with statusCode 404', function() {
         assert.equal(this.res.statusCode, 404);
-        assert.equal(this.res.body.error.status, 404);
+        assert.equal(this.res.body.error.statusCode, 404);
       });
     });
   });
@@ -300,6 +318,7 @@ describe('relations - integration', function() {
       }, function(err, widget) {
         self.widget = widget;
         self.url = '/api/widgets/' + self.widget.id + '/store';
+
         done();
       });
     });
@@ -333,6 +352,7 @@ describe('relations - integration', function() {
             name: 'ph1',
           }, function(err, physician) {
             root.physician = physician;
+
             done();
           });
         },
@@ -345,6 +365,7 @@ describe('relations - integration', function() {
             root.patient = patient;
             root.relUrl = '/api/physicians/' + root.physician.id +
               '/patients/rel/' + root.patient.id;
+
             done();
           });
         } : function(done) {
@@ -354,6 +375,7 @@ describe('relations - integration', function() {
             root.patient = patient;
             root.relUrl = '/api/physicians/' + root.physician.id +
               '/patients/rel/' + root.patient.id;
+
             done();
           });
         }], function(err, done) {
@@ -368,6 +390,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -384,6 +407,7 @@ describe('relations - integration', function() {
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 1);
             assert.equal(apps[0].patientId, self.patient.id);
+
             done();
           });
         });
@@ -393,6 +417,7 @@ describe('relations - integration', function() {
           self.physician.patients(function(err, patients) {
             assert.equal(patients.length, 1);
             assert.equal(patients[0].id, self.patient.id);
+
             done();
           });
         });
@@ -406,6 +431,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -428,6 +454,7 @@ describe('relations - integration', function() {
             assert.equal(apps[0].patientId, self.patient.id);
             assert.equal(apps[0].physicianId, self.physician.id);
             assert.equal(apps[0].date.getTime(), NOW);
+
             done();
           });
         });
@@ -437,6 +464,7 @@ describe('relations - integration', function() {
           self.physician.patients(function(err, patients) {
             assert.equal(patients.length, 1);
             assert.equal(patients[0].id, self.patient.id);
+
             done();
           });
         });
@@ -450,6 +478,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -469,6 +498,7 @@ describe('relations - integration', function() {
             '/patients/rel/' + '999';
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -487,6 +517,7 @@ describe('relations - integration', function() {
           self.url = root.relUrl;
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -496,6 +527,7 @@ describe('relations - integration', function() {
         app.models.appointment.find(function(err, apps) {
           assert.equal(apps.length, 1);
           assert.equal(apps[0].patientId, self.patient.id);
+
           done();
         });
       });
@@ -505,6 +537,7 @@ describe('relations - integration', function() {
         self.physician.patients(function(err, patients) {
           assert.equal(patients.length, 1);
           assert.equal(patients[0].id, self.patient.id);
+
           done();
         });
       });
@@ -518,6 +551,7 @@ describe('relations - integration', function() {
           var self = this;
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 0);
+
             done();
           });
         });
@@ -527,6 +561,7 @@ describe('relations - integration', function() {
           // Need to refresh the cache
           self.physician.patients(true, function(err, patients) {
             assert.equal(patients.length, 0);
+
             done();
           });
         });
@@ -541,6 +576,7 @@ describe('relations - integration', function() {
             '/patients/' + root.patient.id;
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -561,6 +597,7 @@ describe('relations - integration', function() {
             '/patients/' + root.patient.id;
           self.patient = root.patient;
           self.physician = root.physician;
+
           done(err);
         });
       });
@@ -574,6 +611,7 @@ describe('relations - integration', function() {
           var self = this;
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 0);
+
             done();
           });
         });
@@ -583,6 +621,7 @@ describe('relations - integration', function() {
           // Need to refresh the cache
           self.physician.patients(true, function(err, patients) {
             assert.equal(patients.length, 0);
+
             done();
           });
         });
@@ -591,6 +630,7 @@ describe('relations - integration', function() {
           var self = this;
           app.models.patient.find(function(err, patients) {
             assert.equal(patients.length, 0);
+
             done();
           });
         });
@@ -621,7 +661,9 @@ describe('relations - integration', function() {
         name: 'a-product',
       }, function(err, product) {
         if (err) return done(err);
+
         test.product = product;
+
         done();
       });
     });
@@ -630,6 +672,7 @@ describe('relations - integration', function() {
       app.models.category.create({ name: 'another-category' },
         function(err, cat) {
           if (err) return done(err);
+
           cat.products.create({ name: 'another-product' }, done);
         });
     });
@@ -644,12 +687,14 @@ describe('relations - integration', function() {
       this.get('/api/products?filter[where][categoryId]=' + this.category.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.eql([
             {
               id: expectedProduct.id,
               name: expectedProduct.name,
             },
           ]);
+
           done();
         });
     });
@@ -659,12 +704,14 @@ describe('relations - integration', function() {
       this.get('/api/categories/' + this.category.id + '/products')
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.eql([
             {
               id: expectedProduct.id,
               name: expectedProduct.name,
             },
           ]);
+
           done();
         });
     });
@@ -677,6 +724,7 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.have.property('products');
           expect(res.body.products).to.eql([
             {
@@ -684,6 +732,7 @@ describe('relations - integration', function() {
               name: expectedProduct.name,
             },
           ]);
+
           done();
         });
     });
@@ -697,6 +746,7 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.have.property('products');
           expect(res.body.products).to.eql([
             {
@@ -704,6 +754,7 @@ describe('relations - integration', function() {
               name: expectedProduct.name,
             },
           ]);
+
           done();
         });
     });
@@ -730,7 +781,9 @@ describe('relations - integration', function() {
       app.models.group.create({ name: 'Group 1' },
         function(err, group) {
           if (err) return done(err);
+
           test.group = group;
+
           done();
         });
     });
@@ -748,6 +801,7 @@ describe('relations - integration', function() {
           expect(res.body).to.be.eql(
             { url: 'http://image.url' }
           );
+
           done();
         });
     });
@@ -758,10 +812,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.name).to.be.equal('Group 1');
           expect(res.body.poster).to.be.eql(
             { url: 'http://image.url' }
           );
+
           done();
         });
     });
@@ -772,9 +828,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql(
             { url: 'http://image.url' }
           );
+
           done();
         });
     });
@@ -786,6 +844,7 @@ describe('relations - integration', function() {
         .send({ url: 'http://changed.url' })
         .expect(200, function(err, res) {
           expect(res.body.url).to.be.equal('http://changed.url');
+
           done();
         });
     });
@@ -796,9 +855,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql(
             { url: 'http://changed.url' }
           );
+
           done();
         });
     });
@@ -835,6 +896,7 @@ describe('relations - integration', function() {
       app.models.todoList.create({ name: 'List A' },
         function(err, list) {
           if (err) return done(err);
+
           test.todoList = list;
           list.items.build({ content: 'Todo 1' });
           list.items.build({ content: 'Todo 2' });
@@ -852,11 +914,13 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.name).to.be.equal('List A');
           expect(res.body.todoItems).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 2', id: 2 },
           ]);
+
           done();
         });
     });
@@ -867,10 +931,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 2', id: 2 },
           ]);
+
           done();
         });
     });
@@ -882,9 +948,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { content: 'Todo 2', id: 2 },
           ]);
+
           done();
         });
     });
@@ -898,6 +966,7 @@ describe('relations - integration', function() {
         .send({ content: 'Todo 3' })
         .expect(200, function(err, res) {
           expect(res.body).to.be.eql(expected);
+
           done();
         });
     });
@@ -908,11 +977,13 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 2', id: 2 },
             { content: 'Todo 3', id: 3 },
           ]);
+
           done();
         });
     });
@@ -923,9 +994,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql(
             { content: 'Todo 3', id: 3 }
           );
+
           done();
         });
     });
@@ -946,10 +1019,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { content: 'Todo 1', id: 1 },
             { content: 'Todo 3', id: 3 },
           ]);
+
           done();
         });
     });
@@ -958,9 +1033,11 @@ describe('relations - integration', function() {
       var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
       this.get(url).expect(404, function(err, res) {
         if (err) return done(err);
+
         expect(res.body.error.status).to.be.equal(404);
         expect(res.body.error.message).to.be.equal('Unknown "todoItem" id "2".');
         expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
+
         done();
       });
     });
@@ -1010,6 +1087,7 @@ describe('relations - integration', function() {
       app.models.recipe.create({ name: 'Recipe' },
         function(err, recipe) {
           if (err) return done(err);
+
           test.recipe = recipe;
           recipe.ingredients.create({
             name: 'Chocolate' },
@@ -1024,6 +1102,7 @@ describe('relations - integration', function() {
       var test = this;
       app.models.ingredient.create({ name: 'Sugar' }, function(err, ing) {
         test.ingredient2 = ing.id;
+
         done();
       });
     });
@@ -1044,8 +1123,10 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.ingredientIds).to.eql([test.ingredient1]);
           expect(res.body).to.not.have.property('ingredients');
+
           done();
         });
     });
@@ -1059,6 +1140,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           expect(res.body.name).to.be.eql('Butter');
           test.ingredient3 = res.body.id;
+
           done();
         });
     });
@@ -1070,11 +1152,13 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 },
             { name: 'Butter', id: test.ingredient3 },
           ]);
+
           done();
         });
     });
@@ -1086,10 +1170,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Butter', id: test.ingredient3 },
           ]);
+
           done();
         });
     });
@@ -1102,9 +1188,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Butter', id: test.ingredient3 },
           ]);
+
           done();
         });
     });
@@ -1117,6 +1205,7 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.ingredientIds).to.eql([
             test.ingredient1, test.ingredient3,
           ]);
@@ -1124,6 +1213,7 @@ describe('relations - integration', function() {
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Butter', id: test.ingredient3 },
           ]);
+
           done();
         });
     });
@@ -1136,9 +1226,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql(
             { name: 'Butter', id: test.ingredient3 }
           );
+
           done();
         });
     });
@@ -1152,8 +1244,10 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.ingredientIds).to.eql(expected);
           expect(res.body).to.not.have.property('ingredients');
+
           done();
         });
     });
@@ -1176,10 +1270,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 },
           ]);
+
           done();
         });
     });
@@ -1191,9 +1287,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
           ]);
+
           done();
         });
     });
@@ -1208,6 +1306,7 @@ describe('relations - integration', function() {
           expect(res.body).to.be.eql(
             { name: 'Sugar', id: test.ingredient2 }
           );
+
           done();
         });
     });
@@ -1219,10 +1318,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 },
           ]);
+
           done();
         });
     });
@@ -1245,9 +1346,11 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Sugar', id: test.ingredient2 },
           ]);
+
           done();
         });
     });
@@ -1259,10 +1362,12 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.eql([
             { name: 'Chocolate', id: test.ingredient1 },
             { name: 'Sugar', id: test.ingredient2 },
           ]);
+
           done();
         });
     });
@@ -1273,8 +1378,10 @@ describe('relations - integration', function() {
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(err).to.not.exist;
           expect(res.body.name).to.equal('Photo 1');
+
           done();
         });
     });
@@ -1349,11 +1456,13 @@ describe('relations - integration', function() {
 
       Page.beforeRemote('prototype.__findById__notes', function(ctx, result, next) {
         ctx.res.set('x-before', 'before');
+
         next();
       });
 
       Page.afterRemote('prototype.__findById__notes', function(ctx, result, next) {
         ctx.res.set('x-after', 'after');
+
         next();
       });
     });
@@ -1363,14 +1472,17 @@ describe('relations - integration', function() {
       app.models.Book.create({ name: 'Book 1' },
         function(err, book) {
           if (err) return done(err);
+
           test.book = book;
           book.pages.create({ name: 'Page 1' },
           function(err, page) {
             if (err) return done(err);
+
             test.page = page;
             page.notes.create({ text: 'Page Note 1' },
             function(err, note) {
               test.note = note;
+
               done();
             });
           });
@@ -1382,9 +1494,11 @@ describe('relations - integration', function() {
       test.book.chapters.create({ name: 'Chapter 1' },
         function(err, chapter) {
           if (err) return done(err);
+
           test.chapter = chapter;
           chapter.notes.create({ text: 'Chapter Note 1' }, function(err, note) {
             test.cnote = note;
+
             done();
           });
         });
@@ -1395,7 +1509,9 @@ describe('relations - integration', function() {
       app.models.Image.create({ name: 'Cover 1', book: test.book },
         function(err, image) {
           if (err) return done(err);
+
           test.image = image;
+
           done();
         });
     });
@@ -1405,9 +1521,11 @@ describe('relations - integration', function() {
       this.get('/api/books/' + test.book.id + '/pages')
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
+
           done();
         });
     });
@@ -1417,10 +1535,12 @@ describe('relations - integration', function() {
       this.get('/api/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.headers['x-before']).to.equal('before');
           expect(res.headers['x-after']).to.equal('after');
           expect(res.body).to.be.an.object;
           expect(res.body.text).to.equal('Page Note 1');
+
           done();
         });
     });
@@ -1430,10 +1550,12 @@ describe('relations - integration', function() {
       this.get('/api/books/unknown/pages/' + test.page.id + '/notes')
         .expect(404, function(err, res) {
           if (err) return done(err);
+
           expect(res.body.error).to.be.an.object;
           var expected = 'could not find a model with id unknown';
           expect(res.body.error.message).to.equal(expected);
           expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
+
           done();
         });
     });
@@ -1443,9 +1565,11 @@ describe('relations - integration', function() {
       this.get('/api/images/' + test.image.id + '/book/pages')
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
+
           done();
         });
     });
@@ -1455,8 +1579,10 @@ describe('relations - integration', function() {
       this.get('/api/images/' + test.image.id + '/book/pages/' + test.page.id)
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.an.object;
           expect(res.body.name).to.equal('Page 1');
+
           done();
         });
     });
@@ -1466,9 +1592,11 @@ describe('relations - integration', function() {
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes')
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.an.array;
           expect(res.body).to.have.length(1);
           expect(res.body[0].text).to.equal('Page Note 1');
+
           done();
         });
     });
@@ -1478,10 +1606,12 @@ describe('relations - integration', function() {
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.headers['x-before']).to.equal('before');
           expect(res.headers['x-after']).to.equal('after');
           expect(res.body).to.be.an.object;
           expect(res.body.text).to.equal('Page Note 1');
+
           done();
         });
     });
@@ -1491,8 +1621,10 @@ describe('relations - integration', function() {
       this.get('/api/books/' + test.book.id + '/chapters/' + test.chapter.id + '/notes/' + test.cnote.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
+
           expect(res.headers['x-before']).to.empty;
           expect(res.headers['x-after']).to.empty;
+
           done();
         });
     });
@@ -1504,6 +1636,7 @@ describe('relations - integration', function() {
           http.forEach(function(opt) {
             // destroyAll has been shared but missing http property
             if (opt.path === undefined) return;
+
             expect(opt.path, method.stringName).to.match(/^\/.*/);
           });
         });
@@ -1515,11 +1648,13 @@ describe('relations - integration', function() {
       this.get('/api/books/' + test.book.id + '/pages/' + this.page.id + '/throws')
         .end(function(err, res) {
           if (err) return done(err);
+
           expect(res.body).to.be.an('object');
           expect(res.body.error).to.be.an('object');
           expect(res.body.error.name).to.equal('Error');
-          expect(res.body.error.status).to.equal(500);
+          expect(res.body.error.statusCode).to.equal(500);
           expect(res.body.error.message).to.equal('This should not crash the app');
+
           done();
         });
     });
@@ -1531,10 +1666,10 @@ describe('relations - integration', function() {
     before(function createCustomer(done) {
       var test = this;
       app.models.customer.create({ name: 'John' }, function(err, c) {
-        if (err) {
-          return done(err);
-        }
+        if (err) return done(err);
+
         cust = c;
+
         done();
       });
     });
@@ -1542,9 +1677,8 @@ describe('relations - integration', function() {
     after(function(done) {
       var self = this;
       this.app.models.customer.destroyAll(function(err) {
-        if (err) {
-          return done(err);
-        }
+        if (err) return done(err);
+
         self.app.models.profile.destroyAll(done);
       });
     });
@@ -1555,11 +1689,11 @@ describe('relations - integration', function() {
       this.post(url)
         .send({ points: 10 })
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.points).to.be.eql(10);
           expect(res.body.customerId).to.be.eql(cust.id);
+
           done();
         });
     });
@@ -1568,11 +1702,11 @@ describe('relations - integration', function() {
       var url = '/api/customers/' + cust.id + '/profile';
       this.get(url)
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.points).to.be.eql(10);
           expect(res.body.customerId).to.be.eql(cust.id);
+
           done();
         });
     });
@@ -1591,11 +1725,11 @@ describe('relations - integration', function() {
       this.put(url)
         .send({ points: 100 })
         .expect(200, function(err, res) {
-          if (err) {
-            return done(err);
-          }
+          if (err) return done(err);
+
           expect(res.body.points).to.be.eql(100);
           expect(res.body.customerId).to.be.eql(cust.id);
+
           done();
         });
     });

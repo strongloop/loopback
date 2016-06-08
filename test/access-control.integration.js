@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -122,6 +127,7 @@ describe('access control - integration', function() {
     var userCounter;
     function newUserData() {
       userCounter = userCounter ? ++userCounter : 1;
+
       return {
         email: 'new-' + userCounter + '@test.test',
         password: 'test',
@@ -199,6 +205,7 @@ describe('access control - integration', function() {
           balance: 100,
         }, function(err, act) {
           self.url = '/api/accounts/' + act.id;
+
           done();
         });
       });

@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2015,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../');
 var app;
 var assert = require('assert');
@@ -15,6 +20,7 @@ describe('loopback.errorHandler(options)', function() {
       .get('/url-does-not-exist')
       .end(function(err, res) {
         assert.ok(res.error.text.match(/<ul id="stacktrace"><li> &nbsp; &nbsp;at raiseUrlNotFoundError/));
+
         done();
       });
   });
@@ -30,6 +36,7 @@ describe('loopback.errorHandler(options)', function() {
       .get('/url-does-not-exist')
       .end(function(err, res) {
         assert.ok(res.error.text.match(/<ul id="stacktrace"><\/ul>/));
+
         done();
       });
   });
@@ -53,6 +60,7 @@ describe('loopback.errorHandler(options)', function() {
       //assert
       expect(errorLogged)
         .to.have.property('message', 'Cannot GET /url-does-not-exist');
+
       done();
     });
   });

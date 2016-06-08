@@ -41,7 +41,6 @@
     "body-parser": "^1.12.0",
     "canonical-json": "0.0.4",
     "continuation-local-storage": "^3.1.3",
-    "cookie-parser": "^1.3.4",
     "debug": "^2.1.2",
     "depd": "^1.0.0",
     "ejs": "^2.3.1",
@@ -62,6 +61,7 @@
   "devDependencies": {
     "browserify": "^10.0.0",
     "chai": "^2.1.1",
+    "cookie-parser": "^1.3.4",
     "es5-shim": "^4.1.0",
     "eslint-config-loopback": "^1.0.0",
     "grunt": "^0.4.5",
@@ -79,11 +79,13 @@
     "karma-html2js-preprocessor": "^0.1.0",
     "karma-junit-reporter": "^0.2.2",
     "karma-mocha": "^0.1.10",
-    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^1.0.0",
     "karma-script-launcher": "^0.1.0",
     "loopback-boot": "^2.7.0",
     "mocha": "^2.1.0",
+    "phantomjs-prebuilt": "^2.1.7",
     "sinon": "^1.13.0",
+    "sinon-chai": "^2.8.0",
     "strong-task-emitter": "^0.0.6",
     "supertest": "^0.15.0"
   },
@@ -100,6 +102,11 @@
     "supertest": false,
     "depd": "loopback-datasource-juggler/lib/browser.depd.js",
     "bcrypt": false
+  },
+  "config": {
+    "ci": {
+      "debug": "*,-mocha:*,-eslint:*"
+    }
   },
   "license": "MIT"
 }

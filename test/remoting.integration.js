@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -17,7 +22,8 @@ describe('remoting - integration', function() {
     it('should load remoting options', function() {
       var remotes = app.remotes();
       assert.deepEqual(remotes.options, { 'json': { 'limit': '1kb', 'strict': false },
-        'urlencoded': { 'limit': '8kb', 'extended': true }});
+        'urlencoded': { 'limit': '8kb', 'extended': true },
+        'errorHandler': { 'debug': true, log: false }});
     });
 
     it('rest handler', function() {
@@ -40,6 +46,7 @@ describe('remoting - integration', function() {
         this.req = this.http.req;
         this.res = this.http.res;
         assert.equal(this.res.statusCode, 200);
+
         done();
       }.bind(this));
     });
@@ -60,6 +67,7 @@ describe('remoting - integration', function() {
         this.res = this.http.res;
         // Request is rejected with 413
         assert.equal(this.res.statusCode, 413);
+
         done();
       }.bind(this));
     });

@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var path = require('path');
 var loopback = require('../../');
 var models = require('../fixtures/e2e/models');
@@ -19,7 +24,9 @@ describe('RemoteConnector', function() {
       foo: 'bar',
     }, function(err, inst) {
       if (err) return done(err);
+
       assert(inst.id);
+
       done();
     });
   });
@@ -30,7 +37,9 @@ describe('RemoteConnector', function() {
     });
     m.save(function(err, data) {
       if (err) return done(err);
+
       assert(data.foo === 'bar');
+
       done();
     });
   });

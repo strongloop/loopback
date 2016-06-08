@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var async = require('async');
 var loopback = require('../');
 var expect = require('chai').expect;
@@ -20,7 +25,9 @@ describe('Checkpoint', function() {
         function(next) {
           Checkpoint.current(function(err, seq) {
             if (err) next(err);
+
             expect(seq).to.equal(3);
+
             next();
           });
         },
@@ -33,9 +40,12 @@ describe('Checkpoint', function() {
         function(next) { Checkpoint.current(next); },
       ], function(err, list) {
         if (err) return done(err);
+
         Checkpoint.find(function(err, data) {
           if (err) return done(err);
+
           expect(data).to.have.length(1);
+
           done();
         });
       });
@@ -47,6 +57,7 @@ describe('Checkpoint', function() {
         function(next) { Checkpoint.bumpLastSeq(next); },
       ], function(err, list) {
         if (err) return done(err);
+
         Checkpoint.find(function(err, data) {
           if (err) return done(err);
           // The invariant "we have at most 1 checkpoint instance" is preserved
@@ -59,6 +70,7 @@ describe('Checkpoint', function() {
           // should be 2.
           expect(list.map(function(it) { return it.seq; }))
             .to.eql([2, 2]);
+
           done();
         });
       });
@@ -68,6 +80,7 @@ describe('Checkpoint', function() {
     function(done) {
       Checkpoint.current(function(err, seq) {
         expect(seq).to.equal(1);
+
         done(err);
       });
     });
@@ -78,6 +91,7 @@ describe('Checkpoint', function() {
         // `bumpLastSeq` for the first time not only initializes it to one,
         // but also increments the initialized value by one.
         expect(cp.seq).to.equal(2);
+
         done(err);
       });
     });

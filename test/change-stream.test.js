@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2015,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 describe('PersistedModel.createChangeStream()', function() {
   describe('configured to source changes locally', function() {
     before(function() {
@@ -17,6 +22,7 @@ describe('PersistedModel.createChangeStream()', function() {
         changes.on('data', function(change) {
           expect(change.type).to.equal('create');
           changes.destroy();
+
           done();
         });
 
@@ -31,6 +37,7 @@ describe('PersistedModel.createChangeStream()', function() {
           changes.on('data', function(change) {
             expect(change.type).to.equal('update');
             changes.destroy();
+
             done();
           });
           newScore.updateAttributes({
@@ -47,6 +54,7 @@ describe('PersistedModel.createChangeStream()', function() {
           changes.on('data', function(change) {
             expect(change.type).to.equal('remove');
             changes.destroy();
+
             done();
           });
 

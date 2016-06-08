@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2013,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
 var assert = require('assert');
 var loopback = require('../index');
 var Scope = loopback.Scope;
@@ -391,6 +396,7 @@ describe('access check', function() {
   var app;
   before(function() {
     app = loopback();
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
     app.use(loopback.rest());
     app.enableAuth();
     app.dataSource('test', { connector: 'memory' });
@@ -412,7 +418,9 @@ describe('access check', function() {
     MyTestModel.beforeRemote('find', function(ctx, next) {
       // ensure this is called after checkAccess
       if (!checkAccessCalled) return done(new Error('incorrect order'));
+
       beforeHookCalled = true;
+
       next();
     });
 
@@ -421,6 +429,7 @@ describe('access check', function() {
       .end(function(err, result) {
         assert(beforeHookCalled, 'the before hook should be called');
         assert(checkAccessCalled, 'checkAccess should have been called');
+
         done();
       });
   });
