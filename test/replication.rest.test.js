@@ -502,7 +502,6 @@ describe('Replication over REST', function() {
     serverApp.use(loopback.token({ model: ServerToken }));
     serverApp.use(loopback.rest());
 
-    serverApp.set('legacyExplorer', false);
     serverApp.set('port', 0);
     serverApp.set('host', '127.0.0.1');
     serverApp.listen(function() {
