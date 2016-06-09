@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-13 to 2016-06-08)
+since: (from 2016-04-14 to 2016-06-09)
 ---
 
 ## Core
@@ -51,6 +51,8 @@ since: (from 2016-04-13 to 2016-06-08)
 
 
 ### loopback-datasource-juggler
+ * [PR#952](https://github.com/strongloop/loopback-datasource-juggler/pull/952) Avoid changing PK of instance in operation hook when forceId is set ([Amir-61](https://github.com/Amir-61))
+ * [PR#965](https://github.com/strongloop/loopback-datasource-juggler/pull/965) [SEMVER-MAJOR] Remove model events ([0candy](https://github.com/0candy))
  * [@ea2266e](https://github.com/strongloop/loopback-datasource-juggler/commit/ea2266e453220208b204d3817a866ea7f0b42410) Persist changes on parent for embedsOne ([Dimitris Halatsis](https://github.com/mitsos1os))
  * [PR#964](https://github.com/strongloop/loopback-datasource-juggler/pull/964) Fix `disableInclude` for hasAndBelongsToMany relation ([Amir-61](https://github.com/Amir-61))
  * [PR#953](https://github.com/strongloop/loopback-datasource-juggler/pull/953) Fix error message ([Amir-61](https://github.com/Amir-61))
@@ -133,6 +135,7 @@ since: (from 2016-04-13 to 2016-06-08)
 
 
 ### loopback-connector-db2
+ * [@2286350](https://github.com/strongloop/loopback-connector-db2/commit/2286350479b8d8bc29aeb30555968ae17350518a) Update README.md ([Quentin Presley](https://github.com/qpresley))
  * [PR#35](https://github.com/strongloop/loopback-connector-db2/pull/35) Check dsn in config before throw error ([jannyHou](https://github.com/jannyHou))
  * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
