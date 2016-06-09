@@ -6,22 +6,33 @@
 var bunyan = require('bunyan');
 var loopback = require('../../lib/loopback');
 var util = require('util');
+var path = require('path');
 
 module.exports = loggerMiddleware;
 
 function loggerMiddleware(options) {
-  //console.log('typeof this mdidleware', this.get('restApiRoot'));
-  console.log('log-middleware options: ', options);
+  var logPath = options.path || path.resolve('logs', 'info.log');
+  var defaultLogLevel = process.env.LOG_LEVEL || 'info';
   var defaultOptions = {
     name: 'Loopback',
     // decides what to log
     log: {
       request: true,
     },
-    streams: [],
+    streams: [
+      {
+        level: defaultLogLevel,
+        stream: process.stdout,
+      },
+      {
+        level: defaultLogLevel,
+        type: 'file',
+        path: logPath,
+      },
+    ],
   };
   var options = util._extend(defaultOptions, options);
-  var logger = bunyan.createLogger({name: 'app'});
+  var logger = bunyan.createLogger(options);
 
 
   return function(req, res, next) {
@@ -53,6 +64,11 @@ function loggerMiddleware(options) {
       remoteMethod: remoteMethod,
     };
     //log data
-    logger.info(data);
+    if (res.statusCode >= 200 && res.statusCode < 300)
+      logger.info(data);
+    else if (res.statusCode < 400)
+      logger.warn(data);
+    else
+      logger.error(data);
   }
 };
