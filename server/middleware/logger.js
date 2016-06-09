@@ -7,9 +7,9 @@ var bunyan = require('bunyan');
 var loopback = require('../../lib/loopback');
 var util = require('util');
 
-module.exports = logger;
+module.exports = loggerMiddleware;
 
-function logger(options) {
+function loggerMiddleware(options) {
   //console.log('typeof this mdidleware', this.get('restApiRoot'));
   console.log('log-middleware options: ', options);
   var defaultOptions = {
@@ -44,12 +44,15 @@ function logger(options) {
   }
 
   function logRequest(req, res) {
+    var remoteMethod = req.remotingContext.methodString;
     var data = {
       action: options.log.request.action || 'request',
       verb: req.method,
       path: req.url,
       statusCode: res.statusCode,
+      remoteMethod: remoteMethod,
     };
+    //log data
     logger.info(data);
   }
 };
