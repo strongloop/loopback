@@ -485,7 +485,7 @@ module.exports = function(User) {
         fn(err);
       } else {
         if (user && user.verificationToken === token) {
-          user.verificationToken = undefined;
+          user.verificationToken = null;
           user.emailVerified = true;
           user.save(function(err) {
             if (err) {
