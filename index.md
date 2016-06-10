@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-14 to 2016-06-09)
+since: (from 2016-04-15 to 2016-06-10)
 ---
 
 ## Core
@@ -223,8 +223,8 @@ since: (from 2016-04-14 to 2016-06-09)
 
 
 ### loopback-connector-soap
- * [@38847a2](https://github.com/strongloop/loopback-connector-soap/commit/38847a2607517d87da97fd91d778d8a9a0b47073) Update soap-connector.js ([Ritchie Martori](https://github.com/ritch))
- * [@1b27b3b](https://github.com/strongloop/loopback-connector-soap/commit/1b27b3b3bf96fc52e5d10a30e8eb11b3313a9da8) Update soap-connector.js ([Ritchie Martori](https://github.com/ritch))
+ * [@5955176](https://github.com/strongloop/loopback-connector-soap/commit/5955176d389514af3f13cbda3f96304cbd73ee2c) Update deps ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#35](https://github.com/strongloop/loopback-connector-soap/pull/35) Update soap-connector.js ([ritch](https://github.com/ritch))
  * **Released 2.4.1** ([Ryan Graham](https://github.com/rmg))
  * [@f5447c5](https://github.com/strongloop/loopback-connector-soap/commit/f5447c5870603dd2a35cd5df9cfebda3eb3a1dd6) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
 
