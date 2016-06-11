@@ -1,12 +1,13 @@
 ---
 layout: page
-since: (from 2016-04-15 to 2016-06-10)
+since: (from 2016-04-16 to 2016-06-11)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@33b0d42](https://github.com/strongloop/generator-loopback/commit/33b0d4271123fbf99502ba1d3d28990cd9e3fff4) Fix "undefined" model name ([Mickael Burguet](https://github.com/rundef))
+ * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
+ * [PR#198](https://github.com/strongloop/generator-loopback/pull/198) Fix "undefined" model name ([rundef](https://github.com/rundef))
  * **Released 1.21.1** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#195](https://github.com/strongloop/generator-loopback/pull/195) Fix generator prompt validate error ([0candy](https://github.com/0candy))
  * [PR#188](https://github.com/strongloop/generator-loopback/pull/188) remote-method: make prompts more descriptive ([bajtos](https://github.com/bajtos))
