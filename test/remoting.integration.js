@@ -74,60 +74,27 @@ describe('remoting - integration', function() {
   });
 
   describe('Model shared classes', function() {
-    function formatReturns(m) {
-      var returns = m.returns;
-      if (!returns || returns.length === 0) {
-        return '';
-      }
-      var type = returns[0].type;
-      return type ? ':' + type : '';
-    }
-
-    function formatMethod(m) {
-      return [
-        m.name,
-        '(',
-        m.accepts.map(function(a) {
-          return a.arg + ':' + a.type;
-        }).join(','),
-        ')',
-        formatReturns(m),
-        ' ',
-        m.getHttpMethod(),
-        ' ',
-        m.getFullPath(),
-      ].join('');
-    }
-
-    function findClass(name) {
-      return app.handler('rest').adapter
-        .getClasses()
-        .filter(function(c) {
-          return c.name === name;
-        })[0];
-    }
-
-    it('has expected remote methods', function() {
+    it('has expected remote methods with default model.settings.replaceOnPUT' +
+      'set to true (3.x)',
+    function() {
       var storeClass = findClass('store');
-      var methods = storeClass.methods
-        .filter(function(m) {
-          return m.name.indexOf('__') === -1;
-        })
-        .map(function(m) {
-          return formatMethod(m);
-        });
+      var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
       var expectedMethods = [
         'create(data:object):store POST /stores',
-        'upsert(data:object):store PUT /stores',
+        'patchOrCreate(data:object):store PATCH /stores',
+        'replaceOrCreate(data:object):store PUT /stores',
+        'replaceOrCreate(data:object):store POST /stores/replaceOrCreate',
         'exists(id:any):boolean GET /stores/:id/exists',
         'findById(id:any,filter:object):store GET /stores/:id',
+        'replaceById(id:any,data:object):store PUT /stores/:id',
+        'replaceById(id:any,data:object):store POST /stores/:id/replace',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
         'updateAll(where:object,data:object):object POST /stores/update',
         'deleteById(id:any):object DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
-        'prototype.updateAttributes(data:object):store PUT /stores/:id',
+        'prototype.patchAttributes(data:object):store PATCH /stores/:id',
         'createChangeStream(options:object):ReadableStream POST /stores/change-stream',
       ];
 
@@ -138,13 +105,7 @@ describe('remoting - integration', function() {
 
     it('has expected remote methods for scopes', function() {
       var storeClass = findClass('store');
-      var methods = storeClass.methods
-        .filter(function(m) {
-          return m.name.indexOf('__') === 0;
-        })
-        .map(function(m) {
-          return formatMethod(m);
-        });
+      var methods = getFormattedScopeMethods(storeClass.methods);
 
       var expectedMethods = [
         '__get__superStores(filter:object):store GET /stores/superStores',
@@ -159,13 +120,7 @@ describe('remoting - integration', function() {
     it('should have correct signatures for belongsTo methods',
       function() {
         var widgetClass = findClass('widget');
-        var methods = widgetClass.methods
-          .filter(function(m) {
-            return m.name.indexOf('prototype.__') === 0;
-          })
-          .map(function(m) {
-            return formatMethod(m);
-          });
+        var methods = getFormattedPrototypeMethods(widgetClass.methods);
 
         var expectedMethods = [
           'prototype.__get__store(refresh:boolean):store ' +
@@ -177,13 +132,7 @@ describe('remoting - integration', function() {
     it('should have correct signatures for hasMany methods',
       function() {
         var physicianClass = findClass('store');
-        var methods = physicianClass.methods
-          .filter(function(m) {
-            return m.name.indexOf('prototype.__') === 0;
-          })
-          .map(function(m) {
-            return formatMethod(m);
-          });
+        var methods = getFormattedPrototypeMethods(physicianClass.methods);
 
         var expectedMethods = [
           'prototype.__findById__widgets(fk:any):widget ' +
@@ -207,13 +156,7 @@ describe('remoting - integration', function() {
     it('should have correct signatures for hasMany-through methods',
       function() { // jscs:disable validateIndentation
         var physicianClass = findClass('physician');
-        var methods = physicianClass.methods
-        .filter(function(m) {
-          return m.name.indexOf('prototype.__') === 0;
-        })
-        .map(function(m) {
-          return formatMethod(m);
-        });
+        var methods = getFormattedPrototypeMethods(physicianClass.methods);
 
         var expectedMethods = [
           'prototype.__findById__patients(fk:any):patient ' +
@@ -241,3 +184,127 @@ describe('remoting - integration', function() {
       });
   });
 });
+
+describe('With model.settings.replaceOnPUT false', function() {
+  lt.beforeEach.withApp(app);
+  lt.beforeEach.givenModel('storeWithReplaceOnPUTfalse');
+  afterEach(function(done) {
+    this.app.models.storeWithReplaceOnPUTfalse.destroyAll(done);
+  });
+
+  it('should have expected remote methods',
+  function() {
+    var storeClass = findClass('storeWithReplaceOnPUTfalse');
+    var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+
+    var expectedMethods = [
+      'patchOrCreate(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating',
+      'patchOrCreate(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating',
+      'replaceOrCreate(data:object):storeWithReplaceOnPUTfalse POST /stores-updating/replaceOrCreate',
+      'replaceById(id:any,data:object):storeWithReplaceOnPUTfalse POST /stores-updating/:id/replace',
+      'prototype.patchAttributes(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating/:id',
+      'prototype.patchAttributes(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating/:id',
+    ];
+
+    expect(methods).to.include.members(expectedMethods);
+  });
+});
+
+describe('With model.settings.replaceOnPUT true', function() {
+  lt.beforeEach.withApp(app);
+  lt.beforeEach.givenModel('storeWithReplaceOnPUTtrue');
+  afterEach(function(done) {
+    this.app.models.storeWithReplaceOnPUTtrue.destroyAll(done);
+  });
+
+  it('should have expected remote methods',
+  function() {
+    var storeClass = findClass('storeWithReplaceOnPUTtrue');
+    var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+
+    var expectedMethods = [
+      'patchOrCreate(data:object):storeWithReplaceOnPUTtrue PATCH /stores-replacing',
+      'replaceOrCreate(data:object):storeWithReplaceOnPUTtrue POST /stores-replacing/replaceOrCreate',
+      'replaceOrCreate(data:object):storeWithReplaceOnPUTtrue PUT /stores-replacing',
+      'replaceById(id:any,data:object):storeWithReplaceOnPUTtrue POST /stores-replacing/:id/replace',
+      'replaceById(id:any,data:object):storeWithReplaceOnPUTtrue PUT /stores-replacing/:id',
+      'prototype.patchAttributes(data:object):storeWithReplaceOnPUTtrue PATCH /stores-replacing/:id',
+    ];
+
+    expect(methods).to.include.members(expectedMethods);
+  });
+});
+
+function formatReturns(m) {
+  var returns = m.returns;
+  if (!returns || returns.length === 0) {
+    return '';
+  }
+  var type = returns[0].type;
+  return type ? ':' + type : '';
+}
+
+function formatMethod(m) {
+  var arr = [];
+  var endpoints = m.getEndpoints();
+  for (var i = 0; i < endpoints.length; i++) {
+    arr.push([
+      m.name,
+      '(',
+      m.accepts.map(function(a) {
+        return a.arg + ':' + a.type;
+      }).join(','),
+      ')',
+      formatReturns(m),
+      ' ',
+      endpoints[i].verb,
+      ' ',
+      endpoints[i].fullPath,
+    ].join(''));
+  }
+  return arr;
+}
+
+function findClass(name) {
+  return app.handler('rest').adapter
+    .getClasses()
+    .filter(function(c) {
+      return c.name === name;
+    })[0];
+}
+
+function getFormattedMethodsExcludingRelations(methods) {
+  return result = methods.filter(function(m) {
+    return m.name.indexOf('__') === -1;
+  })
+  .map(function(m) {
+    return formatMethod(m);
+  })
+  .reduce(function(p, c) {
+    return p.concat(c);
+  });
+}
+
+function getFormattedScopeMethods(methods) {
+  return result = methods.filter(function(m) {
+    return m.name.indexOf('__') === 0;
+  })
+  .map(function(m) {
+    return formatMethod(m);
+  })
+  .reduce(function(p, c) {
+    return p.concat(c);
+  });
+}
+
+function getFormattedPrototypeMethods(methods) {
+  return result = methods.filter(function(m) {
+    return m.name.indexOf('prototype.__') === 0;
+  })
+  .map(function(m) {
+    return formatMethod(m);
+  })
+  .reduce(function(p, c) {
+    return p.concat(c);
+  });
+}
