@@ -256,6 +256,7 @@ since: (from 2016-04-18 to 2016-06-13)
 
 
 ### loopback-sdk-ios
+ * [@74fc996](https://github.com/strongloop/loopback-sdk-ios/commit/74fc996a3b7c6949273b7b26fc114264e1606b1e) skip failing test ([Ryan Graham](https://github.com/rmg))
  * [@f9fe9d3](https://github.com/strongloop/loopback-sdk-ios/commit/f9fe9d37557185a0b12d54a625564ad4152294cf) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
 
 
