@@ -1,3 +1,135 @@
+2016-06-13, Version 3.0.0-alpha.2
+=================================
+
+ * add missing unit tests for #2108 (Benjamin Kroeger)
+
+ * Expose `Replace*` methods (Amir Jafarian)
+
+ * Update tests for strong-error-handler (David Cheung)
+
+ * Remove legacy express 3.x middleware getters (Miroslav Bajtoš)
+
+ * Docuemtation for `replace*` methods (Amir Jafarian)
+
+ * Make the doc clear for `findORCreate` cb (Amir Jafarian)
+
+ * Fix JSCS unsupported rule error (Jason)
+
+ * Remove env.json and strong-pm dir (Ritchie Martori)
+
+ * Throw error upon extending unknown model (David Cheung)
+
+ * Remove unused UserModel properties (David Cheung)
+
+ * Remove Change.handleError (Candy)
+
+ * Update user.js (Rik)
+
+ * Separate error-checking and next/done logic from other logic in the test suite (Supasate Choochaisri)
+
+ * Clean up by removing unnecessary comments (Supasate Choochaisri)
+
+ * Add feature to not allow duplicate role name (Supasate Choochaisri)
+
+ * update copyright statements (Ryan Graham)
+
+ * relicense as MIT only (Ryan Graham)
+
+ * Upgrade phantomjs to 2.x (Miroslav Bajtoš)
+
+ * app: send port:0 instead of port:undefined (Miroslav Bajtoš)
+
+ * travis: drop node@5, add node@6 (Miroslav Bajtoš)
+
+ * Disable DEBUG output for eslint on Jenkins CI (Miroslav Bajtoš)
+
+ * Remove "loopback.autoAttach()" (Miroslav Bajtoš)
+
+ * test/rest.middleware: use local registry (Miroslav Bajtoš)
+
+ * Fix role.isOwner to support app-local registry (Miroslav Bajtoš)
+
+ * test/user: use local registry (Miroslav Bajtoš)
+
+ * Resolver support return promise (juehou)
+
+ * remove @private from jsdoc (Manu Phatak)
+
+ * Fixes for emit `remoteMethodDisabled` PR (Simon Ho)
+
+ * Add new feature to emit a `remoteMethodDisabled` event when disabling a remote method. (Supasate Choochaisri)
+
+ * Fix typo in Model.nestRemoting (Tim Needham)
+
+ * Update loopback.js (Rand McKinney)
+
+ * Allow built-in token middleware to run repeatedly (Benjamin Kröger)
+
+ * Use eslint with loopback config (Miroslav Bajtoš)
+
+ * promise docs (Jue Hou)
+
+ * Update JSDoc (sghung@ca.ibm.com)
+
+ * Remove constraint making isStatic required (Candy)
+
+ * Fix inconsistencies in JSDoc (sghung@ca.ibm.com)
+
+ * Improve error message on connector init error (Miroslav Bajtoš)
+
+ * application: correct spelling of "cannont" (Sam Roberts)
+
+ * Remove sl-blip from dependency (Candy)
+
+ * Use new strong-remoting API (Candy)
+
+ * test: remove forgotten console.trace logs (Miroslav Bajtoš)
+
+ * Fix race condition in replication tests (Miroslav Bajtoš)
+
+ * Fix race condition in error handler test (Miroslav Bajtoš)
+
+ * test: remove errant console.log from test (Ryan Graham)
+
+ * Promisify Model Change (Jue Hou)
+
+ * Travis: drop iojs, add v4.x and v5.x (Miroslav Bajtoš)
+
+ * test: use ephemeral port for e2e server (Ryan Graham)
+
+ * test: fail on error instead of crash (Ryan Graham)
+
+ * ensure app is booted before integration tests (Ryan Graham)
+
+ * Remove "loopback.DataModel" (Miroslav Bajtoš)
+
+ * Correct JSDoc findOrCreate() callback in PersistedModel (Chris Coggburn)
+
+ * Fix typo in package.json (publishConfig) (Miroslav Bajtoš)
+
+ * Start development of 3.0 (Candy)
+
+ * Hide verificationToken (Samuel Gaus)
+
+ * Fix description for User.prototype.hasPassword (Jue Hou)
+
+ * Checkpoint speedup (Amir Jafarian)
+
+ * Always use bluebird as promise library Replace `global.Promise` with `bluebird` (Jue Hou)
+
+ * Remove unused code from loopback-testing-helper (Simon Ho)
+
+ * Make juggler a regular dependency (Miroslav Bajtoš)
+
+ * Remove dependency on loopback-testing (Simon Ho)
+
+ * Fix failing tests (Simon Ho)
+
+ * Update persisted-model.js (Rand McKinney)
+
+ * Update persisted-model.js (linguofeng)
+
+
 2015-12-22, Version 3.0.0-alpha.1
 =================================
 
@@ -997,8 +1129,6 @@
 2014-07-15, Version 2.0.0-beta6
 ===============================
 
- * 2.0.0-beta6 (Miroslav Bajtoš)
-
  * lib/application: publish Change models to REST API (Miroslav Bajtoš)
 
  * models/change: fix typo (Miroslav Bajtoš)
@@ -1008,8 +1138,6 @@
 
 2014-07-03, Version 2.0.0-beta5
 ===============================
-
- * 2.0.0-beta5 (Miroslav Bajtoš)
 
  * app: update `url` on `listening` event (Miroslav Bajtoš)
 
@@ -1028,8 +1156,6 @@
 
 2014-06-26, Version 2.0.0-beta4
 ===============================
-
- * 2.0.0-beta4 (Miroslav Bajtoš)
 
  * package: upgrade juggler to 2.0.0-beta2 (Miroslav Bajtoš)
 
@@ -1156,8 +1282,6 @@
 
 2014-05-28, Version 2.0.0-beta3
 ===============================
-
- * 2.0.0-beta3 (Miroslav Bajtoš)
 
  * package.json: fix malformed json (Miroslav Bajtoš)
 
