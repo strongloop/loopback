@@ -3,19 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var expressErrorHandler = require('errorhandler');
-expressErrorHandler.title = 'Loopback';
-
-module.exports = errorHandler;
-
-function errorHandler(options) {
-  if (!options || options.includeStack !== false) {
-    return expressErrorHandler(options);
-  } else {
-    var baseHandler = expressErrorHandler(options);
-    return function errorHandler(err, req, res, next) {
-      delete err.stack;
-      return baseHandler(err, req, res, next);
-    };
-  }
-}
+module.exports = function(options) {
+  throw new Error('loopback.errorHandler is no longer available.' +
+  ' Please use the module "strong-error-handler" instead.');
+};
