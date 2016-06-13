@@ -24,6 +24,7 @@ since: (from 2016-04-18 to 2016-06-13)
 
 
 ### loopback
+ * [@6502309](https://github.com/strongloop/loopback/commit/6502309e347260932010e687f4d9535543b02402) Expose `Replace*` methods ([Amir Jafarian](https://github.com/Amir-61))
  * [PR#2375](https://github.com/strongloop/loopback/pull/2375) [SEMVER-MAJOR] Fix remoting strong-error-handler ([davidcheung](https://github.com/davidcheung))
  * [PR#2394](https://github.com/strongloop/loopback/pull/2394) [SEMVER-MAJOR] Remove legacy express 3.x middleware getters ([bajtos](https://github.com/bajtos))
  * [PR#2360](https://github.com/strongloop/loopback/pull/2360) Docuemtation for `replace*` methods ([Amir-61](https://github.com/Amir-61))
