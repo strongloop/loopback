@@ -132,6 +132,8 @@ since: (from 2016-04-19 to 2016-06-14)
 
 ### loopback-connector-db2
  * [@2286350](https://github.com/strongloop/loopback-connector-db2/commit/2286350479b8d8bc29aeb30555968ae17350518a) Update README.md ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.17** ([Quentin Presley](https://github.com/qpresley))
+ * **Released 1.0.16** ([Quentin Presley](https://github.com/qpresley))
  * [PR#35](https://github.com/strongloop/loopback-connector-db2/pull/35) Check dsn in config before throw error ([jannyHou](https://github.com/jannyHou))
  * [PR#31](https://github.com/strongloop/loopback-connector-db2/pull/31) Lazy connect when app booting from swagger generator ([jannyHou](https://github.com/jannyHou))
  * [@adc17e7](https://github.com/strongloop/loopback-connector-db2/commit/adc17e79d42957faaeab2d82292c11c6aba6854c) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
