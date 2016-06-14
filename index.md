@@ -174,6 +174,15 @@ since: (from 2016-04-19 to 2016-06-14)
  * [PR#241](https://github.com/strongloop/loopback-connector-mongodb/pull/241) Lazy connect when booting app ([jannyHou](https://github.com/jannyHou))
 
 
+### loopback-connector-mqlight
+ * [@82d0d74](https://github.com/strongloop/loopback-connector-mqlight/commit/82d0d74977dc4a1cb5cda8e20e0193bc8bf94d18) Complete readme and touch up minor typos ([Quentin Presley](https://github.com/qpresley))
+ * [@3aed1cb](https://github.com/strongloop/loopback-connector-mqlight/commit/3aed1cb878b9bed67279290e7f0471001832986f) Update tests to include CReate Update and Delete tests ([Quentin Presley](https://github.com/qpresley))
+ * [@e0d112d](https://github.com/strongloop/loopback-connector-mqlight/commit/e0d112d65605dfbce0533b16da6697d575df6811) Code cleanup ([Quentin Presley](https://github.com/qpresley))
+ * [@53f079b](https://github.com/strongloop/loopback-connector-mqlight/commit/53f079b1b2ff2c33c2fac9667fd8fa78e4ad8726) Updated with working tests ([Quentin Presley](https://github.com/qpresley))
+ * [@20893c5](https://github.com/strongloop/loopback-connector-mqlight/commit/20893c5009c49de6edd9be1ab17ead18e854671a) Initial code drop ([Quentin Presley](https://github.com/qpresley))
+ * [@7a3c77c](https://github.com/strongloop/loopback-connector-mqlight/commit/7a3c77c36ea72bc60e8b74d9323d74bbcd8de580) Initial commit ([Quentin Presley](https://github.com/qpresley))
+
+
 ### loopback-connector-mssql
  * [@eb2b07d](https://github.com/strongloop/loopback-connector-mssql/commit/eb2b07de4417df3e4177631b9feffaede07c6849) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#80](https://github.com/strongloop/loopback-connector-mssql/pull/80) Lazy connect when booting app ([jannyHou](https://github.com/jannyHou))
