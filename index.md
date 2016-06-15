@@ -6,6 +6,7 @@ since: (from 2016-04-20 to 2016-06-15)
 ## Core
 
 ### generator-loopback
+ * [@28ad27a](https://github.com/strongloop/generator-loopback/commit/28ad27a814935a035ca7142d7ae0e90aed17829d) Support custom connector ([jannyHou](https://github.com/jannyHou))
  * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
  * [PR#198](https://github.com/strongloop/generator-loopback/pull/198) Fix "undefined" model name ([rundef](https://github.com/rundef))
  * **Released 1.21.1** ([Raymond Feng](https://github.com/raymondfeng))
