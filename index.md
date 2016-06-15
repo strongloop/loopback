@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-19 to 2016-06-14)
+since: (from 2016-04-20 to 2016-06-15)
 ---
 
 ## Core
@@ -22,6 +22,7 @@ since: (from 2016-04-19 to 2016-06-14)
 
 
 ### loopback
+ * [@42c83f6](https://github.com/strongloop/loopback/commit/42c83f69a090664bb025d89f8dd5f5a7a3ffa34e) Cleanup unit-test added in 1fc51d129 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2411](https://github.com/strongloop/loopback/pull/2411) [SEMVER-MAJOR] Remove `loopback#errorHandler` middleware ([loay](https://github.com/loay))
  * [@a2e199f](https://github.com/strongloop/loopback/commit/a2e199f02554c75845bcbb0cc37843b3816f375b) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2227](https://github.com/strongloop/loopback/pull/2227) add missing unit tests for #2108 ([benkroeger](https://github.com/benkroeger))
@@ -131,6 +132,8 @@ since: (from 2016-04-19 to 2016-06-14)
 
 
 ### loopback-connector-db2
+ * [PR#36](https://github.com/strongloop/loopback-connector-db2/pull/36) Componentization ([qpresley](https://github.com/qpresley))
+ * [@72a8f01](https://github.com/strongloop/loopback-connector-db2/commit/72a8f016062588689169a5b18c7131ffdafe9786) Merge v1.0.17 release ([Ryan Graham](https://github.com/rmg))
  * [@2286350](https://github.com/strongloop/loopback-connector-db2/commit/2286350479b8d8bc29aeb30555968ae17350518a) Update README.md ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.17** ([Quentin Presley](https://github.com/qpresley))
  * **Released 1.0.16** ([Quentin Presley](https://github.com/qpresley))
@@ -177,6 +180,7 @@ since: (from 2016-04-19 to 2016-06-14)
 
 
 ### loopback-connector-mqlight
+ * **Released 1.0.0** ([Quentin Presley](https://github.com/qpresley))
  * [@82d0d74](https://github.com/strongloop/loopback-connector-mqlight/commit/82d0d74977dc4a1cb5cda8e20e0193bc8bf94d18) Complete readme and touch up minor typos ([Quentin Presley](https://github.com/qpresley))
  * [@3aed1cb](https://github.com/strongloop/loopback-connector-mqlight/commit/3aed1cb878b9bed67279290e7f0471001832986f) Update tests to include CReate Update and Delete tests ([Quentin Presley](https://github.com/qpresley))
  * [@e0d112d](https://github.com/strongloop/loopback-connector-mqlight/commit/e0d112d65605dfbce0533b16da6697d575df6811) Code cleanup ([Quentin Presley](https://github.com/qpresley))
@@ -223,6 +227,7 @@ since: (from 2016-04-19 to 2016-06-14)
 
 
 ### loopback-connector-soap
+ * [@568557d](https://github.com/strongloop/loopback-connector-soap/commit/568557df4abb2c6e2ef092d1b51a4ac3f17e3cc1) Honor security options ([Raymond Feng](https://github.com/raymondfeng))
  * [@5955176](https://github.com/strongloop/loopback-connector-soap/commit/5955176d389514af3f13cbda3f96304cbd73ee2c) Update deps ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#35](https://github.com/strongloop/loopback-connector-soap/pull/35) Update soap-connector.js ([ritch](https://github.com/ritch))
  * **Released 2.4.1** ([Ryan Graham](https://github.com/rmg))
@@ -284,6 +289,7 @@ since: (from 2016-04-19 to 2016-06-14)
 
 
 ### loopback-component-storage
+ * [PR#129](https://github.com/strongloop/loopback-component-storage/pull/129) Fixes issue #127 (Bad Content-type returned) ([GaryTowers](https://github.com/GaryTowers))
  * **Released 1.8.1** ([Ryan Graham](https://github.com/rmg))
  * [@728a198](https://github.com/strongloop/loopback-component-storage/commit/728a1986dfc0f0aba2f5b1eddab78ecb54b448ba) update/insert copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@2121565](https://github.com/strongloop/loopback-component-storage/commit/2121565fc3ca23d82c8fbc581c84eefc7f117d2c) relicese as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
