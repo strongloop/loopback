@@ -1418,6 +1418,30 @@ describe('User', function() {
         }, done);
       });
 
+      it('sets verificationToken to null after confirmation', function(done) {
+        testConfirm(function(result, done) {
+          request(app)
+          .get('/test-users/confirm?uid=' + (result.uid) +
+            '&token=' + encodeURIComponent(result.token) +
+            '&redirect=' + encodeURIComponent(options.redirect))
+           .expect(302)
+            .end(function(err, res) {
+              if (err) return done(err);
+              expect(options.user.verificationToken).to.equal(result.token);
+              User.once('confirmed', function(info) {
+                info.accessToken.user(function(err, user) {
+                  if (err) return done(err);
+                  assert.equal(user.email, u.email);
+                  assert.equal(user.verificationToken, null);
+                  done();
+                });
+              });
+
+              done();
+            });
+        }, done);
+      });
+
       it('Should report 302 when redirect url is set', function(done) {
         testConfirm(function(result, done) {
           request(app)
