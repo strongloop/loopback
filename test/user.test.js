@@ -1418,6 +1418,21 @@ describe('User', function() {
         }, done);
       });
 
+      it('sets verificationToken to null after confirmation', function(done) {
+        testConfirm(function(result, done) {
+          User.confirm(result.uid, result.token, false, function(err) {
+            if (err) return done(err);
+
+            // Verify by loading user data stored in the datasource
+            User.findById(result.uid, function(err, user) {
+              if (err) return done(err);
+              expect(user).to.have.property('verificationToken', null);
+              done();
+            });
+          });
+        }, done);
+      });
+
       it('Should report 302 when redirect url is set', function(done) {
         testConfirm(function(result, done) {
           request(app)
