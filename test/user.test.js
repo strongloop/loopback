@@ -1520,7 +1520,7 @@ describe('User', function() {
       it('Requires email address to reset password - promise variant', function(done) {
         User.resetPassword({ })
           .then(function() {
-            throw new Error ('Error should NOT be thrown');
+            throw new Error('Error should NOT be thrown');
           })
           .catch(function(err) {
             assert(err);
