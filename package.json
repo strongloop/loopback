@@ -44,7 +44,7 @@
     "debug": "^2.1.2",
     "depd": "^1.0.0",
     "ejs": "^2.3.1",
-    "express": "^4.12.2",
+    "express": "^4.14.0",
     "inflection": "^1.6.0",
     "loopback-connector-remote": "^1.0.3",
     "loopback-datasource-juggler": "^3.0.0-alpha.1",
