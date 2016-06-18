@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-22 to 2016-06-17)
+since: (from 2016-04-23 to 2016-06-18)
 ---
 
 ## Core
@@ -23,6 +23,8 @@ since: (from 2016-04-22 to 2016-06-17)
 
 
 ### loopback
+ * [PR#2440](https://github.com/strongloop/loopback/pull/2440) Fix verificationToken bug ([loay](https://github.com/loay))
+ * [PR#2446](https://github.com/strongloop/loopback/pull/2446) update express version ([loay](https://github.com/loay))
  * [@42c83f6](https://github.com/strongloop/loopback/commit/42c83f69a090664bb025d89f8dd5f5a7a3ffa34e) Cleanup unit-test added in 1fc51d129 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#2411](https://github.com/strongloop/loopback/pull/2411) [SEMVER-MAJOR] Remove `loopback#errorHandler` middleware ([loay](https://github.com/loay))
  * [@a2e199f](https://github.com/strongloop/loopback/commit/a2e199f02554c75845bcbb0cc37843b3816f375b) 3.0.0-alpha.2 ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -54,12 +56,12 @@ since: (from 2016-04-22 to 2016-06-17)
 
 
 ### loopback-datasource-juggler
+ * [PR#960](https://github.com/strongloop/loopback-datasource-juggler/pull/960) Update datasource.js ([ritch](https://github.com/ritch))
  * [@058d9d4](https://github.com/strongloop/loopback-datasource-juggler/commit/058d9d46c09f249dd7aa14a09e3097aae8a7a21b) 3.0.0-alpha.5 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#952](https://github.com/strongloop/loopback-datasource-juggler/pull/952) Avoid changing PK of instance in operation hook when forceId is set ([Amir-61](https://github.com/Amir-61))
  * [PR#965](https://github.com/strongloop/loopback-datasource-juggler/pull/965) [SEMVER-MAJOR] Remove model events ([0candy](https://github.com/0candy))
  * [@ea2266e](https://github.com/strongloop/loopback-datasource-juggler/commit/ea2266e453220208b204d3817a866ea7f0b42410) Persist changes on parent for embedsOne ([Dimitris Halatsis](https://github.com/mitsos1os))
  * [PR#964](https://github.com/strongloop/loopback-datasource-juggler/pull/964) Fix `disableInclude` for hasAndBelongsToMany relation ([Amir-61](https://github.com/Amir-61))
- * [@293a22f](https://github.com/strongloop/loopback-datasource-juggler/commit/293a22fd3189da7a59cd836af4785099b1adac8a) Update datasource.js ([Ritchie Martori](https://github.com/ritch))
  * [PR#953](https://github.com/strongloop/loopback-datasource-juggler/pull/953) Fix error message ([Amir-61](https://github.com/Amir-61))
  * [PR#954](https://github.com/strongloop/loopback-datasource-juggler/pull/954) Retun err for UPSERT if the connector returns err ([Amir-61](https://github.com/Amir-61))
  * [PR#955](https://github.com/strongloop/loopback-datasource-juggler/pull/955) ModelBuilder: add new setting strictEmbeddedModels ([bajtos](https://github.com/bajtos))
