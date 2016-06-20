@@ -287,6 +287,7 @@ since: (from 2016-04-25 to 2016-06-20)
 
 
 ### loopback-component-push
+ * [@dbb6e8b](https://github.com/strongloop/loopback-component-push/commit/dbb6e8b988cd0a8d370fcd55bc017ac31f889788) Upgrading dependencies ([Benjamin Boudreau](https://github.com/seriousben))
  * **Released 1.5.4** ([Ryan Graham](https://github.com/rmg))
  * [@b68d41a](https://github.com/strongloop/loopback-component-push/commit/b68d41a7255ad87394b6f4f818043e46d0c62aff) update copyright statements ([Ryan Graham](https://github.com/rmg))
  * [@f6ca0a7](https://github.com/strongloop/loopback-component-push/commit/f6ca0a7005210ac06ed99bcefda522dd572c060e) re-license as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
