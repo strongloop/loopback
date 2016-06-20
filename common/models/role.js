@@ -210,30 +210,30 @@ module.exports = function(Role) {
         if (callback) callback(null, matches(ownerId, userId));
         return;
       } else {
-        var rel_tries = 0;
+        var relTries = 0;
         var matched = false;
         function processRelatedUser(err, user) {
-          if(matched) {
+          if (matched) {
             return;
           }
           var checkFinish = function() {
-            if(rel_tries === modelClass.relations.length) {
+            if (relTries === modelClass.relations.length) {
               debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
               if (callback) callback(null, false);
             }
-          }
+          };
           if (!err && user) {
-            rel_tries++;
+            relTries++;
             debug('User found: %j', user.id);
             var result = matches(user.id, userId);
             debug('User matches result: %s !', result);
-            if(result) {
+            if (result) {
               matched = true;
               if (callback) callback(null, matches(user.id, userId));
             }
             checkFinish();
           } else {
-            rel_tries++;
+            relTries++;
             checkFinish();
           }
         }
