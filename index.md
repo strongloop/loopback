@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-25 to 2016-06-20)
+since: (from 2016-04-26 to 2016-06-21)
 ---
 
 ## Core
@@ -23,6 +23,7 @@ since: (from 2016-04-25 to 2016-06-20)
 
 
 ### loopback
+ * [PR#2437](https://github.com/strongloop/loopback/pull/2437) Remove `rectifyAllChanges` and `rectifyChange` ([0candy](https://github.com/0candy))
  * [PR#2440](https://github.com/strongloop/loopback/pull/2440) Fix verificationToken bug ([loay](https://github.com/loay))
  * [PR#2446](https://github.com/strongloop/loopback/pull/2446) update express version ([loay](https://github.com/loay))
  * [@42c83f6](https://github.com/strongloop/loopback/commit/42c83f69a090664bb025d89f8dd5f5a7a3ffa34e) Cleanup unit-test added in 1fc51d129 ([Miroslav Bajtoš](https://github.com/bajtos))
@@ -51,6 +52,7 @@ since: (from 2016-04-25 to 2016-06-20)
 
 
 ### loopback-boot
+ * **Released 2.19.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@5eaa909](https://github.com/strongloop/loopback-boot/commit/5eaa9090068ea99676ca081fc177e2a877ef9337) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#185](https://github.com/strongloop/loopback-boot/pull/185) Add flag var lazyConnect to ds config ([jannyHou](https://github.com/jannyHou))
 
@@ -287,7 +289,7 @@ since: (from 2016-04-25 to 2016-06-20)
 
 
 ### loopback-component-push
- * [@dbb6e8b](https://github.com/strongloop/loopback-component-push/commit/dbb6e8b988cd0a8d370fcd55bc017ac31f889788) Upgrading dependencies ([Benjamin Boudreau](https://github.com/seriousben))
+ * [PR#113](https://github.com/strongloop/loopback-component-push/pull/113) [SEMVER-MINOR] Update GCM, APN and node-cache ([seriousben](https://github.com/seriousben))
  * **Released 1.5.4** ([Ryan Graham](https://github.com/rmg))
  * [@b68d41a](https://github.com/strongloop/loopback-component-push/commit/b68d41a7255ad87394b6f4f818043e46d0c62aff) update copyright statements ([Ryan Graham](https://github.com/rmg))
  * [@f6ca0a7](https://github.com/strongloop/loopback-component-push/commit/f6ca0a7005210ac06ed99bcefda522dd572c060e) re-license as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
