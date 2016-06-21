@@ -218,7 +218,7 @@ module.exports = function(Role) {
           }
           var checkFinish = function() {
             if (relTries === modelClass.relations.length) {
-              debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
+              debug('No matching belongsTo relation in model %j and user: %j', modelId, userId);
               if (callback) callback(null, false);
             }
           };
