@@ -6,6 +6,7 @@ since: (from 2016-04-27 to 2016-06-22)
 ## Core
 
 ### generator-loopback
+ * [@fd830ff](https://github.com/strongloop/generator-loopback/commit/fd830ff7c33b7eeb4c29a56b6e502394690a40dc) test: remove workarounds no longer needed ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 1.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#199](https://github.com/strongloop/generator-loopback/pull/199) Support custom connector ([jannyHou](https://github.com/jannyHou))
  * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
