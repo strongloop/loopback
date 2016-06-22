@@ -1,11 +1,12 @@
 ---
 layout: page
-since: (from 2016-04-26 to 2016-06-21)
+since: (from 2016-04-27 to 2016-06-22)
 ---
 
 ## Core
 
 ### generator-loopback
+ * **Released 1.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#199](https://github.com/strongloop/generator-loopback/pull/199) Support custom connector ([jannyHou](https://github.com/jannyHou))
  * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
  * [PR#198](https://github.com/strongloop/generator-loopback/pull/198) Fix "undefined" model name ([rundef](https://github.com/rundef))
@@ -94,6 +95,7 @@ since: (from 2016-04-26 to 2016-06-21)
 
 
 ### strong-remoting
+ * [@f899aa3](https://github.com/strongloop/strong-remoting/commit/f899aa342a4b3b10becb999bcd997e70b5147213) Prioritise auth errors over sharedCtor errors ([Miroslav Bajtoš](https://github.com/bajtos))
  * [@aa0bda6](https://github.com/strongloop/strong-remoting/commit/aa0bda634b1d2883b0549f9cde65baf65d55ea16) Fix style violations introduced by a1b156b9 ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#271](https://github.com/strongloop/strong-remoting/pull/271) Allow source to be `formData` (=== `form`) to comply with swagger-definition ([0ff](https://github.com/0ff))
  * [@2e4a500](https://github.com/strongloop/strong-remoting/commit/2e4a50041f3b3e8c336f0d2609d108bc65219f83) Add http source "formData" ([Fabian Off](https://github.com/0ff))
@@ -196,11 +198,13 @@ since: (from 2016-04-26 to 2016-06-21)
 
 
 ### loopback-connector-mssql
+ * **Released 2.8.0** ([Simon Ho](https://github.com/superkhau))
  * [@eb2b07d](https://github.com/strongloop/loopback-connector-mssql/commit/eb2b07de4417df3e4177631b9feffaede07c6849) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
  * [PR#80](https://github.com/strongloop/loopback-connector-mssql/pull/80) Lazy connect when booting app ([jannyHou](https://github.com/jannyHou))
 
 
 ### loopback-connector-mysql
+ * **Released 2.3.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#166](https://github.com/strongloop/loopback-connector-mysql/pull/166) Add function connect ([jannyHou](https://github.com/jannyHou))
  * [@340a4eb](https://github.com/strongloop/loopback-connector-mysql/commit/340a4eb0f6599bf4a31b013f4ef7097a19d401b8) insert/update copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@c442f57](https://github.com/strongloop/loopback-connector-mysql/commit/c442f572c7a2f17babe38d9d487b3b24c7612d76) relicense as MIT only ([Ryan Graham](https://github.com/rmg))
@@ -216,6 +220,7 @@ since: (from 2016-04-26 to 2016-06-21)
 
 
 ### loopback-connector-postgresql
+ * **Released 2.5.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#140](https://github.com/strongloop/loopback-connector-postgresql/pull/140) Lazy connect when booting from swagger ([jannyHou](https://github.com/jannyHou))
  * [@0facead](https://github.com/strongloop/loopback-connector-postgresql/commit/0facead0dbb46c9e72c95800d3e656523ee3576b) update/insert copyright notices ([Ryan Graham](https://github.com/rmg))
  * [@5d5458b](https://github.com/strongloop/loopback-connector-postgresql/commit/5d5458bd9e6e2f8a8545a7c016b7f067ba2418ca) relicense as Artistic-2.0 only ([Ryan Graham](https://github.com/rmg))
