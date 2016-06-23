@@ -1,12 +1,12 @@
 ---
 layout: page
-since: (from 2016-04-27 to 2016-06-22)
+since: (from 2016-04-28 to 2016-06-23)
 ---
 
 ## Core
 
 ### generator-loopback
- * [@fd830ff](https://github.com/strongloop/generator-loopback/commit/fd830ff7c33b7eeb4c29a56b6e502394690a40dc) test: remove workarounds no longer needed ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [PR#206](https://github.com/strongloop/generator-loopback/pull/206) test: remove workarounds no longer needed ([bajtos](https://github.com/bajtos))
  * **Released 1.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#199](https://github.com/strongloop/generator-loopback/pull/199) Support custom connector ([jannyHou](https://github.com/jannyHou))
  * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
@@ -221,6 +221,8 @@ since: (from 2016-04-27 to 2016-06-22)
 
 
 ### loopback-connector-postgresql
+ * **Released 2.6.0** ([Raymond Feng](https://github.com/raymondfeng))
+ * [PR#143](https://github.com/strongloop/loopback-connector-postgresql/pull/143) Upgrade to pg 6.0.0 ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.5.0** ([Simon Ho](https://github.com/superkhau))
  * [PR#140](https://github.com/strongloop/loopback-connector-postgresql/pull/140) Lazy connect when booting from swagger ([jannyHou](https://github.com/jannyHou))
  * [@0facead](https://github.com/strongloop/loopback-connector-postgresql/commit/0facead0dbb46c9e72c95800d3e656523ee3576b) update/insert copyright notices ([Ryan Graham](https://github.com/rmg))
@@ -252,6 +254,7 @@ since: (from 2016-04-27 to 2016-06-22)
 
 
 ### loopback-connector-swagger
+ * [PR#4](https://github.com/strongloop/loopback-connector-swagger/pull/4) Update Readme with more info ([gunjpan](https://github.com/gunjpan))
  * [PR#2](https://github.com/strongloop/loopback-connector-swagger/pull/2) Develop basic connector ([gunjpan](https://github.com/gunjpan))
 
 
@@ -280,6 +283,7 @@ since: (from 2016-04-27 to 2016-06-22)
 ## Components
 
 ### loopback-component-explorer
+ * [PR#168](https://github.com/strongloop/loopback-component-explorer/pull/168) Redirect get http 301 instead of 303 ([jannyHou](https://github.com/jannyHou))
  * [PR#160](https://github.com/strongloop/loopback-component-explorer/pull/160) [Fix] `overrides-swagger-ui files` test ignores copyright in dummy file.  ([supasate](https://github.com/supasate))
  * [PR#159](https://github.com/strongloop/loopback-component-explorer/pull/159) Upgrade loopback devDependency ([supasate](https://github.com/supasate))
  * [@cb6eafd](https://github.com/strongloop/loopback-component-explorer/commit/cb6eafd5929170c96490d660eb483ed5e0046431) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
