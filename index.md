@@ -8,6 +8,7 @@ since: (from 2016-04-28 to 2016-06-23)
 ### generator-loopback
  * [PR#206](https://github.com/strongloop/generator-loopback/pull/206) test: remove workarounds no longer needed ([bajtos](https://github.com/bajtos))
  * **Released 1.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@b2db472](https://github.com/strongloop/generator-loopback/commit/b2db4723e50ecb6771c34daff8fac069fbb7c64e) Update generator-loopback to yeoman 0.23 ([Candy](https://github.com/0candy))
  * [PR#199](https://github.com/strongloop/generator-loopback/pull/199) Support custom connector ([jannyHou](https://github.com/jannyHou))
  * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
  * [PR#198](https://github.com/strongloop/generator-loopback/pull/198) Fix "undefined" model name ([rundef](https://github.com/rundef))
