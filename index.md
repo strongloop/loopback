@@ -1,14 +1,14 @@
 ---
 layout: page
-since: (from 2016-04-28 to 2016-06-23)
+since: (from 2016-04-29 to 2016-06-24)
 ---
 
 ## Core
 
 ### generator-loopback
+ * [PR#203](https://github.com/strongloop/generator-loopback/pull/203) Update generator-loopback to yeoman 0.23 ([0candy](https://github.com/0candy))
  * [PR#206](https://github.com/strongloop/generator-loopback/pull/206) test: remove workarounds no longer needed ([bajtos](https://github.com/bajtos))
  * **Released 1.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@b2db472](https://github.com/strongloop/generator-loopback/commit/b2db4723e50ecb6771c34daff8fac069fbb7c64e) Update generator-loopback to yeoman 0.23 ([Candy](https://github.com/0candy))
  * [PR#199](https://github.com/strongloop/generator-loopback/pull/199) Support custom connector ([jannyHou](https://github.com/jannyHou))
  * [PR#197](https://github.com/strongloop/generator-loopback/pull/197) Add prompt for lbVersion ([jannyHou](https://github.com/jannyHou))
  * [PR#198](https://github.com/strongloop/generator-loopback/pull/198) Fix "undefined" model name ([rundef](https://github.com/rundef))
@@ -222,6 +222,11 @@ since: (from 2016-04-28 to 2016-06-23)
 
 
 ### loopback-connector-postgresql
+ * **Released 2.6.3** ([Raymond Feng](https://github.com/raymondfeng))
+ * [@ab5a0cb](https://github.com/strongloop/loopback-connector-postgresql/commit/ab5a0cb7dd8f16f8adc53a13f86e244e372709be) Fix the datasource init ([Raymond Feng](https://github.com/raymondfeng))
+ * **Released 2.6.2** ([Raymond Feng](https://github.com/raymondfeng))
+ * **Released 2.6.1** ([Raymond Feng](https://github.com/raymondfeng))
+ * [@315bd2a](https://github.com/strongloop/loopback-connector-postgresql/commit/315bd2a7cfb0c35063fba14fea87767c7ffc8a45) Fix for https://github.com/strongloop/loopback-connector-postgresql/issues/145 ([Raymond Feng](https://github.com/raymondfeng))
  * **Released 2.6.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#143](https://github.com/strongloop/loopback-connector-postgresql/pull/143) Upgrade to pg 6.0.0 ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.5.0** ([Simon Ho](https://github.com/superkhau))
@@ -242,6 +247,7 @@ since: (from 2016-04-28 to 2016-06-23)
 
 
 ### loopback-connector-soap
+ * [@54dd01d](https://github.com/strongloop/loopback-connector-soap/commit/54dd01df67de603e7f763bc8ed399b92e1cff7b6) Upgrade to soap@0.16 ([Raymond Feng](https://github.com/raymondfeng))
  * [@568557d](https://github.com/strongloop/loopback-connector-soap/commit/568557df4abb2c6e2ef092d1b51a4ac3f17e3cc1) Honor security options ([Raymond Feng](https://github.com/raymondfeng))
  * [@5955176](https://github.com/strongloop/loopback-connector-soap/commit/5955176d389514af3f13cbda3f96304cbd73ee2c) Update deps ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#35](https://github.com/strongloop/loopback-connector-soap/pull/35) Update soap-connector.js ([ritch](https://github.com/ritch))
@@ -255,6 +261,7 @@ since: (from 2016-04-28 to 2016-06-23)
 
 
 ### loopback-connector-swagger
+ * **Released 1.0.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#4](https://github.com/strongloop/loopback-connector-swagger/pull/4) Update Readme with more info ([gunjpan](https://github.com/gunjpan))
  * [PR#2](https://github.com/strongloop/loopback-connector-swagger/pull/2) Develop basic connector ([gunjpan](https://github.com/gunjpan))
 
