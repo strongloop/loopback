@@ -63,6 +63,7 @@ since: (from 2016-04-29 to 2016-06-24)
 ### loopback-datasource-juggler
  * [PR#960](https://github.com/strongloop/loopback-datasource-juggler/pull/960) Update datasource.js ([ritch](https://github.com/ritch))
  * [@058d9d4](https://github.com/strongloop/loopback-datasource-juggler/commit/058d9d46c09f249dd7aa14a09e3097aae8a7a21b) 3.0.0-alpha.5 ([Miroslav Bajtoš](https://github.com/bajtos))
+ * [@8117b04](https://github.com/strongloop/loopback-datasource-juggler/commit/8117b0403f05ac184c15813704f8c56f00d79b00) Throw Error for property names with dots ([gunjpan](https://github.com/gunjpan))
  * [PR#952](https://github.com/strongloop/loopback-datasource-juggler/pull/952) Avoid changing PK of instance in operation hook when forceId is set ([Amir-61](https://github.com/Amir-61))
  * [PR#965](https://github.com/strongloop/loopback-datasource-juggler/pull/965) [SEMVER-MAJOR] Remove model events ([0candy](https://github.com/0candy))
  * [@ea2266e](https://github.com/strongloop/loopback-datasource-juggler/commit/ea2266e453220208b204d3817a866ea7f0b42410) Persist changes on parent for embedsOne ([Dimitris Halatsis](https://github.com/mitsos1os))
