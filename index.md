@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-04-29 to 2016-06-24)
+since: (from 2016-04-30 to 2016-06-25)
 ---
 
 ## Core
@@ -61,9 +61,10 @@ since: (from 2016-04-29 to 2016-06-24)
 
 
 ### loopback-datasource-juggler
+ * [@fbe58f7](https://github.com/strongloop/loopback-datasource-juggler/commit/fbe58f7cf82b0a8e7e04afbaddea319fb7e8e8d1) give options to validators #984 ([RobinBiondi](https://github.com/robinbiondi))
+ * [PR#947](https://github.com/strongloop/loopback-datasource-juggler/pull/947) [SEMVER-MAJOR] Throw Error for property names with dots ([gunjpan](https://github.com/gunjpan))
  * [PR#960](https://github.com/strongloop/loopback-datasource-juggler/pull/960) Update datasource.js ([ritch](https://github.com/ritch))
  * [@058d9d4](https://github.com/strongloop/loopback-datasource-juggler/commit/058d9d46c09f249dd7aa14a09e3097aae8a7a21b) 3.0.0-alpha.5 ([Miroslav Bajtoš](https://github.com/bajtos))
- * [@8117b04](https://github.com/strongloop/loopback-datasource-juggler/commit/8117b0403f05ac184c15813704f8c56f00d79b00) Throw Error for property names with dots ([gunjpan](https://github.com/gunjpan))
  * [PR#952](https://github.com/strongloop/loopback-datasource-juggler/pull/952) Avoid changing PK of instance in operation hook when forceId is set ([Amir-61](https://github.com/Amir-61))
  * [PR#965](https://github.com/strongloop/loopback-datasource-juggler/pull/965) [SEMVER-MAJOR] Remove model events ([0candy](https://github.com/0candy))
  * [@ea2266e](https://github.com/strongloop/loopback-datasource-juggler/commit/ea2266e453220208b204d3817a866ea7f0b42410) Persist changes on parent for embedsOne ([Dimitris Halatsis](https://github.com/mitsos1os))
@@ -248,6 +249,7 @@ since: (from 2016-04-29 to 2016-06-24)
 
 
 ### loopback-connector-soap
+ * **Released 2.5.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [@54dd01d](https://github.com/strongloop/loopback-connector-soap/commit/54dd01df67de603e7f763bc8ed399b92e1cff7b6) Upgrade to soap@0.16 ([Raymond Feng](https://github.com/raymondfeng))
  * [@568557d](https://github.com/strongloop/loopback-connector-soap/commit/568557df4abb2c6e2ef092d1b51a4ac3f17e3cc1) Honor security options ([Raymond Feng](https://github.com/raymondfeng))
  * [@5955176](https://github.com/strongloop/loopback-connector-soap/commit/5955176d389514af3f13cbda3f96304cbd73ee2c) Update deps ([Raymond Feng](https://github.com/raymondfeng))
