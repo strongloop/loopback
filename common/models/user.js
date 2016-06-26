@@ -649,7 +649,8 @@ module.exports = function(User) {
 
     // Access token to normalize email credentials
     UserModel.observe('access', function normalizeEmailCase(ctx, next) {
-      if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where && ctx.query.where.email) {
+      if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
+          ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
         ctx.query.where.email = ctx.query.where.email.toLowerCase();
       }
       next();
