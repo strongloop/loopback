@@ -454,6 +454,36 @@ describe('User', function() {
         done();
       });
     });
+
+    it('Should be able to use query filters (email case-sensitivity off)', function(done) {
+      User.settings.caseSensitiveEmail = false;
+      var insensitiveUser = { email: 'insensitive@example.com', password: 'abc' };
+      User.create(insensitiveUser, function(err, user) {
+        User.find({ where: { email:
+          { inq: [insensitiveUser.email] },
+        }}, function(err, result) {
+          if (err) done(err);
+          assert(result[0], 'The query did not find the user');
+          assert.equal(result[0].email, insensitiveUser.email);
+          done();
+        });
+      });
+    });
+
+    it('Should be able to use query filters (email case-sensitivity on)', function(done) {
+      User.settings.caseSensitiveEmail = true;
+      var sensitiveUser = { email: 'senSiTive@example.com', password: 'abc' };
+      User.create(sensitiveUser, function(err, user) {
+        User.find({ where: { email:
+          { inq: [sensitiveUser.email] },
+        }}, function(err, result) {
+          if (err) done(err);
+          assert(result[0], 'The query did not find the user');
+          assert.equal(result[0].email, sensitiveUser.email);
+          done();
+        });
+      });
+    });
   });
 
   describe('User.login', function() {
