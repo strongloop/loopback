@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-05-01 to 2016-06-26)
+since: (from 2016-05-02 to 2016-06-27)
 ---
 
 ## Core
@@ -93,6 +93,7 @@ since: (from 2016-05-01 to 2016-06-26)
 
 
 ### loopback-swagger
+ * [@a41a508](https://github.com/strongloop/loopback-swagger/commit/a41a5081b2bbdee04cd3f13fa35d524c25a2a4e3) Add doc root ([jannyHou](https://github.com/jannyHou))
  * [PR#39](https://github.com/strongloop/loopback-swagger/pull/39) Add custom definition to swagger file ([jannyHou](https://github.com/jannyHou))
  * **Released 2.4.3** ([Ryan Graham](https://github.com/rmg))
  * [@a0aa29a](https://github.com/strongloop/loopback-swagger/commit/a0aa29a531db4ad29b5bf6d863cbdf0bb01ea4d5) update copyright notices and license ([Ryan Graham](https://github.com/rmg))
