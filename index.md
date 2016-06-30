@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-05-04 to 2016-06-29)
+since: (from 2016-05-05 to 2016-06-30)
 ---
 
 ## Core
@@ -45,7 +45,8 @@ since: (from 2016-05-04 to 2016-06-29)
 
 
 ### loopback-datasource-juggler
- * [@8076be2](https://github.com/strongloop/loopback-datasource-juggler/commit/8076be2db1bf5d82dba17bc15ff3fd53ec14b37b) Remove DataSource.registerType() ([gunjpan](https://github.com/gunjpan))
+ * [@45e14af](https://github.com/strongloop/loopback-datasource-juggler/commit/45e14af4a981fcf376276babeb344ceac578186c) Update validations.js ([Rand McKinney](https://github.com/crandmck))
+ * [PR#976](https://github.com/strongloop/loopback-datasource-juggler/pull/976) [SEMVER-MAJOR] Remove DataSource.registerType() ([gunjpan](https://github.com/gunjpan))
  * [@fbe58f7](https://github.com/strongloop/loopback-datasource-juggler/commit/fbe58f7cf82b0a8e7e04afbaddea319fb7e8e8d1) give options to validators #984 ([RobinBiondi](https://github.com/robinbiondi))
  * [PR#947](https://github.com/strongloop/loopback-datasource-juggler/pull/947) [SEMVER-MAJOR] Throw Error for property names with dots ([gunjpan](https://github.com/gunjpan))
  * [PR#960](https://github.com/strongloop/loopback-datasource-juggler/pull/960) Update datasource.js ([ritch](https://github.com/ritch))
