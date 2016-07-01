@@ -178,6 +178,7 @@ since: (from 2016-05-06 to 2016-07-01)
 ## SDKs
 
 ### loopback-sdk-angular
+ * [@5d9d23e](https://github.com/strongloop/loopback-sdk-angular/commit/5d9d23e09d1399176d39ef1c5e51d5f2910793f8) Expose configured properties on LoopBackResource ([Matteo Padovano](https://github.com/mrbatista))
  * [PR#223](https://github.com/strongloop/loopback-sdk-angular/pull/223) Describe model schema in generated $resource ([bajtos](https://github.com/bajtos))
 
 
