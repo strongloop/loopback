@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-05-06 to 2016-07-01)
+since: (from 2016-05-07 to 2016-07-02)
 ---
 
 ## Core
@@ -41,6 +41,7 @@ since: (from 2016-05-06 to 2016-07-01)
 
 
 ### loopback-boot
+ * [PR#196](https://github.com/strongloop/loopback-boot/pull/196) travis: drop io.js, add Node v4 and v6 ([bajtos](https://github.com/bajtos))
  * **Released 2.19.0** ([Miroslav Bajtoš](https://github.com/bajtos))
 
 
@@ -178,7 +179,7 @@ since: (from 2016-05-06 to 2016-07-01)
 ## SDKs
 
 ### loopback-sdk-angular
- * [@5d9d23e](https://github.com/strongloop/loopback-sdk-angular/commit/5d9d23e09d1399176d39ef1c5e51d5f2910793f8) Expose configured properties on LoopBackResource ([Matteo Padovano](https://github.com/mrbatista))
+ * [PR#225](https://github.com/strongloop/loopback-sdk-angular/pull/225) Expose configured properties (authHeader and urlBase) on LoopBackResource ([mrbatista](https://github.com/mrbatista))
  * [PR#223](https://github.com/strongloop/loopback-sdk-angular/pull/223) Describe model schema in generated $resource ([bajtos](https://github.com/bajtos))
 
 
