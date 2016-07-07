@@ -301,6 +301,21 @@ module.exports = function(User) {
     return fn.promise;
   };
 
+  User.observe('before delete', function(ctx, next) {
+    var AccessToken = ctx.Model.relations.accessTokens.modelTo;
+    var pkName = ctx.Model.definition.idName() || 'id';
+    ctx.Model.find({ where: ctx.where, fields: [pkName] }, function(err, list) {
+      if (err) return next(err);
+
+      var ids = list.map(function(u) { return u[pkName]; });
+      ctx.where = {};
+      ctx.where[pkName] = { inq: ids };
+
+      AccessToken.destroyAll({ userId: { inq: ids }}, next);
+      console.log('Deleted token for users ', ids);
+    });
+  });
+
   /**
    * Compare the given `password` with the users hashed password.
    *
