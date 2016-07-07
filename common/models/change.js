@@ -281,7 +281,7 @@ module.exports = function(Change) {
   Change.hash = function(str) {
     return crypto
       .createHash(Change.settings.hashAlgorithm || 'sha1')
-      .update(str)
+      .update(str, 'utf8')
       .digest('hex');
   };
 
