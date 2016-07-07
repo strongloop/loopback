@@ -6,6 +6,7 @@
 require('./support');
 var loopback = require('../');
 var User, AccessToken;
+var async = require('async');
 
 describe('User', function() {
   var validCredentialsEmail = 'foo@bar.com';
@@ -225,6 +226,92 @@ describe('User', function() {
       assert(u1.password !== 'bar');
       var u2 = new User({username: 'foo', password: u1.password});
       assert(u2.password === u1.password);
+    });
+
+    it('invalidates the user\'s accessToken when the user is deleted By id', function(done) {
+      var usersId;
+      async.series([
+        function(next) {
+          User.create({ email: 'b@c.com', password: 'bar' }, function(err, user) {
+            usersId = user.id;
+            next(err);
+          });
+        },
+        function(next) {
+          User.login({ email: 'b@c.com', password: 'bar' }, function(err, accessToken) {
+            if (err) return next(err);
+            assert(accessToken.userId);
+            next();
+          });
+        },
+        function(next) {
+          User.deleteById(usersId, function(err) {
+            next(err);
+          });
+        },
+        function(next) {
+          User.findById(usersId, function(err, userFound)  {
+            if (err) return next(err);
+            expect(userFound).to.equal(null);
+            AccessToken.find({ where: { userId: usersId }}, function(err, tokens) {
+              if (err) return next(err);
+              expect(tokens.length).to.equal(0);
+              next();
+            });
+          });
+        },
+      ], function(err) {
+        if (err) return done(err);
+        done();
+      });
+    });
+
+    it('invalidates the user\'s accessToken when the user is deleted all', function(done) {
+      var usersId, accessTokenId;
+      async.series([
+        function(next) {
+          User.create([{ name: 'myname', email: 'b@c.com', password: 'bar' },
+          { name: 'myname', email: 'd@c.com', password: 'bar' }], function(err, user) {
+            usersId = user.id;
+            next(err);
+          });
+        },
+        function(next) {
+          User.login({ email: 'b@c.com', password: 'bar' }, function(err, accessToken) {
+            accessTokenId = accessToken.userId;
+            if (err) return next (err);
+            assert(accessTokenId);
+            next();
+          });
+        },
+        function(next) {
+          User.login({ email: 'd@c.com', password: 'bar' }, function(err, accessToken) {
+            accessTokenId = accessToken.userId;
+            if (err) return next (err);
+            assert(accessTokenId);
+            next();
+          });
+        },
+        function(next) {
+          User.deleteAll({ name: 'myname' }, function(err, user) {
+            next(err);
+          });
+        },
+        function(next) {
+          User.find({ where: { name: 'myname' }}, function(err, userFound)  {
+            if (err) return next (err);
+            expect(userFound.length).to.equal(0);
+            AccessToken.find({ where: { userId: usersId }}, function(err, tokens) {
+              if (err) return next(err);
+              expect(tokens.length).to.equal(0);
+              next();
+            });
+          });
+        },
+      ], function(err) {
+        if (err) return done(err);
+        done();
+      });
     });
 
     describe('custom password hash', function() {
