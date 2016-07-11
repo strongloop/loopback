@@ -46,6 +46,7 @@ since: (from 2016-05-16 to 2016-07-11)
 
 
 ### loopback-datasource-juggler
+ * [@9f0c10f](https://github.com/strongloop/loopback-datasource-juggler/commit/9f0c10fdff4dd4ae60f4795dde8bf3e4356f8a82) Add test for updateOrCreate ([Amir Jafarian](https://github.com/Amir-61))
  * [@45e14af](https://github.com/strongloop/loopback-datasource-juggler/commit/45e14af4a981fcf376276babeb344ceac578186c) Update validations.js ([Rand McKinney](https://github.com/crandmck))
  * [PR#976](https://github.com/strongloop/loopback-datasource-juggler/pull/976) [SEMVER-MAJOR] Remove DataSource.registerType() ([gunjpan](https://github.com/gunjpan))
  * [@fbe58f7](https://github.com/strongloop/loopback-datasource-juggler/commit/fbe58f7cf82b0a8e7e04afbaddea319fb7e8e8d1) give options to validators #984 ([RobinBiondi](https://github.com/robinbiondi))
