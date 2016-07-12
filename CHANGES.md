@@ -1,3 +1,13 @@
+2016-07-12, Version 2.29.1
+==========================
+
+ * Fix description for User.prototype.hasPassword (Jue Hou)
+
+ * Fix verificationToken bug #2440 (Loay)
+
+ * add missing unit tests for #2108 (Benjamin Kroeger)
+
+
 2016-06-07, Version 2.29.0
 ==========================
 
