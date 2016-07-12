@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-05-16 to 2016-07-11)
+since: (from 2016-05-17 to 2016-07-12)
 ---
 
 ## Core
@@ -18,10 +18,6 @@ since: (from 2016-05-16 to 2016-07-11)
  * **Released 1.21.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#192](https://github.com/strongloop/generator-loopback/pull/192) Fix/revert promise ([jannyHou](https://github.com/jannyHou))
  * [PR#173](https://github.com/strongloop/generator-loopback/pull/173) Allow defining remote method without isStatic flag ([0candy](https://github.com/0candy))
- * [PR#190](https://github.com/strongloop/generator-loopback/pull/190) Fix failing relation name test ([eddiemonge](https://github.com/eddiemonge))
- * **Released 1.20.7** ([Miroslav Bajtoš](https://github.com/bajtos))
- * [PR#184](https://github.com/strongloop/generator-loopback/pull/184) remove glob devDep ([eddiemonge](https://github.com/eddiemonge))
- * [PR#187](https://github.com/strongloop/generator-loopback/pull/187) fix/update-to-promise-support ([jannyHou](https://github.com/jannyHou))
 
 
 ### loopback
@@ -36,8 +32,6 @@ since: (from 2016-05-16 to 2016-07-11)
  * [PR#2316](https://github.com/strongloop/loopback/pull/2316) Expose `Replace*` methods ([Amir-61](https://github.com/Amir-61))
  * [PR#2375](https://github.com/strongloop/loopback/pull/2375) [SEMVER-MAJOR] Fix remoting strong-error-handler ([davidcheung](https://github.com/davidcheung))
  * [PR#2394](https://github.com/strongloop/loopback/pull/2394) [SEMVER-MAJOR] Remove legacy express 3.x middleware getters ([bajtos](https://github.com/bajtos))
- * [PR#2360](https://github.com/strongloop/loopback/pull/2360) Docuemtation for `replace*` methods ([Amir-61](https://github.com/Amir-61))
- * [PR#2349](https://github.com/strongloop/loopback/pull/2349) Make the doc clear for `findORCreate` cb ([Amir-61](https://github.com/Amir-61))
 
 
 ### loopback-boot
@@ -46,7 +40,7 @@ since: (from 2016-05-16 to 2016-07-11)
 
 
 ### loopback-datasource-juggler
- * [@9f0c10f](https://github.com/strongloop/loopback-datasource-juggler/commit/9f0c10fdff4dd4ae60f4795dde8bf3e4356f8a82) Add test for updateOrCreate ([Amir Jafarian](https://github.com/Amir-61))
+ * [PR#989](https://github.com/strongloop/loopback-datasource-juggler/pull/989) Add test for updateOrCreate ([Amir-61](https://github.com/Amir-61))
  * [@45e14af](https://github.com/strongloop/loopback-datasource-juggler/commit/45e14af4a981fcf376276babeb344ceac578186c) Update validations.js ([Rand McKinney](https://github.com/crandmck))
  * [PR#976](https://github.com/strongloop/loopback-datasource-juggler/pull/976) [SEMVER-MAJOR] Remove DataSource.registerType() ([gunjpan](https://github.com/gunjpan))
  * [@fbe58f7](https://github.com/strongloop/loopback-datasource-juggler/commit/fbe58f7cf82b0a8e7e04afbaddea319fb7e8e8d1) give options to validators #984 ([RobinBiondi](https://github.com/robinbiondi))
@@ -62,14 +56,10 @@ since: (from 2016-05-16 to 2016-07-11)
  * [PR#955](https://github.com/strongloop/loopback-datasource-juggler/pull/955) ModelBuilder: add new setting strictEmbeddedModels ([bajtos](https://github.com/bajtos))
  * [PR#950](https://github.com/strongloop/loopback-datasource-juggler/pull/950) Add test's description ([Amir-61](https://github.com/Amir-61))
  * [PR#944](https://github.com/strongloop/loopback-datasource-juggler/pull/944) [SEMVER-MAJOR] throw error for undefined mixin ([alexpit](https://github.com/alexpit))
- * [PR#938](https://github.com/strongloop/loopback-datasource-juggler/pull/938) Fix incompatibility between different connectors for replace methods ([Amir-61](https://github.com/Amir-61))
- * [PR#943](https://github.com/strongloop/loopback-datasource-juggler/pull/943) travis: add v4, v6, drop io.js ([bajtos](https://github.com/bajtos))
- * [PR#937](https://github.com/strongloop/loopback-datasource-juggler/pull/937) fix avoid duplicate record on scope with promise ([alexpit](https://github.com/alexpit))
 
 
 ### loopback-swagger
  * [PR#47](https://github.com/strongloop/loopback-swagger/pull/47) Add doc root ([jannyHou](https://github.com/jannyHou))
- * [PR#39](https://github.com/strongloop/loopback-swagger/pull/39) Add custom definition to swagger file ([jannyHou](https://github.com/jannyHou))
 
 
 ### strong-remoting
@@ -82,45 +72,15 @@ since: (from 2016-05-16 to 2016-07-11)
  * [PR#304](https://github.com/strongloop/strong-remoting/pull/304) Test rest coercion ([bajtos](https://github.com/bajtos))
  * [PR#302](https://github.com/strongloop/strong-remoting/pull/302) [SEMVER-MAJOR] Implement strong error handler for rest-adapter ([davidcheung](https://github.com/davidcheung))
  * [PR#305](https://github.com/strongloop/strong-remoting/pull/305) Implement getEndpoints ([Amir-61](https://github.com/Amir-61))
- * [PR#303](https://github.com/strongloop/strong-remoting/pull/303) travis: add v4 and v6, drop io.js ([bajtos](https://github.com/bajtos))
 
 
 
 ## Connectors
 
-### loopback-connector-dashdb
- * **Released 1.0.15** ([Quentin Presley](https://github.com/qpresley))
- * [@66bdf04](https://github.com/strongloop/loopback-connector-dashdb/commit/66bdf042899d5d35e20e7ec2be52b6e8a32297fb) Update loopback-ibmdb version ([Quentin Presley](https://github.com/qpresley))
- * [@23d8ef6](https://github.com/strongloop/loopback-connector-dashdb/commit/23d8ef6b3fa87d1099371219eeb2e6c66a7f6f8e) Update README.md ([Quentin Presley](https://github.com/qpresley))
- * [@11d4ca0](https://github.com/strongloop/loopback-connector-dashdb/commit/11d4ca03170a32af15284af2f025beecd09a1d87) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
- * [@c08aa32](https://github.com/strongloop/loopback-connector-dashdb/commit/c08aa325cd2ed435ca1e73b9ce23b3878ac07b2a) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
- * [@6e60214](https://github.com/strongloop/loopback-connector-dashdb/commit/6e60214133df3c1798a5de800d0c389d93f58fa2) Update to move most functionality to loopback-connector-ibmdb ([Quentin Presley](https://github.com/qpresley))
- * [@1943f99](https://github.com/strongloop/loopback-connector-dashdb/commit/1943f99dee021f562a3f5c5e6afcc18637e05912) Remove DB2 from package.json ([Quentin Presley](https://github.com/qpresley))
- * [@fdfb3b5](https://github.com/strongloop/loopback-connector-dashdb/commit/fdfb3b58e5389fe44a485675240cf6944804107e) Collapsing for simplicity ([Quentin Presley](https://github.com/qpresley))
- * [@8c519c0](https://github.com/strongloop/loopback-connector-dashdb/commit/8c519c01488ad1c69fb1160fa70c4809643100e5) Get tests functioning ([Quentin Presley](https://github.com/qpresley))
- * [@787c77c](https://github.com/strongloop/loopback-connector-dashdb/commit/787c77c730ea575aacc517f4e199c67c480dd9ed) Initial commit ([Quentin Presley](https://github.com/qpresley))
- * [@48336bc](https://github.com/strongloop/loopback-connector-dashdb/commit/48336bc23a133bf05c4fe15c22d9238c8c406e01) Initial commit ([Quentin Presley](https://github.com/qpresley))
-
-
 ### loopback-connector-db2
  * [PR#36](https://github.com/strongloop/loopback-connector-db2/pull/36) Componentization ([qpresley](https://github.com/qpresley))
  * [@72a8f01](https://github.com/strongloop/loopback-connector-db2/commit/72a8f016062588689169a5b18c7131ffdafe9786) Merge v1.0.17 release ([Ryan Graham](https://github.com/rmg))
  * [@2286350](https://github.com/strongloop/loopback-connector-db2/commit/2286350479b8d8bc29aeb30555968ae17350518a) Update README.md ([Quentin Presley](https://github.com/qpresley))
-
-
-### loopback-connector-db2z
- * **Released 1.0.2** ([Quentin Presley](https://github.com/qpresley))
- * [@bc4c343](https://github.com/strongloop/loopback-connector-db2z/commit/bc4c3435619fe9946ab89aafa654514f7a79adfa) Update README.md ([Quentin Presley](https://github.com/qpresley))
- * [@73c08f8](https://github.com/strongloop/loopback-connector-db2z/commit/73c08f8f665853ea2de59716cf84268ec361354a) Update loopback-ibmdb version ([Quentin Presley](https://github.com/qpresley))
- * [@342a7f0](https://github.com/strongloop/loopback-connector-db2z/commit/342a7f0c0987268a084f93d33dc40213c2bc8c49) Ignore travis ([Quentin Presley](https://github.com/qpresley))
- * **Released 1.0.1** ([Quentin Presley](https://github.com/qpresley))
- * **Released 1.0.0** ([Quentin Presley](https://github.com/qpresley))
- * [@c21f3e2](https://github.com/strongloop/loopback-connector-db2z/commit/c21f3e2b99f48d3c12287308b2e6d219be3b2cf9) Update README.md ([Quentin Presley](https://github.com/qpresley))
- * [@c970f95](https://github.com/strongloop/loopback-connector-db2z/commit/c970f952f2ac85c533587229accd7fbfa794f9e2) Change to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
- * [@8519471](https://github.com/strongloop/loopback-connector-db2z/commit/8519471ab5e2795a9a7b2c1412f558c9aadda17a) Update to use loopback-ibmdb ([Quentin Presley](https://github.com/qpresley))
- * [@d973433](https://github.com/strongloop/loopback-connector-db2z/commit/d97343327bad8089d7cb511e1f9f6ce38da740ba) Add DB2z code ([Quentin Presley](https://github.com/qpresley))
- * [@f72fbe2](https://github.com/strongloop/loopback-connector-db2z/commit/f72fbe2fb7da6b7f5a8e5385ede5fdba929f10d2) Initial code drop ([Quentin Presley](https://github.com/qpresley))
- * [@d444f2f](https://github.com/strongloop/loopback-connector-db2z/commit/d444f2ffa0a11eab2eb359bc98c12a86a4c2d587) Initial commit ([Quentin Presley](https://github.com/qpresley))
 
 
 ### loopback-connector-mqlight
@@ -141,12 +101,6 @@ since: (from 2016-05-16 to 2016-07-11)
  * **Released 2.3.0** ([Simon Ho](https://github.com/superkhau))
 
 
-### loopback-connector-oracle
- * [@6bdc764](https://github.com/strongloop/loopback-connector-oracle/commit/6bdc7642815426de373c02b47ef861c84c8b6397) Fix package.json to use oracle installer ([Raymond Feng](https://github.com/raymondfeng))
- * [@86e0530](https://github.com/strongloop/loopback-connector-oracle/commit/86e0530f007498835f724f2ef73625804e051ec3) Update dependencies ([Raymond Feng](https://github.com/raymondfeng))
- * [PR#63](https://github.com/strongloop/loopback-connector-oracle/pull/63) [SEMVER-MAJOR] Use oracledb module as the underlying Node.js driver for Oracle DBs ([raymondfeng](https://github.com/raymondfeng))
-
-
 ### loopback-connector-postgresql
  * **Released 2.6.3** ([Raymond Feng](https://github.com/raymondfeng))
  * [@ab5a0cb](https://github.com/strongloop/loopback-connector-postgresql/commit/ab5a0cb7dd8f16f8adc53a13f86e244e372709be) Fix the datasource init ([Raymond Feng](https://github.com/raymondfeng))
@@ -156,10 +110,6 @@ since: (from 2016-05-16 to 2016-07-11)
  * **Released 2.6.0** ([Raymond Feng](https://github.com/raymondfeng))
  * [PR#143](https://github.com/strongloop/loopback-connector-postgresql/pull/143) Upgrade to pg 6.0.0 ([raymondfeng](https://github.com/raymondfeng))
  * **Released 2.5.0** ([Simon Ho](https://github.com/superkhau))
-
-
-### loopback-connector-remote
- * [PR#47](https://github.com/strongloop/loopback-connector-remote/pull/47) Do not use native promises in tests ([superkhau](https://github.com/superkhau))
 
 
 ### loopback-connector-soap
@@ -173,7 +123,6 @@ since: (from 2016-05-16 to 2016-07-11)
 ### loopback-connector-swagger
  * **Released 1.0.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#4](https://github.com/strongloop/loopback-connector-swagger/pull/4) Update Readme with more info ([gunjpan](https://github.com/gunjpan))
- * [PR#2](https://github.com/strongloop/loopback-connector-swagger/pull/2) Develop basic connector ([gunjpan](https://github.com/gunjpan))
 
 
 
