@@ -36,6 +36,7 @@ since: (from 2016-05-18 to 2016-07-13)
 
 ### loopback-boot
  * [PR#196](https://github.com/strongloop/loopback-boot/pull/196) travis: drop io.js, add Node v4 and v6 ([bajtos](https://github.com/bajtos))
+ * [@7b226b2](https://github.com/strongloop/loopback-boot/commit/7b226b212ec81950e99552d746fb48f41aa948f8) Stop caching config files ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 2.19.0** ([Miroslav Bajtoš](https://github.com/bajtos))
 
 
