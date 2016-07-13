@@ -884,10 +884,11 @@ describe('relations - integration', function() {
           plural: 'todo-lists',
         }
       );
-      var todoItem = app.model(
-        'todoItem',
-        { properties: { content: 'string' }, dataSource: 'db' }
-      );
+      var todoItem = app.model('todoItem', {
+        properties: { content: 'string' },
+        forceId: false,
+        dataSource: 'db',
+      });
       todoList.embedsMany(todoItem, { as: 'items' });
     });
 
