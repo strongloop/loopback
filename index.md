@@ -1,6 +1,6 @@
 ---
 layout: page
-since: (from 2016-05-18 to 2016-07-13)
+since: (from 2016-05-19 to 2016-07-14)
 ---
 
 ## Core
@@ -35,12 +35,13 @@ since: (from 2016-05-18 to 2016-07-13)
 
 
 ### loopback-boot
+ * [PR#194](https://github.com/strongloop/loopback-boot/pull/194) Stop caching config files ([bajtos](https://github.com/bajtos))
  * [PR#196](https://github.com/strongloop/loopback-boot/pull/196) travis: drop io.js, add Node v4 and v6 ([bajtos](https://github.com/bajtos))
- * [@7b226b2](https://github.com/strongloop/loopback-boot/commit/7b226b212ec81950e99552d746fb48f41aa948f8) Stop caching config files ([Miroslav Bajtoš](https://github.com/bajtos))
  * **Released 2.19.0** ([Miroslav Bajtoš](https://github.com/bajtos))
 
 
 ### loopback-datasource-juggler
+ * [PR#996](https://github.com/strongloop/loopback-datasource-juggler/pull/996) Ensure stable order of items in DAO.find() ([bajtos](https://github.com/bajtos))
  * [PR#989](https://github.com/strongloop/loopback-datasource-juggler/pull/989) Add test for updateOrCreate ([Amir-61](https://github.com/Amir-61))
  * [@45e14af](https://github.com/strongloop/loopback-datasource-juggler/commit/45e14af4a981fcf376276babeb344ceac578186c) Update validations.js ([Rand McKinney](https://github.com/crandmck))
  * [PR#976](https://github.com/strongloop/loopback-datasource-juggler/pull/976) [SEMVER-MAJOR] Remove DataSource.registerType() ([gunjpan](https://github.com/gunjpan))
@@ -130,6 +131,7 @@ since: (from 2016-05-18 to 2016-07-13)
 ## SDKs
 
 ### loopback-sdk-angular
+ * **Released 1.8.0** ([Miroslav Bajtoš](https://github.com/bajtos))
  * [PR#225](https://github.com/strongloop/loopback-sdk-angular/pull/225) Expose configured properties (authHeader and urlBase) on LoopBackResource ([mrbatista](https://github.com/mrbatista))
  * [PR#223](https://github.com/strongloop/loopback-sdk-angular/pull/223) Describe model schema in generated $resource ([bajtos](https://github.com/bajtos))
 
