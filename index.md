@@ -22,6 +22,7 @@ since: (from 2016-05-19 to 2016-07-14)
 
 
 ### loopback
+ * [@1b053d4](https://github.com/strongloop/loopback/commit/1b053d44fed1a09b2b2d1910b0aefb93ce97faa4) Remove legacyExplorer ([gunjpan](https://github.com/gunjpan))
  * [PR#2437](https://github.com/strongloop/loopback/pull/2437) Remove `rectifyAllChanges` and `rectifyChange` ([0candy](https://github.com/0candy))
  * [PR#2440](https://github.com/strongloop/loopback/pull/2440) Fix verificationToken bug ([loay](https://github.com/loay))
  * [PR#2446](https://github.com/strongloop/loopback/pull/2446) update express version ([loay](https://github.com/loay))
