@@ -6,6 +6,7 @@ since: (from 2016-05-19 to 2016-07-14)
 ## Core
 
 ### generator-loopback
+ * [@950c8b6](https://github.com/strongloop/generator-loopback/commit/950c8b67e1af18532231e504f2d2e152dd52fad9) validate model property default value type ([Alex Pitigoi](https://github.com/alexpit))
  * [PR#203](https://github.com/strongloop/generator-loopback/pull/203) Update generator-loopback to yeoman 0.23 ([0candy](https://github.com/0candy))
  * [PR#206](https://github.com/strongloop/generator-loopback/pull/206) test: remove workarounds no longer needed ([bajtos](https://github.com/bajtos))
  * **Released 1.22.0** ([Miroslav Bajtoš](https://github.com/bajtos))
