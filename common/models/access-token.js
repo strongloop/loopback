@@ -150,7 +150,8 @@ module.exports = function(AccessToken) {
       var created = this.created.getTime();
       var elapsedSeconds = (now - created) / 1000;
       var secondsToLive = this.ttl;
-      var isValid = (secondsToLive === -1 && this.constructor.settings.allowEternalTTL) || elapsedSeconds < secondsToLive;
+      var isNonExpiringToken = (secondsToLive === -1 && this.constructor.settings.allowExternalTTL);
+      var isValid = (isNonExpiringToken) || (elapsedSeconds < secondsToLive);
 
       if (isValid) {
         cb(null, isValid);
