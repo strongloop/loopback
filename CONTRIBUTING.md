@@ -147,5 +147,5 @@ Contributing to `loopback` is easy. In a few simple steps:
      inaccurate in any respect. Email us at callback@strongloop.com.
 ```
 
-[Google C++ Style Guide]: https://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
-[Google Javascript Style Guide]: https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
+[Google C++ Style Guide]: https://google.github.io/styleguide/cppguide.html
+[Google Javascript Style Guide]: https://google.github.io/styleguide/javascriptguide.xml

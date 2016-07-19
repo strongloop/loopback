@@ -27,7 +27,5 @@
       "*": false,
       "destroyAll": true
     }
-  },
-  "legacyExplorer": false
+  }
 }
-

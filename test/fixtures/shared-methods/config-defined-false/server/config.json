@@ -26,7 +26,5 @@
     "sharedMethods": {
       "find": false
     }
-  },
-  "legacyExplorer": false
+  }
 }
-
