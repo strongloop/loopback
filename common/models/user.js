@@ -546,7 +546,8 @@ module.exports = function(User) {
         UserModel.emit('resetPasswordRequest', {
           email: options.email,
           accessToken: accessToken,
-          user: user
+          user: user,
+          options: options
         });
       });
     });
