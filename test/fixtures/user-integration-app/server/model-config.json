@@ -2,7 +2,8 @@
   "_meta": {
     "sources": [
       "../common/models",
-      "./models"
+      "./models",
+      "../../../../common/models"
     ]
   },
   "Email": {
@@ -14,7 +15,7 @@
     "public": true,
     "relations": {
       "posts": {
-        "model": "post",
+        "model": "Post",
         "type": "hasMany",
         "foreignKey": "userId"
       }
@@ -51,7 +52,7 @@
     "dataSource": "db",
     "public": true
   },
-  "post": {
+  "Post": {
     "dataSource": "db",
     "public": true
   }
