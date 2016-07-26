@@ -8,7 +8,6 @@ var chai = require('chai');
 var expect = chai.expect;
 var loopback = require('../');
 var ACL = loopback.ACL;
-var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
 var sinonChai = require('sinon-chai');
@@ -80,7 +79,10 @@ describe.onServer('Remote Methods', function() {
   var app;
 
   beforeEach(function() {
-    User = PersistedModel.extend('user', {
+    app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
+
+    User = app.registry.createModel('user', {
       id: { id: true, type: String, defaultFn: 'guid' },
       'first': String,
       'last': String,
@@ -93,7 +95,7 @@ describe.onServer('Remote Methods', function() {
       trackChanges: true
     });
 
-    Post = PersistedModel.extend('post', {
+    Post = app.registry.createModel('post', {
       id: { id: true, type: String, defaultFn: 'guid' },
       title: String,
       content: String
@@ -101,12 +103,10 @@ describe.onServer('Remote Methods', function() {
       trackChanges: true
     });
 
-    dataSource = loopback.createDataSource({
-      connector: loopback.Memory
-    });
+    dataSource = app.dataSource('db', { connector: 'memory' });
 
-    User.attachTo(dataSource);
-    Post.attachTo(dataSource);
+    app.model(User, { dataSource: 'db' });
+    app.model(Post, { dataSource: 'db' });
 
     User.hasMany(Post);
 
@@ -118,21 +118,16 @@ describe.onServer('Remote Methods', function() {
       }
     };
 
-    loopback.remoteMethod(
-      User.login,
-      {
-        accepts: [
-          {arg: 'username', type: 'string', required: true},
-          {arg: 'password', type: 'string', required: true}
-        ],
-        returns: {arg: 'sessionId', type: 'any', root: true},
-        http: {path: '/sign-in', verb: 'get'}
-      }
-    );
+    User.remoteMethod('login', {
+      accepts: [
+        { arg: 'username', type: 'string', required: true },
+        { arg: 'password', type: 'string', required: true },
+      ],
+      returns: { arg: 'sessionId', type: 'any', root: true },
+      http: { path: '/sign-in', verb: 'get' },
+    });
 
-    app = loopback();
     app.use(loopback.rest());
-    app.model(User);
   });
 
   describe('Model.destroyAll(callback)', function() {
@@ -556,7 +551,7 @@ describe.onServer('Remote Methods', function() {
     it('Get the Change Model', function() {
       var UserChange = User.getChangeModel();
       var change = new UserChange();
-      assert(change instanceof Change);
+      assert(change instanceof app.registry.getModel('Change'));
     });
   });
 

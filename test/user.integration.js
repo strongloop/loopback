@@ -22,16 +22,10 @@ describe('users - integration', function() {
   lt.beforeEach.withApp(app);
 
   before(function(done) {
-    // HACK: [rfeng] We have to reset the relations as they are polluted by
-    // other tests
-    app.models.User.hasMany(app.models.post);
-    app.models.User.hasMany(app.models.AccessToken,
-      {options: {disableInclude: true}});
-    app.models.AccessToken.belongsTo(app.models.User);
     app.models.User.destroyAll(function(err) {
       if (err) return done(err);
 
-      app.models.post.destroyAll(function(err) {
+      app.models.Post.destroyAll(function(err) {
         if (err) return done(err);
 
         app.models.blog.destroyAll(function(err) {
