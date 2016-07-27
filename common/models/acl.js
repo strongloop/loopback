@@ -268,7 +268,7 @@ module.exports = function(ACL) {
    * @return {Object[]} An array of ACLs
    */
   ACL.getStaticACLs = function getStaticACLs(model, property) {
-    var modelClass = loopback.findModel(model);
+    var modelClass = this.registry.findModel(model);
     var staticACLs = [];
     if (modelClass && modelClass.settings.acls) {
       modelClass.settings.acls.forEach(function(acl) {
@@ -360,7 +360,7 @@ module.exports = function(ACL) {
         acls = acls.concat(dynACLs);
         resolved = self.resolvePermission(acls, req);
         if (resolved && resolved.permission === ACL.DEFAULT) {
-          var modelClass = loopback.findModel(model);
+          var modelClass = self.registry.findModel(model);
           resolved.permission = (modelClass && modelClass.settings.defaultPermission) || ACL.ALLOW;
         }
         if (callback) callback(null, resolved);

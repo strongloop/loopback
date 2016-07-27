@@ -146,7 +146,7 @@ module.exports = function(Change) {
    */
 
   Change.findOrCreateChange = function(modelName, modelId, callback) {
-    assert(loopback.findModel(modelName), modelName + ' does not exist');
+    assert(this.registry.findModel(modelName), modelName + ' does not exist');
     callback = callback || utils.createPromiseCallback();
     var id = this.idForModel(modelName, modelId);
     var Change = this;

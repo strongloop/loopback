@@ -2,7 +2,8 @@
   "_meta": {
     "sources": [
       "../common/models",
-      "./models"
+      "./models",
+      "../../../../common/models"
     ]
   },
   "ACL": {

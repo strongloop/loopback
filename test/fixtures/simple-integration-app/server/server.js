@@ -5,7 +5,7 @@
 
 var loopback = require('../../../../index');
 var boot = require('loopback-boot');
-var app = module.exports = loopback();
+var app = module.exports = loopback({ localRegistry: true });
 
 boot(app, __dirname);
 var apiPath = '/api';
