@@ -477,7 +477,8 @@ describe('app.enableAuth()', function() {
   it('stores token in the context', function(done) {
     var TestModel = loopback.createModel('TestModel', { base: 'Model' });
     TestModel.getToken = function(cb) {
-      cb(null, loopback.getCurrentContext().get('accessToken') || null);
+      var ctx = loopback.getCurrentContext();
+      cb(null, ctx && ctx.get('accessToken') || null);
     };
     TestModel.remoteMethod('getToken', {
       returns: { arg: 'token', type: 'object' },

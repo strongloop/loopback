@@ -44,9 +44,6 @@ module.exports = function(grunt) {
       common: {
         src: ['common/**/*.js']
       },
-      browser: {
-        src: ['browser/**/*.js']
-      },
       server: {
         src: ['server/**/*.js']
       },
@@ -59,7 +56,6 @@ module.exports = function(grunt) {
       lib: ['lib/**/*.js'],
       common: ['common/**/*.js'],
       server: ['server/**/*.js'],
-      browser: ['browser/**/*.js'],
       test: ['test/**/*.js']
     },
     watch: {
