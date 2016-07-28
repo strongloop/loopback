@@ -40,11 +40,11 @@ function rest() {
       var remotingOptions = app.get('remoting') || {};
 
       var contextOptions = remotingOptions.context;
-      if (contextOptions !== false) {
-        if (typeof contextOptions !== 'object') {
-          contextOptions = {};
-        }
-        handlers.push(loopback.context(contextOptions));
+      if (contextOptions !== undefined && contextOptions !== false) {
+        throw new Error(
+          'remoting.context option was removed in version 3.0. See ' +
+          'https://docs.strongloop.com/display/APIC/Using%20current%20context ' +
+          'for more details.');
       }
 
       if (app.isAuthEnabled) {

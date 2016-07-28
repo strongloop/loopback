@@ -124,7 +124,7 @@ function token(options) {
     TokenModel.findForRequest(req, options, function(err, token) {
       req.accessToken = token || null;
       rewriteUserLiteral(req, currentUserLiteral);
-      var ctx = loopback.getCurrentContext();
+      var ctx = req.loopbackContext;
       if (ctx) ctx.set('accessToken', token);
       next(err);
     });
