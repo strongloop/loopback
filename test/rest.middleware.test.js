@@ -6,6 +6,7 @@
 var path = require('path');
 
 describe('loopback.rest', function() {
+  this.timeout(10000);
   var app, MyModel;
 
   beforeEach(function() {
