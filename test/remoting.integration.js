@@ -99,9 +99,9 @@ describe('remoting - integration', function() {
         ')',
         formatReturns(m),
         ' ',
-        m.getHttpMethod(),
+        m.getEndpoints()[0].verb,
         ' ',
-        m.getFullPath()
+        m.getEndpoints()[0].fullPath
       ].join('');
     }
 
