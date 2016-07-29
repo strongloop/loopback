@@ -51,7 +51,8 @@ module.exports = function defineModelTestsWithDataSource(options) {
         'domain': String,
         'email': String
       }, {
-        trackChanges: true
+        trackChanges: options.trackChanges !== false,
+        enableRemoteReplication: options.enableRemoteReplication,
       });
 
       User.attachTo(dataSource);
