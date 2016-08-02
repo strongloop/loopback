@@ -388,7 +388,7 @@ describe('User', function() {
 
     it('Should be able to find lowercase email with mixed-case email query', function(done) {
       User.settings.caseSensitiveEmail = false;
-      User.find({where:{email: validMixedCaseEmailCredentials.email}}, function(err, result) {
+      User.find({where: {email: validMixedCaseEmailCredentials.email}}, function(err, result) {
         if (err) done(err);
 
         assert(result[0], 'The query did not find the user');
@@ -1225,7 +1225,7 @@ describe('User', function() {
             redirect: '/',
             protocol: ctx.req.protocol,
             host: ctx.req.get('host'),
-            headers: {'message-id':'custom-header-value'}
+            headers: {'message-id': 'custom-header-value'}
           };
 
           user.verify(options, function(err, result) {
@@ -1680,7 +1680,7 @@ describe('User', function() {
           .end(function(err, res) {
             if (err) return done(err);
 
-            assert.deepEqual(res.body, { });
+            assert.deepEqual(res.body, '');
 
             done();
           });
