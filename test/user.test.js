@@ -1676,7 +1676,7 @@ describe('User', function() {
           .end(function(err, res) {
             if (err) return done(err);
 
-            assert.deepEqual(res.body, { });
+            assert.deepEqual(res.body, '');
 
             done();
           });
