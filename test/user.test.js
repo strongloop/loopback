@@ -9,6 +9,8 @@ var User, AccessToken;
 var async = require('async');
 
 describe('User', function() {
+  this.timeout(10000);
+
   var validCredentialsEmail = 'foo@bar.com';
   var validCredentials = { email: validCredentialsEmail, password: 'bar' };
   var validCredentialsEmailVerified = {
