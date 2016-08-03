@@ -1764,7 +1764,8 @@ describe('User', function() {
 
   describe('password reset without requiring email verification', function() {
     var email = 'foo1@bar.com';
-    it('disallows temp accessToken creation if email verification is required and done', function(done) {
+    it('disallows temp accessToken creation if email verification is required and done',
+    function(done) {
       var calledBack = false;
 
       User.resetPassword({
@@ -1776,15 +1777,30 @@ describe('User', function() {
       User.once('resetPasswordRequest', function(info) {
         assert(info.email);
         assert(!info.accessToken);
-        assert(!info.accessToken.id);
+        assert(calledBack);
+        done();
+      });
+    });
+    it('creates accessToken if email has not been verified', function(done) {
+      var email = 'foo@bar.com';
+      var calledBack = false;
+
+      User.resetPassword({
+        email: 'foo@bar.com',
+      }, function() {
+        calledBack = true;
+      });
+
+      User.once('resetPasswordRequest', function(info) {
+        assert(info.email);
+        assert(info.accessToken);
+        assert(info.accessToken.id);
         assert.equal(info.accessToken.ttl / 60, 15);
         assert(calledBack);
-        console.log(info);
         info.accessToken.user(function(err, user) {
           if (err) return done(err);
 
           assert.equal(user.email, email);
-          console.log(user.emailVerified);
           done();
         });
       });
