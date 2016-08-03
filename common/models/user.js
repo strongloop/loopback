@@ -560,19 +560,32 @@ module.exports = function(User) {
         err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
+      if (user && user.emailVerified) {
+        user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
+          if (err) {
+            return cb(err);
+          }
+          cb();
+          UserModel.emit('resetPasswordRequest', {
+            email: options.email,
+            user: user,
+          });
+        });
+      } else if (user && !user.emailVerified) {
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
-      user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
-        if (err) {
-          return cb(err);
-        }
-        cb();
-        UserModel.emit('resetPasswordRequest', {
-          email: options.email,
-          accessToken: accessToken,
-          user: user,
+        user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
+          if (err) {
+            return cb(err);
+          }
+          cb();
+          UserModel.emit('resetPasswordRequest', {
+            email: options.email,
+            accessToken: accessToken,
+            user: user,
+          });
         });
-      });
+      }
     });
 
     return cb.promise;
