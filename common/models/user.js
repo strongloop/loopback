@@ -14,7 +14,7 @@ var utils = require('../../lib/utils');
 var path = require('path');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
-
+var MAX_PASSWORD_LENGTH = 72;
 var bcrypt;
 try {
   // Try the native module first
@@ -538,7 +538,6 @@ module.exports = function(User) {
     cb = cb || utils.createPromiseCallback();
     var UserModel = this;
     var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
-
     options = options || {};
     if (typeof options.email !== 'string') {
       var err = new Error(g.f('Email is required'));
@@ -548,7 +547,14 @@ module.exports = function(User) {
       return cb.promise;
     }
 
-    UserModel.findOne({ where: {email: options.email} }, function(err, user) {
+    try {
+      if (options.password) {
+        UserModel.validatePassword(options.password);
+      }
+    } catch (err) {
+      return cb(err);
+    }
+    UserModel.findOne({ where: { email: options.email }}, function(err, user) {
       if (err) {
         return cb(err);
       }
@@ -586,14 +592,20 @@ module.exports = function(User) {
   };
 
   User.validatePassword = function(plain) {
-    if (typeof plain === 'string' && plain) {
+    var err;
+    if (plain && typeof plain === 'string' && plain.length <= MAX_PASSWORD_LENGTH) {
       return true;
     }
-    var err =  new Error(g.f('Invalid password: %s', plain));
+    if (plain.length > MAX_PASSWORD_LENGTH) {
+      err = new Error(g.f('Password too long: %s', plain));
+      err.code = 'PASSWORD_TOO_LONG';
+    } else {
+      err =  new Error(g.f('Invalid password: %s', plain));
+      err.code = 'INVALID_PASSWORD';
+    }
     err.statusCode = 422;
     throw err;
   };
-
   /*!
    * Setup an extended user model.
    */
