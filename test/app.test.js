@@ -14,6 +14,7 @@ var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
 
 var describe = require('./util/describe');
+var expect = require('chai').expect;
 var it = require('./util/it');
 
 describe('app', function() {
@@ -945,18 +946,14 @@ describe('app', function() {
         .end(function(err, res) {
           if (err) return done(err);
 
-          assert.equal(typeof res.body, 'object');
-          assert(res.body.started);
-          // The number can be 0
-          assert(res.body.uptime !== undefined);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.have.property('started');
+          expect(res.body.uptime, 'uptime').to.be.gte(0);
 
           var elapsed = Date.now() - Number(new Date(res.body.started));
 
-          // elapsed should be a positive number...
-          assert(elapsed >= 0);
-
-          // less than 100 milliseconds
-          assert(elapsed < 100);
+          // elapsed should be a small positive number...
+          expect(elapsed, 'elapsed').to.be.within(0, 300);
 
           done();
         });
