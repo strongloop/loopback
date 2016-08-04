@@ -575,15 +575,9 @@ module.exports = function(User) {
         return cb(err);
       }
       if (user && user.emailVerified) {
-        user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
-          if (err) {
-            return cb(err);
-          }
-          cb();
-          UserModel.emit('resetPasswordRequest', {
-            email: options.email,
-            user: user,
-          });
+        UserModel.emit('resetPasswordRequest', {
+          email: options.email,
+          user: user,
         });
       } else if (user && !user.emailVerified) {
       // create a short lived access token for temp login to change password
