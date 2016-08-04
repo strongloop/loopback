@@ -1698,7 +1698,6 @@ describe('User', function() {
       User.once('resetPasswordRequest', function(info) {
         assert(info.email);
         assert(!info.accessToken);
-        assert(calledBack);
         done();
       });
     });
