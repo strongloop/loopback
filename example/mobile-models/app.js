@@ -48,6 +48,6 @@ function(err, result) {
   console.log(result.toObject());
 
   result.resetKeys(function(err, result) {
-    g.log(result.toObject());
+    console.log(result.toObject());
   });
 });
