@@ -1037,8 +1037,18 @@ describe('app', function() {
 });
 
 function executeMiddlewareHandlers(app, urlPath, callback) {
+  var handlerError = undefined;
   var server = http.createServer(function(req, res) {
-    app.handle(req, res, callback);
+    app.handle(req, res, function(err) {
+      if (err) {
+        handlerError = err;
+        res.statusCode = err.status || err.statusCode || 500;
+        res.end(err.stack || err);
+      } else {
+        res.statusCode = 204;
+        res.end();
+      }
+    });
   });
 
   if (callback === undefined && typeof urlPath === 'function') {
@@ -1049,6 +1059,6 @@ function executeMiddlewareHandlers(app, urlPath, callback) {
   request(server)
     .get(urlPath)
     .end(function(err) {
-      if (err) return callback(err);
+      callback(handlerError || err);
     });
 }
