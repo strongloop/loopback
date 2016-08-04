@@ -419,6 +419,7 @@ describe('role model', function() {
     var user, app, role;
 
     beforeEach(function(done) {
+      this.timeout(5000);
       User.create({
         username: 'john',
         email: 'john@gmail.com',
