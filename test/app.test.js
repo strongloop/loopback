@@ -12,6 +12,7 @@ var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
 
 var describe = require('./util/describe');
+var expect = require('chai').expect;
 var it = require('./util/it');
 
 describe('app', function() {
@@ -937,18 +938,14 @@ describe('app', function() {
         .end(function(err, res) {
           if (err) return done(err);
 
-          assert.equal(typeof res.body, 'object');
-          assert(res.body.started);
-          // The number can be 0
-          assert(res.body.uptime !== undefined);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.have.property('started');
+          expect(res.body.uptime, 'uptime').to.be.gte(0);
 
           var elapsed = Date.now() - Number(new Date(res.body.started));
 
-          // elapsed should be a positive number...
-          assert(elapsed >= 0);
-
-          // less than 100 milliseconds
-          assert(elapsed < 100);
+          // elapsed should be a small positive number...
+          expect(elapsed, 'elapsed').to.be.within(0, 300);
 
           done();
         });
@@ -1040,8 +1037,18 @@ describe('app', function() {
 });
 
 function executeMiddlewareHandlers(app, urlPath, callback) {
+  var handlerError = undefined;
   var server = http.createServer(function(req, res) {
-    app.handle(req, res, callback);
+    app.handle(req, res, function(err) {
+      if (err) {
+        handlerError = err;
+        res.statusCode = err.status || err.statusCode || 500;
+        res.end(err.stack || err);
+      } else {
+        res.statusCode = 204;
+        res.end();
+      }
+    });
   });
 
   if (callback === undefined && typeof urlPath === 'function') {
@@ -1052,6 +1059,6 @@ function executeMiddlewareHandlers(app, urlPath, callback) {
   request(server)
     .get(urlPath)
     .end(function(err) {
-      if (err) return callback(err);
+      callback(handlerError || err);
     });
 }
