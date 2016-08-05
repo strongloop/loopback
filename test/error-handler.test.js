@@ -5,7 +5,7 @@
 
 var loopback = require('../');
 var app;
-var assert = require('assert');
+var expect = require('chai').expect;
 var request = require('supertest');
 
 describe('loopback.errorHandler(options)', function() {
@@ -21,7 +21,8 @@ describe('loopback.errorHandler(options)', function() {
     request(app)
       .get('/url-does-not-exist')
       .end(function(err, res) {
-        assert.ok(res.error.text.match(/<ul id="stacktrace"><li> &nbsp; &nbsp;at raiseUrlNotFoundError/));
+        expect(res.error.text).to.match(
+          /<ul id="stacktrace"><li>( &nbsp;)+at raiseUrlNotFoundError/);
 
         done();
       });
@@ -38,7 +39,7 @@ describe('loopback.errorHandler(options)', function() {
     request(app)
       .get('/url-does-not-exist')
       .end(function(err, res) {
-        assert.ok(res.error.text.match(/<ul id="stacktrace"><\/ul>/));
+        expect(res.error.text).to.match(/<ul id="stacktrace"><\/ul>/);
 
         done();
       });

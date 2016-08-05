@@ -672,8 +672,7 @@ module.exports = function(User) {
             return tokenID;
           }, description: 'Do not supply this argument, it is automatically extracted ' +
             'from request headers.'
-          }
-        ],
+        }],
         http: {verb: 'all'}
       }
     );

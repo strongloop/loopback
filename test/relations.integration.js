@@ -102,7 +102,7 @@ describe('relations - integration', function() {
     it('includes the related child model', function(done) {
       var url = '/api/readers/' + this.reader.id;
       this.get(url)
-        .query({'filter': {'include' : 'pictures'}})
+        .query({'filter': {'include': 'pictures'}})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -119,7 +119,7 @@ describe('relations - integration', function() {
     it('includes the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({'filter': {'include' : 'imageable'}})
+        .query({'filter': {'include': 'imageable'}})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -134,7 +134,7 @@ describe('relations - integration', function() {
     it('includes related models scoped to the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({'filter': {'include' : {'relation': 'imageable', 'scope': { 'include' : 'team'}}}})
+        .query({'filter': {'include': {'relation': 'imageable', 'scope': { 'include': 'team'}}}})
         .expect(200, function(err, res) {
           if (err) return done(err);
 

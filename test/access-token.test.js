@@ -421,7 +421,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
-    createTestAppAndRequest(this.token, {app:{aclErrorStatus:403}}, done)
+    createTestAppAndRequest(this.token, {app: {aclErrorStatus: 403}}, done)
       .del('/tests/123')
       .expect(403)
       .set('authorization', this.token.id)
@@ -439,7 +439,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
-    createTestAppAndRequest(this.token, {model:{aclErrorStatus:404}}, done)
+    createTestAppAndRequest(this.token, {model: {aclErrorStatus: 404}}, done)
       .del('/tests/123')
       .expect(404)
       .set('authorization', this.token.id)
