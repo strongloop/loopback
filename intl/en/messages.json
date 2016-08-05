@@ -19,7 +19,7 @@
   "860d1a0b8bd340411fb32baa72867989": "The transport does not support HTTP redirects.",
   "895b1f941d026870b3cc8e6af087c197": "{{username}} or {{email}} is required",
   "a50d10fc6e0959b220e085454c40381e": "User not found: {0}",
-  "ad24a933c0351aa6fc39c8f1431b0ee4": "realm is required",
+  "ba96498b10c179f9cd75f75c8def4f70": "{{realm}} is required",
   "c34fa20eea0091747fcc9eda204b8d37": "could not find {{accessToken}}",
   "c68a93f0a9524fed4ff64372fc90c55f": "Must provide a valid email",
   "f58cdc481540cd1f69a4aa4da2e37981": "Invalid password: {0}",

@@ -205,7 +205,7 @@ module.exports = function(User) {
       realmDelimiter);
 
     if (realmRequired && !query.realm) {
-      var err1 = new Error(g.f('realm is required'));
+      var err1 = new Error(g.f('{{realm}} is required'));
       err1.statusCode = 400;
       err1.code = 'REALM_REQUIRED';
       fn(err1);
