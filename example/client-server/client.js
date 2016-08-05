@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var g = require('strong-globalize')();
+
 var loopback = require('../../');
 var client = loopback();
 var CartItem = require('./models').CartItem;
@@ -16,10 +18,10 @@ CartItem.attachTo(remote);
 
 // call the remote method
 CartItem.sum(1, function(err, total) {
-  console.log('result:', err || total);
+  g.log('result:%s', err || total);
 });
 
 // call a built in remote method
 CartItem.find(function(err, items) {
-  console.log(items);
+  g.log(items);
 });
