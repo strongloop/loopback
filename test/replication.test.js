@@ -13,6 +13,8 @@ var expect = require('chai').expect;
 var debug = require('debug')('test');
 
 describe('Replication / Change APIs', function() {
+  this.timeout(10000);
+
   var dataSource, SourceModel, TargetModel;
   var useSinceFilter;
   var tid = 0; // per-test unique id used e.g. to build unique model names

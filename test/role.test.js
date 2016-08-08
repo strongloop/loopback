@@ -15,6 +15,8 @@ function checkResult(err, result) {
 }
 
 describe('role model', function() {
+  this.timeout(10000);
+
   var app, Role, RoleMapping, User, Application, ACL;
 
   beforeEach(function() {
@@ -419,7 +421,6 @@ describe('role model', function() {
     var user, app, role;
 
     beforeEach(function(done) {
-      this.timeout(5000);
       User.create({
         username: 'john',
         email: 'john@gmail.com',

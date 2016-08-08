@@ -11,6 +11,8 @@ var expect = require('chai').expect;
 var supertest = require('supertest');
 
 describe('Replication over REST', function() {
+  this.timeout(10000);
+
   var ALICE = { id: 'a', username: 'alice', email: 'a@t.io', password: 'p' };
   var PETER = { id: 'p', username: 'peter', email: 'p@t.io', password: 'p' };
   var EMERY = { id: 'e', username: 'emery', email: 'e@t.io', password: 'p' };
