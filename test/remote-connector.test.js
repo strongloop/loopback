@@ -7,6 +7,8 @@ var loopback = require('../');
 var defineModelTestsWithDataSource = require('./util/model-tests');
 
 describe('RemoteConnector', function() {
+  this.timeout(10000);
+
   var remoteApp, remote;
 
   defineModelTestsWithDataSource({
