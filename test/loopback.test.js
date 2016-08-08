@@ -44,6 +44,7 @@ describe('loopback', function() {
         'DataSource',
         'Email',
         'GeoPoint',
+        'KeyValueModel',
         'Mail',
         'Memory',
         'Model',
