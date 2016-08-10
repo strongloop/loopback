@@ -4,11 +4,12 @@
 // License text available at https://opensource.org/licenses/MIT
 
 var deprecated = require('depd')('loopback');
+var g = require('strong-globalize')();
 var perRequestContext = require('loopback-context').perRequest;
 
 module.exports = function() {
-  deprecated('loopback#context middleware is deprecated. See ' +
-    'https://docs.strongloop.com/display/APIC/Using%20current%20context ' +
-    'for more details.');
+  deprecated(g.f('%s middleware is deprecated. See %s for more details.',
+    'loopback#context',
+    'https://docs.strongloop.com/display/APIC/Using%20current%20context'));
   return perRequestContext.apply(this, arguments);
 };
