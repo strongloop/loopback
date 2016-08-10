@@ -4,6 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 var cookieParser = require('cookie-parser');
+var LoopBackContext = require('loopback-context');
+var contextMiddleware = require('loopback-context').perRequest;
 var loopback = require('../');
 var extend = require('util')._extend;
 var Token = loopback.AccessToken.extend('MyToken');
@@ -477,7 +479,8 @@ describe('app.enableAuth()', function() {
   it('stores token in the context', function(done) {
     var TestModel = loopback.createModel('TestModel', { base: 'Model' });
     TestModel.getToken = function(cb) {
-      cb(null, loopback.getCurrentContext().get('accessToken') || null);
+      var ctx = LoopBackContext.getCurrentContext();
+      cb(null, ctx && ctx.get('accessToken') || null);
     };
     TestModel.remoteMethod('getToken', {
       returns: { arg: 'token', type: 'object' },
@@ -488,7 +491,7 @@ describe('app.enableAuth()', function() {
     app.model(TestModel, { dataSource: null });
 
     app.enableAuth();
-    app.use(loopback.context());
+    app.use(contextMiddleware());
     app.use(loopback.token({ model: Token }));
     app.use(loopback.rest());
 

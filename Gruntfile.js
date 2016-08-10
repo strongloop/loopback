@@ -40,9 +40,6 @@ module.exports = function(grunt) {
       common: {
         src: ['common/**/*.js'],
       },
-      browser: {
-        src: ['browser/**/*.js'],
-      },
       server: {
         src: ['server/**/*.js'],
       },
