@@ -9,7 +9,7 @@
 
 var loopback = require('../../lib/loopback');
 var async = require('async');
-var deprecate = require('depd')('loopback');
+var g = require('strong-globalize')();
 
 /*!
  * Export the middleware.
@@ -41,10 +41,10 @@ function rest() {
 
       var contextOptions = remotingOptions.context;
       if (contextOptions !== undefined && contextOptions !== false) {
-        throw new Error(
-          'remoting.context option was removed in version 3.0. See ' +
-          'https://docs.strongloop.com/display/APIC/Using%20current%20context ' +
-          'for more details.');
+        throw new Error(g.f(
+          '%s was removed in version 3.0. See %s for more details.',
+          'remoting.context option',
+          'https://docs.strongloop.com/display/APIC/Using%20current%20context'));
       }
 
       if (app.isAuthEnabled) {

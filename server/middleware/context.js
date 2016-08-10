@@ -4,7 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 module.exports = function() {
-  throw new Error('loopback#context middleware was removed in version 3.0. ' +
-    'See https://docs.strongloop.com/display/APIC/Using%20current%20context ' +
-    'for more details.');
+  throw new Error(g.f(
+    '%s middleware was removed in version 3.0. See %s for more details.',
+    'loopback#context',
+    'https://docs.strongloop.com/display/APIC/Using%20current%20context'));
 };
