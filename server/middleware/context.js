@@ -3,55 +3,13 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var loopback = require('../../lib/loopback');
+var deprecated = require('depd')('loopback');
+var g = require('strong-globalize')();
+var perRequestContext = require('loopback-context').perRequest;
 
-module.exports = context;
-
-var name = 'loopback';
-
-/**
- * Context middleware.
- * ```js
- * var app = loopback();
- * app.use(loopback.context(options);
- * app.use(loopback.rest());
- * app.listen();
- * ```
- * @options {Object} [options] Options for context
- * @property {String} name Context scope name.
- * @property {Boolean} enableHttpContext Whether HTTP context is enabled.  Default is false.
- * @header loopback.context([options])
- */
-
-function context(options) {
-  options = options || {};
-  var scope = options.name || name;
-  var enableHttpContext = options.enableHttpContext || false;
-  var ns = loopback.createContext(scope);
-
-  // Return the middleware
-  return function contextHandler(req, res, next) {
-    if (req.loopbackContext) {
-      return next();
-    }
-
-    loopback.runInContext(function processRequestInContext(ns, domain) {
-      req.loopbackContext = ns;
-
-      // Bind req/res event emitters to the given namespace
-      ns.bindEmitter(req);
-      ns.bindEmitter(res);
-
-      // Add req/res event emitters to the current domain
-      domain.add(req);
-      domain.add(res);
-
-      // Run the code in the context of the namespace
-      if (enableHttpContext) {
-        // Set up the transport context
-        ns.set('http', {req: req, res: res});
-      }
-      next();
-    });
-  };
-}
+module.exports = function() {
+  deprecated(g.f('%s middleware is deprecated. See %s for more details.',
+    'loopback#context',
+    'https://docs.strongloop.com/display/APIC/Using%20current%20context'));
+  return perRequestContext.apply(this, arguments);
+};
