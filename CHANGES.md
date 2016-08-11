@@ -1,3 +1,61 @@
+2016-08-11, Version 3.0.0-alpha.3
+=================================
+
+ * common: add KeyValueModel (Miroslav Bajtoš)
+
+ * Globalize current-context error messages (Miroslav Bajtoš)
+
+ * Remove current-context API (Miroslav Bajtoš)
+
+ * Fix forceId in tests (jannyHou)
+
+ * test: increase timeout to prevent CI failures (Miroslav Bajtoš)
+
+ * Update globalization string (Candy)
+
+ * Update globalization (Candy)
+
+ * Add globalization (Candy)
+
+ * test: fix "socket hang up" error in app.test (Miroslav Bajtoš)
+
+ * test: increate timeout in Role test (Miroslav Bajtoš)
+
+ * test: make status test more robust (Miroslav Bajtoš)
+
+ * test: fix broken Role tests (Miroslav Bajtoš)
+
+ * Update dependencies to their latest versions (Miroslav Bajtoš)
+
+ * Increase timeout (jannyHou)
+
+ * test: fix change-tracking setup (Miroslav Bajtoš)
+
+ * test: use local registry in test fixtures (Miroslav Bajtoš)
+
+ * Update loopback.js (Rand McKinney)
+
+ * Fix test case error (Loay)
+
+ * Update user.js (Loay)
+
+ * Fix security issue 580 (Loay)
+
+ * Update URLs in CONTRIBUTING.md (#2503) (Ryan Graham)
+
+ * Remove legacyExplorer (gunjpan)
+
+ * Remove `rectifyAllChanges` and `rectifyChange` (Candy)
+
+ * Fix verificationToken bug (Loay)
+
+ * update express version (Loay)
+
+ * Cleanup unit-test added in 1fc51d129 (Miroslav Bajtoš)
+
+ * update errorHandler template (Loay)
+
+
 2016-06-13, Version 3.0.0-alpha.2
 =================================
 
