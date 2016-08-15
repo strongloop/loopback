@@ -377,6 +377,68 @@ describe('User', function() {
     });
   });
 
+  describe('Password length validation', function() {
+    var pass72Char = new Array(70).join('a') + '012';
+    var pass73Char = pass72Char + '3';
+    var passTooLong = pass72Char + 'WXYZ1234';
+
+    it('rejects passwords longer than 72 characters', function(done) {
+      try {
+        User.create({ email: 'b@c.com', password: pass73Char }, function(err) {
+          if (err) return done(err);
+          done(new Error('User.create() should have thrown an error.'));
+        });
+      } catch (e) {
+        expect(e).to.match(/Password too long/);
+        done();
+      }
+    });
+
+    it('rejects a new user with password longer than 72 characters', function(done) {
+      try {
+        var u = new User({ username: 'foo', password: pass73Char });
+        assert(false, 'Error should have been thrown');
+      } catch (e) {
+        expect(e).to.match(/Password too long/);
+        done();
+      }
+    });
+
+    it('accepts passwords that are exactly 72 characters long', function(done) {
+      User.create({ email: 'b@c.com', password: pass72Char }, function(err, user) {
+        if (err) return done(err);
+        User.findById(user.id, function(err, userFound)  {
+          if (err) return done(err);
+          assert(userFound);
+          done();
+        });
+      });
+    });
+
+    it('allows login with password exactly 72 characters long', function(done) {
+      User.create({ email: 'b@c.com', password: pass72Char }, function(err) {
+        if (err) return done(err);
+        User.login({ email: 'b@c.com', password: pass72Char }, function(err, accessToken) {
+          if (err) return done(err);
+          assertGoodToken(accessToken);
+          assert(accessToken.id);
+          done();
+        });
+      });
+    });
+
+    it('rejects password reset when password is more than 72 chars', function(done) {
+      User.create({ email: 'b@c.com', password: pass72Char }, function(err) {
+        if (err) return done(err);
+        User.resetPassword({ email: 'b@c.com', password: pass73Char }, function(err) {
+          assert(err);
+          expect(err).to.match(/Password too long/);
+          done();
+        });
+      });
+    });
+  });
+
   describe('Access-hook for queries with email NOT case-sensitive', function() {
     it('Should not throw an error if the query does not contain {where: }', function(done) {
       User.find({}, function(err) {
@@ -691,6 +753,23 @@ describe('User', function() {
 
           done();
         });
+    });
+
+    it('allows login with password too long but created in old LB version',
+    function(done) {
+      var bcrypt = require('bcryptjs');
+      var longPassword = new Array(80).join('a');
+      var oldHash = bcrypt.hashSync(longPassword, bcrypt.genSaltSync(1));
+
+      User.create({ email: 'b@c.com', password: oldHash }, function(err) {
+        if (err) return done(err);
+        User.login({ email: 'b@c.com', password: longPassword }, function(err, accessToken) {
+          if (err) return done(err);
+          assert(accessToken.id);
+          // we are logged in, the test passed
+          done();
+        });
+      });
     });
   });
 
