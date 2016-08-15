@@ -627,9 +627,14 @@ describe.onServer('Remote Methods', function() {
       var methodNames = [];
       metadata.methods.forEach(function(method) {
         methodNames.push(method.name);
-        methodNames = methodNames.concat(method.sharedMethod.aliases || []);
+        var aliases = method.sharedMethod.aliases;
+        if (method.name.indexOf('prototype.') === 0) {
+          aliases = aliases.map(function(alias) {
+            return 'prototype.' + alias;
+          });
+        }
+        methodNames = methodNames.concat(aliases || []);
       });
-
       expect(methodNames).to.have.members([
         // NOTE(bajtos) These three methods are disabled by default
         // Because all tests share the same global registry model
@@ -637,9 +642,11 @@ describe.onServer('Remote Methods', function() {
         // this test was seeing this method (with all aliases) as public
         // 'destroyAll', 'deleteAll', 'remove',
         'create',
-        'upsert', 'updateOrCreate',
+        'upsert', 'updateOrCreate', 'patchOrCreate',
         'exists',
         'findById',
+        'replaceById',
+        'replaceOrCreate',
         'find',
         'findOne',
         'updateAll', 'update',
@@ -647,8 +654,8 @@ describe.onServer('Remote Methods', function() {
         'destroyById',
         'removeById',
         'count',
-        'prototype.updateAttributes',
-        'createChangeStream'
+        'prototype.patchAttributes', 'prototype.updateAttributes',
+        'createChangeStream',
       ]);
     });
 

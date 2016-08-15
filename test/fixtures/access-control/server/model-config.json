@@ -34,7 +34,11 @@
     "public": true,
     "dataSource": "db"
   },
-  "account": {
+  "accountWithReplaceOnPUTtrue": {
+    "public": true,
+    "dataSource": "db"
+  },
+  "accountWithReplaceOnPUTfalse": {
     "public": true,
     "dataSource": "db"
   },
