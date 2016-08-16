@@ -670,12 +670,12 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'login',
       {
-        description: g.f('Login a user with username/email and password.'),
+        description: 'Login a user with username/email and password.',
         accepts: [
           { arg: 'credentials', type: 'object', required: true, http: { source: 'body' }},
           { arg: 'include', type: ['string'], http: { source: 'query' },
-            description: g.f('Related objects to include in the response. ' +
-            'See the description of return value for more details.') },
+            description: 'Related objects to include in the response. ' +
+            'See the description of return value for more details.' },
         ],
         returns: {
           arg: 'accessToken', type: 'object', root: true,
@@ -693,7 +693,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'logout',
       {
-        description: g.f('Logout a user with access token.'),
+        description: 'Logout a user with access token.',
         accepts: [
           { arg: 'access_token', type: 'string', required: true, http: function(ctx) {
             var req = ctx && ctx.req;
@@ -701,8 +701,8 @@ module.exports = function(User) {
             var tokenID = accessToken && accessToken.id;
 
             return tokenID;
-          }, description: g.f('Do not supply this argument, it is automatically extracted ' +
-            'from request headers.'),
+          }, description: 'Do not supply this argument, it is automatically extracted ' +
+            'from request headers.',
           },
         ],
         http: { verb: 'all' },
@@ -712,7 +712,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'confirm',
       {
-        description: g.f('Confirm a user registration with email verification token.'),
+        description: 'Confirm a user registration with email verification token.',
         accepts: [
           { arg: 'uid', type: 'string', required: true },
           { arg: 'token', type: 'string', required: true },
@@ -725,7 +725,7 @@ module.exports = function(User) {
     UserModel.remoteMethod(
       'resetPassword',
       {
-        description: g.f('Reset password for a user with email.'),
+        description: 'Reset password for a user with email.',
         accepts: [
           { arg: 'options', type: 'object', required: true, http: { source: 'body' }},
         ],
