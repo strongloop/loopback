@@ -38,6 +38,14 @@ describe('Email connector', function() {
     assert(connector.transportForName('smtp'));
   });
 
+  it('should set up a aliased transport for SMTP' , function() {
+    var connector = new MailConnector({transport:
+        {type: 'smtp', service: 'ses-us-east-1', alias: 'ses-smtp'}
+    });
+
+    assert(connector.transportForName('ses-smtp'));
+  });
+
 });
 
 describe('Email and SMTP', function() {
