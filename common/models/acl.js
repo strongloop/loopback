@@ -74,7 +74,7 @@ assert(Role, 'Role model must be defined before ACL model');
  *  - ALLOW: Explicitly grants access to the resource.
  *  - AUDIT: Log, in a system-dependent way, the access specified in the permissions component of the ACL entry.
  *  - DENY: Explicitly denies access to the resource.
- * @property {String} principalType Type of the principal; one of: Application, Use, Role.
+ * @property {String} principalType Type of the principal; one of: Application, User, Role.
  * @property {String} principalId ID of the principal - such as appId, userId or roleId.
  * @property {Object} settings Extends the `Model.settings` object.
  * @property {String} settings.defaultPermission Default permission setting: ALLOW, DENY, ALARM, or AUDIT. Default is ALLOW.
