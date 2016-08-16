@@ -394,8 +394,9 @@ module.exports = function(ACL) {
    */
 
   ACL.checkAccessForContext = function(context, callback) {
-    this.resolveRelatedModels();
-    var roleModel = this.roleModel;
+    var self = this;
+    self.resolveRelatedModels();
+    var roleModel = self.roleModel;
 
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
@@ -418,10 +419,9 @@ module.exports = function(ACL) {
     var req = new AccessRequest(modelName, property, accessType, ACL.DEFAULT, methodNames);
 
     var effectiveACLs = [];
-    var staticACLs = this.getStaticACLs(model.modelName, property);
+    var staticACLs = self.getStaticACLs(model.modelName, property);
 
-    var self = this;
-    this.find({where: {model: model.modelName, property: propertyQuery,
+    self.find({where: {model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery}}, function(err, acls) {
       if (err) {
         if (callback) callback(err);
