@@ -5,8 +5,12 @@
 
 var loopback = require('../../../..');
 var boot = require('loopback-boot');
-var app = module.exports = loopback({ localRegistry: true });
+var app = module.exports = loopback({
+  localRegistry: true,
+  loadBuiltinModels: true,
+});
 var errorHandler = require('strong-error-handler');
+
 boot(app, __dirname);
 
 var apiPath = '/api';
