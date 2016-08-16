@@ -5,7 +5,10 @@
 
 var loopback = require('../../../..');
 var boot = require('loopback-boot');
-var app = module.exports = loopback({ localRegistry: true });
+var app = module.exports = loopback({
+  localRegistry: true,
+  loadBuiltinModels: true
+});
 
 boot(app, __dirname);
 
