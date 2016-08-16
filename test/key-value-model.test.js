@@ -80,6 +80,20 @@ describe('KeyValueModel', function() {
         .send({ ttl: 10 })
         .expect(404, done);
     });
+
+    it('provides "keys(filter)" at "GET /keys"', function(done) {
+      CacheItem.set('list-key', AN_OBJECT_VALUE, function(err) {
+        if (err) return done(err);
+        request.get('/CacheItems/keys')
+          .send(AN_OBJECT_VALUE)
+          .end(function(err, res) {
+            if (err) return done(err);
+            if (res.body.error) return done(res.body.error);
+            expect(res.body).to.eql(['list-key']);
+            done();
+          });
+      });
+    });
   });
 
   function setupAppAndCacheItem() {
