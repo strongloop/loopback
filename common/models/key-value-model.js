@@ -16,6 +16,16 @@ module.exports = function(KeyValueModel) {
     throwNotAttached(this.modelName, 'expire');
   };
 
+  // TODO add api docs
+  KeyValueModel.keys = function(filter, options, callback) {
+    throwNotAttached(this.modelName, 'keys');
+  };
+
+  // TODO add api docs
+  KeyValueModel.iterateKeys = function(filter, options) {
+    throwNotAttached(this.modelName, 'iterateKeys');
+  };
+
   KeyValueModel.setup = function() {
     KeyValueModel.base.setup.apply(this, arguments);
 
@@ -50,6 +60,15 @@ module.exports = function(KeyValueModel) {
           http: { source: 'form' }},
       ],
       http: { path: '/:key/expire', verb: 'put' },
+    });
+
+    this.remoteMethod('keys', {
+      accepts: {
+        arg: 'filter', type: 'object', required: false,
+        http: { source: 'query' },
+      },
+      returns: { arg: 'keys', type: ['string'], root: true },
+      http: { path: '/keys', verb: 'get' },
     });
   };
 };
