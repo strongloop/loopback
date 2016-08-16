@@ -395,7 +395,8 @@ module.exports = function(ACL) {
    */
 
   ACL.checkAccessForContext = function(context, callback) {
-    var registry = this.registry;
+    this.resolveRelatedModels();
+    var roleModel = this.roleModel;
 
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
@@ -421,7 +422,6 @@ module.exports = function(ACL) {
     var staticACLs = this.getStaticACLs(model.modelName, property);
 
     var self = this;
-    var roleModel = registry.getModelByType(Role);
     this.find({ where: { model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery }}, function(err, acls) {
       if (err) {
@@ -506,12 +506,19 @@ module.exports = function(ACL) {
   };
 
   ACL.resolveRelatedModels = function() {
-    if (!this.roleModel) {
-      var reg = this.registry;
-      this.roleModel = reg.getModelByType(loopback.Role);
-      this.roleMappingModel = reg.getModelByType(loopback.RoleMapping);
-      this.userModel = reg.getModelByType(loopback.User);
-      this.applicationModel = reg.getModelByType(loopback.Application);
+    var self = this;
+    if (!self.roleModel) {
+      var reg = self.registry;
+      var builtInModels = {
+        roleModel: reg.getModel('Role'),
+        roleMappingModel: reg.getModel('RoleMapping'),
+        userModel: reg.getModel('User'),
+        applicationModel: reg.getModel('Application'),
+      };
+
+      for (var m in builtInModels) {
+        self[m] = reg.getModelByType(builtInModels[m]);
+      }
     }
   };
 
