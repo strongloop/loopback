@@ -23,5 +23,5 @@ CartItem.sum(1, function(err, total) {
 
 // call a built in remote method
 CartItem.find(function(err, items) {
-  g.log(items);
+  console.log(items);
 });
