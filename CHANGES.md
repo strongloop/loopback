@@ -1,3 +1,53 @@
+2016-08-16, Version 2.30.0
+==========================
+
+ * Revert globalization of Swagger descriptions (Miroslav Bajtoš)
+
+ * Expose `Replace*` methods (Amir Jafarian)
+
+ * Add bcrypt validation (Loay)
+
+ * Cache remoting descriptions to speed up tests (Miroslav Bajtoš)
+
+ * Revert globalization of assert() messages (Miroslav Bajtoš)
+
+ * Fix token middleware to not trigger CLS init (Miroslav Bajtoš)
+
+ * common: add KeyValueModel (Miroslav Bajtoš)
+
+ * Globalize current-context deprecation messages (Miroslav Bajtoš)
+
+ * Deprecate current-context API (Miroslav Bajtoš)
+
+ * test: increase timeout to prevent CI failures (Miroslav Bajtoš)
+
+ * Backport of #2407 (Candy)
+
+ * test: fix timeout in rest.middleware.test (Miroslav Bajtoš)
+
+ * test: fix "socket hang up" error in app.test (Miroslav Bajtoš)
+
+ * test: increate timeout in Role test (Miroslav Bajtoš)
+
+ * test: make status test more robust (Miroslav Bajtoš)
+
+ * test: fix broken Role tests (Miroslav Bajtoš)
+
+ * Update dependencies to their latest versions (Miroslav Bajtoš)
+
+ * Increase timeout (jannyHou)
+
+ * Backport of #2565 (Miroslav Bajtoš)
+
+ * Avoid calling deprecated methds (Amir Jafarian)
+
+ * test: use local registry in test fixtures (Miroslav Bajtoš)
+
+ * Fix test case error (Loay)
+
+ * Backport/Fix security issue 580 (Loay)
+
+
 2016-07-12, Version 2.29.1
 ==========================
 
