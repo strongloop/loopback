@@ -64,6 +64,7 @@
     "chai": "^3.5.0",
     "es5-shim": "^4.1.0",
     "eslint-config-loopback": "^1.0.0",
+    "express-session": "^1.14.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-cli": "^1.2.0",

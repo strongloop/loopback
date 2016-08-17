@@ -125,7 +125,7 @@ function token(options) {
       req.accessToken = token || null;
       rewriteUserLiteral(req, currentUserLiteral);
       var ctx = req.loopbackContext;
-      if (ctx) ctx.set('accessToken', token);
+      if (ctx && ctx.active) ctx.set('accessToken', token);
       next(err);
     });
   };
