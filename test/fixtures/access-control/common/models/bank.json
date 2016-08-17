@@ -22,6 +22,12 @@
       "permission": "ALLOW",
       "principalType": "ROLE",
       "principalId": "$everyone"
+    },
+    {
+      "accessType": "WRITE",
+      "permission": "ALLOW",
+      "principalType": "ROLE",
+      "principalId": "$dynamic-role"
     }
   ],
   "properties": {}
