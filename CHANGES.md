@@ -1,3 +1,11 @@
+2016-08-17, Version 2.31.0
+==========================
+
+ * Fix token middleware crash (Carl Fürstenberg)
+
+ * Support 'alias' in mail transport config. (Samuel Reed)
+
+
 2016-08-16, Version 2.30.0
 ==========================
 
