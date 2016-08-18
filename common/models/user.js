@@ -789,8 +789,18 @@ module.exports = function(User) {
       message: g.f('Must provide a valid email'),
     });
 
-    // FIXME: We need to add support for uniqueness of composite keys in juggler
-    if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
+    // Realm users validation
+    if (UserModel.settings.realmRequired && UserModel.settings.realmDelimiter) {
+      UserModel.validatesUniquenessOf('email', {
+        message: 'Email already exists',
+        scopedTo: ['realm'],
+      });
+      UserModel.validatesUniquenessOf('username', {
+        message: 'User already exists',
+        scopedTo: ['realm'],
+      });
+    } else {
+      // Regular(Non-realm) users validation
       UserModel.validatesUniquenessOf('email', { message: 'Email already exists' });
       UserModel.validatesUniquenessOf('username', { message: 'User already exists' });
     }
