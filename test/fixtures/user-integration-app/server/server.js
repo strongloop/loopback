@@ -5,7 +5,7 @@
 
 var loopback = require('../../../../index');
 var boot = require('loopback-boot');
-var app = module.exports = loopback({ localRegistry: true });
+var app = module.exports = loopback({ localRegistry: true, loadBuiltinModels: true });
 var errorHandler = require('strong-error-handler');
 app.enableAuth();
 boot(app, __dirname);

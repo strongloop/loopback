@@ -46,7 +46,7 @@
     "express": "^4.14.0",
     "inflection": "^1.6.0",
     "loopback-connector-remote": "^1.0.3",
-    "loopback-datasource-juggler": "^3.0.0-alpha.1",
+    "loopback-datasource-juggler": "strongloop/loopback-datasource-juggler#b3907caad21f82eba1e82f005e84c68116eef052",
     "loopback-phase": "^1.2.0",
     "nodemailer": "^2.5.0",
     "nodemailer-stub-transport": "^1.0.0",
