@@ -80,7 +80,7 @@ module.exports = function(Role) {
         };
 
         var model = relsToModels[rel];
-        listByPrincipalType(model, relsToTypes[rel], query, callback);
+        listByPrincipalType.call(this, model, relsToTypes[rel], query, callback);
       };
     });
 
