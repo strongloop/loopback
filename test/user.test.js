@@ -1723,7 +1723,6 @@ describe('User', function() {
             if (err) return done(err);
 
             assert.equal(user.email, email);
-
             done();
           });
         });
@@ -1762,6 +1761,54 @@ describe('User', function() {
       });
     });
   });
+
+  describe('password reset with/without email verification', function() {
+    it('allows resetPassword by email if email verification is required and done',
+    function(done) {
+      User.settings.emailVerificationRequired = true;
+      var email = 'foo1@bar.com';
+      var calledBack = false;
+
+      User.resetPassword({ email: 'foo1@bar.com' }, function() {
+        calledBack = true;
+      });
+
+      User.once('resetPasswordRequest', function(info) {
+        assert(info.email);
+        assert(info.accessToken);
+        assert(info.user.emailVerified);
+        done();
+      });
+    });
+
+    it('disallows resetPassword by email if email verification is required and not done',
+    function(done) {
+      User.settings.emailVerificationRequired = true;
+      var email = 'foo@bar.com';
+
+      User.resetPassword({ email: 'foo@bar.com' }, function(err) {
+        assert(err);
+        assert.equal(err.code, 'RESET_FAILED_EMAIL_NOT_VERIFIED');
+        assert.equal(err.statusCode, 401);
+        done ();
+      });
+    });
+
+    it('allows resetPassword by email if email verification is not required',
+    function(done) {
+      User.settings.emailVerificationRequired = false;
+      var email = 'foo@bar.com';
+
+      User.resetPassword({ email: 'foo@bar.com' }, function(err) {
+        User.once('resetPasswordRequest', function(info) {
+          assert(info.email);
+          assert(info.accessToken);
+          assert(!info.user.emailVerified);
+          done();
+      });
+    });
+  });
+});
 
   describe('ctor', function() {
     it('exports default Email model', function() {

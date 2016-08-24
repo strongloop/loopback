@@ -10,7 +10,6 @@ var app = loopback();
 
 app.use(loopback.rest());
 
-
 var dataSource = app.dataSource('db', { adapter: 'memory' });
 
 var Color = dataSource.define('color', {

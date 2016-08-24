@@ -18,9 +18,8 @@ var Application = models.Application(dataSource);
 
 app.model(Application);
 
-
 var data = { pushSettings: [
-    {   'platform': 'apns',
+    { 'platform': 'apns',
         'apns': {
           'pushOptions': {
             'gateway': 'gateway.sandbox.push.apple.com',
@@ -41,7 +40,6 @@ var data = { pushSettings: [
 Application.create(data, function(err, data) {
   g.log('Created: %s', data.toObject());
 });
-
 
 Application.register('rfeng', 'MyApp', { description: g.f('My first mobile application') },
 function(err, result) {

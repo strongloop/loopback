@@ -494,7 +494,7 @@ describe('Replication over REST', function() {
     });
 
     ServerCar = loopback.createModel('ServerCar', CAR_PROPS, CAR_OPTS);
-    serverApp.model(ServerCar, {  dataSource: 'db', public: true });
+    serverApp.model(ServerCar, { dataSource: 'db', public: true });
 
     serverApp.use(function(req, res, next) {
       debug(req.method + ' ' + req.path);
@@ -535,7 +535,7 @@ describe('Replication over REST', function() {
 
     LocalCar = loopback.createModel('LocalCar', CAR_PROPS, CAR_OPTS);
     LocalCar.Change.Checkpoint = ClientCheckpoint;
-    clientApp.model(LocalCar, {  dataSource: 'db' });
+    clientApp.model(LocalCar, { dataSource: 'db' });
 
     var remoteOpts = createRemoteModelOpts(USER_OPTS);
     RemoteUser = loopback.createModel('RemoteUser', USER_PROPS, remoteOpts);
@@ -543,7 +543,7 @@ describe('Replication over REST', function() {
 
     remoteOpts = createRemoteModelOpts(CAR_OPTS);
     RemoteCar = loopback.createModel('RemoteCar', CAR_PROPS, remoteOpts);
-    clientApp.model(RemoteCar, {  dataSource: 'remote' });
+    clientApp.model(RemoteCar, { dataSource: 'remote' });
   }
 
   function createRemoteModelOpts(modelOpts) {
