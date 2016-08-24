@@ -1805,10 +1805,10 @@ describe('User', function() {
           assert(info.accessToken);
           assert(!info.user.emailVerified);
           done();
-        });
       });
     });
   });
+});
 
   describe('ctor', function() {
     it('exports default Email model', function() {
