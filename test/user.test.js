@@ -1762,44 +1762,48 @@ describe('User', function() {
     });
   });
 
-  describe('password reset without requiring email verification', function() {
-    var email = 'foo1@bar.com';
-    it('disallows temp accessToken creation if email verification is required and done',
+  describe('password reset with/without email verification', function() {
+    it('allows resetPassword by email if email verification is required and done',
     function(done) {
+      User.settings.emailVerificationRequired = true;
+      var email = 'foo1@bar.com';
       var calledBack = false;
 
-      User.resetPassword({
-        email: 'foo1@bar.com',
-      }, function() {
-        calledBack = true;
-      });
-
-      User.once('resetPasswordRequest', function(info) {
-        assert(info.email);
-        assert(!info.accessToken);
-        done();
-      });
-    });
-    it('creates accessToken if email has not been verified', function(done) {
-      var email = 'foo@bar.com';
-      var calledBack = false;
-
-      User.resetPassword({
-        email: 'foo@bar.com',
-      }, function() {
+      User.resetPassword({ email: 'foo1@bar.com' }, function() {
         calledBack = true;
       });
 
       User.once('resetPasswordRequest', function(info) {
         assert(info.email);
         assert(info.accessToken);
-        assert(info.accessToken.id);
-        assert.equal(info.accessToken.ttl / 60, 15);
-        assert(calledBack);
-        info.accessToken.user(function(err, user) {
-          if (err) return done(err);
+        assert(info.user.emailVerified);
+        done();
+      });
+    });
 
-          assert.equal(user.email, email);
+    it('disallows resetPassword by email if email verification is required and not done',
+    function(done) {
+      User.settings.emailVerificationRequired = true;
+      var email = 'foo@bar.com';
+
+      User.resetPassword({ email: 'foo@bar.com' }, function(err) {
+        assert(err);
+        assert.equal(err.code, 'RESET_FAILED_EMAIL_NOT_VERIFIED');
+        assert.equal(err.statusCode, 401);
+        done ();
+      });
+    });
+
+    it('allows resetPassword by email if email verification is not required',
+    function(done) {
+      User.settings.emailVerificationRequired = false;
+      var email = 'foo@bar.com';
+
+      User.resetPassword({ email: 'foo@bar.com' }, function(err) {
+        User.once('resetPasswordRequest', function(info) {
+          assert(info.email);
+          assert(info.accessToken);
+          assert(!info.user.emailVerified);
           done();
         });
       });

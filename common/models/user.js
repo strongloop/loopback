@@ -574,14 +574,14 @@ module.exports = function(User) {
         err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
-      if (user && user.emailVerified) {
-        UserModel.emit('resetPasswordRequest', {
-          email: options.email,
-          user: user,
-        });
-      } else if (user && !user.emailVerified) {
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
+      if (UserModel.settings.emailVerificationRequired && !user.emailVerified) {
+        err = new Error(g.f('Email has not been verified'));
+        err.statusCode = 401;
+        err.code = 'RESET_FAILED_EMAIL_NOT_VERIFIED';
+        cb(err);
+      } else {
         user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
           if (err) {
             return cb(err);
