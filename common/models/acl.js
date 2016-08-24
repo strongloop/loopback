@@ -506,19 +506,12 @@ module.exports = function(ACL) {
   };
 
   ACL.resolveRelatedModels = function() {
-    var self = this;
-    if (!self.roleModel) {
-      var reg = self.registry;
-      var builtInModels = {
-        roleModel: reg.getModel('Role'),
-        roleMappingModel: reg.getModel('RoleMapping'),
-        userModel: reg.getModel('User'),
-        applicationModel: reg.getModel('Application'),
-      };
-
-      for (var m in builtInModels) {
-        self[m] = reg.getModelByType(builtInModels[m]);
-      }
+    if (!this.roleModel) {
+      var reg = this.registry;
+      this.roleModel = reg.getModelByType('Role');
+      this.roleMappingModel = reg.getModelByType('RoleMapping');
+      this.userModel = reg.getModelByType('User');
+      this.applicationModel = reg.getModelByType('Application');
     }
   };
 
