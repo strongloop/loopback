@@ -29,6 +29,7 @@
     "mBaaS"
   ],
   "scripts": {
+    "lint": "eslint .",
     "test": "grunt mocha-and-karma"
   },
   "dependencies": {
