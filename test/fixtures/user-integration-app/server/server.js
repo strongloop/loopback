@@ -5,7 +5,11 @@
 
 var loopback = require('../../../../index');
 var boot = require('loopback-boot');
-var app = module.exports = loopback({ localRegistry: true });
+var app = module.exports = loopback({
+  localRegistry: true,
+  loadBuiltinModels: true
+});
+
 app.enableAuth();
 boot(app, __dirname);
 app.use(loopback.token({model: app.models.AccessToken}));
