@@ -1763,6 +1763,43 @@ describe('User', function() {
     });
   });
 
+  describe('password reset with/without email verification', function() {
+    it('allows resetPassword by email if email verification is required and done',
+    function(done) {
+      User.settings.emailVerificationRequired = true;
+      var email = validCredentialsEmailVerified.email;
+
+      User.resetPassword({ email: email }, function(err, info) {
+        if (err) return done (err);
+        done();
+      });
+    });
+
+    it('disallows resetPassword by email if email verification is required and not done',
+    function(done) {
+      User.settings.emailVerificationRequired = true;
+      var email = validCredentialsEmail;
+
+      User.resetPassword({ email: email }, function(err) {
+        assert(err);
+        assert.equal(err.code, 'RESET_FAILED_EMAIL_NOT_VERIFIED');
+        assert.equal(err.statusCode, 401);
+        done ();
+      });
+    });
+
+    it('allows resetPassword by email if email verification is not required',
+    function(done) {
+      User.settings.emailVerificationRequired = false;
+      var email = validCredentialsEmail;
+
+      User.resetPassword({ email: email }, function(err) {
+        if (err) return done (err);
+        done();
+      });
+    });
+  });
+
   describe('ctor', function() {
     it('exports default Email model', function() {
       expect(User.email, 'User.email').to.be.a('function');
