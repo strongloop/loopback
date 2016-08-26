@@ -820,6 +820,12 @@ describe('app', function() {
         app.dataSource('bad-ds', { connector: 'throwing' });
       }).to.throw(/bad-ds.*throwing/);
     });
+
+    it('adds app reference to the data source object', function() {
+      app.dataSource('ds', { connector: 'memory' });
+      expect(app.datasources.ds.app).to.not.equal(undefined);
+      expect(app.datasources.ds.app).to.equal(app);
+    });
   });
 
   describe.onServer('listen()', function() {
