@@ -207,15 +207,25 @@ describe('With model.settings.replaceOnPUT false', function() {
     var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
     var expectedMethods = [
-      'upsert(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating',
+      'create(data:object):storeWithReplaceOnPUTfalse POST /stores-updating',
       'upsert(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating',
+      'upsert(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating',
       'replaceOrCreate(data:object):storeWithReplaceOnPUTfalse POST /stores-updating/replaceOrCreate',
+      'exists(id:any):boolean GET /stores-updating/:id/exists',
+      'exists(id:any):boolean HEAD /stores-updating/:id',
+      'findById(id:any,filter:object):storeWithReplaceOnPUTfalse GET /stores-updating/:id',
       'replaceById(id:any,data:object):storeWithReplaceOnPUTfalse POST /stores-updating/:id/replace',
-      'prototype.updateAttributes(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating/:id',
+      'find(filter:object):storeWithReplaceOnPUTfalse GET /stores-updating',
+      'findOne(filter:object):storeWithReplaceOnPUTfalse GET /stores-updating/findOne',
+      'updateAll(where:object,data:object):object POST /stores-updating/update',
+      'deleteById(id:any):object DELETE /stores-updating/:id',
+      'count(where:object):number GET /stores-updating/count',
       'prototype.updateAttributes(data:object):storeWithReplaceOnPUTfalse PUT /stores-updating/:id',
+      'prototype.updateAttributes(data:object):storeWithReplaceOnPUTfalse PATCH /stores-updating/:id',
+      'createChangeStream(options:object):ReadableStream POST /stores-updating/change-stream',
+      'createChangeStream(options:object):ReadableStream GET /stores-updating/change-stream',
     ];
-
-    expect(methods).to.include.members(expectedMethods);
+    expect(methods).to.eql(expectedMethods);
   });
 });
 
