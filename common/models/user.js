@@ -443,25 +443,19 @@ module.exports = function(User) {
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
 
-      options.text = options.text || 'Please verify your email by opening ' +
-        'this link in a web browser:\n\t{href}';
+      options.text = options.text || g.f('Please verify your email by opening ' +
+        'this link in a web browser:\n\t%s', options.verifyHref);
 
       options.text = options.text.replace(/\{href\}/g, options.verifyHref);
 
-      options.text = g.f(options.text);
-
       options.to = options.to || user.email;
 
-      options.subject = options.subject || 'Thanks for Registering';
-
-      options.subject = g.f(options.subject);
+      options.subject = options.subject || g.f('Thanks for Registering');
 
       options.headers = options.headers || {};
 
       var template = loopback.template(options.template);
       options.html = template(options);
-
-      options.html = g.f(options.html);
 
       Email.send(options, function(err, email) {
         if (err) {
