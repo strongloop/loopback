@@ -81,6 +81,47 @@ describe('KeyValueModel', function() {
         .expect(404, done);
     });
 
+    it('provides "ttl(key)" at "GET /key/ttl"', function(done) {
+      request.put('/CacheItems/ttl-key?ttl=2000')
+        .end(function(err, res) {
+          if (err) return done(err);
+          request.get('/CacheItems/ttl-key/ttl')
+            .end(function(err, res) {
+              if (err) return done(err);
+              expect(res.body).to.be.number;
+              done();
+            });
+        });
+    });
+
+    it('returns 204 when getting TTL for a key that does not have TTL set',
+    function(done) {
+      request.put('/CacheItems/ttl-key')
+        .end(function(err, res) {
+          if (err) return done(err);
+          request.get('/CacheItems/ttl-key/ttl')
+            .expect(204, done);
+        });
+    });
+
+    it('returns 404 when getting TTL for a key when TTL has expired',
+    function(done) {
+      request.put('/CacheItems/ttl-key?ttl=10')
+        .end(function(err, res) {
+          setTimeout(function() {
+            if (err) return done(err);
+            request.get('/CacheItems/ttl-key/ttl')
+              .expect(404, done);
+          }, 20);
+        });
+    });
+
+    it('returns 404 when getting TTL for a key that does not exist',
+    function(done) {
+      request.get('/CacheItems/key-does-not-exist/ttl')
+        .expect(404, done);
+    });
+
     it('provides "keys(filter)" at "GET /keys"', function(done) {
       CacheItem.set('list-key', AN_OBJECT_VALUE, function(err) {
         if (err) return done(err);
