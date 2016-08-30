@@ -657,6 +657,34 @@ module.exports = function(User) {
       next();
     });
 
+    // Delete old sessions once email is updated
+    UserModel.observe('before save', function beforeEmailUpdate(ctx, next) {
+      if (ctx.isNewInstance) return next();
+      if (!ctx.where && !ctx.instance) return next();
+      var where = ctx.where || { id: ctx.instance.id };
+      ctx.Model.find({ where: where }, function(err, userInstances) {
+        if (err) return next(err);
+        ctx.hookState.originalUserData = userInstances.map(function(u) {
+          return { id: u.id, email: u.email };
+        });
+        next();
+      });
+    });
+
+    UserModel.observe('after save', function afterEmailUpdate(ctx, next) {
+      if (!ctx.Model.relations.accessTokens) return next();
+      var AccessToken = ctx.Model.relations.accessTokens.modelTo;
+      var newEmail = (ctx.instance || ctx.data).email;
+      if (!ctx.hookState.originalUserData) return next();
+      var idsToExpire = ctx.hookState.originalUserData.filter(function(u) {
+        return u.email !== newEmail;
+      }).map(function(u) {
+        return u.id;
+      });
+      if (!idsToExpire.length) return next();
+      AccessToken.deleteAll({ userId: { inq: idsToExpire }}, next);
+    });
+
     UserModel.remoteMethod(
       'login',
       {
