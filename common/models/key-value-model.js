@@ -17,6 +17,11 @@ module.exports = function(KeyValueModel) {
   };
 
   // TODO add api docs
+  KeyValueModel.ttl = function(key, options, callback) {
+    throwNotAttached(this.modelName, 'ttl');
+  };
+
+  // TODO add api docs
   KeyValueModel.keys = function(filter, options, callback) {
     throwNotAttached(this.modelName, 'keys');
   };
@@ -60,6 +65,15 @@ module.exports = function(KeyValueModel) {
           http: { source: 'form' }},
       ],
       http: { path: '/:key/expire', verb: 'put' },
+    });
+
+    this.remoteMethod('ttl', {
+      accepts: {
+        arg: 'key', type: 'string', required: true,
+        http: { source: 'path' },
+      },
+      returns: { arg: 'value', type: 'any', root: true },
+      http: { path: '/:key/ttl', verb: 'get' },
     });
 
     this.remoteMethod('keys', {
