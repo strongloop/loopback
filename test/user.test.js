@@ -66,7 +66,6 @@ describe('User', function() {
     app.enableAuth({ dataSource: 'db' });
     app.use(loopback.token({ model: AccessToken }));
     app.use(loopback.rest());
-    app.model(User);
 
     User.create(validCredentials, function(err, user) {
       if (err) return done(err);
