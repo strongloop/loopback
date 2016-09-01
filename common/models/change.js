@@ -279,9 +279,10 @@ module.exports = function(Change) {
    */
 
   Change.hash = function(str) {
+    var buf = new Buffer(str);
     return crypto
       .createHash(Change.settings.hashAlgorithm || 'sha1')
-      .update(str, 'utf8')
+      .update(buf)
       .digest('hex');
   };
 
