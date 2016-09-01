@@ -46,7 +46,7 @@
     "ejs": "^2.3.1",
     "express": "^4.14.0",
     "inflection": "^1.6.0",
-    "loopback-connector-remote": "^1.0.3",
+    "loopback-connector-remote": "^2.0.0-alpha.1",
     "loopback-datasource-juggler": "^3.0.0-alpha.7",
     "loopback-phase": "^1.2.0",
     "nodemailer": "^2.5.0",
