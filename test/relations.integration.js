@@ -243,6 +243,32 @@ describe('relations - integration', function() {
         });
       });
     });
+
+    describe('PUT /api/store/:id/widgets/:fk', function() {
+      beforeEach(function(done) {
+        var self = this;
+        this.store.widgets.create({
+          name: this.widgetName
+        }, function(err, widget) {
+          self.widget = widget;
+          self.url = '/api/stores/' + self.store.id + '/widgets/' + widget.id;
+          done();
+        });
+      });
+      it('does not add default properties to request body', function(done) {
+        var self = this;
+        self.request.put(self.url)
+          .send({ active: true })
+          .end(function(err) {
+            if (err) return done(err);
+            app.models.Widget.findById(self.widget.id, function(err, w) {
+              if (err) return done(err);
+              expect(w.name).to.equal(self.widgetName);
+              done();
+            });
+          });
+      });
+    });
   });
 
   describe('/stores/:id/widgets/:fk - 200', function() {
