@@ -7,6 +7,9 @@ var it = require('./util/it');
 var describe = require('./util/describe');
 var Domain = require('domain');
 var EventEmitter = require('events').EventEmitter;
+var loopback = require('../');
+var expect = require('chai').expect;
+var assert = require('assert');
 
 describe('loopback', function() {
   var nameCounter = 0;
@@ -607,5 +610,134 @@ describe('loopback', function() {
 
       expect(methodNames).to.include('prototype.instanceMethod');
     });
+  });
+
+  describe('Remote method inheritance', function() {
+    var app;
+
+    beforeEach(setupLoopback);
+
+    it('inherits remote methods defined via createModel', function() {
+      var Base = app.registry.createModel('Base', {}, {
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+        methods: {
+          hello: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+
+      expect(methodNames).to.include('greet');
+      expect(methodNames).to.include('hello');
+    });
+
+    it('same remote method with different metadata should override parent', function() {
+      var Base = app.registry.createModel('Base', {}, {
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+        methods: {
+          greet: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+      var baseMethod = Base.sharedClass.findMethodByName('greet');
+      var customMethod = MyCustomModel.sharedClass.findMethodByName('greet');
+
+      // Base Method
+      expect(baseMethod.http).to.eql({ path: '/greet' });
+      expect(baseMethod.http.path).to.equal('/greet');
+      expect(baseMethod.http.path).to.not.equal('/hello');
+
+      // Custom Method
+      expect(methodNames).to.include('greet');
+      expect(customMethod.http).to.eql({ path: '/hello' });
+      expect(customMethod.http.path).to.equal('/hello');
+      expect(customMethod.http.path).to.not.equal('/greet');
+    });
+
+    it('does not inherit remote methods defined via configureModel', function() {
+      var Base = app.registry.createModel('Base');
+      app.registry.configureModel(Base, {
+        dataSource: null,
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+        methods: {
+          hello: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+
+      expect(methodNames).to.not.include('greet');
+      expect(methodNames).to.include('hello');
+    });
+
+    it('does not inherit remote methods defined via configureModel after child model ' +
+        'was created', function() {
+      var Base = app.registry.createModel('Base');
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+      });
+
+      app.registry.configureModel(Base, {
+        dataSource: null,
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      app.registry.configureModel(MyCustomModel, {
+        dataSource: null,
+        methods: {
+          hello: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var baseMethodNames = getAllMethodNamesWithoutClassName(Base);
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+
+      expect(baseMethodNames).to.include('greet');
+      expect(methodNames).to.not.include('greet');
+      expect(methodNames).to.include('hello');
+    });
+
+    function setupLoopback() {
+      app = loopback({ localRegistry: true });
+    }
+
+    function getAllMethodNamesWithoutClassName(Model) {
+      return Model.sharedClass.methods().map(function(m) {
+        return m.stringName.replace(/^[^.]+\./, ''); // drop the class name
+      });
+    }
   });
 });
