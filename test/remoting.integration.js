@@ -192,6 +192,14 @@ describe('remoting - integration', function() {
     });
   });
 
+  it('has upsertWithWhere remote method', function() {
+    var storeClass = findClass('store');
+    var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+    var expectedMethods = [
+      'upsertWithWhere(where:object,data:object):store POST /stores/upsertWithWhere',
+    ];
+    expect(methods).to.include.members(expectedMethods);
+  });
 });
 
 describe('With model.settings.replaceOnPUT false', function() {
@@ -211,6 +219,7 @@ describe('With model.settings.replaceOnPUT false', function() {
       'upsert(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PUT /stores-updating',
       'upsert(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PATCH /stores-updating',
       'replaceOrCreate(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating/replaceOrCreate',
+      'upsertWithWhere(where:object,data:object):storeWithReplaceOnPUTfalse POST /stores-updating/upsertWithWhere',
       'exists(id:any):boolean GET /stores-updating/:id/exists',
       'exists(id:any):boolean HEAD /stores-updating/:id',
       'findById(id:any,filter:object):storeWithReplaceOnPUTfalse GET /stores-updating/:id',

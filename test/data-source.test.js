@@ -22,6 +22,7 @@ describe('DataSource', function() {
       assert.isFunc(Color, 'findOne');
       assert.isFunc(Color, 'create');
       assert.isFunc(Color, 'updateOrCreate');
+      assert.isFunc(Color, 'upsertWithWhere');
       assert.isFunc(Color, 'upsert');
       assert.isFunc(Color, 'findOrCreate');
       assert.isFunc(Color, 'exists');
@@ -83,6 +84,7 @@ describe('DataSource', function() {
       existsAndShared('_forDB', false);
       existsAndShared('create', true);
       existsAndShared('updateOrCreate', true);
+      existsAndShared('upsertWithWhere', true);
       existsAndShared('upsert', true);
       existsAndShared('findOrCreate', false);
       existsAndShared('exists', true);
