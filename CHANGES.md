@@ -1,3 +1,45 @@
+2016-09-05, Version 3.0.0-alpha.4
+=================================
+
+ * Update loopback-connector-remote to 2.0-alpha (Miroslav Bajtoš)
+
+ * Add remoting for KeyValue model TTL feature (Simon Ho)
+
+ * Add lint NPM script (Simon Ho)
+
+ * Make the app instance available to connectors (Subramanian Krishnan)
+
+ * Update pre-release dependencies (Miroslav Bajtoš)
+
+ * Apply g.f to literal strings (Setogit)
+
+ * Allow resetPassword if  emailVerified (Loay)
+
+ * Reorder PATCH Vs PUT endpoints (Amir Jafarian)
+
+ * streamline use if `self` (Benjamin Kroeger)
+
+ * resolve related models from correct registry (Benjamin Kroeger)
+
+ * KeyValueModel: add API for listing keys (Miroslav Bajtoš)
+
+ * Fix token middleware crash (Carl Fürstenberg)
+
+ * loopback#context: fix missing "g" symbol (Miroslav Bajtoš)
+
+ * Update acl.js (Rand McKinney)
+
+ * Support 'alias' in mail transport config. (Samuel Reed)
+
+ * Remove unnecessary g.log (Setogit)
+
+ * Revert globalization of Swagger descriptions (Miroslav Bajtoš)
+
+ * Revert globalization of assert() messages (Miroslav Bajtoš)
+
+ * Add bcrypt validation (Loay)
+
+
 2016-08-11, Version 3.0.0-alpha.3
 =================================
 
