@@ -1,3 +1,23 @@
+2016-09-05, Version 2.32.0
+==========================
+
+ * test/user: don't attach User model twice (Miroslav Bajtoš)
+
+ * app.enableAuth: correctly detect attached models (Miroslav Bajtoš)
+
+ * Apply g.f to literal strings (Candy)
+
+ * Make the app instance available to connectors (Subramanian Krishnan)
+
+ * Reorder PATCH Vs PUT endpoints (Amir Jafarian)
+
+ * streamline use if `self` (Benjamin Kroeger)
+
+ * resolve related models from correct registry (Benjamin Kroeger)
+
+ * KeyValueModel: add API for listing keys (Miroslav Bajtoš)
+
+
 2016-08-17, Version 2.31.0
 ==========================
 
