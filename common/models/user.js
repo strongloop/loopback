@@ -400,8 +400,9 @@ module.exports = function(User) {
     var app = userModel.app;
     options.host = options.host || (app && app.get('host')) || 'localhost';
     options.port = options.port || (app && app.get('port')) || 3000;
-    options.restApiRoot = options.restApiRoot || (app && app.get('restApiRoot')) || '/api';
-
+    if(options.restApiRoot !== ""){
+      options.restApiRoot = options.restApiRoot || (app && app.get('restApiRoot')) || '/api';
+    }
     var displayPort = (
       (options.protocol === 'http' && options.port == '80') ||
       (options.protocol === 'https' && options.port == '443')
