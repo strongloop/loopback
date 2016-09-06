@@ -1010,6 +1010,19 @@ describe('Replication / Change APIs', function() {
       });
     });
 
+    it('detects "upsertWithWhere"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        SourceModel.upsertWithWhere(
+          { name: inst.name },
+          { name: 'updated' },
+          function(err) {
+            if (err) return done(err);
+            assertChangeRecordedForId(inst.id, done);
+          });
+      });
+    });
+
     it('detects "findOrCreate"', function(done) {
       // make sure we bypass find+create and call the connector directly
       SourceModel.dataSource.connector.findOrCreate =

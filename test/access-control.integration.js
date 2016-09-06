@@ -122,6 +122,10 @@ describe('access control - integration', function() {
       });
     });
 
+    lt.it.shouldBeDeniedWhenCalledAnonymously('POST', '/api/users/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledUnauthenticated('POST', '/api/users/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users/upsertWithWhere');
+
     lt.it.shouldBeDeniedWhenCalledAnonymously('DELETE', urlForUser);
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('DELETE', urlForUser);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'DELETE', urlForUser);
@@ -192,6 +196,10 @@ describe('access control - integration', function() {
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('DELETE', urlForBank);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'DELETE', urlForBank);
     lt.it.shouldBeAllowedWhenCalledByUser(SPECIAL_USER, 'DELETE', urlForBank);
+
+    lt.it.shouldBeDeniedWhenCalledAnonymously('POST', '/api/banks/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledUnauthenticated('POST', '/api/banks/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'POST', '/api/banks/upsertWithWhere');
 
     function urlForBank() {
       return '/api/banks/' + this.bank.id;
