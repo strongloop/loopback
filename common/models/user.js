@@ -401,14 +401,18 @@ module.exports = function(User) {
       (options.protocol === 'https' && options.port == '443')
     ) ? '' : ':' + options.port;
 
+    var urlPath = joinUrlPath(
+      options.restApiRoot,
+      userModel.http.path,
+      userModel.sharedClass.find('confirm', true).http.path
+    );
+
     options.verifyHref = options.verifyHref ||
       options.protocol +
       '://' +
       options.host +
       displayPort +
-      options.restApiRoot +
-      userModel.http.path +
-      userModel.sharedClass.find('confirm', true).http.path +
+      urlPath +
       '?uid=' +
       options.user.id +
       '&redirect=' +
@@ -766,4 +770,14 @@ function emailValidator(err, done) {
   if (value === '') return;
   if (!isEmail(value))
     return err('email');
+}
+
+function joinUrlPath(args) {
+  var result = arguments[0];
+  for (var ix = 1; ix < arguments.length; ix++) {
+    var next = arguments[ix];
+    result += result[result.length - 1] === '/' && next[0] === '/' ?
+      next.slice(1) : next;
+  }
+  return result;
 }
