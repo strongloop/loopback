@@ -120,10 +120,7 @@ describe('User', function() {
         assert.equal(err.name, 'ValidationError');
         assert.equal(err.statusCode, 422);
         assert.equal(err.details.context, User.modelName);
-        assert.deepEqual(err.details.codes.email, [
-          'presence',
-          'format.null',
-        ]);
+        assert.deepEqual(err.details.codes.email, ['presence']);
 
         done();
       });
@@ -143,8 +140,18 @@ describe('User', function() {
     it('Requires a valid email', function(done) {
       User.create({ email: 'foo@', password: '123' }, function(err) {
         assert(err);
-
+        assert.equal(err.name, 'ValidationError');
+        assert.equal(err.statusCode, 422);
+        assert.equal(err.details.context, User.modelName);
+        assert.deepEqual(err.details.codes.email, ['custom.email']);
         done();
+      });
+    });
+
+    it('allows TLD domains in email', function() {
+      return User.create({
+        email: 'local@com',
+        password: '123',
       });
     });
 
