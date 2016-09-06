@@ -9,6 +9,7 @@
 
 var g = require('strong-globalize')();
 
+var isEmail = require('isemail');
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
 var path = require('path');
@@ -752,10 +753,9 @@ module.exports = function(User) {
     assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
     UserModel.accessToken = loopback.AccessToken;
 
-    // email validation regex
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    UserModel.validatesFormatOf('email', { with: re, message: g.f('Must provide a valid email') });
+    UserModel.validate('email', emailValidator, {
+      message: g.f('Must provide a valid email'),
+    });
 
     // FIXME: We need to add support for uniqueness of composite keys in juggler
     if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
@@ -772,3 +772,14 @@ module.exports = function(User) {
 
   User.setup();
 };
+
+function emailValidator(err, done) {
+  var value = this.email;
+  if (value == null)
+    return;
+  if (typeof value !== 'string')
+    return err('string');
+  if (value === '') return;
+  if (!isEmail(value))
+    return err('email');
+}

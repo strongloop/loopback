@@ -48,6 +48,7 @@
     "inflection": "^1.6.0",
     "loopback-connector-remote": "^2.0.0-alpha.1",
     "loopback-datasource-juggler": "^3.0.0-alpha.7",
+    "isemail": "^1.2.0",
     "loopback-phase": "^1.2.0",
     "nodemailer": "^2.5.0",
     "nodemailer-stub-transport": "^1.0.0",
