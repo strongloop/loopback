@@ -9,7 +9,8 @@ describe('PersistedModel.createChangeStream()', function() {
       var test = this;
       var app = loopback({ localRegistry: true });
       var ds = app.dataSource('ds', { connector: 'memory' });
-      this.Score = app.model('Score', {
+      var Score = app.registry.createModel('Score');
+      this.Score = app.model(Score, {
         dataSource: 'ds',
         changeDataSource: false, // use only local observers
       });

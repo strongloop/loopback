@@ -611,11 +611,12 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app, db;
+    var app, db, MyTestModel;
     beforeEach(function() {
       app = loopback();
       app.set('remoting', { errorHandler: { debug: true, log: false }});
       db = loopback.createDataSource({ connector: loopback.Memory });
+      MyTestModel = app.registry.createModel('MyTestModel');
     });
 
     it('Expose a `Model` to remote clients', function() {
@@ -626,7 +627,7 @@ describe('app', function() {
       expect(app.models()).to.eql([Color]);
     });
 
-    it('uses singlar name as app.remoteObjects() key', function() {
+    it('uses singular name as app.remoteObjects() key', function() {
       var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
@@ -689,76 +690,26 @@ describe('app', function() {
       });
     });
 
-    it('accepts null dataSource', function() {
-      app.model('MyTestModel', { dataSource: null });
+    it('accepts null dataSource', function(done) {
+      app.model(MyTestModel, { dataSource: null });
+      expect(MyTestModel.dataSource).to.eql(null);
+      done();
     });
 
-    it('accepts false dataSource', function() {
-      app.model('MyTestModel', { dataSource: false });
+    it('accepts false dataSource', function(done) {
+      app.model(MyTestModel, { dataSource: false });
+      expect(MyTestModel.getDataSource()).to.eql(null);
+      done();
     });
 
-    it('should not require dataSource', function() {
-      app.model('MyTestModel', {});
-    });
-  });
-
-  describe('app.model(name, config)', function() {
-    var app;
-
-    beforeEach(function() {
-      app = loopback();
-      app.dataSource('db', {
-        connector: 'memory',
-      });
+    it('does not require dataSource', function(done) {
+      app.model(MyTestModel);
+      done();
     });
 
-    it('Sugar for defining a fully built model', function() {
-      app.model('foo', {
-        dataSource: 'db',
-      });
-
-      var Foo = app.models.foo;
-      var f = new Foo();
-
-      assert(f instanceof app.registry.getModel('Model'));
-    });
-
-    it('interprets extra first-level keys as options', function() {
-      app.model('foo', {
-        dataSource: 'db',
-        base: 'User',
-      });
-
-      expect(app.models.foo.definition.settings.base).to.equal('User');
-    });
-
-    it('prefers config.options.key over config.key', function() {
-      app.model('foo', {
-        dataSource: 'db',
-        base: 'User',
-        options: {
-          base: 'Application',
-        },
-      });
-
-      expect(app.models.foo.definition.settings.base).to.equal('Application');
-    });
-
-    it('honors config.public options', function() {
-      app.model('foo', {
-        dataSource: 'db',
-        public: false,
-      });
-      expect(app.models.foo.app).to.equal(app);
-      expect(app.models.foo.shared).to.equal(false);
-    });
-
-    it('defaults config.public to be true', function() {
-      app.model('foo', {
-        dataSource: 'db',
-      });
-      expect(app.models.foo.app).to.equal(app);
-      expect(app.models.foo.shared).to.equal(true);
+    it('throws error if model typeof string is passed', function() {
+      var fn = function() { app.model('MyTestModel'); };
+      expect(fn).to.throw(/app(\.model|\.registry)/);
     });
   });
 
@@ -772,7 +723,8 @@ describe('app', function() {
       }
 
       assert(!previousModel || !previousModel.dataSource);
-      app.model('TestModel', { dataSource: 'db' });
+      var TestModel = app.registry.createModel('TestModel');
+      app.model(TestModel, { dataSource: 'db' });
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
   });
@@ -780,7 +732,8 @@ describe('app', function() {
   describe('app.models', function() {
     it('is unique per app instance', function() {
       app.dataSource('db', { connector: 'memory' });
-      var Color = app.model('Color', { dataSource: 'db' });
+      var Color = app.registry.createModel('Color');
+      app.model(Color, { dataSource: 'db' });
       expect(app.models.Color).to.equal(Color);
       var anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);
