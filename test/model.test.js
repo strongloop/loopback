@@ -152,6 +152,43 @@ describe.onServer('Remote Methods', function() {
     });
   });
 
+  describe('Model.upsertWithWhere(where, data, callback)', function() {
+    it('Updates when a Model instance is retreived from data source', function(done) {
+      var taskEmitter = new TaskEmitter();
+      taskEmitter
+        .task(User, 'create', { first: 'jill', second: 'pill' })
+        .task(User, 'create', { first: 'bob', second: 'sob' })
+        .on('done', function() {
+          User.upsertWithWhere({ second: 'pill' }, { second: 'jones' }, function(err, user) {
+            if (err) return done(err);
+            var id = user.id;
+            User.findById(id, function(err, user) {
+              if (err) return done(err);
+              assert.equal(user.second, 'jones');
+              done();
+            });
+          });
+        });
+    });
+
+    it('Creates when no Model instance is retreived from data source', function(done) {
+      var taskEmitter = new TaskEmitter();
+      taskEmitter
+        .task(User, 'create', { first: 'simon', second: 'somers' })
+        .on('done', function() {
+          User.upsertWithWhere({ first: 'somers' }, { first: 'Simon' }, function(err, user) {
+            if (err) return done(err);
+            var id = user.id;
+            User.findById(id, function(err, user) {
+              if (err) return done(err);
+              assert.equal(user.first, 'Simon');
+              done();
+            });
+          });
+        });
+    });
+  });
+
   describe('Example Remote Method', function() {
     it('Call the method using HTTP / REST', function(done) {
       request(app)
@@ -523,6 +560,7 @@ describe.onServer('Remote Methods', function() {
   describe('Model.checkAccessTypeForMethod(remoteMethod)', function() {
     shouldReturn('create', ACL.WRITE);
     shouldReturn('updateOrCreate', ACL.WRITE);
+    shouldReturn('upsertWithWhere', ACL.WRITE);
     shouldReturn('upsert', ACL.WRITE);
     shouldReturn('exists', ACL.READ);
     shouldReturn('findById', ACL.READ);
@@ -643,6 +681,7 @@ describe.onServer('Remote Methods', function() {
         // 'destroyAll', 'deleteAll', 'remove',
         'create',
         'upsert', 'updateOrCreate', 'patchOrCreate',
+        'upsertWithWhere', 'patchOrCreateWithWhere',
         'exists',
         'findById',
         'replaceById',
