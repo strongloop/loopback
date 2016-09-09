@@ -1,3 +1,15 @@
+2016-09-09, Version 2.33.0
+==========================
+
+ * Fix data argument for upsertWithWhere (Amir Jafarian)
+
+ * Expose upsertWithWhere (Sonali Samantaray)
+
+ * Fix remoting metadata for "data" arguments (Miroslav Bajtoš)
+
+ * Rework email validation to use isemail (Miroslav Bajtoš)
+
+
 2016-09-05, Version 2.32.0
 ==========================
 
