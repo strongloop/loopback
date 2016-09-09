@@ -80,26 +80,27 @@ module.exports = function(Role) {
         };
 
         var model = relsToModels[rel];
-        listByPrincipalType.call(this, model, relsToTypes[rel], query, callback);
+        listByPrincipalType(this, model, relsToTypes[rel], query, callback);
       };
     });
 
     /**
      * Fetch all models assigned to this role
      * @private
+     * @param {object} model context
      * @param {*} model model type to fetch
      * @param {String} [principalType] principalType used in the rolemapping for model
      * @param {object} [query] query object passed to model find call
      * @param  {Function} [callback] callback function called with `(err, models)` arguments.
      */
-    function listByPrincipalType(model, principalType, query, callback) {
+    function listByPrincipalType(self, model, principalType, query, callback) {
       if (callback === undefined) {
         callback = query;
         query = {};
       }
 
       roleModel.roleMappingModel.find({
-        where: {roleId: this.id, principalType: principalType}
+        where: {roleId: self.id, principalType: principalType}
       }, function(err, mappings) {
         var ids;
         if (err) {
