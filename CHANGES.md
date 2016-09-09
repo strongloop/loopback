@@ -1,3 +1,25 @@
+2016-09-09, Version 3.0.0-alpha.5
+=================================
+
+ * Use strong-remoting's new TypeRegistry (Miroslav Bajtoš)
+
+ * test/user: don't attach User model twice (Miroslav Bajtoš)
+
+ * app.enableAuth: correctly detect attached models (Miroslav Bajtoš)
+
+ * Fix remoting metadata for "data" arguments (Miroslav Bajtoš)
+
+ * Add instructions for upgrading context (Miroslav Bajtoš)
+
+ * Discard sugar method for model creation (gunjpan)
+
+ * Remove one-var exceptions no longer needed (Miroslav Bajtoš)
+
+ * Rework email validation to use isemail (Miroslav Bajtoš)
+
+ * Expose upsertWithWhere method (Sonali Samantaray)
+
+
 2016-09-05, Version 3.0.0-alpha.4
 =================================
 
