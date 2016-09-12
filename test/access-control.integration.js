@@ -24,6 +24,7 @@ describe('access control - integration', function() {
   });
 
   lt.beforeEach.withApp(app);
+  lt.beforeEach.withUserModel('user');
 
   /*
   describe('accessToken', function() {
@@ -105,7 +106,7 @@ describe('access control - integration', function() {
 
     lt.describe.whenLoggedInAsUser(CURRENT_USER, function() {
       beforeEach(function() {
-        this.url = '/api/users/' + this.user.id + '?ok';
+        this.url = '/api/users/' + this.loggedInAccessToken.userId + '?ok';
       });
       lt.describe.whenCalledRemotely('DELETE', '/api/users/:id', function() {
         lt.it.shouldBeAllowed();
@@ -262,7 +263,7 @@ describe('access control - integration', function() {
         var self = this;
         // Create an account under the given user
         app.models.accountWithReplaceOnPUTtrue.create({
-          userId: self.user.id,
+          userId: self.loggedInAccessToken.userId,
           balance: 100
         }, function(err, act) {
           actId = act.id;
@@ -326,7 +327,7 @@ describe('access control - integration', function() {
         var self = this;
         // Create an account under the given user
         app.models.accountWithReplaceOnPUTfalse.create({
-          userId: self.user.id,
+          userId: self.loggedInAccessToken.userId,
           balance: 100,
         }, function(err, act) {
           actId = act.id;
