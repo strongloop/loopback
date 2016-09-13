@@ -581,38 +581,82 @@ describe('role model', function() {
     });
 
     it('should fetch all models assigned to the role', function(done) {
+
       var principalTypesToModels = {};
-      var runs = 0;
       var mappings;
 
       principalTypesToModels[RoleMapping.USER] = User;
       principalTypesToModels[RoleMapping.APPLICATION] = Application;
       principalTypesToModels[RoleMapping.ROLE] = Role;
-
       mappings = Object.keys(principalTypesToModels);
 
-      mappings.forEach(function(principalType) {
-        var Model = principalTypesToModels[principalType];
-        Model.create({ name: 'test', email: 'x@y.com', password: 'foobar' }, function(err, model) {
-          if (err) return done(err);
-          var uniqueRoleName = 'testRoleFor' + principalType;
-          Role.create({ name: uniqueRoleName }, function(err, role) {
-            if (err) return done(err);
-            role.principals.create({ principalType: principalType, principalId: model.id },
-            function(err, p) {
-              if (err) return done(err);
-              var pluralName = Model.pluralModelName.toLowerCase();
-              role[pluralName](function(err, models) {
-                if (err) return done(err);
-                assert.equal(models.length, 1);
+      async.each(mappings, function(principalType, eachCallback) {
 
-                if (++runs === mappings.length) {
-                  done();
-                }
+        var Model = principalTypesToModels[principalType];
+
+        async.waterfall([
+          // Create models
+          function(next) {
+            Model.create([
+                { name: 'test', email: 'x@y.com', password: 'foobar' },
+                { name: 'test2', email: 'f@v.com', password: 'bargoo' },
+                { name: 'test3', email: 'd@t.com', password: 'bluegoo' }
+              ], function(err, models) {
+                if (err) return next(err);
+                next(null, models);
               });
+          },
+
+          // Create Roles
+          function(models, next) {
+            var uniqueRoleName = 'testRoleFor' + principalType;
+            var otherUniqueRoleName = 'otherTestRoleFor' + principalType;
+            Role.create([
+                { name: uniqueRoleName },
+                { name: otherUniqueRoleName }
+              ], function(err, roles) {
+                if (err) return next(err);
+                next(null, models, roles);
+              });
+          },
+
+          // Create principles
+          function(models, roles, next){
+            async.parallel([
+              function(callback){
+                roles[0].principals.create({ principalType: principalType, principalId: models[0].id },
+                  function(err, p) {
+                    if (err) return callback(err);
+                    callback(p);
+                  });
+              },
+              function(callback){
+                roles[1].principals.create({ principalType: principalType, principalId: models[1].id },
+                  function(err, p) {
+                    if (err) return callback(err);
+                    callback(p);
+                  });
+              }
+            ],
+            function(err, principles) {
+              next(null, models, roles, principles)
             });
-          });
-        });
+          },
+
+          // Run tests against unique Role     
+          function(models, roles, principles, next){
+            var pluralName = Model.pluralModelName.toLowerCase();
+            uniqueRole = roles[0];
+            uniqueRole[pluralName](function(err, models) {
+              if (err) return done(err);
+              assert.equal(models.length, 1);
+              next();
+            });
+          }
+        ], eachCallback);
+      
+      }, function(err){
+        done()
       });
     });
 
