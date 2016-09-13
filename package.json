@@ -86,7 +86,7 @@
     "karma-script-launcher": "^1.0.0",
     "loopback-boot": "^2.7.0",
     "loopback-datasource-juggler": "^2.19.1",
-    "loopback-testing": "~1.1.0",
+    "loopback-testing": "^1.4.0",
     "mocha": "^3.0.0",
     "phantomjs-prebuilt": "^2.1.7",
     "sinon": "^1.13.0",
