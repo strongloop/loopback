@@ -1,3 +1,12 @@
+2016-09-13, Version 2.34.1
+==========================
+
+ * Fix double-slash in confirmation URL (Miroslav Bajtoš)
+
+
+2016-09-12, Version 2.34.0
+==========================
+
 
 
 2016-09-09, Version 2.33.0
