@@ -10,6 +10,7 @@ var loopback = require('../');
 var ACL = loopback.ACL;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
+var Promise = require('bluebird');
 var sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 
@@ -305,6 +306,32 @@ describe.onServer('Remote Methods', function() {
 
           assert(hookCalled, 'hook wasnt called');
 
+          done();
+        });
+    });
+
+    it('Does not stop the hook chain after returning a promise', function(done) {
+      var hooksCalled = [];
+
+      User.beforeRemote('create', function() {
+        hooksCalled.push('first');
+        return Promise.resolve();
+      });
+
+      User.beforeRemote('create', function(ctx, user, next) {
+        hooksCalled.push('second');
+        next();
+      });
+
+      // invoke save
+      request(app)
+        .post('/users')
+        .send({ data: { first: 'foo', last: 'bar' }})
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(hooksCalled).to.eql(['first', 'second']);
           done();
         });
     });
