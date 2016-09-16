@@ -7,9 +7,9 @@
  * Module dependencies.
  */
 
+var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var async = require('async');
-var g = require('strong-globalize')();
 
 /*!
  * Export the middleware.
