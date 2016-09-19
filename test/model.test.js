@@ -698,7 +698,21 @@ describe.onServer('Remote Methods', function() {
       var callbackSpy = require('sinon').spy();
       var TestModel = app.models.TestModelForDisablingRemoteMethod;
       TestModel.on('remoteMethodDisabled', callbackSpy);
-      TestModel.disableRemoteMethod('findOne');
+      TestModel.disableRemoteMethod('findOne', true);
+
+      expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass, 'findOne');
+    });
+
+    it('emits a `remoteMethodDisabled` event from disableRemoteMethodByName', function() {
+      var app = loopback();
+      var model = PersistedModel.extend('TestModelForDisablingRemoteMethod');
+      app.dataSource('db', { connector: 'memory' });
+      app.model(model, { dataSource: 'db' });
+
+      var callbackSpy = require('sinon').spy();
+      var TestModel = app.models.TestModelForDisablingRemoteMethod;
+      TestModel.on('remoteMethodDisabled', callbackSpy);
+      TestModel.disableRemoteMethodByName('findOne');
 
       expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass, 'findOne');
     });
