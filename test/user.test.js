@@ -45,9 +45,12 @@ describe('User', function() {
     app.model(Email, { dataSource: 'email' });
 
     // attach User and related models
+    // forceId is set to false for the purpose of updating the same affected user within the
+    // `Email Update` test cases.
     User = app.registry.createModel('TestUser', {}, {
       base: 'User',
       http: { path: 'test-users' },
+      forceId: false,
     });
     app.model(User, { dataSource: 'db' });
 
@@ -1801,6 +1804,316 @@ describe('User', function() {
             done();
           });
       });
+    });
+  });
+
+  describe('Email Update', function() {
+    describe('User changing email property', function() {
+      var user, originalUserToken1, originalUserToken2, newUserCreated;
+      var currentEmailCredentials = { email: 'original@example.com', password: 'bar' };
+      var updatedEmailCredentials = { email: 'updated@example.com', password: 'bar' };
+      var newUserCred = { email: 'newuser@example.com', password: 'newpass' };
+
+      beforeEach('create user then login', function createAndLogin(done) {
+        async.series([
+          function createUserWithOriginalEmail(next) {
+            User.create(currentEmailCredentials, function(err, userCreated) {
+              if (err) return next(err);
+              user = userCreated;
+              next();
+            });
+          },
+          function firstLoginWithOriginalEmail(next) {
+            User.login(currentEmailCredentials, function(err, accessToken1) {
+              if (err) return next(err);
+              assert(accessToken1.userId);
+              originalUserToken1 = accessToken1.id;
+              next();
+            });
+          },
+          function secondLoginWithOriginalEmail(next) {
+            User.login(currentEmailCredentials, function(err, accessToken2) {
+              if (err) return next(err);
+              assert(accessToken2.userId);
+              originalUserToken2 = accessToken2.id;
+              next();
+            });
+          },
+        ], done);
+      });
+
+      it('invalidates sessions when email is changed using `updateAttributes`', function(done) {
+        user.updateAttributes(
+          { email: updatedEmailCredentials.email },
+          function(err, userInstance) {
+            if (err) return done(err);
+            assertNoAccessTokens(done);
+          });
+      });
+
+      it('invalidates sessions when email is changed using `replaceAttributes`', function(done) {
+        user.replaceAttributes(updatedEmailCredentials, function(err, userInstance) {
+          if (err) return done(err);
+          assertNoAccessTokens(done);
+        });
+      });
+
+      it('invalidates sessions when email is changed using `updateOrCreate`', function(done) {
+        User.updateOrCreate({
+          id: user.id,
+          email: updatedEmailCredentials.email,
+          password: updatedEmailCredentials.password,
+        }, function(err, userInstance) {
+          if (err) return done(err);
+          assertNoAccessTokens(done);
+        });
+      });
+
+      it('invalidates sessions when the email is changed using `replaceById`', function(done) {
+        User.replaceById(user.id, updatedEmailCredentials, function(err, userInstance) {
+          if (err) return done(err);
+          assertNoAccessTokens(done);
+        });
+      });
+
+      it('invalidates sessions when the email is changed using `replaceOrCreate`', function(done) {
+        User.replaceOrCreate({
+          id: user.id,
+          email: updatedEmailCredentials.email,
+          password: updatedEmailCredentials.password,
+        }, function(err, userInstance) {
+          if (err) return done(err);
+          assertNoAccessTokens(done);
+        });
+      });
+
+      it('keeps sessions AS IS if firstName is added using `updateAttributes`', function(done) {
+        user.updateAttributes({ 'firstName': 'Janny' }, function(err, userInstance) {
+          if (err) return done(err);
+          assertUntouchedTokens(done);
+        });
+      });
+
+      it('keeps sessions AS IS if firstName is added using `replaceAttributes`', function(done) {
+        user.replaceAttributes({
+          email: currentEmailCredentials.email,
+          password: currentEmailCredentials.password,
+          firstName: 'Candy',
+        }, function(err, userInstance) {
+          if (err) return done(err);
+          assertUntouchedTokens(done);
+        });
+      });
+
+      it('keeps sessions AS IS if firstName is added using `updateOrCreate`', function(done) {
+        User.updateOrCreate({
+          id: user.id,
+          firstName: 'Loay',
+          email: currentEmailCredentials.email,
+          password: currentEmailCredentials.password,
+        }, function(err, userInstance) {
+          if (err) return done(err);
+          assertUntouchedTokens(done);
+        });
+      });
+
+      it('keeps sessions AS IS if firstName is added using `replaceById`', function(done) {
+        User.replaceById(
+          user.id,
+          {
+            firstName: 'Miroslav',
+            email: currentEmailCredentials.email,
+            password: currentEmailCredentials.password,
+          }, function(err, userInstance) {
+            if (err) return done(err);
+            assertUntouchedTokens(done);
+          });
+      });
+
+      it('keeps sessions AS IS if a new user is created using `create`', function(done) {
+        async.series([
+          function(next) {
+            User.create(newUserCred, function(err, newUserInstance) {
+              if (err) return done(err);
+              newUserCreated = newUserInstance;
+              next();
+            });
+          },
+          function(next) {
+            User.login(newUserCred, function(err, newAccessToken) {
+              if (err) return done(err);
+              assert(newAccessToken.id);
+              assertPreservedToken(next);
+            });
+          },
+        ], done);
+      });
+
+      it('keeps sessions AS IS if a new user is created using `updateOrCreate`', function(done) {
+        async.series([
+          function(next) {
+            User.create(newUserCred, function(err, newUserInstance2) {
+              if (err) return done(err);
+              newUserCreated = newUserInstance2;
+              next();
+            });
+          },
+          function(next) {
+            User.login(newUserCred, function(err, newAccessToken2) {
+              if (err) return done(err);
+              assert(newAccessToken2.id);
+              assertPreservedToken(next);
+            });
+          },
+        ], done);
+      });
+
+      function assertPreservedToken(done) {
+        AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
+          if (err) return done(err);
+          expect(tokens.length).to.equal(2);
+          expect([tokens[0].id, tokens[1].id]).to.have.members([originalUserToken1,
+            originalUserToken2]);
+          done();
+        });
+      };
+
+      function assertNoAccessTokens(done) {
+        AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
+          if (err) return done(err);
+          expect(tokens.length).to.equal(0);
+          done();
+        });
+      }
+
+      function assertUntouchedTokens(done) {
+        AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
+          if (err) return done(err);
+          expect(tokens.length).to.equal(2);
+          done();
+        });
+      }
+    });
+
+    describe('User not changing email property', function() {
+      var user1, user2, user3;
+      it('preserves other users\' sessions if their email is  untouched', function(done) {
+        async.series([
+          function(next) {
+            User.create({ email: 'user1@example.com', password: 'u1pass' }, function(err, u1) {
+              if (err) return done(err);
+              User.create({ email: 'user2@example.com', password: 'u2pass' }, function(err, u2) {
+                if (err) return done(err);
+                User.create({ email: 'user3@example.com', password: 'u3pass' }, function(err, u3) {
+                  if (err) return done(err);
+                  user1 = u1;
+                  user2 = u2;
+                  user3 = u3;
+                  next();
+                });
+              });
+            });
+          },
+          function(next) {
+            User.login(
+              { email: 'user1@example.com', password: 'u1pass' },
+              function(err, accessToken1) {
+                if (err) return next(err);
+                User.login(
+                  { email: 'user2@example.com', password: 'u2pass' },
+                  function(err, accessToken2) {
+                    if (err) return next(err);
+                    User.login({ email: 'user3@example.com', password: 'u3pass' },
+                    function(err, accessToken3) {
+                      if (err) return next(err);
+                      next();
+                    });
+                  });
+              });
+          },
+          function(next) {
+            user2.updateAttribute('email', 'user2Update@b.com', function(err, userInstance) {
+              if (err) return next(err);
+              assert.equal(userInstance.email, 'user2Update@b.com');
+              next();
+            });
+          },
+          function(next) {
+            AccessToken.find({ where: { userId: user1.id }}, function(err, tokens1) {
+              if (err) return next(err);
+              AccessToken.find({ where: { userId: user2.id }}, function(err, tokens2) {
+                if (err) return next(err);
+                AccessToken.find({ where: { userId: user3.id }}, function(err, tokens3) {
+                  if (err) return next(err);
+
+                  expect(tokens1.length).to.equal(1);
+                  expect(tokens2.length).to.equal(0);
+                  expect(tokens3.length).to.equal(1);
+                  next();
+                });
+              });
+            });
+          },
+        ], done);
+      });
+    });
+
+    it('invalidates sessions after using updateAll', function(done) {
+      var userSpecial, userNormal;
+      async.series([
+        function createSpecialUser(next) {
+          User.create(
+              { email: 'special@example.com', password: 'pass1', name: 'Special' },
+              function(err, specialInstance) {
+                if (err) return next (err);
+                userSpecial = specialInstance;
+                next();
+              });
+        },
+        function createNormaluser(next) {
+          User.create(
+              { email: 'normal@example.com', password: 'pass2' },
+              function(err, normalInstance) {
+                if (err) return next (err);
+                userNormal = normalInstance;
+                next();
+              });
+        },
+        function loginSpecialUser(next) {
+          User.login({ email: 'special@example.com', password: 'pass1' }, function(err, ats) {
+            if (err) return next (err);
+            next();
+          });
+        },
+        function loginNormalUser(next) {
+          User.login({ email: 'normal@example.com', password: 'pass2' }, function(err, atn) {
+            if (err) return next (err);
+            next();
+          });
+        },
+        function updateSpecialUser(next) {
+          User.updateAll(
+                { name: 'Special' },
+                { email: 'superspecial@example.com' }, function(err, info) {
+                  if (err) return next (err);
+                  next();
+                });
+        },
+        function verifyTokensOfSpecialUser(next) {
+          AccessToken.find({ where: { userId: userSpecial.id }}, function(err, tokens1) {
+            if (err) return done (err);
+            expect(tokens1.length).to.equal(0);
+            next();
+          });
+        },
+        function verifyTokensOfNormalUser(next) {
+          AccessToken.find({ userId: userNormal.userId }, function(err, tokens2) {
+            if (err) return done (err);
+            expect(tokens2.length).to.equal(1);
+            next();
+          });
+        },
+      ], done);
     });
   });
 
