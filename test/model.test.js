@@ -786,4 +786,108 @@ describe.onServer('Remote Methods', function() {
       // fails on time-out when not implemented correctly
     });
   });
+
+  describe('Model.createOptionsFromRemotingContext', function() {
+    var app, TestModel, accessToken, userId, actualOptions;
+
+    before(setupAppAndRequest);
+    before(createUserAndAccessToken);
+
+    it('sets empty options.accessToken for anonymous requests', function(done) {
+      request(app).get('/TestModels/saveOptions')
+        .expect(204, function(err) {
+          if (err) return done(err);
+          expect(actualOptions).to.eql({accessToken: null});
+          done();
+        });
+    });
+
+    it('sets options.accessToken for authorized requests', function(done) {
+      request(app).get('/TestModels/saveOptions')
+        .set('Authorization', accessToken.id)
+        .expect(204, function(err) {
+          if (err) return done(err);
+          expect(actualOptions).to.have.property('accessToken');
+          expect(actualOptions.accessToken.toObject())
+            .to.eql(accessToken.toObject());
+          done();
+        });
+    });
+
+    it('allows "beforeRemote" hooks to contribute options', function(done) {
+      TestModel.beforeRemote('saveOptions', function(ctx, unused, next) {
+        ctx.args.options.hooked = true;
+        next();
+      });
+
+      request(app).get('/TestModels/saveOptions')
+        .expect(204, function(err) {
+          if (err) return done(err);
+          expect(actualOptions).to.have.property('hooked', true);
+          done();
+        });
+    });
+
+    it('allows apps to add options before remoting hooks', function(done) {
+      TestModel.createOptionsFromRemotingContext = function(ctx) {
+        return {hooks: []};
+      };
+
+      TestModel.beforeRemote('saveOptions', function(ctx, unused, next) {
+        ctx.args.options.hooks.push('beforeRemote');
+        next();
+      });
+
+      // In real apps, this code can live in a component or in a boot script
+      app.remotes().phases
+        .addBefore('invoke', 'options-from-request')
+        .use(function(ctx, next) {
+          ctx.args.options.hooks.push('custom');
+          next();
+        });
+
+      request(app).get('/TestModels/saveOptions')
+        .expect(204, function(err) {
+          if (err) return done(err);
+          expect(actualOptions.hooks).to.eql(['custom', 'beforeRemote']);
+          done();
+        });
+    });
+
+    function setupAppAndRequest() {
+      app = loopback({localRegistry: true, loadBuiltinModels: true});
+
+      app.dataSource('db', {connector: 'memory'});
+
+      TestModel = app.registry.createModel('TestModel', {base: 'Model'});
+      TestModel.saveOptions = function(options, cb) {
+        actualOptions = options;
+        cb();
+      };
+
+      TestModel.remoteMethod('saveOptions', {
+        accepts: {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+        http: {verb: 'GET', path: '/saveOptions'},
+      });
+
+      app.model(TestModel, {dataSource: null});
+
+      app.enableAuth({dataSource: 'db'});
+
+      app.use(loopback.token());
+      app.use(loopback.rest());
+    }
+
+    function createUserAndAccessToken() {
+      var CREDENTIALS = {email: 'context@example.com', password: 'pass'};
+      var User = app.registry.getModel('User');
+      return User.create(CREDENTIALS)
+        .then(function(u) {
+          return User.login(CREDENTIALS);
+        }).then(function(token) {
+          accessToken = token;
+          userId = token.userId;
+        });
+    }
+  });
 });
