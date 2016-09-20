@@ -285,7 +285,9 @@ function formatMethod(m) {
     arr.push([
       m.name,
       '(',
-      m.accepts.map(function(a) {
+      m.accepts.filter(function(a) {
+        return !(a.http && typeof a.http === 'function');
+      }).map(function(a) {
         return a.arg + ':' + a.type + (a.model ? ':' + a.model : '');
       }).join(','),
       ')',

@@ -74,7 +74,7 @@ describe('RemoteConnector', function() {
 
     var ServerModel = this.ServerModel;
 
-    ServerModel.create = function(data, cb) {
+    ServerModel.create = function(data, options, cb) {
       calledServerCreate = true;
       data.id = 1;
       cb(null, data);
