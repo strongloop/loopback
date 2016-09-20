@@ -2193,6 +2193,70 @@ describe('User', function() {
     });
   });
 
+  describe('Verification after updating email', function() {
+    var NEW_EMAIL = 'updated@example.com';
+    var userInstance;
+
+    beforeEach(createOriginalUser);
+
+    it('sets verification to false after email update if verification is required',
+    function(done) {
+      User.settings.emailVerificationRequired = true;
+      async.series([
+        function updateUser(next) {
+          userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
+            if (err) return next (err);
+            assert.equal(info.email, NEW_EMAIL);
+            next();
+          });
+        },
+        function findUser(next) {
+          User.findById(userInstance.id, function(err, info) {
+            if (err) return next (err);
+            assert.equal(info.email, NEW_EMAIL);
+            assert.equal(info.emailVerified, false);
+            next();
+          });
+        },
+      ], done);
+    });
+
+    it('leaves verification as is after email update if verification is not required',
+    function(done) {
+      User.settings.emailVerificationRequired = false;
+      async.series([
+        function updateUser(next) {
+          userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
+            if (err) return next (err);
+            assert.equal(info.email, NEW_EMAIL);
+            next();
+          });
+        },
+        function findUser(next) {
+          User.findById(userInstance.id, function(err, info) {
+            if (err) return next (err);
+            assert.equal(info.email, NEW_EMAIL);
+            assert.equal(info.emailVerified, true);
+            next();
+          });
+        },
+      ], done);
+    });
+
+    function createOriginalUser(done) {
+      var userData = {
+        email: 'original@example.com',
+        password: 'bar',
+        emailVerified: true,
+      };
+      User.create(userData, function(err, instance) {
+        if (err) return done(err);
+        userInstance = instance;
+        done();
+      });
+    }
+  });
+
   describe('password reset with/without email verification', function() {
     it('allows resetPassword by email if email verification is required and done',
     function(done) {
