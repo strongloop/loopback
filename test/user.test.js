@@ -998,6 +998,15 @@ describe('User', function() {
       });
     });
 
+    it('honors unique email for realm', function(done) {
+      User.create(realm1User, function(err, u) {
+        assert(err);
+        assert(err.message.match(/User already exists/) &&
+          err.message.match(/Email already exists/));
+        done();
+      });
+    });
+
     it('rejects a user by without realm', function(done) {
       User.login(credentialWithoutRealm, function(err, accessToken) {
         assert(err);
