@@ -667,6 +667,7 @@ module.exports = function(User) {
 
     // Delete old sessions once email is updated
     UserModel.observe('before save', function beforeEmailUpdate(ctx, next) {
+      var emailChanged;
       if (ctx.isNewInstance) return next();
       if (!ctx.where && !ctx.instance) return next();
       var where = ctx.where || { id: ctx.instance.id };
@@ -675,6 +676,19 @@ module.exports = function(User) {
         ctx.hookState.originalUserData = userInstances.map(function(u) {
           return { id: u.id, email: u.email };
         });
+        if (ctx.instance) {
+          emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
+          if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
+            ctx.instance.emailVerified = false;
+          }
+        } else {
+          emailChanged = ctx.hookState.originalUserData.some(function(data) {
+            return data.email != ctx.data.email;
+          });
+          if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
+            ctx.data.emailVerified = false;
+          }
+        }
         next();
       });
     });
