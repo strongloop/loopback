@@ -1,4 +1,4 @@
-var g = require('strong-globalize')();
+var g = require('../../lib/globalize');
 
 /**
  * Data model for key-value databases.

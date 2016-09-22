@@ -7,8 +7,7 @@
  * Module Dependencies.
  */
 
-var g = require('strong-globalize')();
-
+var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var assert = require('assert');
 var uid = require('uid2');

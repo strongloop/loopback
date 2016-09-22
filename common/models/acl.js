@@ -36,8 +36,7 @@
 
  */
 
-var g = require('strong-globalize')();
-
+var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var async = require('async');
 var assert = require('assert');

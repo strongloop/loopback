@@ -3,10 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-var g = require('strong-globalize')();
-
+var g = require('../../lib/globalize');
 var models = require('../../lib/models');
-
 var loopback = require('../../');
 var app = loopback();
 
