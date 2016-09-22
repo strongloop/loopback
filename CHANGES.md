@@ -1,3 +1,25 @@
+2016-09-22, Version 3.0.0
+=========================
+
+ * Update deps to 3.0.0 RC (Miroslav Bajtoš)
+
+ * Update globalization structure (Candy)
+
+ * Call new disable remote method from model class. (Richard Pringle)
+
+ * Add translation strings (Candy)
+
+ * Support uniqueness for realm users (David Cheung)
+
+ * Invalidate sessions after email change (Loay)
+
+ * Add docs for KeyValue model (Simon Ho)
+
+ * Fix remote method inheritance (Candy)
+
+ * Fix double-slash in confirmation URL (Miroslav Bajtoš)
+
+
 2016-09-09, Version 3.0.0-alpha.5
 =================================
 
