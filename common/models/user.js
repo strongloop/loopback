@@ -7,12 +7,14 @@
  * Module Dependencies.
  */
 
+var g = require('../../lib/globalize');
+var isEmail = require('isemail');
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
 var path = require('path');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
-
+var MAX_PASSWORD_LENGTH = 72;
 var bcrypt;
 try {
   // Try the native module first
@@ -203,14 +205,14 @@ module.exports = function(User) {
       realmDelimiter);
 
     if (realmRequired && !query.realm) {
-      var err1 = new Error('realm is required');
+      var err1 = new Error(g.f('{{realm}} is required'));
       err1.statusCode = 400;
       err1.code = 'REALM_REQUIRED';
       fn(err1);
       return fn.promise;
     }
     if (!query.email && !query.username) {
-      var err2 = new Error('username or email is required');
+      var err2 = new Error(g.f('{{username}} or {{email}} is required'));
       err2.statusCode = 400;
       err2.code = 'USERNAME_EMAIL_REQUIRED';
       fn(err2);
@@ -218,7 +220,7 @@ module.exports = function(User) {
     }
 
     self.findOne({ where: query }, function(err, user) {
-      var defaultError = new Error('login failed');
+      var defaultError = new Error(g.f('login failed'));
       defaultError.statusCode = 401;
       defaultError.code = 'LOGIN_FAILED';
 
@@ -248,7 +250,7 @@ module.exports = function(User) {
             if (self.settings.emailVerificationRequired && !user.emailVerified) {
               // Fail to log in if email verification is not done yet
               debug('User email has not been verified');
-              err = new Error('login failed as the email has not been verified');
+              err = new Error(g.f('login failed as the email has not been verified'));
               err.statusCode = 401;
               err.code = 'LOGIN_FAILED_EMAIL_NOT_VERIFIED';
               fn(err);
@@ -295,11 +297,25 @@ module.exports = function(User) {
       } else if (accessToken) {
         accessToken.destroy(fn);
       } else {
-        fn(new Error('could not find accessToken'));
+        fn(new Error(g.f('could not find {{accessToken}}')));
       }
     });
     return fn.promise;
   };
+
+  User.observe('before delete', function(ctx, next) {
+    var AccessToken = ctx.Model.relations.accessTokens.modelTo;
+    var pkName = ctx.Model.definition.idName() || 'id';
+    ctx.Model.find({ where: ctx.where, fields: [pkName] }, function(err, list) {
+      if (err) return next(err);
+
+      var ids = list.map(function(u) { return u[pkName]; });
+      ctx.where = {};
+      ctx.where[pkName] = { inq: ids };
+
+      AccessToken.destroyAll({ userId: { inq: ids }}, next);
+    });
+  });
 
   /**
    * Compare the given `password` with the users hashed password.
@@ -391,14 +407,18 @@ module.exports = function(User) {
       (options.protocol === 'https' && options.port == '443')
     ) ? '' : ':' + options.port;
 
+    var urlPath = joinUrlPath(
+      options.restApiRoot,
+      userModel.http.path,
+      userModel.sharedClass.findMethodByName('confirm').http.path
+    );
+
     options.verifyHref = options.verifyHref ||
       options.protocol +
       '://' +
       options.host +
       displayPort +
-      options.restApiRoot +
-      userModel.http.path +
-      userModel.sharedClass.findMethodByName('confirm').http.path +
+      urlPath +
       '?uid=' +
       options.user.id +
       '&redirect=' +
@@ -427,14 +447,14 @@ module.exports = function(User) {
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
 
-      options.text = options.text || 'Please verify your email by opening ' +
-        'this link in a web browser:\n\t{href}';
+      options.text = options.text || g.f('Please verify your email by opening ' +
+        'this link in a web browser:\n\t%s', options.verifyHref);
 
       options.text = options.text.replace(/\{href\}/g, options.verifyHref);
 
       options.to = options.to || user.email;
 
-      options.subject = options.subject || 'Thanks for Registering';
+      options.subject = options.subject || g.f('Thanks for Registering');
 
       options.headers = options.headers || {};
 
@@ -485,7 +505,7 @@ module.exports = function(User) {
         fn(err);
       } else {
         if (user && user.verificationToken === token) {
-          user.verificationToken = undefined;
+          user.verificationToken = null;
           user.emailVerified = true;
           user.save(function(err) {
             if (err) {
@@ -496,11 +516,11 @@ module.exports = function(User) {
           });
         } else {
           if (user) {
-            err = new Error('Invalid token: ' + token);
+            err = new Error(g.f('Invalid token: %s', token));
             err.statusCode = 400;
             err.code = 'INVALID_TOKEN';
           } else {
-            err = new Error('User not found: ' + uid);
+            err = new Error(g.f('User not found: %s', uid));
             err.statusCode = 404;
             err.code = 'USER_NOT_FOUND';
           }
@@ -526,28 +546,41 @@ module.exports = function(User) {
     cb = cb || utils.createPromiseCallback();
     var UserModel = this;
     var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
-
     options = options || {};
     if (typeof options.email !== 'string') {
-      var err = new Error('Email is required');
+      var err = new Error(g.f('Email is required'));
       err.statusCode = 400;
       err.code = 'EMAIL_REQUIRED';
       cb(err);
       return cb.promise;
     }
 
+    try {
+      if (options.password) {
+        UserModel.validatePassword(options.password);
+      }
+    } catch (err) {
+      return cb(err);
+    }
     UserModel.findOne({ where: { email: options.email }}, function(err, user) {
       if (err) {
         return cb(err);
       }
       if (!user) {
-        err = new Error('Email not found');
+        err = new Error(g.f('Email not found'));
         err.statusCode = 404;
         err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
+      if (UserModel.settings.emailVerificationRequired && !user.emailVerified) {
+        err = new Error(g.f('Email has not been verified'));
+        err.statusCode = 401;
+        err.code = 'RESET_FAILED_EMAIL_NOT_VERIFIED';
+        return cb(err);
+      }
+
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
         if (err) {
           return cb(err);
@@ -574,14 +607,20 @@ module.exports = function(User) {
   };
 
   User.validatePassword = function(plain) {
-    if (typeof plain === 'string' && plain) {
+    var err;
+    if (plain && typeof plain === 'string' && plain.length <= MAX_PASSWORD_LENGTH) {
       return true;
     }
-    var err =  new Error('Invalid password: ' + plain);
+    if (plain.length > MAX_PASSWORD_LENGTH) {
+      err = new Error (g.f('Password too long: %s', plain));
+      err.code = 'PASSWORD_TOO_LONG';
+    } else {
+      err =  new Error(g.f('Invalid password: %s', plain));
+      err.code = 'INVALID_PASSWORD';
+    }
     err.statusCode = 422;
     throw err;
   };
-
   /*!
    * Setup an extended user model.
    */
@@ -633,6 +672,34 @@ module.exports = function(User) {
       next();
     });
 
+    // Delete old sessions once email is updated
+    UserModel.observe('before save', function beforeEmailUpdate(ctx, next) {
+      if (ctx.isNewInstance) return next();
+      if (!ctx.where && !ctx.instance) return next();
+      var where = ctx.where || { id: ctx.instance.id };
+      ctx.Model.find({ where: where }, function(err, userInstances) {
+        if (err) return next(err);
+        ctx.hookState.originalUserData = userInstances.map(function(u) {
+          return { id: u.id, email: u.email };
+        });
+        next();
+      });
+    });
+
+    UserModel.observe('after save', function afterEmailUpdate(ctx, next) {
+      if (!ctx.Model.relations.accessTokens) return next();
+      var AccessToken = ctx.Model.relations.accessTokens.modelTo;
+      var newEmail = (ctx.instance || ctx.data).email;
+      if (!ctx.hookState.originalUserData) return next();
+      var idsToExpire = ctx.hookState.originalUserData.filter(function(u) {
+        return u.email !== newEmail;
+      }).map(function(u) {
+        return u.id;
+      });
+      if (!idsToExpire.length) return next();
+      AccessToken.deleteAll({ userId: { inq: idsToExpire }}, next);
+    });
+
     UserModel.remoteMethod(
       'login',
       {
@@ -646,10 +713,11 @@ module.exports = function(User) {
         returns: {
           arg: 'accessToken', type: 'object', root: true,
           description:
-            'The response body contains properties of the AccessToken created on login.\n' +
+            g.f('The response body contains properties of the {{AccessToken}} created on login.\n' +
             'Depending on the value of `include` parameter, the body may contain ' +
             'additional properties:\n\n' +
-            '  - `user` - `{User}` - Data of the currently logged in user. (`include=user`)\n\n',
+            '  - `user` - `U+007BUserU+007D` - Data of the currently logged in user. ' +
+            '{{(`include=user`)}}\n\n'),
         },
         http: { verb: 'post' },
       }
@@ -701,7 +769,7 @@ module.exports = function(User) {
     UserModel.afterRemote('confirm', function(ctx, inst, next) {
       if (ctx.args.redirect !== undefined) {
         if (!ctx.res) {
-          return next(new Error('The transport does not support HTTP redirects.'));
+          return next(new Error(g.f('The transport does not support HTTP redirects.')));
         }
         ctx.res.location(ctx.args.redirect);
         ctx.res.status(302);
@@ -716,13 +784,22 @@ module.exports = function(User) {
     assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
     UserModel.accessToken = loopback.AccessToken;
 
-    // email validation regex
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    UserModel.validate('email', emailValidator, {
+      message: g.f('Must provide a valid email'),
+    });
 
-    UserModel.validatesFormatOf('email', { with: re, message: 'Must provide a valid email' });
-
-    // FIXME: We need to add support for uniqueness of composite keys in juggler
-    if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
+    // Realm users validation
+    if (UserModel.settings.realmRequired && UserModel.settings.realmDelimiter) {
+      UserModel.validatesUniquenessOf('email', {
+        message: 'Email already exists',
+        scopedTo: ['realm'],
+      });
+      UserModel.validatesUniquenessOf('username', {
+        message: 'User already exists',
+        scopedTo: ['realm'],
+      });
+    } else {
+      // Regular(Non-realm) users validation
       UserModel.validatesUniquenessOf('email', { message: 'Email already exists' });
       UserModel.validatesUniquenessOf('username', { message: 'User already exists' });
     }
@@ -736,3 +813,24 @@ module.exports = function(User) {
 
   User.setup();
 };
+
+function emailValidator(err, done) {
+  var value = this.email;
+  if (value == null)
+    return;
+  if (typeof value !== 'string')
+    return err('string');
+  if (value === '') return;
+  if (!isEmail(value))
+    return err('email');
+}
+
+function joinUrlPath(args) {
+  var result = arguments[0];
+  for (var ix = 1; ix < arguments.length; ix++) {
+    var next = arguments[ix];
+    result += result[result.length - 1] === '/' && next[0] === '/' ?
+      next.slice(1) : next;
+  }
+  return result;
+}

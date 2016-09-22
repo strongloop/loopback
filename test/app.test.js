@@ -12,6 +12,7 @@ var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
 
 var describe = require('./util/describe');
+var expect = require('chai').expect;
 var it = require('./util/it');
 
 describe('app', function() {
@@ -610,11 +611,12 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app, db;
+    var app, db, MyTestModel;
     beforeEach(function() {
       app = loopback();
       app.set('remoting', { errorHandler: { debug: true, log: false }});
       db = loopback.createDataSource({ connector: loopback.Memory });
+      MyTestModel = app.registry.createModel('MyTestModel');
     });
 
     it('Expose a `Model` to remote clients', function() {
@@ -625,7 +627,7 @@ describe('app', function() {
       expect(app.models()).to.eql([Color]);
     });
 
-    it('uses singlar name as app.remoteObjects() key', function() {
+    it('uses singular name as app.remoteObjects() key', function() {
       var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
@@ -670,7 +672,7 @@ describe('app', function() {
         disabledRemoteMethod = methodName;
       });
       app.model(Color);
-      app.models.Color.disableRemoteMethod('findOne');
+      app.models.Color.disableRemoteMethodByName('findOne');
       expect(remoteMethodDisabledClass).to.exist;
       expect(remoteMethodDisabledClass).to.eql(Color.sharedClass);
       expect(disabledRemoteMethod).to.exist;
@@ -688,76 +690,26 @@ describe('app', function() {
       });
     });
 
-    it('accepts null dataSource', function() {
-      app.model('MyTestModel', { dataSource: null });
+    it('accepts null dataSource', function(done) {
+      app.model(MyTestModel, { dataSource: null });
+      expect(MyTestModel.dataSource).to.eql(null);
+      done();
     });
 
-    it('accepts false dataSource', function() {
-      app.model('MyTestModel', { dataSource: false });
+    it('accepts false dataSource', function(done) {
+      app.model(MyTestModel, { dataSource: false });
+      expect(MyTestModel.getDataSource()).to.eql(null);
+      done();
     });
 
-    it('should not require dataSource', function() {
-      app.model('MyTestModel', {});
-    });
-  });
-
-  describe('app.model(name, config)', function() {
-    var app;
-
-    beforeEach(function() {
-      app = loopback();
-      app.dataSource('db', {
-        connector: 'memory',
-      });
+    it('does not require dataSource', function(done) {
+      app.model(MyTestModel);
+      done();
     });
 
-    it('Sugar for defining a fully built model', function() {
-      app.model('foo', {
-        dataSource: 'db',
-      });
-
-      var Foo = app.models.foo;
-      var f = new Foo();
-
-      assert(f instanceof app.registry.getModel('Model'));
-    });
-
-    it('interprets extra first-level keys as options', function() {
-      app.model('foo', {
-        dataSource: 'db',
-        base: 'User',
-      });
-
-      expect(app.models.foo.definition.settings.base).to.equal('User');
-    });
-
-    it('prefers config.options.key over config.key', function() {
-      app.model('foo', {
-        dataSource: 'db',
-        base: 'User',
-        options: {
-          base: 'Application',
-        },
-      });
-
-      expect(app.models.foo.definition.settings.base).to.equal('Application');
-    });
-
-    it('honors config.public options', function() {
-      app.model('foo', {
-        dataSource: 'db',
-        public: false,
-      });
-      expect(app.models.foo.app).to.equal(app);
-      expect(app.models.foo.shared).to.equal(false);
-    });
-
-    it('defaults config.public to be true', function() {
-      app.model('foo', {
-        dataSource: 'db',
-      });
-      expect(app.models.foo.app).to.equal(app);
-      expect(app.models.foo.shared).to.equal(true);
+    it('throws error if model typeof string is passed', function() {
+      var fn = function() { app.model('MyTestModel'); };
+      expect(fn).to.throw(/app(\.model|\.registry)/);
     });
   });
 
@@ -771,7 +723,8 @@ describe('app', function() {
       }
 
       assert(!previousModel || !previousModel.dataSource);
-      app.model('TestModel', { dataSource: 'db' });
+      var TestModel = app.registry.createModel('TestModel');
+      app.model(TestModel, { dataSource: 'db' });
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
   });
@@ -779,7 +732,8 @@ describe('app', function() {
   describe('app.models', function() {
     it('is unique per app instance', function() {
       app.dataSource('db', { connector: 'memory' });
-      var Color = app.model('Color', { dataSource: 'db' });
+      var Color = app.registry.createModel('Color');
+      app.model(Color, { dataSource: 'db' });
       expect(app.models.Color).to.equal(Color);
       var anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);
@@ -810,6 +764,12 @@ describe('app', function() {
       expect(function() {
         app.dataSource('bad-ds', { connector: 'throwing' });
       }).to.throw(/bad-ds.*throwing/);
+    });
+
+    it('adds app reference to the data source object', function() {
+      app.dataSource('ds', { connector: 'memory' });
+      expect(app.datasources.ds.app).to.not.equal(undefined);
+      expect(app.datasources.ds.app).to.equal(app);
     });
   });
 
@@ -937,18 +897,14 @@ describe('app', function() {
         .end(function(err, res) {
           if (err) return done(err);
 
-          assert.equal(typeof res.body, 'object');
-          assert(res.body.started);
-          // The number can be 0
-          assert(res.body.uptime !== undefined);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.have.property('started');
+          expect(res.body.uptime, 'uptime').to.be.gte(0);
 
           var elapsed = Date.now() - Number(new Date(res.body.started));
 
-          // elapsed should be a positive number...
-          assert(elapsed >= 0);
-
-          // less than 100 milliseconds
-          assert(elapsed < 100);
+          // elapsed should be a small positive number...
+          expect(elapsed, 'elapsed').to.be.within(0, 300);
 
           done();
         });
@@ -1040,8 +996,18 @@ describe('app', function() {
 });
 
 function executeMiddlewareHandlers(app, urlPath, callback) {
+  var handlerError = undefined;
   var server = http.createServer(function(req, res) {
-    app.handle(req, res, callback);
+    app.handle(req, res, function(err) {
+      if (err) {
+        handlerError = err;
+        res.statusCode = err.status || err.statusCode || 500;
+        res.end(err.stack || err);
+      } else {
+        res.statusCode = 204;
+        res.end();
+      }
+    });
   });
 
   if (callback === undefined && typeof urlPath === 'function') {
@@ -1052,6 +1018,6 @@ function executeMiddlewareHandlers(app, urlPath, callback) {
   request(server)
     .get(urlPath)
     .end(function(err) {
-      if (err) return callback(err);
+      callback(handlerError || err);
     });
 }

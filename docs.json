@@ -24,6 +24,7 @@
     "common/models/application.js",
     "common/models/change.js",
     "common/models/email.js",
+    "common/models/key-value-model.js",
     "common/models/role.js",
     "common/models/role-mapping.js",
     "common/models/scope.js",

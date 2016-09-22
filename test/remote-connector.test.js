@@ -7,13 +7,18 @@ var loopback = require('../');
 var defineModelTestsWithDataSource = require('./util/model-tests');
 
 describe('RemoteConnector', function() {
+  this.timeout(10000);
+
   var remoteApp, remote;
 
   defineModelTestsWithDataSource({
     beforeEach: function(done) {
       var test = this;
       remoteApp = loopback();
-      remoteApp.set('remoting', { errorHandler: { debug: true, log: false }});
+      remoteApp.set('remoting', {
+        errorHandler: { debug: true, log: false },
+        types: { warnWhenOverridingType: false },
+      });
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
         test.dataSource = loopback.createDataSource({
@@ -25,19 +30,33 @@ describe('RemoteConnector', function() {
         done();
       });
     },
+
+    // We are defining the model attached to the remote connector datasource,
+    // therefore change tracking must be disabled, only the remote API for
+    // replication should be present
+    trackChanges: false,
+    enableRemoteReplication: true,
+
     onDefine: function(Model) {
-      var RemoteModel = Model.extend('Remote' + Model.modelName, {},
-        { plural: Model.pluralModelName });
-      RemoteModel.attachTo(loopback.createDataSource({
+      var ServerModel = Model.extend('Server' + Model.modelName, {}, {
+        plural: Model.pluralModelName,
+        // This is the model running on the server & attached to a real
+        // datasource, that's the place where to keep track of changes
+        trackChanges: true,
+      });
+      ServerModel.attachTo(loopback.createDataSource({
         connector: loopback.Memory,
       }));
-      remoteApp.model(RemoteModel);
+      remoteApp.model(ServerModel);
     },
   });
 
   beforeEach(function(done) {
     var test = this;
     remoteApp = this.remoteApp = loopback();
+    remoteApp.set('remoting', {
+      types: { warnWhenOverridingType: false },
+    });
     remoteApp.use(loopback.rest());
     var ServerModel = this.ServerModel = loopback.PersistedModel.extend('TestModel');
 

@@ -1,3 +1,147 @@
+2016-09-22, Version 3.0.0
+=========================
+
+ * Update deps to 3.0.0 RC (Miroslav Bajtoš)
+
+ * Update globalization structure (Candy)
+
+ * Call new disable remote method from model class. (Richard Pringle)
+
+ * Add translation strings (Candy)
+
+ * Support uniqueness for realm users (David Cheung)
+
+ * Invalidate sessions after email change (Loay)
+
+ * Add docs for KeyValue model (Simon Ho)
+
+ * Fix remote method inheritance (Candy)
+
+ * Fix double-slash in confirmation URL (Miroslav Bajtoš)
+
+
+2016-09-09, Version 3.0.0-alpha.5
+=================================
+
+ * Use strong-remoting's new TypeRegistry (Miroslav Bajtoš)
+
+ * test/user: don't attach User model twice (Miroslav Bajtoš)
+
+ * app.enableAuth: correctly detect attached models (Miroslav Bajtoš)
+
+ * Fix remoting metadata for "data" arguments (Miroslav Bajtoš)
+
+ * Add instructions for upgrading context (Miroslav Bajtoš)
+
+ * Discard sugar method for model creation (gunjpan)
+
+ * Remove one-var exceptions no longer needed (Miroslav Bajtoš)
+
+ * Rework email validation to use isemail (Miroslav Bajtoš)
+
+ * Expose upsertWithWhere method (Sonali Samantaray)
+
+
+2016-09-05, Version 3.0.0-alpha.4
+=================================
+
+ * Update loopback-connector-remote to 2.0-alpha (Miroslav Bajtoš)
+
+ * Add remoting for KeyValue model TTL feature (Simon Ho)
+
+ * Add lint NPM script (Simon Ho)
+
+ * Make the app instance available to connectors (Subramanian Krishnan)
+
+ * Update pre-release dependencies (Miroslav Bajtoš)
+
+ * Apply g.f to literal strings (Setogit)
+
+ * Allow resetPassword if  emailVerified (Loay)
+
+ * Reorder PATCH Vs PUT endpoints (Amir Jafarian)
+
+ * streamline use if `self` (Benjamin Kroeger)
+
+ * resolve related models from correct registry (Benjamin Kroeger)
+
+ * KeyValueModel: add API for listing keys (Miroslav Bajtoš)
+
+ * Fix token middleware crash (Carl Fürstenberg)
+
+ * loopback#context: fix missing "g" symbol (Miroslav Bajtoš)
+
+ * Update acl.js (Rand McKinney)
+
+ * Support 'alias' in mail transport config. (Samuel Reed)
+
+ * Remove unnecessary g.log (Setogit)
+
+ * Revert globalization of Swagger descriptions (Miroslav Bajtoš)
+
+ * Revert globalization of assert() messages (Miroslav Bajtoš)
+
+ * Add bcrypt validation (Loay)
+
+
+2016-08-11, Version 3.0.0-alpha.3
+=================================
+
+ * common: add KeyValueModel (Miroslav Bajtoš)
+
+ * Globalize current-context error messages (Miroslav Bajtoš)
+
+ * Remove current-context API (Miroslav Bajtoš)
+
+ * Fix forceId in tests (jannyHou)
+
+ * test: increase timeout to prevent CI failures (Miroslav Bajtoš)
+
+ * Update globalization string (Candy)
+
+ * Update globalization (Candy)
+
+ * Add globalization (Candy)
+
+ * test: fix "socket hang up" error in app.test (Miroslav Bajtoš)
+
+ * test: increate timeout in Role test (Miroslav Bajtoš)
+
+ * test: make status test more robust (Miroslav Bajtoš)
+
+ * test: fix broken Role tests (Miroslav Bajtoš)
+
+ * Update dependencies to their latest versions (Miroslav Bajtoš)
+
+ * Increase timeout (jannyHou)
+
+ * test: fix change-tracking setup (Miroslav Bajtoš)
+
+ * test: use local registry in test fixtures (Miroslav Bajtoš)
+
+ * Update loopback.js (Rand McKinney)
+
+ * Fix test case error (Loay)
+
+ * Update user.js (Loay)
+
+ * Fix security issue 580 (Loay)
+
+ * Update URLs in CONTRIBUTING.md (#2503) (Ryan Graham)
+
+ * Remove legacyExplorer (gunjpan)
+
+ * Remove `rectifyAllChanges` and `rectifyChange` (Candy)
+
+ * Fix verificationToken bug (Loay)
+
+ * update express version (Loay)
+
+ * Cleanup unit-test added in 1fc51d129 (Miroslav Bajtoš)
+
+ * update errorHandler template (Loay)
+
+
 2016-06-13, Version 3.0.0-alpha.2
 =================================
 

@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+var g = require('../../lib/globalize');
 var loopback = require('../../');
 var app = loopback();
 
@@ -25,4 +26,4 @@ Color.all(function() {
 
 app.listen(3000);
 
-console.log('a list of colors is available at http://localhost:3000/colors');
+g.log('a list of colors is available at {{http://localhost:3000/colors}}');

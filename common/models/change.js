@@ -7,6 +7,7 @@
  * Module Dependencies.
  */
 
+var g = require('../../lib/globalize');
 var PersistedModel = require('../../lib/loopback').PersistedModel;
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
@@ -110,7 +111,7 @@ module.exports = function(Change) {
           })
           .join('\n');
 
-        var msg = 'Cannot rectify ' + modelName + ' changes:\n' + desc;
+        var msg = g.f('Cannot rectify %s changes:\n%s', modelName, desc);
         err = new Error(msg);
         err.details = { errors: errors };
         return callback(err);
@@ -144,7 +145,7 @@ module.exports = function(Change) {
    */
 
   Change.findOrCreateChange = function(modelName, modelId, callback) {
-    assert(loopback.findModel(modelName), modelName + ' does not exist');
+    assert(this.registry.findModel(modelName), modelName + ' does not exist');
     callback = callback || utils.createPromiseCallback();
     var id = this.idForModel(modelName, modelId);
     var Change = this;

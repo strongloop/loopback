@@ -36,6 +36,7 @@
 
  */
 
+var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var async = require('async');
 var assert = require('assert');
@@ -72,7 +73,7 @@ assert(Role, 'Role model must be defined before ACL model');
  *  - ALLOW: Explicitly grants access to the resource.
  *  - AUDIT: Log, in a system-dependent way, the access specified in the permissions component of the ACL entry.
  *  - DENY: Explicitly denies access to the resource.
- * @property {String} principalType Type of the principal; one of: Application, Use, Role.
+ * @property {String} principalType Type of the principal; one of: Application, User, Role.
  * @property {String} principalId ID of the principal - such as appId, userId or roleId.
  * @property {Object} settings Extends the `Model.settings` object.
  * @property {String} settings.defaultPermission Default permission setting: ALLOW, DENY, ALARM, or AUDIT. Default is ALLOW.
@@ -268,7 +269,7 @@ module.exports = function(ACL) {
    * @return {Object[]} An array of ACLs
    */
   ACL.getStaticACLs = function getStaticACLs(model, property) {
-    var modelClass = loopback.findModel(model);
+    var modelClass = this.registry.findModel(model);
     var staticACLs = [];
     if (modelClass && modelClass.settings.acls) {
       modelClass.settings.acls.forEach(function(acl) {
@@ -361,7 +362,7 @@ module.exports = function(ACL) {
         acls = acls.concat(dynACLs);
         resolved = self.resolvePermission(acls, req);
         if (resolved && resolved.permission === ACL.DEFAULT) {
-          var modelClass = loopback.findModel(model);
+          var modelClass = self.registry.findModel(model);
           resolved.permission = (modelClass && modelClass.settings.defaultPermission) || ACL.ALLOW;
         }
         if (callback) callback(null, resolved);
@@ -393,7 +394,9 @@ module.exports = function(ACL) {
    */
 
   ACL.checkAccessForContext = function(context, callback) {
-    var registry = this.registry;
+    var self = this;
+    self.resolveRelatedModels();
+    var roleModel = self.roleModel;
 
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
@@ -416,10 +419,8 @@ module.exports = function(ACL) {
     var req = new AccessRequest(modelName, property, accessType, ACL.DEFAULT, methodNames);
 
     var effectiveACLs = [];
-    var staticACLs = this.getStaticACLs(model.modelName, property);
+    var staticACLs = self.getStaticACLs(model.modelName, property);
 
-    var self = this;
-    var roleModel = registry.getModelByType(Role);
     this.find({ where: { model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery }}, function(err, acls) {
       if (err) {
@@ -506,10 +507,10 @@ module.exports = function(ACL) {
   ACL.resolveRelatedModels = function() {
     if (!this.roleModel) {
       var reg = this.registry;
-      this.roleModel = reg.getModelByType(loopback.Role);
-      this.roleMappingModel = reg.getModelByType(loopback.RoleMapping);
-      this.userModel = reg.getModelByType(loopback.User);
-      this.applicationModel = reg.getModelByType(loopback.Application);
+      this.roleModel = reg.getModelByType('Role');
+      this.roleMappingModel = reg.getModelByType('RoleMapping');
+      this.userModel = reg.getModelByType('User');
+      this.applicationModel = reg.getModelByType('Application');
     }
   };
 
@@ -536,7 +537,7 @@ module.exports = function(ACL) {
         break;
       default:
         process.nextTick(function() {
-          var err = new Error('Invalid principal type: ' + type);
+          var err = new Error(g.f('Invalid principal type: %s', type));
           err.statusCode = 400;
           cb(err);
         });
