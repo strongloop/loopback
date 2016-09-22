@@ -1,6 +1,11 @@
 {
   "name": "widget",
-  "properties": {},
+  "properties": {
+    "name": {
+      "type": "string",
+      "default": "DefaultWidgetName"
+    }
+  },
   "relations": {
     "store": {
       "model": "store",

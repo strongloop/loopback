@@ -6,6 +6,7 @@
 var path = require('path');
 
 describe('loopback.rest', function() {
+  this.timeout(10000);
   var app, MyModel;
 
   beforeEach(function() {
@@ -27,7 +28,6 @@ describe('loopback.rest', function() {
   });
 
   it('should report 200 for DELETE /:id found', function(done) {
-    app.set('legacyExplorer', false);
     app.model(MyModel);
     app.use(loopback.rest());
     MyModel.create({ name: 'm1' }, function(err, inst) {
@@ -195,153 +195,6 @@ describe('loopback.rest', function() {
           done();
         });
     }, done);
-  });
-
-  it('should report 200 for legacy explorer route /routes', function(done) {
-    app.use(loopback.rest());
-    request(app).get('/routes')
-      .expect(200)
-      .end(function(err, res) {
-        if (err) return done(err);
-
-        expect(res.body).to.eql([]);
-
-        done();
-      });
-  });
-
-  it('should report 200 for legacy explorer route /models', function(done) {
-    app.use(loopback.rest());
-    request(app).get('/models')
-      .expect(200)
-      .end(function(err, res) {
-        if (err) return done(err);
-
-        expect(res.body).to.eql({});
-
-        done();
-      });
-  });
-
-  it('should report 404 for disabled legacy explorer route /routes', function(done) {
-    app.set('legacyExplorer', false);
-    app.use(loopback.rest());
-    request(app).get('/routes')
-      .expect(404)
-      .end(done);
-  });
-
-  it('should report 404 for disabled legacy explorer route /models', function(done) {
-    app.set('legacyExplorer', false);
-    app.use(loopback.rest());
-    request(app).get('/models')
-      .expect(404)
-      .end(done);
-  });
-
-  describe('context propagation', function() {
-    var User;
-
-    beforeEach(function() {
-      User = givenUserModelWithAuth();
-      User.getToken = function(cb) {
-        var context = loopback.getCurrentContext();
-        var req = context.get('http').req;
-        expect(req).to.have.property('accessToken');
-
-        var juggler = require('loopback-datasource-juggler');
-        expect(juggler.getCurrentContext().get('http').req)
-          .to.have.property('accessToken');
-
-        var remoting = require('strong-remoting');
-        expect(remoting.getCurrentContext().get('http').req)
-          .to.have.property('accessToken');
-
-        cb(null, req && req.accessToken ? req.accessToken.id : null);
-      };
-      // Set up the ACL
-      User.settings.acls.push({ principalType: 'ROLE',
-        principalId: '$authenticated', permission: 'ALLOW',
-        property: 'getToken' });
-
-      loopback.remoteMethod(User.getToken, {
-        accepts: [],
-        returns: [
-          { type: 'object', name: 'id' },
-        ],
-      });
-    });
-
-    function invokeGetToken(done) {
-      givenLoggedInUser(function(err, token) {
-        if (err) return done(err);
-
-        request(app).get('/users/getToken')
-          .set('Authorization', token.id)
-          .expect(200)
-          .end(function(err, res) {
-            if (err) return done(err);
-
-            expect(res.body.id).to.equal(token.id);
-
-            done();
-          });
-      });
-    }
-
-    it('should enable context using loopback.context', function(done) {
-      app.use(loopback.context({ enableHttpContext: true }));
-      app.enableAuth({ dataSource: 'db' });
-      app.use(loopback.rest());
-
-      invokeGetToken(done);
-    });
-
-    it('should enable context with loopback.rest', function(done) {
-      app.enableAuth({ dataSource: 'db' });
-      app.set('remoting', { context: { enableHttpContext: true }});
-      app.use(loopback.rest());
-
-      invokeGetToken(done);
-    });
-
-    it('should support explicit context', function(done) {
-      app.enableAuth({ dataSource: 'db' });
-      app.use(loopback.context());
-      app.use(loopback.token(
-        { model: app.registry.getModelByType('AccessToken') }));
-      app.use(function(req, res, next) {
-        loopback.getCurrentContext().set('accessToken', req.accessToken);
-
-        next();
-      });
-      app.use(loopback.rest());
-
-      User.getToken = function(cb) {
-        var context = loopback.getCurrentContext();
-        var accessToken = context.get('accessToken');
-        expect(context.get('accessToken')).to.have.property('id');
-
-        var juggler = require('loopback-datasource-juggler');
-        context = juggler.getCurrentContext();
-        expect(context.get('accessToken')).to.have.property('id');
-
-        var remoting = require('strong-remoting');
-        context = remoting.getCurrentContext();
-        expect(context.get('accessToken')).to.have.property('id');
-
-        cb(null, accessToken ? accessToken.id : null);
-      };
-
-      loopback.remoteMethod(User.getToken, {
-        accepts: [],
-        returns: [
-          { type: 'object', name: 'id' },
-        ],
-      });
-
-      invokeGetToken(done);
-    });
   });
 
   function givenUserModelWithAuth() {

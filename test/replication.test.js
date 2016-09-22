@@ -13,6 +13,8 @@ var expect = require('chai').expect;
 var debug = require('debug')('test');
 
 describe('Replication / Change APIs', function() {
+  this.timeout(10000);
+
   var dataSource, SourceModel, TargetModel, useSinceFilter;
   var tid = 0; // per-test unique id used e.g. to build unique model names
 
@@ -1005,6 +1007,19 @@ describe('Replication / Change APIs', function() {
 
           assertChangeRecordedForId(inst.id, done);
         });
+      });
+    });
+
+    it('detects "upsertWithWhere"', function(done) {
+      givenReplicatedInstance(function(err, inst) {
+        if (err) return done(err);
+        SourceModel.upsertWithWhere(
+          { name: inst.name },
+          { name: 'updated' },
+          function(err) {
+            if (err) return done(err);
+            assertChangeRecordedForId(inst.id, done);
+          });
       });
     });
 

@@ -6,7 +6,6 @@
 var async = require('async');
 var loopback = require('../');
 var ACL = loopback.ACL;
-var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
 
@@ -74,7 +73,10 @@ describe.onServer('Remote Methods', function() {
   var User, Post, dataSource, app;
 
   beforeEach(function() {
-    User = PersistedModel.extend('user', {
+    app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
+
+    User = app.registry.createModel('user', {
       id: { id: true, type: String, defaultFn: 'guid' },
       'first': String,
       'last': String,
@@ -87,7 +89,7 @@ describe.onServer('Remote Methods', function() {
       trackChanges: true,
     });
 
-    Post = PersistedModel.extend('post', {
+    Post = app.registry.createModel('post', {
       id: { id: true, type: String, defaultFn: 'guid' },
       title: String,
       content: String,
@@ -95,12 +97,10 @@ describe.onServer('Remote Methods', function() {
       trackChanges: true,
     });
 
-    dataSource = loopback.createDataSource({
-      connector: loopback.Memory,
-    });
+    dataSource = app.dataSource('db', { connector: 'memory' });
 
-    User.attachTo(dataSource);
-    Post.attachTo(dataSource);
+    app.model(User, { dataSource: 'db' });
+    app.model(Post, { dataSource: 'db' });
 
     User.hasMany(Post);
 
@@ -112,22 +112,16 @@ describe.onServer('Remote Methods', function() {
       }
     };
 
-    loopback.remoteMethod(
-      User.login,
-      {
-        accepts: [
-          { arg: 'username', type: 'string', required: true },
-          { arg: 'password', type: 'string', required: true },
-        ],
-        returns: { arg: 'sessionId', type: 'any', root: true },
-        http: { path: '/sign-in', verb: 'get' },
-      }
-    );
+    User.remoteMethod('login', {
+      accepts: [
+        { arg: 'username', type: 'string', required: true },
+        { arg: 'password', type: 'string', required: true },
+      ],
+      returns: { arg: 'sessionId', type: 'any', root: true },
+      http: { path: '/sign-in', verb: 'get' },
+    });
 
-    app = loopback();
-    app.set('remoting', { errorHandler: { debug: true, log: false }});
     app.use(loopback.rest());
-    app.model(User);
   });
 
   describe('Model.destroyAll(callback)', function() {
@@ -146,6 +140,43 @@ describe.onServer('Remote Methods', function() {
 
                 done();
               });
+            });
+          });
+        });
+    });
+  });
+
+  describe('Model.upsertWithWhere(where, data, callback)', function() {
+    it('Updates when a Model instance is retreived from data source', function(done) {
+      var taskEmitter = new TaskEmitter();
+      taskEmitter
+        .task(User, 'create', { first: 'jill', second: 'pill' })
+        .task(User, 'create', { first: 'bob', second: 'sob' })
+        .on('done', function() {
+          User.upsertWithWhere({ second: 'pill' }, { second: 'jones' }, function(err, user) {
+            if (err) return done(err);
+            var id = user.id;
+            User.findById(id, function(err, user) {
+              if (err) return done(err);
+              assert.equal(user.second, 'jones');
+              done();
+            });
+          });
+        });
+    });
+
+    it('Creates when no Model instance is retreived from data source', function(done) {
+      var taskEmitter = new TaskEmitter();
+      taskEmitter
+        .task(User, 'create', { first: 'simon', second: 'somers' })
+        .on('done', function() {
+          User.upsertWithWhere({ first: 'somers' }, { first: 'Simon' }, function(err, user) {
+            if (err) return done(err);
+            var id = user.id;
+            User.findById(id, function(err, user) {
+              if (err) return done(err);
+              assert.equal(user.first, 'Simon');
+              done();
             });
           });
         });
@@ -521,6 +552,7 @@ describe.onServer('Remote Methods', function() {
   describe('Model.checkAccessTypeForMethod(remoteMethod)', function() {
     shouldReturn('create', ACL.WRITE);
     shouldReturn('updateOrCreate', ACL.WRITE);
+    shouldReturn('upsertWithWhere', ACL.WRITE);
     shouldReturn('upsert', ACL.WRITE);
     shouldReturn('exists', ACL.READ);
     shouldReturn('findById', ACL.READ);
@@ -549,7 +581,7 @@ describe.onServer('Remote Methods', function() {
     it('Get the Change Model', function() {
       var UserChange = User.getChangeModel();
       var change = new UserChange();
-      assert(change instanceof Change);
+      assert(change instanceof app.registry.getModel('Change'));
     });
   });
 
@@ -640,6 +672,7 @@ describe.onServer('Remote Methods', function() {
         // 'destroyAll', 'deleteAll', 'remove',
         'create',
         'upsert', 'updateOrCreate', 'patchOrCreate',
+        'upsertWithWhere', 'patchOrCreateWithWhere',
         'exists',
         'findById',
         'replaceById',
@@ -665,7 +698,21 @@ describe.onServer('Remote Methods', function() {
       var callbackSpy = require('sinon').spy();
       var TestModel = app.models.TestModelForDisablingRemoteMethod;
       TestModel.on('remoteMethodDisabled', callbackSpy);
-      TestModel.disableRemoteMethod('findOne');
+      TestModel.disableRemoteMethod('findOne', true);
+
+      expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass, 'findOne');
+    });
+
+    it('emits a `remoteMethodDisabled` event from disableRemoteMethodByName', function() {
+      var app = loopback();
+      var model = PersistedModel.extend('TestModelForDisablingRemoteMethod');
+      app.dataSource('db', { connector: 'memory' });
+      app.model(model, { dataSource: 'db' });
+
+      var callbackSpy = require('sinon').spy();
+      var TestModel = app.models.TestModelForDisablingRemoteMethod;
+      TestModel.on('remoteMethodDisabled', callbackSpy);
+      TestModel.disableRemoteMethodByName('findOne');
 
       expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass, 'findOne');
     });

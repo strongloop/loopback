@@ -393,19 +393,17 @@ describe('security ACLs', function() {
 });
 
 describe('access check', function() {
-  var app;
-  before(function() {
-    app = loopback();
-    app.set('remoting', { errorHandler: { debug: true, log: false }});
-    app.use(loopback.rest());
-    app.enableAuth();
-    app.dataSource('test', { connector: 'memory' });
-  });
-
   it('should occur before other remote hooks', function(done) {
-    var MyTestModel = app.model('MyTestModel', { base: 'PersistedModel', dataSource: 'test' });
+    var app = loopback();
+    var MyTestModel = app.registry.createModel('MyTestModel');
     var checkAccessCalled = false;
     var beforeHookCalled = false;
+
+    app.use(loopback.rest());
+    app.set('remoting', { errorHandler: { debug: true, log: false }});
+    app.enableAuth();
+    app.dataSource('test', { connector: 'memory' });
+    app.model(MyTestModel, { dataSource: 'test' });
 
     // fake / spy on the checkAccess method
     MyTestModel.checkAccess = function() {

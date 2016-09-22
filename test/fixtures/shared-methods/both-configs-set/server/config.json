@@ -3,9 +3,6 @@
   "host": "0.0.0.0",
   "port": 3000,
   "remoting": {
-    "context": {
-      "enableHttpContext": false
-    },
     "rest": {
       "normalizeHttpPath": false,
       "xml": false
@@ -27,7 +24,5 @@
       "*": false,
       "destroyAll": true
     }
-  },
-  "legacyExplorer": false
+  }
 }
-

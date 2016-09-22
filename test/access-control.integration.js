@@ -122,6 +122,10 @@ describe('access control - integration', function() {
       });
     });
 
+    lt.it.shouldBeDeniedWhenCalledAnonymously('POST', '/api/users/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledUnauthenticated('POST', '/api/users/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users/upsertWithWhere');
+
     lt.it.shouldBeDeniedWhenCalledAnonymously('DELETE', urlForUser);
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('DELETE', urlForUser);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'DELETE', urlForUser);
@@ -142,6 +146,34 @@ describe('access control - integration', function() {
   });
 
   describe('/banks', function() {
+    var SPECIAL_USER = { email: 'special@test.test', password: 'test' };
+
+    // define dynamic role that would only grant access when the authenticated user's email is equal to
+    // SPECIAL_USER's email
+
+    before(function() {
+      var roleModel = app.registry.getModel('Role');
+      var userModel = app.registry.getModel('user');
+
+      roleModel.registerResolver('$dynamic-role', function(role, context, callback) {
+        if (!(context && context.accessToken && context.accessToken.userId)) {
+          return process.nextTick(function() {
+            callback && callback(null, false);
+          });
+        }
+        var accessToken = context.accessToken;
+        userModel.findById(accessToken.userId, function(err, user) {
+          if (err) {
+            return callback(err, false);
+          }
+          if (user && user.email === SPECIAL_USER.email) {
+            return callback(null, true);
+          }
+          return callback(null, false);
+        });
+      });
+    });
+
     lt.beforeEach.givenModel('bank');
 
     lt.it.shouldBeAllowedWhenCalledAnonymously('GET', '/api/banks');
@@ -163,6 +195,11 @@ describe('access control - integration', function() {
     lt.it.shouldBeDeniedWhenCalledAnonymously('DELETE', urlForBank);
     lt.it.shouldBeDeniedWhenCalledUnauthenticated('DELETE', urlForBank);
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'DELETE', urlForBank);
+    lt.it.shouldBeAllowedWhenCalledByUser(SPECIAL_USER, 'DELETE', urlForBank);
+
+    lt.it.shouldBeDeniedWhenCalledAnonymously('POST', '/api/banks/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledUnauthenticated('POST', '/api/banks/upsertWithWhere');
+    lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'POST', '/api/banks/upsertWithWhere');
 
     function urlForBank() {
       return '/api/banks/' + this.bank.id;

@@ -7,6 +7,9 @@ var it = require('./util/it');
 var describe = require('./util/describe');
 var Domain = require('domain');
 var EventEmitter = require('events').EventEmitter;
+var loopback = require('../');
+var expect = require('chai').expect;
+var assert = require('assert');
 
 describe('loopback', function() {
   var nameCounter = 0;
@@ -44,6 +47,7 @@ describe('loopback', function() {
         'DataSource',
         'Email',
         'GeoPoint',
+        'KeyValueModel',
         'Mail',
         'Memory',
         'Model',
@@ -518,91 +522,6 @@ describe('loopback', function() {
     });
   });
 
-  describe.onServer('loopback.getCurrentContext', function() {
-    var runInOtherDomain, runnerInterval;
-
-    before(function setupRunInOtherDomain() {
-      var emitterInOtherDomain = new EventEmitter();
-      Domain.create().add(emitterInOtherDomain);
-
-      runInOtherDomain = function(fn) {
-        emitterInOtherDomain.once('run', fn);
-      };
-
-      runnerInterval = setInterval(function() {
-        emitterInOtherDomain.emit('run');
-      }, 10);
-    });
-
-    after(function tearDownRunInOtherDomain() {
-      clearInterval(runnerInterval);
-    });
-
-    // See the following two items for more details:
-    // https://github.com/strongloop/loopback/issues/809
-    // https://github.com/strongloop/loopback/pull/337#issuecomment-61680577
-    it('preserves callback domain', function(done) {
-      var app = loopback();
-      app.use(loopback.rest());
-      app.dataSource('db', { connector: 'memory' });
-
-      var TestModel = loopback.createModel({ name: 'TestModel' });
-      app.model(TestModel, { dataSource: 'db', public: true });
-
-      // function for remote method
-      TestModel.test = function(inst, cb) {
-        var tmpCtx = loopback.getCurrentContext();
-        if (tmpCtx) tmpCtx.set('data', 'a value stored in context');
-        if (process.domain) cb = process.domain.bind(cb);  // IMPORTANT
-        runInOtherDomain(cb);
-      };
-
-      // remote method
-      TestModel.remoteMethod('test', {
-        accepts: { arg: 'inst', type: uniqueModelName },
-        returns: { root: true },
-        http: { path: '/test', verb: 'get' },
-      });
-
-      // after remote hook
-      TestModel.afterRemote('**', function(ctxx, inst, next) {
-        var tmpCtx = loopback.getCurrentContext();
-        if (tmpCtx) {
-          ctxx.result.data = tmpCtx.get('data');
-        } else {
-          ctxx.result.data = 'context not available';
-        }
-
-        next();
-      });
-
-      request(app)
-        .get('/TestModels/test')
-        .end(function(err, res) {
-          if (err) return done(err);
-
-          expect(res.body.data).to.equal('a value stored in context');
-
-          done();
-        });
-    });
-
-    it('works outside REST middleware', function(done) {
-      loopback.runInContext(function() {
-        var ctx = loopback.getCurrentContext();
-        expect(ctx).is.an('object');
-        ctx.set('test-key', 'test-value');
-        process.nextTick(function() {
-          var ctx = loopback.getCurrentContext();
-          expect(ctx).is.an('object');
-          expect(ctx.get('test-key')).to.equal('test-value');
-
-          done();
-        });
-      });
-    });
-  });
-
   describe('new remote method configuration', function() {
     function getAllMethodNamesWithoutClassName(TestModel) {
       return TestModel.sharedClass.methods().map(function(m) {
@@ -691,5 +610,134 @@ describe('loopback', function() {
 
       expect(methodNames).to.include('prototype.instanceMethod');
     });
+  });
+
+  describe('Remote method inheritance', function() {
+    var app;
+
+    beforeEach(setupLoopback);
+
+    it('inherits remote methods defined via createModel', function() {
+      var Base = app.registry.createModel('Base', {}, {
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+        methods: {
+          hello: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+
+      expect(methodNames).to.include('greet');
+      expect(methodNames).to.include('hello');
+    });
+
+    it('same remote method with different metadata should override parent', function() {
+      var Base = app.registry.createModel('Base', {}, {
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+        methods: {
+          greet: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+      var baseMethod = Base.sharedClass.findMethodByName('greet');
+      var customMethod = MyCustomModel.sharedClass.findMethodByName('greet');
+
+      // Base Method
+      expect(baseMethod.http).to.eql({ path: '/greet' });
+      expect(baseMethod.http.path).to.equal('/greet');
+      expect(baseMethod.http.path).to.not.equal('/hello');
+
+      // Custom Method
+      expect(methodNames).to.include('greet');
+      expect(customMethod.http).to.eql({ path: '/hello' });
+      expect(customMethod.http.path).to.equal('/hello');
+      expect(customMethod.http.path).to.not.equal('/greet');
+    });
+
+    it('does not inherit remote methods defined via configureModel', function() {
+      var Base = app.registry.createModel('Base');
+      app.registry.configureModel(Base, {
+        dataSource: null,
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+        methods: {
+          hello: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+
+      expect(methodNames).to.not.include('greet');
+      expect(methodNames).to.include('hello');
+    });
+
+    it('does not inherit remote methods defined via configureModel after child model ' +
+        'was created', function() {
+      var Base = app.registry.createModel('Base');
+      var MyCustomModel = app.registry.createModel('MyCustomModel', {}, {
+        base: 'Base',
+      });
+
+      app.registry.configureModel(Base, {
+        dataSource: null,
+        methods: {
+          greet: {
+            http: { path: '/greet' },
+          },
+        },
+      });
+
+      app.registry.configureModel(MyCustomModel, {
+        dataSource: null,
+        methods: {
+          hello: {
+            http: { path: '/hello' },
+          },
+        },
+      });
+      var baseMethodNames = getAllMethodNamesWithoutClassName(Base);
+      var methodNames = getAllMethodNamesWithoutClassName(MyCustomModel);
+
+      expect(baseMethodNames).to.include('greet');
+      expect(methodNames).to.not.include('greet');
+      expect(methodNames).to.include('hello');
+    });
+
+    function setupLoopback() {
+      app = loopback({ localRegistry: true });
+    }
+
+    function getAllMethodNamesWithoutClassName(Model) {
+      return Model.sharedClass.methods().map(function(m) {
+        return m.stringName.replace(/^[^.]+\./, ''); // drop the class name
+      });
+    }
   });
 });
