@@ -224,6 +224,10 @@ module.exports = function(grunt) {
     });
   });
 
+  grunt.registerTask('skip-karma-on-windows', function() {
+    console.log('*** SKIPPING PHANTOM-JS BASED TESTS ON WINDOWS ***');
+  });
+
   grunt.registerTask('e2e', ['e2e-server', 'karma:e2e']);
 
   // Default task.
@@ -233,7 +237,9 @@ module.exports = function(grunt) {
     'jscs',
     'jshint',
     process.env.JENKINS_HOME ? 'mochaTest:unit-xml' : 'mochaTest:unit',
-   'karma:unit-once']);
+    process.env.JENKINS_HOME && /^win/.test(process.platform) ?
+      'skip-karma-on-windows' : 'karma:unit-once',
+  ]);
 
   // alias for sl-ci-run and `npm test`
   grunt.registerTask('mocha-and-karma', ['test']);
