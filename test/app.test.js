@@ -677,7 +677,7 @@ describe('app', function() {
         disabledRemoteMethod = methodName;
       });
       app.model(Color);
-      app.models.Color.disableRemoteMethod('findOne');
+      app.models.Color.disableRemoteMethodByName('findOne');
       expect(remoteMethodDisabledClass).to.exist;
       expect(remoteMethodDisabledClass).to.eql(Color.sharedClass);
       expect(disabledRemoteMethod).to.exist;
