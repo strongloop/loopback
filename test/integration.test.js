@@ -41,7 +41,8 @@ describe('loopback application', function() {
       loopback.ACL.attachTo(db);
       loopback.User.hasMany(loopback.AccessToken, { as: 'accessTokens' });
 
-      var Streamer = app.model('Streamer', { dataSource: 'db' });
+      var Streamer = app.registry.createModel('Streamer');
+      app.model(Streamer, { dataSource: 'db' });
       Streamer.read = function(req, res, cb) {
         var body = new Buffer(0);
         req.on('data', function(chunk) {
