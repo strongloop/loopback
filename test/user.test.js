@@ -1972,6 +1972,43 @@ describe('User', function() {
         ], done);
       });
 
+      it('keeps sessions AS IS if non-email property is changed using updateAll', function(done) {
+        var userPartial;
+        async.series([
+          function createPartialUser(next) {
+            User.create(
+              { email: 'partial@example.com', password: 'pass1', age: 25 },
+              function(err, partialInstance) {
+                if (err) return next(err);
+                userPartial = partialInstance;
+                next();
+              });
+          },
+          function loginPartiallUser(next) {
+            User.login({ email: 'partial@example.com', password: 'pass1' }, function(err, ats) {
+              if (err) return next(err);
+              next();
+            });
+          },
+          function updatePartialUser(next) {
+            User.updateAll(
+              { id: userPartial.id },
+              { age: userPartial.age + 1 },
+              function(err, info) {
+                if (err) return next(err);
+                next();
+              });
+          },
+          function verifyTokensOfPartialUser(next) {
+            AccessToken.find({ where: { userId: userPartial.id }}, function(err, tokens1) {
+              if (err) return next(err);
+              expect(tokens1.length).to.equal(1);
+              next();
+            });
+          },
+        ], done);
+      });
+
       function assertPreservedToken(done) {
         AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
           if (err) return done(err);
