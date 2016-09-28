@@ -5,7 +5,7 @@
   "c2b5d51f007178170ca3952d59640ca4": "Impossibile correggere {0} modifiche:\n{1}",
   "5858e63efaa0e4ad86b61c0459ea32fa": "È necessario collegare il modello {{Email}} ad un connettore {{Mail}}",
   "0caffe1d763c8cca6a61814abe33b776": "L'email è obbligatoria",
-  "1b2a6076dccbe91a56f1672eb3b8598c": "Il corpo della risposta contiene proprietà del {{AccessToken}} creato all'accesso. \nIn base al valore del parametro `include`, il corpo può contenere ulteriori proprietà:\n\n  - `user` - `U+007BUserU+007D` - Dati dell'utente attualmente collegato.. {{(`include=user`)}}\n\n",
+  "1b2a6076dccbe91a56f1672eb3b8598c": "Il corpo della risposta contiene proprietà del {{AccessToken}} creato all'accesso.\nIn base al valore del parametro `include`, il corpo può contenere ulteriori proprietà:\n\n  - `user` - `U+007BUserU+007D` - Dati dell'utente attualmente collegato.. {{(`include=user`)}}\n\n",
   "2362ba55796c733e337af169922327a2": "Oggetti correlati da includere nella risposta. Per ulteriori dettagli, consultare la descrizione del valore di restituzione.",
   "306999d39387d87b2638199ff0bed8ad": "Reimpostare la password per un utente con email.",
   "3aae63bb7e8e046641767571c1591441": "login non riuscito perché l'email non è stata verificata",
