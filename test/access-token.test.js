@@ -358,7 +358,7 @@ describe('AccessToken', function() {
   });
 
   it('should be validateable', function(done) {
-    this.token.validate(function(err, isValid) {
+    Token.validate(this.token, function(err, isValid) {
       assert(isValid);
 
       done();
