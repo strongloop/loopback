@@ -301,6 +301,36 @@ describe.onServer('Remote Methods', function() {
           done();
         });
     });
+
+    it('Does not stop the hook chain after returning a promise', function(done) {
+      var firstCalled = false;
+      var secondCalled = false;
+
+      User.beforeRemote('create', function() {
+        firstCalled = true;
+        return Promise.resolve();
+      });
+
+      User.beforeRemote('create', function(ctx, user, next) {
+        secondCalled = true;
+        next();
+      });
+
+      // invoke save
+      request(app)
+        .post('/users')
+        .send({ data: { first: 'foo', last: 'bar' }})
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+
+          assert(firstCalled, 'first hook wasnt called');
+          assert(secondCalled, 'second hook wasnt called');
+
+          done();
+        });
+    });
   });
 
   describe('Model.afterRemote(name, fn)', function() {
