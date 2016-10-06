@@ -77,7 +77,7 @@
   "2a7df74fe6e8462e617b79d5fbb536ea": "Het meest recente wijzigingsrecord voor deze instance ophalen.",
   "2a9684b3d5b3b67af74bac74eb1b0843": "Zoeken naar alle instances van model dat overeenkomt met filter uit gegevensbron.",
   "2e50838caf0c927735eb15d12866bdd7": "Wijzigingen die zijn aangebracht op een model sinds een bepaald checkpoint ophalen. Geef een filterobject op om het aantal resultaten te beperken.",
-  "4203ab415ec66a78d3164345439ba76e": "Kan {0}.{1}() niet aanroepen. De methode {2} is niet geconfigureerd. De {{PersistedModel}} is niet correct gekoppeld aan een {{DataSource}}!",
+  "4203ab415ec66a78d3164345439ba76e": "{0} kan niet worden aangeroepen. {1}(). De methode {2} is niet geconfigureerd. De {{PersistedModel}} is niet correct gekoppeld aan een {{DataSource}}!",
   "51ea9b6245bb5e672b236d640ca3b048": "Een object van Combinaties van eigenschapnaam/waarde wijzigen",
   "55ddedd4c501348f82cb89db02ec85c1": "Een object van combinaties van eigenschapnaam/waarde",
   "5f659bbc15e6e2b249fa33b3879b5f69": "Zoeken naar modelinstance op basis van {{id}} uit gegevensbron.",
