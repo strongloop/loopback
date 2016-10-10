@@ -149,11 +149,19 @@ module.exports = function(AccessToken) {
       assert(this.ttl, 'token.ttl must exist');
       assert(this.ttl >= -1, 'token.ttl must be >= -1');
 
+      var AccessToken = this.constructor;
+      var userRelation = AccessToken.relations.user; // may not be set up
+      var User = userRelation && userRelation.modelTo;
+
       var now = Date.now();
       var created = this.created.getTime();
       var elapsedSeconds = (now - created) / 1000;
       var secondsToLive = this.ttl;
-      var isValid = elapsedSeconds < secondsToLive;
+      var eternalTokensAllowed = !!(User && User.settings.allowEternalTokens);
+      var isEternalToken = secondsToLive === -1;
+      var isValid = isEternalToken ?
+        eternalTokensAllowed :
+        elapsedSeconds < secondsToLive;
 
       if (isValid) {
         cb(null, isValid);

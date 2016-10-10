@@ -355,11 +355,38 @@ describe('AccessToken', function() {
     assert(Object.prototype.toString.call(this.token.created), '[object Date]');
   });
 
-  it('should be validateable', function(done) {
-    this.token.validate(function(err, isValid) {
-      assert(isValid);
+  describe('.validate()', function() {
+    it('accepts valid tokens', function(done) {
+      this.token.validate(function(err, isValid) {
+        assert(isValid);
+        done();
+      });
+    });
 
-      done();
+    it('rejects eternal TTL by default', function(done) {
+      this.token.ttl = -1;
+      this.token.validate(function(err, isValid) {
+        if (err) return done(err);
+        expect(isValid, 'isValid').to.equal(false);
+        done();
+      });
+    });
+
+    it('allows eternal tokens when enabled by User.allowEternalTokens',
+    function(done) {
+      var Token = givenLocalTokenModel();
+
+      // Overwrite User settings - enable eternal tokens
+      Token.app.models.User.settings.allowEternalTokens = true;
+
+      Token.create({ userId: '123', ttl: -1 }, function(err, token) {
+        if (err) return done(err);
+        token.validate(function(err, isValid) {
+          if (err) return done(err);
+          expect(isValid, 'isValid').to.equal(true);
+          done();
+        });
+      });
     });
   });
 
@@ -621,4 +648,17 @@ function createTestApp(testToken, settings, done) {
   app.model(TestModel);
 
   return app;
+}
+
+function givenLocalTokenModel() {
+  var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+  app.dataSource('db', { connector: 'memory' });
+
+  var User = app.registry.getModel('User');
+  app.model(User, { dataSource: 'db' });
+
+  var Token = app.registry.getModel('AccessToken');
+  app.model(Token, { dataSource: 'db' });
+
+  return Token;
 }
