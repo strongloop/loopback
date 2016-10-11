@@ -262,6 +262,12 @@ function formatReturns(m) {
     return '';
   }
   var type = returns[0].type;
+
+  // handle anonymous type definitions, e.g
+  // { arg: 'info', type: { count: 'number' } }
+  if (typeof type === 'object' && !Array.isArray(type))
+    type = 'object';
+
   return type ? ':' + type : '';
 }
 
