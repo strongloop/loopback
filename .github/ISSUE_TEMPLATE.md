@@ -11,6 +11,10 @@
 
 ### Bug or feature request
 
+<!--
+Put an "x" side in the item you want to check (eg. [x]).
+-->
+
 - [ ] Bug
 - [ ] Feature request
 
