@@ -1,3 +1,39 @@
+2016-10-13, Version 2.35.0
+==========================
+
+ * Reword ticking checkbox note in issue template (#2855) (Simon Ho)
+
+ * Add how to tick checkbox in issue template (#2851) (#2853) (Simon Ho)
+
+ * Use GitHub issue templates (#2810) (#2852) (Simon Ho)
+
+ * Allow tokens with eternal TTL (value -1) (Miroslav Bajtoš)
+
+ * Update ja and nl translation files (Candy)
+
+ * Fix support for remote hooks returning a Promise (Tim van der Staaij)
+
+ * Validate non-email property partial update (Loay)
+
+ * Update translation files - round#2 (Candy)
+
+ * Update tests to use registry for model creation (gunjpan)
+
+ * Call new disable remote method from model class. (Richard Pringle)
+
+ * Temporarily disable Karma tests on Windows CI (Miroslav Bajtoš)
+
+ * Add translation files for 2.x (Candy)
+
+ * Allow resetPassword if email is verified (Loay)
+
+ * Add docs for KeyValue model (Simon Ho)
+
+ * Invalidate sessions after email change (Loay)
+
+ * Upgrade loopback-testing to the latest ^1.4 (Miroslav Bajtoš)
+
+
 2016-09-13, Version 2.34.1
 ==========================
 
