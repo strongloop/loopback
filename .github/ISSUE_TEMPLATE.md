@@ -12,7 +12,7 @@
 ### Bug or feature request
 
 <!--
-Put an "x" side in the item you want to check (eg. [x]).
+Mark your choice with an "x" (eg. [x], NOT [*]).
 -->
 
 - [ ] Bug
