@@ -11,6 +11,10 @@
 
 ### Bug or feature request
 
+<!--
+Mark your choice with an "x" (eg. [x], NOT [*]).
+-->
+
 - [ ] Bug
 - [ ] Feature request
 

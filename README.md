@@ -83,10 +83,10 @@ See [loopback-example](https://github.com/strongloop/loopback-example) for detai
 
 ## Contributing
 
-See https://github.com/strongloop/loopback/wiki/Contributing-code
+Contributions to the LoopBack project are welcome! See [Contributing to LoopBack](http://loopback.io/doc/en/contrib/index.html) for more information.
 
-## Issues
+## Reporting issues
 
-See https://github.com/strongloop/loopback/wiki/Reporting-issues
+One of the easiest ways to contribute to LoopBack is to report an issue. See [Reporting issues](http://loopback.io/doc/en/contrib/Reporting-issues.html) for more information.
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
