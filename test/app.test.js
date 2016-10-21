@@ -16,11 +16,15 @@ var expect = require('chai').expect;
 var it = require('./util/it');
 
 describe('app', function() {
+  var app;
+  beforeEach(function() {
+    app = loopback();
+  });
+
   describe.onServer('.middleware(phase, handler)', function() {
-    var app, steps;
+    var steps;
 
     beforeEach(function setup() {
-      app = loopback();
       steps = [];
     });
 
