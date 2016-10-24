@@ -1,7 +1,14 @@
 ### Description
 
 
-#### Related issues (eg. #49 or strongloop/loopback#49)
+#### Related issues
+
+<!--
+Use on of the following link syntax:
+
+ - #49
+ - strongloop/loopback#49
+-->
 
 - None
 
