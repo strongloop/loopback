@@ -1,3 +1,17 @@
+2016-10-24, Version 2.36.0
+==========================
+
+ * Need index on principalId for performance. (#2883) (#2884) (Simon Ho)
+
+ * Remove redundant items in PR template (#2877) (#2878) (Simon Ho)
+
+ * Refactor PR template based on feedback (#2865) (#2874) (Simon Ho)
+
+ * Add pull request template (#2843) (#2862) (Simon Ho)
+
+ * Fix description of updateAll response (Miroslav Bajtoš)
+
+
 2016-10-13, Version 2.35.0
 ==========================
 
