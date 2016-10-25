@@ -82,6 +82,7 @@ describe('loopback', function() {
         'memory',
         'modelBuilder',
         'name',
+        'optionsFromContext',
         'prototype',
         'query',
         'registry',
