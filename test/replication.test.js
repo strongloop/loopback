@@ -60,6 +60,65 @@ describe('Replication / Change APIs', function() {
     };
   });
 
+  describe('ensure options object is set on context during bulkUpdate', function() {
+    var syncPropertyExists = false;
+    var OptionsSourceModel;
+
+    beforeEach(function() {
+      OptionsSourceModel = PersistedModel.extend(
+        'OptionsSourceModel-' + tid,
+        { id: { id: true, type: String, defaultFn: 'guid' } },
+        { trackChanges: true });
+
+      OptionsSourceModel.attachTo(dataSource);
+
+      OptionsSourceModel.observe('before save', function updateTimestamp(ctx, next) {
+        if (ctx.options.sync) {
+          syncPropertyExists = true;
+        } else {
+          syncPropertyExists = false;
+        }
+
+        next();
+      });
+    });
+
+    it('bulkUpdate should call Model updates with the provided options object', function(done) {
+      var testData = {name: 'Janie', surname: 'Doe'};
+      var updates = [
+        {
+          data: null,
+          change: null,
+          type: 'create'
+        }
+      ];
+
+      var options = {
+        sync: true
+      };
+
+      async.waterfall([
+        function(callback) {
+          TargetModel.create(testData, callback);
+        },
+        function(data, callback) {
+          updates[0].data = data;
+          TargetModel.getChangeModel().find({where: {modelId: data.id}}, callback);
+        },
+        function(data, callback) {
+          updates[0].change = data;
+          OptionsSourceModel.bulkUpdate(updates, options, callback);
+        }
+      ], function(err, result) {
+        if (err) return done(err);
+
+        expect(syncPropertyExists).to.eql(true);
+
+        done();
+      });
+    });
+  });
+
   describe('optimization check rectifyChange Vs rectifyAllChanges', function() {
     beforeEach(function initialData(done) {
       var data = [{name: 'John', surname: 'Doe'}, {name: 'Jane', surname: 'Roe'}];
