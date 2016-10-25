@@ -4,10 +4,10 @@
 #### Related issues
 
 <!--
-Use on of the following link syntax:
+Please use the following link syntaxes:
 
- - #49
- - strongloop/loopback#49
+- #49 (to reference issues in the current repository)
+- strongloop/loopback#49 (to reference issues in another repository)
 -->
 
 - None
