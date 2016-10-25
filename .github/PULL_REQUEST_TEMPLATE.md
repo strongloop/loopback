@@ -1,7 +1,14 @@
 ### Description
 
 
-#### Related issues (eg. #49 or strongloop/loopback#49)
+#### Related issues
+
+<!--
+Please use the following link syntaxes:
+
+- #49 (to reference issues in the current repository)
+- strongloop/loopback#49 (to reference issues in another repository)
+-->
 
 - None
 
