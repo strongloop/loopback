@@ -18,6 +18,6 @@ Please use the following link syntaxes:
 Please mark your choice with an "x" (eg. [x], not [*])
 -->
 
-- [ ] New tests add or existing tests modified to cover all changes
+- [ ] New tests added or existing tests modified to cover all changes
 - [ ] Code conforms with the [style
   guide](http://loopback.io/doc/en/contrib/style-guide.html)
