@@ -124,6 +124,44 @@ describe.onServer('Remote Methods', function() {
     app.use(loopback.rest());
   });
 
+  describe('Model.create(data, callback)', function() {
+    it('creates model', function(done) {
+      var anObject = { first: 'June' };
+      request(app)
+        .post('/users')
+        // sends an object
+        .send(anObject)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body).to.have.property('id');
+          expect(res.body).to.have.property('first', 'June');
+          done();
+        });
+    });
+    // batch create must be tested with a remote request because there are
+    // coercion being done on strong-remoting side
+    it('creates array of models', function(done) {
+      var arrayOfObjects = [
+        { first: 'John' }, { first: 'Jane' },
+      ];
+      request(app)
+        .post('/users')
+        // sends an array of objects
+        .send(arrayOfObjects)
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          expect(res.body.length).to.eql(2);
+          expect(res.body).to.have.deep.property('[0].first', 'John');
+          expect(res.body).to.have.deep.property('[1].first', 'Jane');
+          done();
+        });
+    });
+  });
+  // destoryAll is not exposed as a remoteMethod by default
   describe('Model.destroyAll(callback)', function() {
     it('Delete all Model instances from data source', function(done) {
       (new TaskEmitter())
