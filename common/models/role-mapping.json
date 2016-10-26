@@ -11,7 +11,10 @@
       "type": "string",
       "description": "The principal type, such as user, application, or role"
     },
-    "principalId": "string"
+    "principalId": {
+      "type": "string",
+      "index": true
+    }
   },
   "relations": {
     "role": {
