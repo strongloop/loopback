@@ -15,7 +15,9 @@ Please use the following link syntaxes:
 ### Checklist
 
 <!--
-Please mark your choice with an "x" (eg. [x], not [*])
+Please mark your choice with an "x" (i.e. [x], see
+https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments
+for more details).
 -->
 
 - [ ] New tests added or existing tests modified to cover all changes
