@@ -358,7 +358,8 @@ describe('role model', function() {
           assert(!err && yes);
         });
 
-        Album.create({ name: 'Album 1', userId: user.id, customerId: user2.id }, function(err, album1) {
+        Album.create({ name: 'Album 1', userId: user.id, customerId: user2.id },
+        function(err, album1) {
           var role = { principalType: ACL.USER, principalId: user.id, model: Album, id: album1.id };
           Role.isInRole(Role.OWNER, role, function(err, yes) {
             assert(!err && yes);
