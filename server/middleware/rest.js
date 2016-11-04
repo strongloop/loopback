@@ -24,7 +24,7 @@ module.exports = rest;
  * ```js
  * app.use(loopback.rest());
  * ```
- * For more information, see [Exposing models over a REST API](http://docs.strongloop.com/display/DOC/Exposing+models+over+a+REST+API).
+ * For more information, see [Exposing models over a REST API](http://loopback.io/doc/en/lb2/Exposing-models-over-REST.html).
  * @header loopback.rest()
  */
 
@@ -44,7 +44,7 @@ function rest() {
         throw new Error(g.f(
           '%s was removed in version 3.0. See %s for more details.',
           'remoting.context option',
-          'https://docs.strongloop.com/display/APIC/Using%20current%20context'));
+          'http://loopback.io/doc/en/lb2/Using-current-context.html'));
       }
 
       if (app.isAuthEnabled) {

@@ -99,7 +99,7 @@ describe('remoting - integration', function() {
       ];
 
       // The list of methods is from docs:
-      // https://docs.strongloop.com/display/public/LB/Exposing+models+over+REST
+      // http://loopback.io/doc/en/lb2/Exposing-models-over-REST.html
       expect(methods).to.include.members(expectedMethods);
     });
 
