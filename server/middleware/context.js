@@ -9,5 +9,5 @@ module.exports = function() {
   throw new Error(g.f(
     '%s middleware was removed in version 3.0. See %s for more details.',
     'loopback#context',
-    'https://docs.strongloop.com/display/APIC/Using%20current%20context'));
+    'http://loopback.io/doc/en/lb2/Using-current-context.html'));
 };
