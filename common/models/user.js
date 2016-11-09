@@ -683,6 +683,19 @@ module.exports = function(User) {
         ctx.hookState.originalUserData = userInstances.map(function(u) {
           return { id: u.id, email: u.email };
         });
+        if (ctx.instance) {
+          var emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
+          if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
+            ctx.instance.emailVerified = false;
+          }
+        } else {
+          var emailChanged = ctx.hookState.originalUserData.some(function(data) {
+            return data.email != ctx.data.email;
+          });
+          if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
+            ctx.data.emailVerified = false;
+          }
+        }
         next();
       });
     });
