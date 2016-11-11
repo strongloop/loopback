@@ -460,6 +460,7 @@ module.exports = function(User) {
 
       var template = loopback.template(options.template);
       options.html = template(options);
+      delete options.template;
 
       Email.send(options, function(err, email) {
         if (err) {
