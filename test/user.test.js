@@ -1364,6 +1364,45 @@ describe('User', function() {
           });
       });
 
+      it('Verify a user\'s email address with custom template function', function(done) {
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(user, 'afterRemote should include result');
+
+          var options = {
+            type: 'email',
+            to: user.email,
+            from: 'noreply@myapp.org',
+            redirect: '/',
+            protocol: ctx.req.protocol,
+            host: ctx.req.get('host'),
+            templateFn: function(options, cb) {
+              cb(null, 'custom template  - verify url: ' + options.verifyHref);
+            },
+          };
+
+          user.verify(options, function(err, result) {
+            assert(result.email);
+            assert(result.email.response);
+            assert(result.token);
+            var msg = result.email.response.toString('utf-8');
+            assert(~msg.indexOf('/api/test-users/confirm'));
+            assert(~msg.indexOf('custom template'));
+            assert(~msg.indexOf('To: bar@bat.com'));
+
+            done();
+          });
+        });
+
+        request(app)
+          .post('/test-users')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .send({ email: 'bar@bat.com', password: 'bar' })
+          .end(function(err, res) {
+            if (err) return done(err);
+          });
+      });
+
       it('Verify a user\'s email address with custom token generator', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
