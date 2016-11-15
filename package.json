@@ -35,6 +35,9 @@
     "lint": "grunt eslint",
     "test": "grunt mocha-and-karma"
   },
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "dependencies": {
     "async": "^2.0.1",
     "bcryptjs": "^2.1.0",
