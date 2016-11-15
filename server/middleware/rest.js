@@ -7,6 +7,7 @@
  * Module dependencies.
  */
 
+'use strict';
 var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var async = require('async');
@@ -49,7 +50,7 @@ function rest() {
 
       if (app.isAuthEnabled) {
         var AccessToken = registry.getModelByType('AccessToken');
-        handlers.push(loopback.token({ model: AccessToken, app: app }));
+        handlers.push(loopback.token({model: AccessToken, app: app}));
       }
 
       handlers.push(function(req, res, next) {

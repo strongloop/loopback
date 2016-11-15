@@ -118,7 +118,13 @@
       "description": "Status of the application, production/sandbox/disabled"
     },
 
-    "created": "date",
-    "modified": "date"
+    "created": {
+      "type": "date",
+      "defaultFn": "now"
+    },
+    "modified": {
+      "type": "date",
+      "defaultFn": "now"
+    }
   }
 }

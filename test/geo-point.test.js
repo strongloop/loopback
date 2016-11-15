@@ -3,12 +3,17 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
+var loopback = require('../');
+var GeoPoint = loopback.GeoPoint;
+
 describe('GeoPoint', function() {
   describe('geoPoint.distanceTo(geoPoint, options)', function() {
     it('Get the distance to another `GeoPoint`', function() {
-      var here = new GeoPoint({ lat: 10, lng: 10 });
-      var there = new GeoPoint({ lat: 5, lng: 5 });
-      var distance = here.distanceTo(there, { type: 'meters' });
+      var here = new GeoPoint({lat: 10, lng: 10});
+      var there = new GeoPoint({lat: 5, lng: 5});
+      var distance = here.distanceTo(there, {type: 'meters'});
 
       assert.equal(Math.floor(distance), 782777);
     });
@@ -16,9 +21,9 @@ describe('GeoPoint', function() {
 
   describe('GeoPoint.distanceBetween(a, b, options)', function() {
     it('Get the distance between two points', function() {
-      var here = new GeoPoint({ lat: 10, lng: 10 });
-      var there = new GeoPoint({ lat: 5, lng: 5 });
-      var distance = GeoPoint.distanceBetween(here, there, { type: 'feet' });
+      var here = new GeoPoint({lat: 10, lng: 10});
+      var there = new GeoPoint({lat: 5, lng: 5});
+      var distance = GeoPoint.distanceBetween(here, there, {type: 'feet'});
 
       assert.equal(Math.floor(distance), 2568169);
     });
@@ -48,7 +53,7 @@ describe('GeoPoint', function() {
     });
     it('Create as Model property', function() {
       var Model = loopback.createModel('geo-model', {
-        geo: { type: 'GeoPoint' },
+        geo: {type: 'GeoPoint'},
       });
 
       var m = new Model({

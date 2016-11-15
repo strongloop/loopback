@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var _describe = {};
 var _it = {};
 var _beforeEach = {};
@@ -68,7 +69,7 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
     var app = this.app;
     var model = app.models[modelName];
 
-    app.set('remoting', { errorHandler: { debug: true, log: false }});
+    app.set('remoting', {errorHandler: {debug: true, log: false}});
     assert(model, 'cannot get model of name ' + modelName + ' from app.models');
     assert(model.dataSource, 'cannot test model ' + modelName +
         ' without attached dataSource');
@@ -135,7 +136,7 @@ _beforeEach.givenAnUnauthenticatedToken = function(attrs, optionalHandler) {
 };
 
 _beforeEach.givenAnAnonymousToken = function(attrs, optionalHandler) {
-  _beforeEach.givenModel('accessToken', { id: '$anonymous' }, optionalHandler);
+  _beforeEach.givenModel('accessToken', {id: '$anonymous'}, optionalHandler);
 };
 
 _describe.whenCalledRemotely = function(verb, url, data, cb) {

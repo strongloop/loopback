@@ -3,14 +3,15 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
 var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
 var app = require(path.join(ACCESS_CONTROL_APP, 'server/server.js'));
 var assert = require('assert');
-var USER = { email: 'test@test.test', password: 'test' };
-var CURRENT_USER = { email: 'current@test.test', password: 'test' };
+var USER = {email: 'test@test.test', password: 'test'};
+var CURRENT_USER = {email: 'current@test.test', password: 'test'};
 var debug = require('debug')('loopback:test:access-control.integration');
 
 describe('access control - integration', function() {
@@ -146,7 +147,7 @@ describe('access control - integration', function() {
   });
 
   describe('/banks', function() {
-    var SPECIAL_USER = { email: 'special@test.test', password: 'test' };
+    var SPECIAL_USER = {email: 'special@test.test', password: 'test'};
 
     // define dynamic role that would only grant access when the authenticated user's email is equal to
     // SPECIAL_USER's email

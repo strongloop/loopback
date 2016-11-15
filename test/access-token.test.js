@@ -3,15 +3,20 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
+var expect = require('chai').expect;
 var cookieParser = require('cookie-parser');
 var LoopBackContext = require('loopback-context');
 var contextMiddleware = require('loopback-context').perRequest;
 var loopback = require('../');
 var extend = require('util')._extend;
 var session = require('express-session');
+var request = require('supertest');
+var app = loopback();
 
 var Token = loopback.AccessToken.extend('MyToken');
-var ds = loopback.createDataSource({ connector: loopback.Memory });
+var ds = loopback.createDataSource({connector: loopback.Memory});
 Token.attachTo(ds);
 var ACL = loopback.ACL;
 
@@ -50,7 +55,7 @@ describe('loopback.token(options)', function() {
     var tokenId = this.token.id;
     var app = createTestApp(
       this.token,
-      { token: { searchDefaultTokenKeys: false }},
+      {token: {searchDefaultTokenKeys: false}},
       done);
     var agent = request.agent(app);
 
@@ -158,7 +163,7 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, { userId: userId });
+          assert.deepEqual(res.body, {userId: userId});
 
           done();
         });
@@ -174,7 +179,7 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, { userId: userId, state: 1 });
+          assert.deepEqual(res.body, {userId: userId, state: 1});
 
           done();
         });
@@ -190,20 +195,20 @@ describe('loopback.token(options)', function() {
         .set('authorization', id)
         .end(function(err, res) {
           assert(!err);
-          assert.deepEqual(res.body, { userId: userId, state: 1 });
+          assert.deepEqual(res.body, {userId: userId, state: 1});
 
           done();
         });
     });
 
   it('should skip when req.token is already present', function(done) {
-    var tokenStub = { id: 'stub id' };
+    var tokenStub = {id: 'stub id'};
     app.use(function(req, res, next) {
       req.accessToken = tokenStub;
 
       next();
     });
-    app.use(loopback.token({ model: Token }));
+    app.use(loopback.token({model: Token}));
     app.get('/', function(req, res, next) {
       res.send(req.accessToken);
     });
@@ -223,13 +228,13 @@ describe('loopback.token(options)', function() {
   describe('loading multiple instances of token middleware', function() {
     it('should skip when req.token is already present and no further options are set',
     function(done) {
-      var tokenStub = { id: 'stub id' };
+      var tokenStub = {id: 'stub id'};
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
 
         next();
       });
-      app.use(loopback.token({ model: Token }));
+      app.use(loopback.token({model: Token}));
       app.get('/', function(req, res, next) {
         res.send(req.accessToken);
       });
@@ -249,7 +254,7 @@ describe('loopback.token(options)', function() {
     it('should not overwrite valid existing token (has "id" property) ' +
       ' when overwriteExistingToken is falsy',
     function(done) {
-      var tokenStub = { id: 'stub id' };
+      var tokenStub = {id: 'stub id'};
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
 
@@ -279,7 +284,7 @@ describe('loopback.token(options)', function() {
       ' when enableDoubkecheck is true',
     function(done) {
       var token = this.token;
-
+      var app = loopback();
       app.use(function(req, res, next) {
         req.accessToken = null;
         next();
@@ -313,8 +318,8 @@ describe('loopback.token(options)', function() {
       'and overwriteExistingToken options are truthy',
     function(done) {
       var token = this.token;
-      var tokenStub = { id: 'stub id' };
-
+      var tokenStub = {id: 'stub id'};
+      var app = loopback();
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
 
@@ -385,7 +390,7 @@ describe('AccessToken', function() {
       // Overwrite User settings - enable eternal tokens
       Token.app.models.User.settings.allowEternalTokens = true;
 
-      Token.create({ userId: '123', ttl: -1 }, function(err, token) {
+      Token.create({userId: '123', ttl: -1}, function(err, token) {
         if (err) return done(err);
         token.validate(function(err, isValid) {
           if (err) return done(err);
@@ -402,7 +407,7 @@ describe('AccessToken', function() {
     it('supports two-arg variant with no options', function(done) {
       var expectedTokenId = this.token.id;
       var req = mockRequest({
-        headers: { 'authorization': expectedTokenId },
+        headers: {'authorization': expectedTokenId},
       });
 
       Token.findForRequest(req, function(err, token) {
@@ -435,7 +440,7 @@ describe('app.enableAuth()', function() {
   var app;
   beforeEach(function setupAuthWithModels() {
     app = loopback();
-    app.enableAuth({ dataSource: ds });
+    app.enableAuth({dataSource: ds});
   });
   beforeEach(createTestingToken);
 
@@ -458,7 +463,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
-    createTestAppAndRequest(this.token, { app: { aclErrorStatus: 403 }}, done)
+    createTestAppAndRequest(this.token, {app: {aclErrorStatus: 403}}, done)
       .del('/tests/123')
       .expect(403)
       .set('authorization', this.token.id)
@@ -476,7 +481,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('prevent remote call with app setting status on denied ACL', function(done) {
-    createTestAppAndRequest(this.token, { model: { aclErrorStatus: 404 }}, done)
+    createTestAppAndRequest(this.token, {model: {aclErrorStatus: 404}}, done)
       .del('/tests/123')
       .expect(404)
       .set('authorization', this.token.id)
@@ -512,22 +517,22 @@ describe('app.enableAuth()', function() {
   });
 
   it('stores token in the context', function(done) {
-    var TestModel = loopback.createModel('TestModel', { base: 'Model' });
+    var TestModel = loopback.createModel('TestModel', {base: 'Model'});
     TestModel.getToken = function(cb) {
       var ctx = LoopBackContext.getCurrentContext();
       cb(null, ctx && ctx.get('accessToken') || null);
     };
     TestModel.remoteMethod('getToken', {
-      returns: { arg: 'token', type: 'object' },
-      http: { verb: 'GET', path: '/token' },
+      returns: {arg: 'token', type: 'object'},
+      http: {verb: 'GET', path: '/token'},
     });
 
     var app = loopback();
-    app.model(TestModel, { dataSource: null });
+    app.model(TestModel, {dataSource: null});
 
     app.enableAuth();
     app.use(contextMiddleware());
-    app.use(loopback.token({ model: Token }));
+    app.use(loopback.token({model: Token}));
     app.use(loopback.rest());
 
     var token = this.token;
@@ -556,7 +561,7 @@ describe('app.enableAuth()', function() {
       saveUninitialized: true,
       resave: true,
     }));
-    app.use(loopback.token({ model: Token }));
+    app.use(loopback.token({model: Token}));
     app.get('/', function(req, res) { res.send('OK'); });
     app.use(loopback.rest());
 
@@ -572,7 +577,7 @@ describe('app.enableAuth()', function() {
 
 function createTestingToken(done) {
   var test = this;
-  Token.create({ userId: '123' }, function(err, token) {
+  Token.create({userId: '123'}, function(err, token) {
     if (err) return done(err);
 
     test.token = token;
@@ -602,10 +607,10 @@ function createTestApp(testToken, settings, done) {
 
   app.use(cookieParser('secret'));
   app.use(loopback.token(tokenSettings));
-  app.set('remoting', { errorHandler: { debug: true, log: false }});
+  app.set('remoting', {errorHandler: {debug: true, log: false}});
   app.get('/token', function(req, res) {
-    res.cookie('authorization', testToken.id, { signed: true });
-    res.cookie('access_token', testToken.id, { signed: true });
+    res.cookie('authorization', testToken.id, {signed: true});
+    res.cookie('access_token', testToken.id, {signed: true});
     res.end();
   });
   app.get('/', function(req, res) {
@@ -621,7 +626,7 @@ function createTestApp(testToken, settings, done) {
     res.status(req.accessToken ? 200 : 401).end();
   });
   app.use('/users/:uid', function(req, res) {
-    var result = { userId: req.params.uid };
+    var result = {userId: req.params.uid};
     if (req.query.state) {
       result.state = req.query.state;
     } else if (req.url !== '/') {
@@ -661,14 +666,14 @@ function createTestApp(testToken, settings, done) {
 }
 
 function givenLocalTokenModel() {
-  var app = loopback({ localRegistry: true, loadBuiltinModels: true });
-  app.dataSource('db', { connector: 'memory' });
+  var app = loopback({localRegistry: true, loadBuiltinModels: true});
+  app.dataSource('db', {connector: 'memory'});
 
   var User = app.registry.getModel('User');
-  app.model(User, { dataSource: 'db' });
+  app.model(User, {dataSource: 'db'});
 
   var Token = app.registry.getModel('AccessToken');
-  app.model(Token, { dataSource: 'db' });
+  app.model(Token, {dataSource: 'db'});
 
   return Token;
 }

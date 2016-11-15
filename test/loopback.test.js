@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var it = require('./util/it');
 var describe = require('./util/describe');
 var Domain = require('domain');
@@ -61,8 +62,6 @@ describe('loopback', function() {
         'User',
         'ValidationError',
         'application',
-        'arguments',
-        'caller',
         'configureModel',
         'context',
         'createContext',
@@ -106,17 +105,17 @@ describe('loopback', function() {
 
   describe('loopback(options)', function() {
     it('supports localRegistry:true', function() {
-      var app = loopback({ localRegistry: true });
+      var app = loopback({localRegistry: true});
       expect(app.registry).to.not.equal(loopback.registry);
     });
 
     it('does not load builtin models into the local registry', function() {
-      var app = loopback({ localRegistry: true });
+      var app = loopback({localRegistry: true});
       expect(app.registry.findModel('User')).to.equal(undefined);
     });
 
     it('supports loadBuiltinModels:true', function() {
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      var app = loopback({localRegistry: true, loadBuiltinModels: true});
       expect(app.registry.findModel('User'))
         .to.have.property('modelName', 'User');
     });
@@ -150,7 +149,7 @@ describe('loopback', function() {
 
   describe('loopback.remoteMethod(Model, fn, [options]);', function() {
     it('Setup a remote method.', function() {
-      var Product = loopback.createModel('product', { price: Number });
+      var Product = loopback.createModel('product', {price: Number});
 
       Product.stats = function(fn) {
         // ...
@@ -159,8 +158,8 @@ describe('loopback', function() {
       loopback.remoteMethod(
         Product.stats,
         {
-          returns: { arg: 'stats', type: 'array' },
-          http: { path: '/info', verb: 'get' },
+          returns: {arg: 'stats', type: 'array'},
+          http: {path: '/info', verb: 'get'},
         }
       );
 
@@ -187,7 +186,7 @@ describe('loopback', function() {
           },
         });
         assert(MyCustomModel.super_ === MyModel);
-        assert.deepEqual(MyCustomModel.settings.foo, { bar: 'bat', bat: 'baz' });
+        assert.deepEqual(MyCustomModel.settings.foo, {bar: 'bat', bat: 'baz'});
         assert(MyCustomModel.super_.modelName === MyModel.modelName);
       });
     });
@@ -237,11 +236,11 @@ describe('loopback', function() {
         methods: {
           staticMethod: {
             isStatic: true,
-            http: { path: '/static' },
+            http: {path: '/static'},
           },
           instanceMethod: {
             isStatic: false,
-            http: { path: '/instance' },
+            http: {path: '/instance'},
           },
         },
       });
@@ -331,7 +330,7 @@ describe('loopback', function() {
     });
 
     it('updates relations before attaching to a dataSource', function() {
-      var db = loopback.createDataSource({ connector: loopback.Memory });
+      var db = loopback.createDataSource({connector: loopback.Memory});
       var model = loopback.Model.extend(uniqueModelName);
 
       // This test used to work because User model was already attached
@@ -471,11 +470,11 @@ describe('loopback', function() {
         methods: {
           staticMethod: {
             isStatic: true,
-            http: { path: '/static' },
+            http: {path: '/static'},
           },
           instanceMethod: {
             isStatic: false,
-            http: { path: '/instance' },
+            http: {path: '/instance'},
           },
         },
       });
@@ -535,7 +534,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           staticMethod: {
-            http: { path: '/static' },
+            http: {path: '/static'},
           },
         },
       });
@@ -551,7 +550,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           'prototype.instanceMethod': {
-            http: { path: '/instance' },
+            http: {path: '/instance'},
           },
         },
       });
@@ -569,7 +568,7 @@ describe('loopback', function() {
           methods: {
             'prototype.instanceMethod': {
               isStatic: true,
-              http: { path: '/instance' },
+              http: {path: '/instance'},
             },
           },
         });
@@ -584,7 +583,7 @@ describe('loopback', function() {
         methods: {
           staticMethod: {
             isStatic: true,
-            http: { path: '/static' },
+            http: {path: '/static'},
           },
         },
       });
@@ -601,7 +600,7 @@ describe('loopback', function() {
         methods: {
           'prototype.instanceMethod': {
             isStatic: false,
-            http: { path: '/instance' },
+            http: {path: '/instance'},
           },
         },
       });
@@ -621,7 +620,7 @@ describe('loopback', function() {
       var Base = app.registry.createModel('Base', {}, {
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -630,7 +629,7 @@ describe('loopback', function() {
         base: 'Base',
         methods: {
           hello: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -644,7 +643,7 @@ describe('loopback', function() {
       var Base = app.registry.createModel('Base', {}, {
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -653,7 +652,7 @@ describe('loopback', function() {
         base: 'Base',
         methods: {
           greet: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -662,13 +661,13 @@ describe('loopback', function() {
       var customMethod = MyCustomModel.sharedClass.findMethodByName('greet');
 
       // Base Method
-      expect(baseMethod.http).to.eql({ path: '/greet' });
+      expect(baseMethod.http).to.eql({path: '/greet'});
       expect(baseMethod.http.path).to.equal('/greet');
       expect(baseMethod.http.path).to.not.equal('/hello');
 
       // Custom Method
       expect(methodNames).to.include('greet');
-      expect(customMethod.http).to.eql({ path: '/hello' });
+      expect(customMethod.http).to.eql({path: '/hello'});
       expect(customMethod.http.path).to.equal('/hello');
       expect(customMethod.http.path).to.not.equal('/greet');
     });
@@ -679,7 +678,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -688,7 +687,7 @@ describe('loopback', function() {
         base: 'Base',
         methods: {
           hello: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -709,7 +708,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -718,7 +717,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           hello: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -731,7 +730,7 @@ describe('loopback', function() {
     });
 
     function setupLoopback() {
-      app = loopback({ localRegistry: true });
+      app = loopback({localRegistry: true});
     }
 
     function getAllMethodNamesWithoutClassName(Model) {

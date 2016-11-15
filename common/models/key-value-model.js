@@ -1,3 +1,9 @@
+// Copyright IBM Corp. 2014,2016. All Rights Reserved.
+// Node module: loopback
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
+
+'use strict';
 var g = require('../../lib/globalize');
 
 /**
@@ -164,52 +170,52 @@ module.exports = function(KeyValueModel) {
     this.remoteMethod('get', {
       accepts: {
         arg: 'key', type: 'string', required: true,
-        http: { source: 'path' },
+        http: {source: 'path'},
       },
-      returns: { arg: 'value', type: 'any', root: true },
-      http: { path: '/:key', verb: 'get' },
-      rest: { after: convertNullToNotFoundError },
+      returns: {arg: 'value', type: 'any', root: true},
+      http: {path: '/:key', verb: 'get'},
+      rest: {after: convertNullToNotFoundError},
     });
 
     this.remoteMethod('set', {
       accepts: [
-        { arg: 'key', type: 'string', required: true,
-          http: { source: 'path' }},
-        { arg: 'value', type: 'any', required: true,
-          http: { source: 'body' }},
-        { arg: 'ttl', type: 'number',
-          http: { source: 'query' },
-          description: 'time to live in milliseconds' },
+        {arg: 'key', type: 'string', required: true,
+          http: {source: 'path'}},
+        {arg: 'value', type: 'any', required: true,
+          http: {source: 'body'}},
+        {arg: 'ttl', type: 'number',
+          http: {source: 'query'},
+          description: 'time to live in milliseconds'},
       ],
-      http: { path: '/:key', verb: 'put' },
+      http: {path: '/:key', verb: 'put'},
     });
 
     this.remoteMethod('expire', {
       accepts: [
-        { arg: 'key', type: 'string', required: true,
-          http: { source: 'path' }},
-        { arg: 'ttl', type: 'number', required: true,
-          http: { source: 'form' }},
+        {arg: 'key', type: 'string', required: true,
+          http: {source: 'path'}},
+        {arg: 'ttl', type: 'number', required: true,
+          http: {source: 'form'}},
       ],
-      http: { path: '/:key/expire', verb: 'put' },
+      http: {path: '/:key/expire', verb: 'put'},
     });
 
     this.remoteMethod('ttl', {
       accepts: {
         arg: 'key', type: 'string', required: true,
-        http: { source: 'path' },
+        http: {source: 'path'},
       },
-      returns: { arg: 'value', type: 'any', root: true },
-      http: { path: '/:key/ttl', verb: 'get' },
+      returns: {arg: 'value', type: 'any', root: true},
+      http: {path: '/:key/ttl', verb: 'get'},
     });
 
     this.remoteMethod('keys', {
       accepts: {
         arg: 'filter', type: 'object', required: false,
-        http: { source: 'query' },
+        http: {source: 'query'},
       },
-      returns: { arg: 'keys', type: ['string'], root: true },
-      http: { path: '/keys', verb: 'get' },
+      returns: {arg: 'keys', type: ['string'], root: true},
+      http: {path: '/keys', verb: 'get'},
     });
   };
 };

@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var async = require('async');
 var loopback = require('../');
 var expect = require('chai').expect;

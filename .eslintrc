@@ -5,6 +5,7 @@
       "ignoreComments": true,
       "ignoreUrls": true,
       "ignorePattern": "^\\s*var\\s.+=\\s*(require\\s*\\()|(/)"
-    }]
+    }],
+  "no-unused-expressions": "off",
   }
 }

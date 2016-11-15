@@ -3,12 +3,14 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
+var expect = require('chai').expect;
 
 describe('remoting - integration', function() {
   lt.beforeEach.withApp(app);
@@ -21,9 +23,9 @@ describe('remoting - integration', function() {
   describe('app.remotes.options', function() {
     it('should load remoting options', function() {
       var remotes = app.remotes();
-      assert.deepEqual(remotes.options, { 'json': { 'limit': '1kb', 'strict': false },
-        'urlencoded': { 'limit': '8kb', 'extended': true },
-        'errorHandler': { 'debug': true, log: false }});
+      assert.deepEqual(remotes.options, {'json': {'limit': '1kb', 'strict': false},
+        'urlencoded': {'limit': '8kb', 'extended': true},
+        'errorHandler': {'debug': true, log: false}});
     });
 
     it('rest handler', function() {
@@ -301,7 +303,7 @@ function findClass(name) {
 }
 
 function getFormattedMethodsExcludingRelations(methods) {
-  return result = methods.filter(function(m) {
+  return methods.filter(function(m) {
     return m.name.indexOf('__') === -1;
   })
   .map(function(m) {
@@ -313,7 +315,7 @@ function getFormattedMethodsExcludingRelations(methods) {
 }
 
 function getFormattedScopeMethods(methods) {
-  return result = methods.filter(function(m) {
+  return methods.filter(function(m) {
     return m.name.indexOf('__') === 0;
   })
   .map(function(m) {
@@ -325,7 +327,7 @@ function getFormattedScopeMethods(methods) {
 }
 
 function getFormattedPrototypeMethods(methods) {
-  return result = methods.filter(function(m) {
+  return methods.filter(function(m) {
     return m.name.indexOf('prototype.__') === 0;
   })
   .map(function(m) {

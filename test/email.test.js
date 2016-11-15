@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var MyEmail;
 var assert = require('assert');
@@ -10,37 +11,37 @@ var MailConnector = require('../lib/connectors/mail');
 
 describe('Email connector', function() {
   it('should set up SMTP', function() {
-    var connector = new MailConnector({ transports: [
-      { type: 'smtp', service: 'gmail' },
-    ] });
+    var connector = new MailConnector({transports: [
+      {type: 'smtp', service: 'gmail'},
+    ]});
     assert(connector.transportForName('smtp'));
   });
 
   it('should set up DIRECT', function() {
-    var connector = new MailConnector({ transports: [
-      { type: 'direct', name: 'localhost' },
-    ] });
+    var connector = new MailConnector({transports: [
+      {type: 'direct', name: 'localhost'},
+    ]});
     assert(connector.transportForName('direct'));
   });
 
   it('should set up STUB', function() {
-    var connector = new MailConnector({ transports: [
-      { type: 'stub', service: 'gmail' },
-    ] });
+    var connector = new MailConnector({transports: [
+      {type: 'stub', service: 'gmail'},
+    ]});
     assert(connector.transportForName('stub'));
   });
 
   it('should set up a single transport for SMTP', function() {
-    var connector = new MailConnector({ transport:
-      { type: 'smtp', service: 'gmail' },
+    var connector = new MailConnector({transport:
+      {type: 'smtp', service: 'gmail'},
     });
 
     assert(connector.transportForName('smtp'));
   });
 
   it('should set up a aliased transport for SMTP', function() {
-    var connector = new MailConnector({ transport:
-      { type: 'smtp', service: 'ses-us-east-1', alias: 'ses-smtp' },
+    var connector = new MailConnector({transport:
+      {type: 'smtp', service: 'ses-us-east-1', alias: 'ses-smtp'},
     });
 
     assert(connector.transportForName('ses-smtp'));
@@ -52,7 +53,7 @@ describe('Email and SMTP', function() {
     MyEmail = loopback.Email.extend('my-email');
     var ds = loopback.createDataSource('email', {
       connector: loopback.Mail,
-      transports: [{ type: 'STUB' }],
+      transports: [{type: 'STUB'}],
     });
     MyEmail.attachTo(ds);
   });

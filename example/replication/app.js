@@ -3,13 +3,14 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../../');
 var app = loopback();
-var db = app.dataSource('db', { connector: 'memory' });
-var Color = app.registry.createModel('color', {}, { trackChanges: true });
-app.model(Color, { dataSource: 'db' });
-var Color2 = app.registry.createModel('color2', {}, { trackChanges: true });
-app.model(Color2, { dataSource: 'db' });
+var db = app.dataSource('db', {connector: 'memory'});
+var Color = app.registry.createModel('color', {}, {trackChanges: true});
+app.model(Color, {dataSource: 'db'});
+var Color2 = app.registry.createModel('color2', {}, {trackChanges: true});
+app.model(Color2, {dataSource: 'db'});
 var target = Color2;
 var source = Color;
 var SPEED = process.env.SPEED || 100;
@@ -70,9 +71,9 @@ run(steps);
 
 function createSomeInitialSourceData() {
   Color.create([
-    { name: 'red' },
-    { name: 'blue' },
-    { name: 'green' },
+    {name: 'red'},
+    {name: 'blue'},
+    {name: 'green'},
   ]);
 }
 
@@ -98,11 +99,11 @@ function updateSomeTargetData() {
 }
 
 function createMoreSourceData() {
-  Color.create({ name: 'orange' });
+  Color.create({name: 'orange'});
 }
 
 function createEvenMoreSourceData() {
-  Color.create({ name: 'black' });
+  Color.create({name: 'black'});
 }
 
 function updateSomeSourceDataCausingAConflict() {
@@ -118,9 +119,9 @@ function deleteAllSourceData() {
 
 function createSomeNewSourceData() {
   Color.create([
-    { name: 'violet' },
-    { name: 'amber' },
-    { name: 'olive' },
+    {name: 'violet'},
+    {name: 'amber'},
+    {name: 'olive'},
   ]);
 }
 

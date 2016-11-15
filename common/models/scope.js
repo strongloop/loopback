@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var assert = require('assert');
 var loopback = require('../../lib/loopback');
 
@@ -41,7 +42,7 @@ module.exports = function(Scope) {
     assert(aclModel,
       'ACL model must be defined before Scope.checkPermission is called');
 
-    this.findOne({ where: { name: scope }}, function(err, scope) {
+    this.findOne({where: {name: scope}}, function(err, scope) {
       if (err) {
         if (callback) callback(err);
       } else {

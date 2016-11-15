@@ -13,4 +13,5 @@
  *   for the full list of available options.
  * @header loopback.static(root, [options])
  */
+'use strict';
 module.exports = require('express').static;

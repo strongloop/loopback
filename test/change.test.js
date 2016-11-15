@@ -3,8 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
 var async = require('async');
 var expect = require('chai').expect;
+var loopback = require('../');
 
 var Change, TestModel;
 
@@ -15,7 +18,7 @@ describe('Change', function() {
     });
     TestModel = loopback.PersistedModel.extend('ChangeTestModel',
       {
-        id: { id: true, type: 'string', defaultFn: 'guid' },
+        id: {id: true, type: 'string', defaultFn: 'guid'},
       },
       {
         trackChanges: true,
@@ -475,20 +478,20 @@ describe('Change', function() {
   describe('Change.diff(modelName, since, remoteChanges, callback)', function() {
     beforeEach(function(done) {
       Change.create([
-        { rev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1 },
-        { rev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1 },
-        { rev: 'bat', modelName: this.modelName, modelId: 11, checkpoint: 1 },
+        {rev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
+        {rev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
+        {rev: 'bat', modelName: this.modelName, modelId: 11, checkpoint: 1},
       ], done);
     });
 
     it('should return delta and conflict lists', function(done) {
       var remoteChanges = [
         // an update => should result in a delta
-        { rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1 },
+        {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
         // no change => should not result in a delta / conflict
-        { rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1 },
+        {rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
         // a conflict => should result in a conflict
-        { rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1 },
+        {rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1},
       ];
 
       Change.diff(this.modelName, 0, remoteChanges, function(err, diff) {
@@ -504,11 +507,11 @@ describe('Change', function() {
     it('should return delta and conflict lists - promise variant', function(done) {
       var remoteChanges = [
         // an update => should result in a delta
-        { rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1 },
+        {rev: 'foo2', prev: 'foo', modelName: this.modelName, modelId: 9, checkpoint: 1},
         // no change => should not result in a delta / conflict
-        { rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1 },
+        {rev: 'bar', prev: 'bar', modelName: this.modelName, modelId: 10, checkpoint: 1},
         // a conflict => should result in a conflict
-        { rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1 },
+        {rev: 'bat2', prev: 'bat0', modelName: this.modelName, modelId: 11, checkpoint: 1},
       ];
 
       Change.diff(this.modelName, 0, remoteChanges)

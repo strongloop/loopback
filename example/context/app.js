@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var g = require('../../lib/globalize');
 var loopback = require('../../');
 var app = loopback();
@@ -19,7 +20,7 @@ app.use(function saveHostToContext(req, res, next) {
 
 app.use(loopback.rest());
 
-var Color = loopback.createModel('color', { 'name': String });
+var Color = loopback.createModel('color', {'name': String});
 Color.beforeRemote('**', function(ctx, unused, next) {
   // Inside LoopBack code, you can read the property from the context
   var ns = loopback.getCurrentContext();
@@ -27,8 +28,8 @@ Color.beforeRemote('**', function(ctx, unused, next) {
   next();
 });
 
-app.dataSource('db', { connector: 'memory' });
-app.model(Color, { dataSource: 'db' });
+app.dataSource('db', {connector: 'memory'});
+app.model(Color, {dataSource: 'db'});
 
 app.listen(3000, function() {
   g.log('A list of colors is available at {{http://localhost:3000/colors}}');

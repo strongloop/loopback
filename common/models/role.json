@@ -13,8 +13,12 @@
     },
     "description": "string",
 
-    "created": "date",
-    "modified": "date"
+    "created": {
+      "defaultFn": "now"
+    },
+    "modified": {
+      "defaultFn": "now"
+    }
   },
   "relations": {
     "principals": {

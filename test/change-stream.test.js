@@ -3,12 +3,16 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var expect = require('chai').expect;
+var loopback = require('../');
+
 describe('PersistedModel.createChangeStream()', function() {
   describe('configured to source changes locally', function() {
     before(function() {
       var test = this;
-      var app = loopback({ localRegistry: true });
-      var ds = app.dataSource('ds', { connector: 'memory' });
+      var app = loopback({localRegistry: true});
+      var ds = app.dataSource('ds', {connector: 'memory'});
       var Score = app.registry.createModel('Score');
       this.Score = app.model(Score, {
         dataSource: 'ds',
@@ -27,13 +31,13 @@ describe('PersistedModel.createChangeStream()', function() {
           done();
         });
 
-        Score.create({ team: 'foo' });
+        Score.create({team: 'foo'});
       });
     });
 
     it('should detect update', function(done) {
       var Score = this.Score;
-      Score.create({ team: 'foo' }, function(err, newScore) {
+      Score.create({team: 'foo'}, function(err, newScore) {
         Score.createChangeStream(function(err, changes) {
           changes.on('data', function(change) {
             expect(change.type).to.equal('update');
@@ -50,7 +54,7 @@ describe('PersistedModel.createChangeStream()', function() {
 
     it('should detect delete', function(done) {
       var Score = this.Score;
-      Score.create({ team: 'foo' }, function(err, newScore) {
+      Score.create({team: 'foo'}, function(err, newScore) {
         Score.createChangeStream(function(err, changes) {
           changes.on('data', function(change) {
             expect(change.type).to.equal('remove');
@@ -69,8 +73,8 @@ describe('PersistedModel.createChangeStream()', function() {
   describe.skip('configured to source changes using pubsub', function() {
     before(function() {
       var test = this;
-      var app = loopback({ localRegistry: true });
-      var db = app.dataSource('ds', { connector: 'memory' });
+      var app = loopback({localRegistry: true});
+      var db = app.dataSource('ds', {connector: 'memory'});
       var ps = app.dataSource('ps', {
         host: 'localhost',
         port: '12345',

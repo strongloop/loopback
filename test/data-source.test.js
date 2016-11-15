@@ -3,6 +3,10 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
+var loopback = require('../');
+
 describe('DataSource', function() {
   var memory;
 
@@ -16,7 +20,7 @@ describe('DataSource', function() {
 
   describe('dataSource.createModel(name, properties, settings)', function() {
     it('Define a model and attach it to a `DataSource`', function() {
-      var Color = memory.createModel('color', { name: String });
+      var Color = memory.createModel('color', {name: String});
       assert.isFunc(Color, 'find');
       assert.isFunc(Color, 'findById');
       assert.isFunc(Color, 'findOne');
@@ -42,13 +46,13 @@ describe('DataSource', function() {
 
     it('should honor settings.base', function() {
       var Base = memory.createModel('base');
-      var Color = memory.createModel('color', { name: String }, { base: Base });
+      var Color = memory.createModel('color', {name: String}, {base: Base});
       assert(Color.prototype instanceof Base);
       assert.equal(Color.base, Base);
     });
 
     it('should use loopback.PersistedModel as the base for DBs', function() {
-      var Color = memory.createModel('color', { name: String });
+      var Color = memory.createModel('color', {name: String});
       assert(Color.prototype instanceof loopback.PersistedModel);
       assert.equal(Color.base, loopback.PersistedModel);
     });
@@ -65,7 +69,7 @@ describe('DataSource', function() {
         connector: new Connector(),
       });
 
-      var Color = ds.createModel('color', { name: String });
+      var Color = ds.createModel('color', {name: String});
       assert(Color.prototype instanceof Color.registry.getModel('Model'));
       assert.equal(Color.base.modelName, 'PersistedModel');
     });
@@ -116,3 +120,19 @@ describe('DataSource', function() {
     });
   });
 });
+
+var assertValidDataSource = function(dataSource) {
+  // has methods
+  assert.isFunc(dataSource, 'createModel');
+  assert.isFunc(dataSource, 'discoverModelDefinitions');
+  assert.isFunc(dataSource, 'discoverSchema');
+  assert.isFunc(dataSource, 'enableRemote');
+  assert.isFunc(dataSource, 'disableRemote');
+  assert.isFunc(dataSource, 'defineOperation');
+  assert.isFunc(dataSource, 'operations');
+};
+
+assert.isFunc = function(obj, name) {
+  assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');
+  assert(typeof obj[name] === 'function', name + ' is not a function');
+};

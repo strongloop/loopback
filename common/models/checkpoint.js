@@ -7,6 +7,7 @@
  * Module Dependencies.
  */
 
+'use strict';
 var assert = require('assert');
 
 /**
@@ -41,8 +42,8 @@ module.exports = function(Checkpoint) {
   };
 
   Checkpoint._getSingleton = function(cb) {
-    var query = { limit: 1 }; // match all instances, return only one
-    var initialData = { seq: 1 };
+    var query = {limit: 1}; // match all instances, return only one
+    var initialData = {seq: 1};
     this.findOrCreate(query, initialData, cb);
   };
 
@@ -59,7 +60,7 @@ module.exports = function(Checkpoint) {
       var originalSeq = cp.seq;
       cp.seq++;
       // Update the checkpoint but only if it was not changed under our hands
-      Checkpoint.updateAll({ id: cp.id, seq: originalSeq }, { seq: cp.seq }, function(err, info) {
+      Checkpoint.updateAll({id: cp.id, seq: originalSeq}, {seq: cp.seq}, function(err, info) {
         if (err) return cb(err);
         // possible outcomes
         // 1) seq was updated to seq+1 - exactly what we wanted!

@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var assert = require('assert');
 var utils = require('../../lib/utils');
 
@@ -70,18 +71,6 @@ function generateKey(hmacKey, algorithm, encoding) {
  */
 
 module.exports = function(Application) {
-  // Workaround for https://github.com/strongloop/loopback/issues/292
-  Application.definition.rawProperties.created.default =
-  Application.definition.properties.created.default = function() {
-    return new Date();
-  };
-
-  // Workaround for https://github.com/strongloop/loopback/issues/292
-  Application.definition.rawProperties.modified.default =
-  Application.definition.properties.modified.default = function() {
-    return new Date();
-  };
-
   /*!
    * A hook to generate keys before creation
    * @param next
@@ -126,7 +115,7 @@ module.exports = function(Application) {
     }
     cb = cb || utils.createPromiseCallback();
 
-    var props = { owner: owner, name: name };
+    var props = {owner: owner, name: name};
     for (var p in options) {
       if (!(p in props)) {
         props[p] = options[p];

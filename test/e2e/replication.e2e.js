@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var path = require('path');
 var loopback = require('../../');
 var models = require('../fixtures/e2e/models');
@@ -33,7 +34,7 @@ describe('Replication', function() {
       LocalTestModel.replicate(0, TestModel, function() {
         if (err) return done(err);
 
-        TestModel.findOne({ n: RANDOM }, function(err, found) {
+        TestModel.findOne({n: RANDOM}, function(err, found) {
           assert.equal(created.id, found.id);
 
           done();

@@ -6,6 +6,7 @@
 // Karma configuration
 // http://karma-runner.github.io/0.12/config/configuration-file.html
 
+'use strict';
 module.exports = function(config) {
   config.set({
     // enable / disable watching file and executing tests whenever any file changes
@@ -111,6 +112,6 @@ module.exports = function(config) {
     },
 
     // Add browserify to preprocessors
-    preprocessors: { 'test/*': ['browserify'] },
+    preprocessors: {'test/*': ['browserify']},
   });
 };

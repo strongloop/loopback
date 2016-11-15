@@ -14,5 +14,6 @@
       "principalType": "ROLE",
       "principalId": "$owner"
     }
-  ]
+  ],
+  "saltWorkFactor": 4
 }

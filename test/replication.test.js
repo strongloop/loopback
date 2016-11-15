@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var assert = require('assert');
 var async = require('async');
 var loopback = require('../');
@@ -27,15 +28,15 @@ describe('Replication / Change APIs', function() {
     });
     SourceModel = this.SourceModel = PersistedModel.extend(
       'SourceModel-' + tid,
-      { id: { id: true, type: String, defaultFn: 'guid' }},
-      { trackChanges: true });
+      {id: {id: true, type: String, defaultFn: 'guid'}},
+      {trackChanges: true});
 
     SourceModel.attachTo(dataSource);
 
     TargetModel = this.TargetModel = PersistedModel.extend(
       'TargetModel-' + tid,
-      { id: { id: true, type: String, defaultFn: 'guid' }},
-      { trackChanges: true });
+      {id: {id: true, type: String, defaultFn: 'guid'}},
+      {trackChanges: true});
 
     // NOTE(bajtos) At the moment, all models share the same Checkpoint
     // model. This causes the in-process replication to work differently
@@ -50,7 +51,7 @@ describe('Replication / Change APIs', function() {
     test.startingCheckpoint = -1;
 
     this.createInitalData = function(cb) {
-      SourceModel.create({ name: 'foo' }, function(err, inst) {
+      SourceModel.create({name: 'foo'}, function(err, inst) {
         if (err) return cb(err);
 
         test.model = inst;
@@ -61,7 +62,7 @@ describe('Replication / Change APIs', function() {
 
   describe('optimization check rectifyChange Vs rectifyAllChanges', function() {
     beforeEach(function initialData(done) {
-      var data = [{ name: 'John', surname: 'Doe' }, { name: 'Jane', surname: 'Roe' }];
+      var data = [{name: 'John', surname: 'Doe'}, {name: 'Jane', surname: 'Roe'}];
       async.waterfall([
         function(callback) {
           SourceModel.create(data, callback);
@@ -75,7 +76,7 @@ describe('Replication / Change APIs', function() {
 
     it('should call rectifyAllChanges if no id is passed for rectifyOnDelete', function(done) {
       var calls = mockSourceModelRectify();
-      SourceModel.destroyAll({ name: 'John' }, function(err, data) {
+      SourceModel.destroyAll({name: 'John'}, function(err, data) {
         if (err) return done(err);
 
         expect(calls).to.eql(['rectifyAllChanges']);
@@ -86,8 +87,8 @@ describe('Replication / Change APIs', function() {
 
     it('should call rectifyAllChanges if no id is passed for rectifyOnSave', function(done) {
       var calls = mockSourceModelRectify();
-      var newData = { 'name': 'Janie' };
-      SourceModel.update({ name: 'Jane' }, newData, function(err, data) {
+      var newData = {'name': 'Janie'};
+      SourceModel.update({name: 'Jane'}, newData, function(err, data) {
         if (err) return done(err);
 
         expect(calls).to.eql(['rectifyAllChanges']);
@@ -101,7 +102,7 @@ describe('Replication / Change APIs', function() {
       var calls = mockTargetModelRectify();
       async.waterfall([
         function(callback) {
-          SourceModel.destroyAll({ name: 'John' }, callback);
+          SourceModel.destroyAll({name: 'John'}, callback);
         },
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
@@ -119,10 +120,10 @@ describe('Replication / Change APIs', function() {
     it('rectifyOnSave for Update should call rectifyChange instead of rectifyAllChanges',
     function(done) {
       var calls = mockTargetModelRectify();
-      var newData = { 'name': 'Janie' };
+      var newData = {'name': 'Janie'};
       async.waterfall([
         function(callback) {
-          SourceModel.update({ name: 'Jane' }, newData, callback);
+          SourceModel.update({name: 'Jane'}, newData, callback);
         },
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
@@ -140,7 +141,7 @@ describe('Replication / Change APIs', function() {
     it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges',
     function(done) {
       var calls = mockTargetModelRectify();
-      var newData = [{ name: 'Janie', surname: 'Doe' }];
+      var newData = [{name: 'Janie', surname: 'Doe'}];
       async.waterfall([
         function(callback) {
           SourceModel.create(newData, callback);
@@ -194,7 +195,7 @@ describe('Replication / Change APIs', function() {
   describe('Model.changes(since, filter, callback)', function() {
     it('Get changes since the given checkpoint', function(done) {
       var test = this;
-      this.SourceModel.create({ name: 'foo' }, function(err) {
+      this.SourceModel.create({name: 'foo'}, function(err) {
         if (err) return done(err);
 
         setTimeout(function() {
@@ -210,7 +211,7 @@ describe('Replication / Change APIs', function() {
     it('excludes changes from older checkpoints', function(done) {
       var FUTURE_CHECKPOINT = 999;
 
-      SourceModel.create({ name: 'foo' }, function(err) {
+      SourceModel.create({name: 'foo'}, function(err) {
         if (err) return done(err);
         SourceModel.changes(FUTURE_CHECKPOINT, {}, function(err, changes) {
           if (err) return done(err);
@@ -259,7 +260,7 @@ describe('Replication / Change APIs', function() {
       var test = this;
       var options = {};
 
-      this.SourceModel.create({ name: 'foo' }, function(err) {
+      this.SourceModel.create({name: 'foo'}, function(err) {
         if (err) return done(err);
 
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
@@ -276,7 +277,7 @@ describe('Replication / Change APIs', function() {
       var test = this;
       var options = {};
 
-      this.SourceModel.create({ name: 'foo' }, function(err) {
+      this.SourceModel.create({name: 'foo'}, function(err) {
         if (err) return done(err);
 
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
@@ -294,13 +295,13 @@ describe('Replication / Change APIs', function() {
     it('applies "since" filter on source changes', function(done) {
       async.series([
         function createModelInSourceCp1(next) {
-          SourceModel.create({ id: '1' }, next);
+          SourceModel.create({id: '1'}, next);
         },
         function checkpoint(next) {
           SourceModel.checkpoint(next);
         },
         function createModelInSourceCp2(next) {
-          SourceModel.create({ id: '2' }, next);
+          SourceModel.create({id: '2'}, next);
         },
         function replicateLastChangeOnly(next) {
           SourceModel.currentCheckpoint(function(err, cp) {
@@ -323,13 +324,13 @@ describe('Replication / Change APIs', function() {
     it('applies "since" filter on source changes - promise variant', function(done) {
       async.series([
         function createModelInSourceCp1(next) {
-          SourceModel.create({ id: '1' }, next);
+          SourceModel.create({id: '1'}, next);
         },
         function checkpoint(next) {
           SourceModel.checkpoint(next);
         },
         function createModelInSourceCp2(next) {
-          SourceModel.create({ id: '2' }, next);
+          SourceModel.create({id: '2'}, next);
         },
         function replicateLastChangeOnly(next) {
           SourceModel.currentCheckpoint(function(err, cp) {
@@ -394,7 +395,7 @@ describe('Replication / Change APIs', function() {
       spyAndStoreSinceArg(SourceModel, 'changes', sourceSince);
       spyAndStoreSinceArg(TargetModel, 'diff', targetSince);
 
-      var since = { source: 1, target: 2 };
+      var since = {source: 1, target: 2};
       SourceModel.replicate(since, TargetModel, function(err) {
         if (err) return done(err);
 
@@ -412,7 +413,7 @@ describe('Replication / Change APIs', function() {
       spyAndStoreSinceArg(SourceModel, 'changes', sourceSince);
       spyAndStoreSinceArg(TargetModel, 'diff', targetSince);
 
-      var since = { source: 1, target: 2 };
+      var since = {source: 1, target: 2};
       SourceModel.replicate(since, TargetModel, {})
         .then(function() {
           expect(sourceSince).to.eql([1]);
@@ -429,13 +430,13 @@ describe('Replication / Change APIs', function() {
       setupRaceConditionInReplication(function(cb) {
         // simulate the situation when another model is created
         // while a replication run is in progress
-        SourceModel.create({ id: 'racer' }, cb);
+        SourceModel.create({id: 'racer'}, cb);
       });
 
       var lastCp;
       async.series([
         function buildSomeDataToReplicate(next) {
-          SourceModel.create({ id: 'init' }, next);
+          SourceModel.create({id: 'init'}, next);
         },
         function getLastCp(next) {
           SourceModel.currentCheckpoint(function(err, cp) {
@@ -532,7 +533,7 @@ describe('Replication / Change APIs', function() {
             if (err) return next(err);
 
             TargetModel.getChangeModel().find(
-              { where: { checkpoint: { gte: cp }}},
+              {where: {checkpoint: {gte: cp}}},
               function(err, changes) {
                 if (err) return done(err);
 
@@ -548,10 +549,10 @@ describe('Replication / Change APIs', function() {
     describe('with 3rd-party changes', function() {
       it('detects UPDATE made during UPDATE', function(done) {
         async.series([
-          createModel(SourceModel, { id: '1' }),
+          createModel(SourceModel, {id: '1'}),
           replicateExpectingSuccess(),
           function updateModel(next) {
-            SourceModel.updateAll({ id: '1' }, { name: 'source' }, next);
+            SourceModel.updateAll({id: '1'}, {name: 'source'}, next);
           },
           function replicateWith3rdPartyModifyingData(next) {
             setupRaceConditionInReplication(function(cb) {
@@ -560,14 +561,14 @@ describe('Replication / Change APIs', function() {
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  { name: '3rd-party' },
+                  {name: '3rd-party'},
                   cb);
               } else {
                 // 2.x connectors require `options`
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  { name: '3rd-party' },
+                  {name: '3rd-party'},
                   {}, // options
                   cb);
               }
@@ -595,20 +596,20 @@ describe('Replication / Change APIs', function() {
         async.series([
           // FIXME(bajtos) Remove the 'name' property once the implementation
           // of UPDATE is fixed to correctly remove properties
-          createModel(SourceModel, { id: '1', name: 'source' }),
+          createModel(SourceModel, {id: '1', name: 'source'}),
           function replicateWith3rdPartyModifyingData(next) {
             var connector = TargetModel.dataSource.connector;
             setupRaceConditionInReplication(function(cb) {
               if (connector.create.length <= 3) {
                 connector.create(
                   TargetModel.modelName,
-                  { id: '1', name: '3rd-party' },
+                  {id: '1', name: '3rd-party'},
                   cb);
               } else {
                 // 2.x connectors require `options`
                 connector.create(
                   TargetModel.modelName,
-                  { id: '1', name: '3rd-party' },
+                  {id: '1', name: '3rd-party'},
                   {}, // options
                   cb);
               }
@@ -634,7 +635,7 @@ describe('Replication / Change APIs', function() {
 
       it('detects UPDATE made during DELETE', function(done) {
         async.series([
-          createModel(SourceModel, { id: '1' }),
+          createModel(SourceModel, {id: '1'}),
           replicateExpectingSuccess(),
           function deleteModel(next) {
             SourceModel.deleteById('1', next);
@@ -646,14 +647,14 @@ describe('Replication / Change APIs', function() {
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  { name: '3rd-party' },
+                  {name: '3rd-party'},
                   cb);
               } else {
                 // 2.x connectors require `options`
                 connector.updateAttributes(
                   TargetModel.modelName,
                   '1',
-                  { name: '3rd-party' },
+                  {name: '3rd-party'},
                   {}, // options
                   cb);
               }
@@ -679,7 +680,7 @@ describe('Replication / Change APIs', function() {
 
       it('handles DELETE made during DELETE', function(done) {
         async.series([
-          createModel(SourceModel, { id: '1' }),
+          createModel(SourceModel, {id: '1'}),
           replicateExpectingSuccess(),
           function deleteModel(next) {
             SourceModel.deleteById('1', next);
@@ -1014,8 +1015,8 @@ describe('Replication / Change APIs', function() {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
         SourceModel.upsertWithWhere(
-          { name: inst.name },
-          { name: 'updated' },
+          {name: inst.name},
+          {name: 'updated'},
           function(err) {
             if (err) return done(err);
             assertChangeRecordedForId(inst.id, done);
@@ -1050,8 +1051,8 @@ describe('Replication / Change APIs', function() {
         };
 
       SourceModel.findOrCreate(
-        { where: { name: 'does-not-exist' }},
-        { name: 'created' },
+        {where: {name: 'does-not-exist'}},
+        {name: 'created'},
         function(err, inst) {
           if (err) return done(err);
 
@@ -1073,7 +1074,7 @@ describe('Replication / Change APIs', function() {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
 
-        SourceModel.deleteAll({ name: inst.name }, function(err) {
+        SourceModel.deleteAll({name: inst.name}, function(err) {
           if (err) return done(err);
 
           assertChangeRecordedForId(inst.id, done);
@@ -1086,8 +1087,8 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
 
         SourceModel.updateAll(
-          { name: inst.name },
-          { name: 'updated' },
+          {name: inst.name},
+          {name: 'updated'},
           function(err) {
             if (err) return done(err);
 
@@ -1113,7 +1114,7 @@ describe('Replication / Change APIs', function() {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
 
-        inst.updateAttributes({ name: 'updated' }, function(err) {
+        inst.updateAttributes({name: 'updated'}, function(err) {
           if (err) return done(err);
 
           assertChangeRecordedForId(inst.id, done);
@@ -1132,7 +1133,7 @@ describe('Replication / Change APIs', function() {
     });
 
     function givenReplicatedInstance(cb) {
-      SourceModel.create({ name: 'a-name' }, function(err, inst) {
+      SourceModel.create({name: 'a-name'}, function(err, inst) {
         if (err) return cb(err);
 
         SourceModel.checkpoint(function(err) {
@@ -1171,7 +1172,7 @@ describe('Replication / Change APIs', function() {
     beforeEach(function createReplicatedInstance(done) {
       async.series([
         function createInstance(next) {
-          SourceModel.create({ id: 'test-instance' }, function(err, result) {
+          SourceModel.create({id: 'test-instance'}, function(err, result) {
             sourceInstance = result;
             sourceInstanceId = result.id;
 
@@ -1186,8 +1187,8 @@ describe('Replication / Change APIs', function() {
     beforeEach(function setupThirdModel() {
       AnotherModel = this.AnotherModel = PersistedModel.extend(
         'AnotherModel-' + tid,
-        { id: { id: true, type: String, defaultFn: 'guid' }},
-        { trackChanges: true });
+        {id: {id: true, type: String, defaultFn: 'guid'}},
+        {trackChanges: true});
 
       // NOTE(bajtos) At the moment, all models share the same Checkpoint
       // model. This causes the in-process replication to work differently
@@ -1363,7 +1364,7 @@ describe('Replication / Change APIs', function() {
         it('handles UPDATE conflict resolved manually', function(done) {
           testUpdateConflictIsResolved(
             function resolveManually(conflict, cb) {
-              conflict.resolveManually({ name: 'manual' }, cb);
+              conflict.resolveManually({name: 'manual'}, cb);
             },
             done);
         });
@@ -1398,7 +1399,7 @@ describe('Replication / Change APIs', function() {
         it('handles DELETE conflict resolved manually', function(done) {
           testDeleteConflictIsResolved(
             function resolveManually(conflict, cb) {
-              conflict.resolveManually({ name: 'manual' }, cb);
+              conflict.resolveManually({name: 'manual'}, cb);
             },
             done);
         });
@@ -1542,8 +1543,8 @@ describe('Replication / Change APIs', function() {
     beforeEach(function() {
       OptionsSourceModel = PersistedModel.extend(
         'OptionsSourceModel-' + tid,
-        { id: { id: true, type: String, defaultFn: 'guid' }},
-        { trackChanges: true });
+        {id: {id: true, type: String, defaultFn: 'guid'}},
+        {trackChanges: true});
 
       OptionsSourceModel.attachTo(dataSource);
 
@@ -1558,7 +1559,7 @@ describe('Replication / Change APIs', function() {
     });
 
     it('bulkUpdate should call Model updates with the provided options object', function(done) {
-      var testData = { name: 'Janie', surname: 'Doe' };
+      var testData = {name: 'Janie', surname: 'Doe'};
       var updates = [
         {
           data: null,
@@ -1577,7 +1578,7 @@ describe('Replication / Change APIs', function() {
         },
         function(data, callback) {
           updates[0].data = data;
-          TargetModel.getChangeModel().find({ where: { modelId: data.id }}, callback);
+          TargetModel.getChangeModel().find({where: {modelId: data.id}}, callback);
         },
         function(data, callback) {
           updates[0].change = data;
@@ -1596,7 +1597,7 @@ describe('Replication / Change APIs', function() {
 
   describe('ensure bulkUpdate works with just 2 args', function() {
     it('bulkUpdate should successfully finish without options', function(done) {
-      var testData = { name: 'Janie', surname: 'Doe' };
+      var testData = {name: 'Janie', surname: 'Doe'};
       var updates = [{
         data: null,
         change: null,
@@ -1609,7 +1610,7 @@ describe('Replication / Change APIs', function() {
         },
         function(data, callback) {
           updates[0].data = data;
-          TargetModel.getChangeModel().find({ where: { modelId: data.id }}, callback);
+          TargetModel.getChangeModel().find({where: {modelId: data.id}}, callback);
         },
         function(data, callback) {
           updates[0].change = data;

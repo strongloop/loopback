@@ -7,6 +7,7 @@
  * Export the middleware.
  */
 
+'use strict';
 module.exports = status;
 
 /**
