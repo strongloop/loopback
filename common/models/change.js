@@ -186,26 +186,50 @@ module.exports = function(Change) {
 
     cb = cb || utils.createPromiseCallback();
 
-    change.currentRevision(function(err, rev) {
+    var model = this.getModelCtor();
+    var id = this.getModelId();
+
+    model.findById(id, function(err, inst) {
       if (err) return cb(err);
 
-      // avoid setting rev and prev to the same value
-      if (currentRev === rev) {
-        change.debug('rev and prev are equal (not updating anything)');
-        return cb(null, change);
-      }
+      change.tenant = getTenant(model, inst);
 
-      // FIXME(@bajtos) Allo callers to pass in the checkpoint value
-      // (or even better - a memoized async function to get the cp value)
-      // That will enable `rectifyAll` to cache the checkpoint value
-      change.constructor.getCheckpointModel().current(
-        function(err, checkpoint) {
-          if (err) return cb(err);
-          doRectify(checkpoint, rev);
+      change.currentRevision(inst, function(err, rev) {
+        if (err) return cb(err);
+
+        // avoid setting rev and prev to the same value
+        if (currentRev === rev) {
+          change.debug('rev and prev are equal (not updating anything)');
+          return cb(null, change);
         }
-      );
+
+        // FIXME(@bajtos) Allow callers to pass in the checkpoint value
+        // (or even better - a memoized async function to get the cp value)
+        // That will enable `rectifyAll` to cache the checkpoint value
+        change.constructor.getCheckpointModel().current(
+          function(err, checkpoint) {
+            if (err) return cb(err);
+            doRectify(checkpoint, rev);
+          }
+        );
+      });
     });
     return cb.promise;
+
+    function getTenant(model, inst) {
+      var tenant = null;
+      var tenantProperty;
+
+      if (model && model.settings && model.settings.tenantProperty) {
+        tenantProperty = model.settings.tenantProperty;
+      }
+
+      if (tenantProperty && inst && inst[tenantProperty]) {
+        tenant = inst[tenantProperty];
+      }
+
+      return tenant;
+    }
 
     function doRectify(checkpoint, rev) {
       if (rev) {
@@ -230,7 +254,7 @@ module.exports = function(Change) {
           if (currentRev) {
             change.prev = currentRev;
           } else if (!change.prev) {
-            change.debug('ERROR - could not determing prev');
+            change.debug('ERROR - could not determining prev');
             change.prev = Change.UNKNOWN;
           }
           change.debug('updated prev');
@@ -254,23 +278,35 @@ module.exports = function(Change) {
 
   /**
    * Get a change's current revision based on current data.
+   * @param  {Object} instance Optional instance object to get the revision string for, if not provided it will be queried
    * @callback  {Function} callback
    * @param {Error} err
    * @param {String} rev The current revision
    */
 
-  Change.prototype.currentRevision = function(cb) {
+  Change.prototype.currentRevision = function(instance, cb) {
+    // if only one argument was provided, then set that as the callback
+    if (typeof instance === 'function') {
+      cb = instance;
+      instance = null;
+    }
+
     cb = cb || utils.createPromiseCallback();
-    var model = this.getModelCtor();
-    var id = this.getModelId();
-    model.findById(id, function(err, inst) {
-      if (err) return cb(err);
-      if (inst) {
-        cb(null, Change.revisionForInst(inst));
-      } else {
-        cb(null, null);
-      }
-    });
+
+    if (instance) {
+      cb(null, Change.revisionForInst(instance));
+    } else {
+      var model = this.getModelCtor();
+      var id = this.getModelId();
+      model.findById(id, function(err, inst) {
+        if (err) return cb(err);
+        if (inst) {
+          cb(null, Change.revisionForInst(inst));
+        } else {
+          cb(null, null);
+        }
+      });
+    }
     return cb.promise;
   };
 
