@@ -6,10 +6,10 @@
 var async = require('async');
 var expect = require('chai').expect;
 
-var Change;
-var TestModel;
-
 describe('Change', function() {
+  var Change;
+  var TestModel;
+
   beforeEach(function() {
     var memory = loopback.createDataSource({
       connector: loopback.Memory
@@ -233,6 +233,14 @@ describe('Change', function() {
       });
     });
 
+    it('should create a new change with tenant set as null', function(done) {
+      var test = this;
+      change.rectify(function(err, ch) {
+        assert.equal(ch.tenant, null);
+        done();
+      });
+    });
+
     // This test is a low-level equivalent of the test in replication.test.js
     // called "replicates multiple updates within the same CP"
     it('should merge updates within the same checkpoint', function(done) {
@@ -320,7 +328,7 @@ describe('Change', function() {
       change.rectify()
         .then(function(ch) {
           assert.equal(ch.rev, test.revisionForModel);
-
+          assert.equal(ch.tenant, null);
           done();
         })
         .catch(done);
@@ -336,6 +344,22 @@ describe('Change', function() {
       });
 
       change.currentRevision(function(err, rev) {
+        assert.equal(rev, test.revisionForModel);
+
+        done();
+      });
+    });
+  });
+
+  describe('change.currentRevision(instance, callback)', function() {
+    it('should get the correct revision', function(done) {
+      var test = this;
+      var change = new Change({
+        modelName: this.modelName,
+        modelId: this.modelId
+      });
+
+      change.currentRevision(this.model, function(err, rev) {
         assert.equal(rev, test.revisionForModel);
 
         done();
@@ -544,6 +568,7 @@ describe('Change', function() {
           modelName: updateRecord.modelName,
           prev: 'foo', // this is the current local revision
           rev: 'foo-new',
+          tenant: null,
         });
 
         done();
@@ -573,6 +598,7 @@ describe('Change', function() {
           modelName: updateRecord.modelName,
           prev: 'foo', // this is the current local revision
           rev: 'foo-new',
+          tenant: null,
         });
 
         done();
@@ -601,10 +627,70 @@ describe('Change', function() {
           modelName: updateRecord.modelName,
           prev: null, // this is the current local revision
           rev: 'new-rev',
+          tenant: null,
         });
 
         done();
       });
+    });
+  });
+});
+
+describe('Change with multi tenancy', function() {
+  var ChangeWithTenant;
+  var TestModelWithTenant;
+
+  beforeEach(function() {
+    var memory = loopback.createDataSource({
+      connector: loopback.Memory
+    });
+    TestModelWithTenant = loopback.PersistedModel.extend('ChangeTestModel',
+      {
+        id: {id: true, type: 'string', defaultFn: 'guid'}
+      },
+      {
+        trackChanges: true,
+        tenantProperty: 'tenantId'
+      });
+    this.modelName = TestModelWithTenant.modelName;
+    TestModelWithTenant.attachTo(memory);
+    ChangeWithTenant = TestModelWithTenant.getChangeModel();
+  });
+
+  describe('change.rectify - tenant variant', function() {
+    var change;
+    var tenantId = '123';
+
+    beforeEach(function(done) {
+      ChangeWithTenant = TestModelWithTenant.getChangeModel();
+      var test = this;
+      test.data = {
+        foo: 'bar',
+        tenantId: tenantId
+      };
+
+      TestModelWithTenant.create(test.data, function(err, model) {
+        if (err) return done(err);
+        test.revisionForModel = ChangeWithTenant.revisionForInst(model);
+
+        ChangeWithTenant.findOrCreateChange(TestModelWithTenant.modelName, model.id)
+          .then(function(ch) {
+            change = ch;
+            done();
+          }).catch(done);
+      });
+    });
+
+    it('should create a new change with the correct tenant and revision', function(done) {
+      var test = this;
+      change.rectify()
+        .then(function(ch) {
+          assert.equal(ch.rev, test.revisionForModel);
+          assert.equal(ch.tenant, tenantId);
+
+          done();
+        })
+        .catch(done);
     });
   });
 });

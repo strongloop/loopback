@@ -20,6 +20,10 @@
     },
     "modelId": {
       "type": "string"
+    },
+    "tenant": {
+      "type": "string",
+      "default": null
     }
   }
 }
