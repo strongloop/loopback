@@ -4,12 +4,16 @@
 // License text available at https://opensource.org/licenses/MIT
 
 var async = require('async');
+var chai = require('chai');
+var describe = require('./util/describe');
 var loopback = require('../');
 var ACL = loopback.ACL;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
+var sinonChai = require('sinon-chai');
 
-var describe = require('./util/describe');
+var expect = chai.expect;
+chai.use(sinonChai);
 
 describe('Model / PersistedModel', function() {
   defineModelTestsWithDataSource({

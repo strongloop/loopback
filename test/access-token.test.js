@@ -16,7 +16,11 @@ Token.attachTo(ds);
 var ACL = loopback.ACL;
 
 describe('loopback.token(options)', function() {
-  beforeEach(createTestingToken);
+  var app;
+  beforeEach(function(done) {
+    app = loopback();
+    createTestingToken.call(this, done);
+  });
 
   it('should populate req.token from the query string', function(done) {
     createTestAppAndRequest(this.token, done)
@@ -428,7 +432,9 @@ describe('AccessToken', function() {
 });
 
 describe('app.enableAuth()', function() {
+  var app;
   beforeEach(function setupAuthWithModels() {
+    app = loopback();
     app.enableAuth({ dataSource: ds });
   });
   beforeEach(createTestingToken);
