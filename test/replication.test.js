@@ -1560,6 +1560,96 @@ describe('Replication / Change APIs', function() {
     });
   });
 
+  describe('ensure options object is set on context during bulkUpdate', function() {
+    var syncPropertyExists = false;
+    var OptionsSourceModel;
+
+    beforeEach(function() {
+      OptionsSourceModel = PersistedModel.extend(
+        'OptionsSourceModel-' + tid,
+        { id: { id: true, type: String, defaultFn: 'guid' } },
+        { trackChanges: true });
+
+      OptionsSourceModel.attachTo(dataSource);
+
+      OptionsSourceModel.observe('before save', function updateTimestamp(ctx, next) {
+        if (ctx.options.sync) {
+          syncPropertyExists = true;
+        } else {
+          syncPropertyExists = false;
+        }
+        next();
+      });
+    });
+
+    it('bulkUpdate should call Model updates with the provided options object', function(done) {
+      var testData = {name: 'Janie', surname: 'Doe'};
+      var updates = [
+        {
+          data: null,
+          change: null,
+          type: 'create'
+        }
+      ];
+
+      var options = {
+        sync: true
+      };
+
+      async.waterfall([
+        function(callback) {
+          TargetModel.create(testData, callback);
+        },
+        function(data, callback) {
+          updates[0].data = data;
+          TargetModel.getChangeModel().find({where: {modelId: data.id}}, callback);
+        },
+        function(data, callback) {
+          updates[0].change = data;
+          OptionsSourceModel.bulkUpdate(updates, options, callback);
+        }],
+        function(err, result) {
+          if (err) return done(err);
+
+          expect(syncPropertyExists).to.eql(true);
+
+          done();
+        }
+      );
+    });
+  });
+
+  describe('ensure bulkUpdate works with just 2 args', function() {
+    it('bulkUpdate should successfully finish without options', function(done) {
+      var testData = {name: 'Janie', surname: 'Doe'};
+      var updates = [
+        {
+        data: null,
+        change: null,
+        type: 'create'
+      }
+      ];
+
+      async.waterfall([
+        function(callback) {
+          TargetModel.create(testData, callback);
+        },
+        function(data, callback) {
+          updates[0].data = data;
+          TargetModel.getChangeModel().find({where: {modelId: data.id}}, callback);
+        },
+        function(data, callback) {
+          updates[0].change = data;
+          SourceModel.bulkUpdate(updates, callback);
+        }
+        ], function(err, result) {
+          if (err) return done(err);
+          done();
+        }
+      );
+    });
+  });
+
   var _since = {};
   function replicate(source, target, since, next) {
     if (typeof since === 'function') {
@@ -1614,14 +1704,14 @@ describe('Replication / Change APIs', function() {
 
   function setupRaceConditionInReplication(fn) {
     var bulkUpdate = TargetModel.bulkUpdate;
-    TargetModel.bulkUpdate = function(data, cb) {
+    TargetModel.bulkUpdate = function(data, options, cb) {
       // simulate the situation when a 3rd party modifies the database
       // while a replication run is in progress
       var self = this;
       fn(function(err) {
         if (err) return cb(err);
 
-        bulkUpdate.call(self, data, cb);
+        bulkUpdate.call(self, data, options, cb);
       });
 
       // apply the 3rd party modification only once
