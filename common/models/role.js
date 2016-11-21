@@ -211,25 +211,41 @@ module.exports = function(Role) {
         if (callback) callback(null, matches(ownerId, userId));
         return;
       } else {
+        var relTries = 0;
+        var matched = false;
+        function processRelatedUser(err, user) {
+          if (matched) {
+            return;
+          }
+          var checkFinish = function() {
+            if (relTries === modelClass.relations.length) {
+              debug('No matching belongsTo relation in model %j and user: %j', modelId, userId);
+              if (callback) callback(null, false);
+            }
+          };
+          if (!err && user) {
+            relTries++;
+            debug('User found: %j', user.id);
+            var result = matches(user.id, userId);
+            debug('User matches result: %s !', result);
+            if (result) {
+              matched = true;
+              if (callback) callback(null, matches(user.id, userId));
+            }
+            checkFinish();
+          } else {
+            relTries++;
+            checkFinish();
+          }
+        }
+
         // Try to follow belongsTo
         for (var r in modelClass.relations) {
           var rel = modelClass.relations[r];
           if (rel.type === 'belongsTo' && isUserClass(rel.modelTo)) {
             debug('Checking relation %s to %s: %j', r, rel.modelTo.modelName, rel);
             inst[r](processRelatedUser);
-            return;
           }
-        }
-        debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
-        if (callback) callback(null, false);
-      }
-
-      function processRelatedUser(err, user) {
-        if (!err && user) {
-          debug('User found: %j', user.id);
-          if (callback) callback(null, matches(user.id, userId));
-        } else {
-          if (callback) callback(err, false);
         }
       }
     });
