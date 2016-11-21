@@ -35,5 +35,5 @@ CartItem.remoteMethod('sum',
 );
 
 CartItem.prototype.total = function() {
-  return this.price * this.qty * 1 + this.tax;
+  return this.price * this.qty * (1 + this.tax);
 };
