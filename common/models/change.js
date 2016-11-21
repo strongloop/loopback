@@ -184,16 +184,32 @@ module.exports = function(Change) {
 
     cb = cb || utils.createPromiseCallback();
 
-    change.currentRevision(function(err, rev) {
+    const model = this.getModelCtor();
+    const id = this.getModelId();
+
+    model.findById(id, function(err, inst) {
       if (err) return cb(err);
 
+      if (inst) {
+        inst.fillCustomChangeProperties(change, function() {
+          const rev = Change.revisionForInst(inst);
+          prepareAndDoRectify(rev);
+        });
+      } else {
+        prepareAndDoRectify(null);
+      }
+    });
+
+    return cb.promise;
+
+    function prepareAndDoRectify(rev) {
       // avoid setting rev and prev to the same value
       if (currentRev === rev) {
         change.debug('rev and prev are equal (not updating anything)');
         return cb(null, change);
       }
 
-      // FIXME(@bajtos) Allo callers to pass in the checkpoint value
+      // FIXME(@bajtos) Allow callers to pass in the checkpoint value
       // (or even better - a memoized async function to get the cp value)
       // That will enable `rectifyAll` to cache the checkpoint value
       change.constructor.getCheckpointModel().current(
@@ -202,8 +218,7 @@ module.exports = function(Change) {
           doRectify(checkpoint, rev);
         }
       );
-    });
-    return cb.promise;
+    }
 
     function doRectify(checkpoint, rev) {
       if (rev) {
@@ -228,7 +243,7 @@ module.exports = function(Change) {
           if (currentRev) {
             change.prev = currentRev;
           } else if (!change.prev) {
-            change.debug('ERROR - could not determing prev');
+            change.debug('ERROR - could not determine prev');
             change.prev = Change.UNKNOWN;
           }
           change.debug('updated prev');
