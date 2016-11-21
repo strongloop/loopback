@@ -12,6 +12,7 @@ var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
 var expect = require('./helpers/expect');
 var debug = require('debug')('test');
+var runtime = require('./../lib/runtime');
 
 describe('Replication / Change APIs', function() {
   this.timeout(10000);
@@ -58,6 +59,77 @@ describe('Replication / Change APIs', function() {
         SourceModel.replicate(TargetModel, cb);
       });
     };
+  });
+
+  describe('cleanup check for enableChangeTracking', function() {
+    describe('when no changeCleanupInterval set', function() {
+      it('should call rectifyAllChanges if running on server', function(done) {
+        var calls = mockRectifyAllChanges(SourceModel);
+        SourceModel.enableChangeTracking();
+
+        if (runtime.isServer) {
+          expect(calls).to.eql(['rectifyAllChanges']);
+        } else {
+          expect(calls).to.eql([]);
+        }
+
+        done();
+      });
+    });
+
+    describe('when changeCleanupInterval set to -1', function() {
+      var Model;
+      beforeEach(function() {
+        Model = this.Model = PersistedModel.extend(
+          'Model-' + tid,
+          {id: {id: true, type: String, defaultFn: 'guid'}},
+          {trackChanges: true, changeCleanupInterval: -1});
+
+        Model.attachTo(dataSource);
+      });
+
+      it('should not call rectifyAllChanges', function(done) {
+        var calls = mockRectifyAllChanges(Model);
+        Model.enableChangeTracking();
+        expect(calls).to.eql([]);
+        done();
+      });
+    });
+
+    describe('when changeCleanupInterval set to 10000', function() {
+      var Model;
+      beforeEach(function() {
+        Model = this.Model = PersistedModel.extend(
+          'Model-' + tid,
+          {id: {id: true, type: String, defaultFn: 'guid'}},
+          {trackChanges: true, changeCleanupInterval: 10000});
+
+        Model.attachTo(dataSource);
+      });
+
+      it('should call rectifyAllChanges if running on server', function(done) {
+        var calls = mockRectifyAllChanges(Model);
+        Model.enableChangeTracking();
+        if (runtime.isServer) {
+          expect(calls).to.eql(['rectifyAllChanges']);
+        } else {
+          expect(calls).to.eql([]);
+        }
+
+        done();
+      });
+    });
+
+    function mockRectifyAllChanges(Model) {
+      var calls = [];
+
+      Model.rectifyAllChanges = function(cb) {
+        calls.push('rectifyAllChanges');
+        process.nextTick(cb);
+      };
+
+      return calls;
+    }
   });
 
   describe('optimization check rectifyChange Vs rectifyAllChanges', function() {
