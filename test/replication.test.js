@@ -297,37 +297,6 @@ describe('Replication / Change APIs', function() {
   });
 
   describe('Model.replicate(since, targetModel, options, callback)', function() {
-    function assertTargetModelEqualsSourceModel(conflicts, sourceModel,
-      targetModel, done) {
-      var sourceData, targetData;
-
-      assert(conflicts.length === 0);
-      async.parallel([
-        function(cb) {
-          sourceModel.find(function(err, result) {
-            if (err) return cb(err);
-
-            sourceData = result;
-            cb();
-          });
-        },
-        function(cb) {
-          targetModel.find(function(err, result) {
-            if (err) return cb(err);
-
-            targetData = result;
-            cb();
-          });
-        },
-      ], function(err) {
-        if (err) return done(err);
-
-        assert.deepEqual(sourceData, targetData);
-
-        done();
-      });
-    }
-
     it('Replicate data using the target model', function(done) {
       var test = this;
       var options = {};
@@ -1695,6 +1664,111 @@ describe('Replication / Change APIs', function() {
     });
   });
 
+  describe('Replication with chunking', function() {
+    beforeEach(function() {
+      var test = this;
+      SourceModel = this.SourceModel = PersistedModel.extend(
+        'SourceModel-' + tid,
+        {id: {id: true, type: String, defaultFn: 'guid'}},
+        {trackChanges: true, replicationChunkSize: 1});
+
+      SourceModel.attachTo(dataSource);
+
+      TargetModel = this.TargetModel = PersistedModel.extend(
+        'TargetModel-' + tid,
+        {id: {id: true, type: String, defaultFn: 'guid'}},
+        {trackChanges: true, replicationChunkSize: 1});
+
+      var TargetChange = TargetModel.Change;
+      TargetChange.Checkpoint = loopback.Checkpoint.extend('TargetCheckpoint');
+      TargetChange.Checkpoint.attachTo(dataSource);
+
+      TargetModel.attachTo(dataSource);
+
+      test.startingCheckpoint = -1;
+    });
+
+    describe('Model.replicate(since, targetModel, options, callback)', function() {
+      it('calls bulkUpdate multiple times', function(done) {
+        var test = this;
+        var options = {};
+        var calls = mockBulkUpdate(TargetModel);
+
+        SourceModel.create([{name: 'foo'}, {name: 'bar'}], function(err) {
+          if (err) return done(err);
+
+          test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
+            options, function(err, conflicts) {
+              if (err) return done(err);
+
+              assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
+                test.TargetModel, done);
+              expect(calls.length).to.eql(2);
+            });
+        });
+      });
+    });
+  });
+
+  describe('Replication without chunking', function() {
+    beforeEach(function() {
+      var test = this;
+      SourceModel = this.SourceModel = PersistedModel.extend(
+        'SourceModel-' + tid,
+        {id: {id: true, type: String, defaultFn: 'guid'}},
+        {trackChanges: true});
+
+      SourceModel.attachTo(dataSource);
+
+      TargetModel = this.TargetModel = PersistedModel.extend(
+        'TargetModel-' + tid,
+        {id: {id: true, type: String, defaultFn: 'guid'}},
+        {trackChanges: true});
+
+      var TargetChange = TargetModel.Change;
+      TargetChange.Checkpoint = loopback.Checkpoint.extend('TargetCheckpoint');
+      TargetChange.Checkpoint.attachTo(dataSource);
+
+      TargetModel.attachTo(dataSource);
+
+      test.startingCheckpoint = -1;
+    });
+
+    describe('Model.replicate(since, targetModel, options, callback)', function() {
+      it('calls bulkUpdate only once', function(done) {
+        var test = this;
+        var options = {};
+        var calls = mockBulkUpdate(TargetModel);
+
+        SourceModel.create([{name: 'foo'}, {name: 'bar'}], function(err) {
+          if (err) return done(err);
+
+          test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
+            options, function(err, conflicts) {
+              if (err) return done(err);
+
+              assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
+                test.TargetModel, done);
+              expect(calls.length).to.eql(1);
+            });
+        });
+      });
+    });
+  });
+
+  function mockBulkUpdate(modelToMock) {
+    var calls = [];
+
+    var originalBulkUpdateFunction = modelToMock.bulkUpdate;
+
+    modelToMock.bulkUpdate = function(since, filter, callback) {
+      calls.push('bulkUpdate');
+      originalBulkUpdateFunction.call(this, since, filter, callback);
+    };
+
+    return calls;
+  }
+
   var _since = {};
   function replicate(source, target, since, next) {
     if (typeof since === 'function') {
@@ -1798,5 +1872,36 @@ describe('Replication / Change APIs', function() {
 
   function getIds(list) {
     return getPropValue(list, 'id');
+  }
+
+  function assertTargetModelEqualsSourceModel(conflicts, sourceModel,
+                                              targetModel, done) {
+    var sourceData, targetData;
+
+    assert(conflicts.length === 0);
+    async.parallel([
+      function(cb) {
+        sourceModel.find(function(err, result) {
+          if (err) return cb(err);
+
+          sourceData = result;
+          cb();
+        });
+      },
+      function(cb) {
+        targetModel.find(function(err, result) {
+          if (err) return cb(err);
+
+          targetData = result;
+          cb();
+        });
+      },
+    ], function(err) {
+      if (err) return done(err);
+
+      assert.deepEqual(sourceData, targetData);
+
+      done();
+    });
   }
 });
