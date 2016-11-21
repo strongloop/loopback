@@ -146,6 +146,16 @@ module.exports = function(AccessToken) {
       var userRelation = AccessToken.relations.user; // may not be set up
       var User = userRelation && userRelation.modelTo;
 
+      // redefine user model if accessToken's principalType is available
+      if (this.principalType) {
+        User = AccessToken.registry.findModel(this.principalType);
+        if (!User) {
+          process.nextTick(function() {
+            return cb(null, false);
+          });
+        }
+      }
+
       var now = Date.now();
       var created = this.created.getTime();
       var elapsedSeconds = (now - created) / 1000;
@@ -157,14 +167,18 @@ module.exports = function(AccessToken) {
         elapsedSeconds < secondsToLive;
 
       if (isValid) {
-        cb(null, isValid);
+        process.nextTick(function() {
+          cb(null, isValid);
+        });
       } else {
         this.destroy(function(err) {
           cb(err, isValid);
         });
       }
     } catch (e) {
-      cb(e);
+      process.nextTick(function() {
+        cb(e);
+      });
     }
   };
 

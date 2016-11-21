@@ -9,9 +9,9 @@ var debug = require('debug')('loopback:security:role');
 var assert = require('assert');
 var async = require('async');
 var utils = require('../../lib/utils');
-
-var AccessContext = require('../../lib/access-context').AccessContext;
-
+var ctx = require('../../lib/access-context');
+var AccessContext = ctx.AccessContext;
+var Principal = ctx.Principal;
 var RoleMapping = loopback.RoleMapping;
 
 assert(RoleMapping, 'RoleMapping model must be defined before Role model');
@@ -70,7 +70,8 @@ module.exports = function(Role) {
             callback = utils.createPromiseCallback();
           }
         }
-        if (!query) query = {};
+        query = query || {};
+        query.where = query.where || {};
 
         roleModel.resolveRelatedModels();
         var relsToModels = {
@@ -86,8 +87,29 @@ module.exports = function(Role) {
           roles: ACL.ROLE,
         };
 
-        var model = relsToModels[rel];
-        listByPrincipalType(this, model, relsToTypes[rel], query, callback);
+        var principalModel = relsToModels[rel];
+        var principalType = relsToTypes[rel];
+
+        // redefine user model and user type if user principalType is custom (available and not "USER")
+        var isCustomUserPrincipalType = rel === 'users' &&
+          query.where.principalType &&
+          query.where.principalType !== RoleMapping.USER;
+
+        if (isCustomUserPrincipalType) {
+          var registry = this.constructor.registry;
+          principalModel = registry.findModel(query.where.principalType);
+          principalType = query.where.principalType;
+        }
+        // make sure we don't keep principalType in userModel query
+        delete query.where.principalType;
+
+        if (principalModel) {
+          listByPrincipalType(this, principalModel, principalType, query, callback);
+        } else {
+          process.nextTick(function() {
+            callback(null, []);
+          });
+        }
         return callback.promise;
       };
     });
@@ -102,10 +124,11 @@ module.exports = function(Role) {
      * @param  {Function} [callback] callback function called with `(err, models)` arguments.
      */
     function listByPrincipalType(context, model, principalType, query, callback) {
-      if (callback === undefined) {
+      if (callback === undefined && typeof query === 'function') {
         callback = query;
         query = {};
       }
+      query = query || {};
 
       roleModel.roleMappingModel.find({
         where: {roleId: context.id, principalType: principalType},
@@ -303,6 +326,7 @@ module.exports = function(Role) {
    * @promise
    */
   Role.isInRole = function(role, context, callback) {
+    context.registry = this.registry;
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
@@ -421,9 +445,9 @@ module.exports = function(Role) {
         callback = utils.createPromiseCallback();
       }
     }
-
     if (!options) options = {};
 
+    context.registry = this.registry;
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
