@@ -188,8 +188,8 @@ module.exports = function(KeyValueModel) {
       accepts: [
         { arg: 'key', type: 'string', required: true,
           http: { source: 'path' }},
-        { arg: 'ttl', type: 'number', required: true,
-          http: { source: 'form' }},
+        { arg: 'ttl', type: 'object', required: true,
+          http: { source: 'body' }},
       ],
       http: { path: '/:key/expire', verb: 'put' },
     });
