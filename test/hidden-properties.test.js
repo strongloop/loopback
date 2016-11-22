@@ -3,14 +3,17 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
 var loopback = require('../');
+var request = require('supertest');
 
 describe('hidden properties', function() {
   beforeEach(function(done) {
     var app = this.app = loopback();
     var Product = this.Product = loopback.PersistedModel.extend('product',
       {},
-      { hidden: ['secret'] }
+      {hidden: ['secret']}
     );
     Product.attachTo(loopback.memory());
 

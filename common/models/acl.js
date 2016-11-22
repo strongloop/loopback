@@ -3,13 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 /*!
  Schema ACL options
-
  Object level permissions, for example, an album owned by a user
-
  Factors to be authorized against:
-
  * model name: Album
  * model instance properties: userId of the album, friends, shared
  * methods
@@ -21,19 +19,15 @@
  ** none
  ** everyone
  ** relations: owner/friend/granted
-
  Class level permissions, for example, Album
  * model name: Album
  * methods
-
  URL/Route level permissions
  * url pattern
  * application id
  * ip addresses
  * http headers
-
  Map to oAuth 2.0 scopes
-
  */
 
 var g = require('../../lib/globalize');
@@ -331,10 +325,10 @@ module.exports = function(ACL) {
       principalId = principalId.toString();
     }
     property = property || ACL.ALL;
-    var propertyQuery = (property === ACL.ALL) ? undefined : { inq: [property, ACL.ALL] };
+    var propertyQuery = (property === ACL.ALL) ? undefined : {inq: [property, ACL.ALL]};
     accessType = accessType || ACL.ALL;
     var accessTypeQuery = (accessType === ACL.ALL) ? undefined :
-      { inq: [accessType, ACL.ALL, ACL.EXECUTE] };
+      {inq: [accessType, ACL.ALL, ACL.EXECUTE]};
 
     var req = new AccessRequest(model, property, accessType);
 
@@ -352,8 +346,8 @@ module.exports = function(ACL) {
     }
 
     var self = this;
-    this.find({ where: { principalType: principalType, principalId: principalId,
-        model: model, property: propertyQuery, accessType: accessTypeQuery }},
+    this.find({where: {principalType: principalType, principalId: principalId,
+        model: model, property: propertyQuery, accessType: accessTypeQuery}},
       function(err, dynACLs) {
         if (err) {
           if (callback) callback(err);
@@ -408,21 +402,21 @@ module.exports = function(ACL) {
     var modelName = context.modelName;
 
     var methodNames = context.methodNames;
-    var propertyQuery = (property === ACL.ALL) ? undefined : { inq: methodNames.concat([ACL.ALL]) };
+    var propertyQuery = (property === ACL.ALL) ? undefined : {inq: methodNames.concat([ACL.ALL])};
 
     var accessTypeQuery = (accessType === ACL.ALL) ?
       undefined :
       (accessType === ACL.REPLICATE) ?
-        { inq: [ACL.REPLICATE, ACL.WRITE, ACL.ALL] } :
-        { inq: [accessType, ACL.ALL] };
+        {inq: [ACL.REPLICATE, ACL.WRITE, ACL.ALL]} :
+        {inq: [accessType, ACL.ALL]};
 
     var req = new AccessRequest(modelName, property, accessType, ACL.DEFAULT, methodNames);
 
     var effectiveACLs = [];
     var staticACLs = self.getStaticACLs(model.modelName, property);
 
-    this.find({ where: { model: model.modelName, property: propertyQuery,
-      accessType: accessTypeQuery }}, function(err, acls) {
+    this.find({where: {model: model.modelName, property: propertyQuery,
+      accessType: accessTypeQuery}}, function(err, acls) {
       if (err) {
         if (callback) callback(err);
         return;
@@ -525,15 +519,15 @@ module.exports = function(ACL) {
     this.resolveRelatedModels();
     switch (type) {
       case ACL.ROLE:
-        this.roleModel.findOne({ where: { or: [{ name: id }, { id: id }] }}, cb);
+        this.roleModel.findOne({where: {or: [{name: id}, {id: id}]}}, cb);
         break;
       case ACL.USER:
         this.userModel.findOne(
-          { where: { or: [{ username: id }, { email: id }, { id: id }] }}, cb);
+          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb);
         break;
       case ACL.APP:
         this.applicationModel.findOne(
-          { where: { or: [{ name: id }, { email: id }, { id: id }] }}, cb);
+          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb);
         break;
       default:
         process.nextTick(function() {

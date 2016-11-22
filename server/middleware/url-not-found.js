@@ -8,6 +8,7 @@
  * See discussion in Connect pull request #954 for more details
  * https://github.com/senchalabs/connect/pull/954.
  */
+'use strict';
 module.exports = urlNotFound;
 
 /**

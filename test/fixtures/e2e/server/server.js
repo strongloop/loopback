@@ -3,8 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../../../../index');
-var app = module.exports = loopback({ localRegistry: true });
+var app = module.exports = loopback({localRegistry: true});
 var models = require('./models');
 var TestModel = models.TestModel;
 

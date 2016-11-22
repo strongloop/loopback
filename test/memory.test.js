@@ -3,6 +3,10 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
+var loopback = require('../');
+
 describe('Memory Connector', function() {
   it('Create a model using the memory connector', function(done) {
     // use the built in memory function
@@ -25,9 +29,9 @@ describe('Memory Connector', function() {
     var Product = memory.createModel('product', properties);
 
     Product.create([
-      { name: 'apple', price: 0.79 },
-      { name: 'pear', price: 1.29 },
-      { name: 'orange', price: 0.59 },
+      {name: 'apple', price: 0.79},
+      {name: 'pear', price: 1.29},
+      {name: 'orange', price: 0.59},
     ], count);
 
     function count() {

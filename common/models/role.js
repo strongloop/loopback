@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../../lib/loopback');
 var debug = require('debug')('loopback:security:role');
 var assert = require('assert');
@@ -20,18 +21,6 @@ assert(RoleMapping, 'RoleMapping model must be defined before Role model');
  * @header Role object
  */
 module.exports = function(Role) {
-  // Workaround for https://github.com/strongloop/loopback/issues/292
-  Role.definition.rawProperties.created.default =
-    Role.definition.properties.created.default = function() {
-      return new Date();
-    };
-
-  // Workaround for https://github.com/strongloop/loopback/issues/292
-  Role.definition.rawProperties.modified.default =
-    Role.definition.properties.modified.default = function() {
-      return new Date();
-    };
-
   Role.resolveRelatedModels = function() {
     if (!this.userModel) {
       var reg = this.registry;
@@ -98,7 +87,7 @@ module.exports = function(Role) {
       }
 
       roleModel.roleMappingModel.find({
-        where: { roleId: context.id, principalType: principalType },
+        where: {roleId: context.id, principalType: principalType},
       }, function(err, mappings) {
         var ids;
         if (err) {
@@ -108,7 +97,7 @@ module.exports = function(Role) {
           return m.principalId;
         });
         query.where = query.where || {};
-        query.where.id = { inq: ids };
+        query.where.id = {inq: ids};
         model.find(query, function(err, models) {
           callback(err, models);
         });
@@ -330,7 +319,7 @@ module.exports = function(Role) {
     }
 
     var roleMappingModel = this.roleMappingModel;
-    this.findOne({ where: { name: role }}, function(err, result) {
+    this.findOne({where: {name: role}}, function(err, result) {
       if (err) {
         if (callback) callback(err);
         return;
@@ -353,8 +342,8 @@ module.exports = function(Role) {
         }
 
         if (principalType && principalId) {
-          roleMappingModel.findOne({ where: { roleId: roleId,
-              principalType: principalType, principalId: principalId }},
+          roleMappingModel.findOne({where: {roleId: roleId,
+              principalType: principalType, principalId: principalId}},
             function(err, result) {
               debug('Role mapping found: %j', result);
               done(!err && result); // The only arg is the result
@@ -429,8 +418,8 @@ module.exports = function(Role) {
       if (principalType && principalId) {
         // Please find() treat undefined matches all values
         inRoleTasks.push(function(done) {
-          roleMappingModel.find({ where: { principalType: principalType,
-            principalId: principalId }}, function(err, mappings) {
+          roleMappingModel.find({where: {principalType: principalType,
+            principalId: principalId}}, function(err, mappings) {
             debug('Role mappings found: %s %j', err, mappings);
             if (err) {
               if (done) done(err);
@@ -451,5 +440,5 @@ module.exports = function(Role) {
     });
   };
 
-  Role.validatesUniquenessOf('name', { message: 'already exists' });
+  Role.validatesUniquenessOf('name', {message: 'already exists'});
 };

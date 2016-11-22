@@ -7,6 +7,7 @@
  * Module dependencies.
  */
 
+'use strict';
 var loopback = require('../../lib/loopback');
 var assert = require('assert');
 var debug = require('debug')('loopback:middleware:token');

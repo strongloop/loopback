@@ -3,7 +3,11 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var expect = require('chai').expect;
+var loopback = require('../');
 var net = require('net');
+
 describe('loopback application', function() {
   it('pauses request stream during authentication', function(done) {
     // This test reproduces the issue reported in
@@ -38,10 +42,10 @@ describe('loopback application', function() {
       loopback.AccessToken.attachTo(db);
       loopback.Role.attachTo(db);
       loopback.ACL.attachTo(db);
-      loopback.User.hasMany(loopback.AccessToken, { as: 'accessTokens' });
+      loopback.User.hasMany(loopback.AccessToken, {as: 'accessTokens'});
 
       var Streamer = app.registry.createModel('Streamer');
-      app.model(Streamer, { dataSource: 'db' });
+      app.model(Streamer, {dataSource: 'db'});
       Streamer.read = function(req, res, cb) {
         var body = new Buffer(0);
         req.on('data', function(chunk) {
@@ -57,15 +61,15 @@ describe('loopback application', function() {
         });
       };
       loopback.remoteMethod(Streamer.read, {
-        http: { method: 'post' },
+        http: {method: 'post'},
         accepts: [
-          { arg: 'req', type: 'Object', http: { source: 'req' }},
-          { arg: 'res', type: 'Object', http: { source: 'res' }},
+          {arg: 'req', type: 'Object', http: {source: 'req'}},
+          {arg: 'res', type: 'Object', http: {source: 'res'}},
         ],
       });
 
       app.enableAuth();
-      app.use(loopback.token({ model: app.models.accessToken }));
+      app.use(loopback.token({model: app.models.accessToken}));
       app.use(loopback.rest());
     }
 

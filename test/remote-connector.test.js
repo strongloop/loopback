@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
 var loopback = require('../');
 var defineModelTestsWithDataSource = require('./util/model-tests');
 
@@ -16,8 +18,8 @@ describe('RemoteConnector', function() {
       var test = this;
       remoteApp = loopback();
       remoteApp.set('remoting', {
-        errorHandler: { debug: true, log: false },
-        types: { warnWhenOverridingType: false },
+        errorHandler: {debug: true, log: false},
+        types: {warnWhenOverridingType: false},
       });
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
@@ -55,7 +57,7 @@ describe('RemoteConnector', function() {
     var test = this;
     remoteApp = this.remoteApp = loopback();
     remoteApp.set('remoting', {
-      types: { warnWhenOverridingType: false },
+      types: {warnWhenOverridingType: false},
     });
     remoteApp.use(loopback.rest());
     var ServerModel = this.ServerModel = loopback.PersistedModel.extend('TestModel');
@@ -88,7 +90,7 @@ describe('RemoteConnector', function() {
 
     ServerModel.setupRemoting();
 
-    var m = new RemoteModel({ foo: 'bar' });
+    var m = new RemoteModel({foo: 'bar'});
     m.save(function(err, inst) {
       if (err) return done(err);
 

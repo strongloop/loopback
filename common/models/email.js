@@ -3,19 +3,20 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-/**
- * Email model.  Extends LoopBack base [Model](#model-new-model).
- * @property {String} to Email addressee.  Required.
- * @property {String} from Email sender address.  Required.
- * @property {String} subject Email subject string.  Required.
- * @property {String} text Text body of email.
- * @property {String} html HTML body of email.
- *
- * @class Email
- * @inherits {Model}
- */
-
+'use strict';
 var g = require('../../lib/globalize');
+
+/**
+* Email model.  Extends LoopBack base [Model](#model-new-model).
+* @property {String} to Email addressee.  Required.
+* @property {String} from Email sender address.  Required.
+* @property {String} subject Email subject string.  Required.
+* @property {String} text Text body of email.
+* @property {String} html HTML body of email.
+*
+* @class Email
+* @inherits {Model}
+*/
 
 module.exports = function(Email) {
   /**

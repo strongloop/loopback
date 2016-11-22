@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var async = require('async');
 var debug = require('debug')('test');
 var extend = require('util')._extend;
@@ -13,9 +14,9 @@ var supertest = require('supertest');
 describe('Replication over REST', function() {
   this.timeout(10000);
 
-  var ALICE = { id: 'a', username: 'alice', email: 'a@t.io', password: 'p' };
-  var PETER = { id: 'p', username: 'peter', email: 'p@t.io', password: 'p' };
-  var EMERY = { id: 'e', username: 'emery', email: 'e@t.io', password: 'p' };
+  var ALICE = {id: 'a', username: 'alice', email: 'a@t.io', password: 'p'};
+  var PETER = {id: 'p', username: 'peter', email: 'p@t.io', password: 'p'};
+  var EMERY = {id: 'e', username: 'emery', email: 'e@t.io', password: 'p'};
 
   /* eslint-disable one-var */
   var serverApp, serverUrl, ServerUser, ServerCar, serverCars;
@@ -80,7 +81,7 @@ describe('Replication over REST', function() {
       }
 
       function createCar() {
-        return request.post('/Cars').send({ model: 'a-model' });
+        return request.post('/Cars').send({model: 'a-model'});
       }
     });
   });
@@ -400,15 +401,15 @@ describe('Replication over REST', function() {
         if (err) return done(err);
 
         LocalUser.updateAll(
-          { id: aliceId },
-          { fullname: 'Alice Smith' },
+          {id: aliceId},
+          {fullname: 'Alice Smith'},
           done);
       });
     }
   });
 
   var USER_PROPS = {
-    id: { type: 'string', id: true },
+    id: {type: 'string', id: true},
   };
 
   var USER_OPTS = {
@@ -417,12 +418,14 @@ describe('Replication over REST', function() {
     trackChanges: true,
     strict: 'throw',
     persistUndefinedAsNull: true,
+    // Speed up the password hashing algorithm for tests
+    saltWorkFactor: 4,
   };
 
   var CAR_PROPS = {
-    id: { type: 'string', id: true, defaultFn: 'guid' },
-    model: { type: 'string', required: true },
-    maker: { type: 'string' },
+    id: {type: 'string', id: true, defaultFn: 'guid'},
+    model: {type: 'string', required: true},
+    maker: {type: 'string'},
   };
 
   var CAR_OPTS = {
@@ -464,10 +467,10 @@ describe('Replication over REST', function() {
 
   function setupServer(done) {
     serverApp = loopback();
-    serverApp.set('remoting', { errorHandler: { debug: true, log: false }});
+    serverApp.set('remoting', {errorHandler: {debug: true, log: false}});
     serverApp.enableAuth();
 
-    serverApp.dataSource('db', { connector: 'memory' });
+    serverApp.dataSource('db', {connector: 'memory'});
 
     // Setup a custom access-token model that is not shared
     // with the client app
@@ -481,27 +484,27 @@ describe('Replication over REST', function() {
         },
       },
     });
-    serverApp.model(ServerToken, { dataSource: 'db', public: false });
-    serverApp.model(loopback.ACL, { dataSource: 'db', public: false });
-    serverApp.model(loopback.Role, { dataSource: 'db', public: false });
-    serverApp.model(loopback.RoleMapping, { dataSource: 'db', public: false });
+    serverApp.model(ServerToken, {dataSource: 'db', public: false});
+    serverApp.model(loopback.ACL, {dataSource: 'db', public: false});
+    serverApp.model(loopback.Role, {dataSource: 'db', public: false});
+    serverApp.model(loopback.RoleMapping, {dataSource: 'db', public: false});
 
     ServerUser = loopback.createModel('ServerUser', USER_PROPS, USER_OPTS);
     serverApp.model(ServerUser, {
       dataSource: 'db',
       public: true,
-      relations: { accessTokens: { model: 'ServerToken' }},
+      relations: {accessTokens: {model: 'ServerToken'}},
     });
 
     ServerCar = loopback.createModel('ServerCar', CAR_PROPS, CAR_OPTS);
-    serverApp.model(ServerCar, {  dataSource: 'db', public: true });
+    serverApp.model(ServerCar, {dataSource: 'db', public: true});
 
     serverApp.use(function(req, res, next) {
       debug(req.method + ' ' + req.path);
 
       next();
     });
-    serverApp.use(loopback.token({ model: ServerToken }));
+    serverApp.use(loopback.token({model: ServerToken}));
     serverApp.use(loopback.rest());
 
     serverApp.set('port', 0);
@@ -516,7 +519,7 @@ describe('Replication over REST', function() {
 
   function setupClient() {
     clientApp = loopback();
-    clientApp.dataSource('db', { connector: 'memory' });
+    clientApp.dataSource('db', {connector: 'memory'});
     clientApp.dataSource('remote', {
       connector: 'remote',
       url: serverUrl,
@@ -531,19 +534,19 @@ describe('Replication over REST', function() {
 
     LocalUser = loopback.createModel('LocalUser', USER_PROPS, USER_OPTS);
     if (LocalUser.Change) LocalUser.Change.Checkpoint = ClientCheckpoint;
-    clientApp.model(LocalUser, { dataSource: 'db' });
+    clientApp.model(LocalUser, {dataSource: 'db'});
 
     LocalCar = loopback.createModel('LocalCar', CAR_PROPS, CAR_OPTS);
     LocalCar.Change.Checkpoint = ClientCheckpoint;
-    clientApp.model(LocalCar, {  dataSource: 'db' });
+    clientApp.model(LocalCar, {dataSource: 'db'});
 
     var remoteOpts = createRemoteModelOpts(USER_OPTS);
     RemoteUser = loopback.createModel('RemoteUser', USER_PROPS, remoteOpts);
-    clientApp.model(RemoteUser, { dataSource: 'remote' });
+    clientApp.model(RemoteUser, {dataSource: 'remote'});
 
     remoteOpts = createRemoteModelOpts(CAR_OPTS);
     RemoteCar = loopback.createModel('RemoteCar', CAR_PROPS, remoteOpts);
-    clientApp.model(RemoteCar, {  dataSource: 'remote' });
+    clientApp.model(RemoteCar, {dataSource: 'remote'});
   }
 
   function createRemoteModelOpts(modelOpts) {
@@ -594,8 +597,8 @@ describe('Replication over REST', function() {
       function(next) {
         ServerCar.create(
           [
-            { id: 'Ford-Mustang',  maker: 'Ford', model: 'Mustang' },
-            { id: 'Audi-R8', maker: 'Audi', model: 'R8' },
+            {id: 'Ford-Mustang',  maker: 'Ford', model: 'Mustang'},
+            {id: 'Audi-R8', maker: 'Audi', model: 'R8'},
           ],
           function(err, cars) {
             if (err) return next(err);
@@ -615,7 +618,7 @@ describe('Replication over REST', function() {
       },
       function(next) {
         LocalCar.create(
-          [{ maker: 'Local', model: 'Custom' }],
+          [{maker: 'Local', model: 'Custom'}],
           function(err, cars) {
             if (err) return next(err);
 
@@ -641,12 +644,12 @@ describe('Replication over REST', function() {
         // Hard-coded, see the seed data above
         conflictedCarId = 'Ford-Mustang';
 
-        new LocalCar({ id: conflictedCarId })
-          .updateAttributes({ model: 'Client' }, function(err, c) {
+        new LocalCar({id: conflictedCarId})
+          .updateAttributes({model: 'Client'}, function(err, c) {
             if (err) return done(err);
 
-            new ServerCar({ id: conflictedCarId })
-              .updateAttributes({ model: 'Server' }, done);
+            new ServerCar({id: conflictedCarId})
+              .updateAttributes({model: 'Server'}, done);
           });
       });
     });

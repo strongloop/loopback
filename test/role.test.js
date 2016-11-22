@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var assert = require('assert');
 var sinon = require('sinon');
 var loopback = require('../index');
@@ -22,23 +23,25 @@ describe('role model', function() {
   beforeEach(function() {
     // Use local app registry to ensure models are isolated to avoid
     // pollutions from other tests
-    app = loopback({ localRegistry: true, loadBuiltinModels: true });
-    app.dataSource('db', { connector: 'memory' });
+    app = loopback({localRegistry: true, loadBuiltinModels: true});
+    app.dataSource('db', {connector: 'memory'});
 
     ACL = app.registry.getModel('ACL');
-    app.model(ACL, { dataSource: 'db' });
+    app.model(ACL, {dataSource: 'db'});
 
     User = app.registry.getModel('User');
-    app.model(User, { dataSource: 'db' });
+    // Speed up the password hashing algorithm for tests
+    User.settings.saltWorkFactor = 4;
+    app.model(User, {dataSource: 'db'});
 
     Role = app.registry.getModel('Role');
-    app.model(Role, { dataSource: 'db' });
+    app.model(Role, {dataSource: 'db'});
 
     RoleMapping = app.registry.getModel('RoleMapping');
-    app.model(RoleMapping, { dataSource: 'db' });
+    app.model(RoleMapping, {dataSource: 'db'});
 
     Application = app.registry.getModel('Application');
-    app.model(Application, { dataSource: 'db' });
+    app.model(Application, {dataSource: 'db'});
 
     ACL.roleModel = Role;
     ACL.roleMappingModel = RoleMapping;
@@ -50,12 +53,12 @@ describe('role model', function() {
   });
 
   it('should define role/role relations', function(done) {
-    Role.create({ name: 'user' }, function(err, userRole) {
+    Role.create({name: 'user'}, function(err, userRole) {
       if (err) return done(err);
-      Role.create({ name: 'admin' }, function(err, adminRole) {
+      Role.create({name: 'admin'}, function(err, adminRole) {
         if (err) return done(err);
         userRole.principals.create(
-          { principalType: RoleMapping.ROLE, principalId: adminRole.id },
+          {principalType: RoleMapping.ROLE, principalId: adminRole.id},
           function(err, mapping) {
             if (err) return done(err);
 
@@ -97,11 +100,11 @@ describe('role model', function() {
   });
 
   it('should define role/user relations', function(done) {
-    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
       if (err) return done(err);
-      Role.create({ name: 'userRole' }, function(err, role) {
+      Role.create({name: 'userRole'}, function(err, role) {
         if (err) return done(err);
-        role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+        role.principals.create({principalType: RoleMapping.USER, principalId: user.id},
         function(err, p) {
           if (err) return done(err);
           async.parallel([
@@ -137,10 +140,10 @@ describe('role model', function() {
   });
 
   it('should not allow duplicate role name', function(done) {
-    Role.create({ name: 'userRole' }, function(err, role) {
+    Role.create({name: 'userRole'}, function(err, role) {
       if (err) return done(err);
 
-      Role.create({ name: 'userRole' }, function(err, role) {
+      Role.create({name: 'userRole'}, function(err, role) {
         expect(err).to.exist;
         expect(err).to.have.property('name', 'ValidationError');
         expect(err).to.have.deep.property('details.codes.name');
@@ -153,12 +156,12 @@ describe('role model', function() {
   });
 
   it('should automatically generate role id', function(done) {
-    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
       if (err) return done(err);
-      Role.create({ name: 'userRole' }, function(err, role) {
+      Role.create({name: 'userRole'}, function(err, role) {
         if (err) return done(err);
         assert(role.id);
-        role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+        role.principals.create({principalType: RoleMapping.USER, principalId: user.id},
         function(err, p) {
           if (err) return done(err);
           assert(p.id);
@@ -196,18 +199,18 @@ describe('role model', function() {
   });
 
   it('should support getRoles() and isInRole()', function(done) {
-    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
       if (err) return done(err);
-      Role.create({ name: 'userRole' }, function(err, role) {
+      Role.create({name: 'userRole'}, function(err, role) {
         if (err) return done(err);
-        role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+        role.principals.create({principalType: RoleMapping.USER, principalId: user.id},
         function(err, p) {
           if (err) return done(err);
           async.series([
             function(next) {
               Role.isInRole(
                 'userRole',
-                { principalType: RoleMapping.USER, principalId: user.id },
+                {principalType: RoleMapping.USER, principalId: user.id},
                 function(err, inRole) {
                   if (err) return next(err);
                   // NOTE(bajtos) Apparently isRole is not a boolean,
@@ -219,7 +222,7 @@ describe('role model', function() {
             function(next) {
               Role.isInRole(
                 'userRole',
-                { principalType: RoleMapping.APP, principalId: user.id },
+                {principalType: RoleMapping.APP, principalId: user.id},
                 function(err, inRole) {
                   if (err) return next(err);
                   assert(!inRole);
@@ -229,7 +232,7 @@ describe('role model', function() {
             function(next) {
               Role.isInRole(
                 'userRole',
-                { principalType: RoleMapping.USER, principalId: 100 },
+                {principalType: RoleMapping.USER, principalId: 100},
                 function(err, inRole) {
                   if (err) return next(err);
                   assert(!inRole);
@@ -238,7 +241,7 @@ describe('role model', function() {
             },
             function(next) {
               Role.getRoles(
-                { principalType: RoleMapping.USER, principalId: user.id },
+                {principalType: RoleMapping.USER, principalId: user.id},
                 function(err, roles) {
                   if (err) return next(err);
                   expect(roles).to.eql([
@@ -251,7 +254,7 @@ describe('role model', function() {
             },
             function(next) {
               Role.getRoles(
-                { principalType: RoleMapping.APP, principalId: user.id },
+                {principalType: RoleMapping.APP, principalId: user.id},
                 function(err, roles) {
                   if (err) return next(err);
                   expect(roles).to.eql([
@@ -263,7 +266,7 @@ describe('role model', function() {
             },
             function(next) {
               Role.getRoles(
-                { principalType: RoleMapping.USER, principalId: 100 },
+                {principalType: RoleMapping.USER, principalId: 100},
                 function(err, roles) {
                   if (err) return next(err);
                   expect(roles).to.eql([
@@ -275,7 +278,7 @@ describe('role model', function() {
             },
             function(next) {
               Role.getRoles(
-                { principalType: RoleMapping.USER, principalId: null },
+                {principalType: RoleMapping.USER, principalId: null},
                 function(err, roles) {
                   if (err) return next(err);
                   expect(roles).to.eql([
@@ -312,15 +315,15 @@ describe('role model', function() {
         },
       },
     });
-    app.model(Album, { dataSource: 'db' });
+    app.model(Album, {dataSource: 'db'});
 
-    User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+    User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
       if (err) return done(err);
       async.parallel([
         function(next) {
           Role.isInRole(
             'returnPromise',
-            { principalType: ACL.USER, principalId: user.id },
+            {principalType: ACL.USER, principalId: user.id},
             function(err, yes) {
               if (err) return next(err);
               assert(yes);
@@ -330,7 +333,7 @@ describe('role model', function() {
         function(next) {
           Role.isInRole(
             Role.AUTHENTICATED,
-            { principalType: ACL.USER, principalId: user.id },
+            {principalType: ACL.USER, principalId: user.id},
             function(err, yes) {
               if (err) next(err);
               assert(yes);
@@ -340,7 +343,7 @@ describe('role model', function() {
         function(next) {
           Role.isInRole(
             Role.AUTHENTICATED,
-            { principalType: ACL.USER, principalId: null },
+            {principalType: ACL.USER, principalId: null},
             function(err, yes) {
               if (err) next(err);
               assert(!yes);
@@ -350,7 +353,7 @@ describe('role model', function() {
         function(next) {
           Role.isInRole(
             Role.UNAUTHENTICATED,
-            { principalType: ACL.USER, principalId: user.id },
+            {principalType: ACL.USER, principalId: user.id},
             function(err, yes) {
               if (err) return next(err);
               assert(!yes);
@@ -360,7 +363,7 @@ describe('role model', function() {
         function(next) {
           Role.isInRole(
             Role.UNAUTHENTICATED,
-            { principalType: ACL.USER, principalId: null },
+            {principalType: ACL.USER, principalId: null},
             function(err, yes) {
               if (err) return next(err);
               assert(yes);
@@ -370,7 +373,7 @@ describe('role model', function() {
         function(next) {
           Role.isInRole(
             Role.EVERYONE,
-            { principalType: ACL.USER, principalId: user.id },
+            {principalType: ACL.USER, principalId: user.id},
             function(err, yes) {
               if (err) return next(err);
               assert(yes);
@@ -380,7 +383,7 @@ describe('role model', function() {
         function(next) {
           Role.isInRole(
             Role.EVERYONE,
-            { principalType: ACL.USER, principalId: null },
+            {principalType: ACL.USER, principalId: null},
             function(err, yes) {
               if (err) return next(err);
               assert(yes);
@@ -388,7 +391,7 @@ describe('role model', function() {
             });
         },
         function(next) {
-          Album.create({ name: 'Album 1', userId: user.id }, function(err, album1) {
+          Album.create({name: 'Album 1', userId: user.id}, function(err, album1) {
             if (err) return done(err);
             var role = {
               principalType: ACL.USER, principalId: user.id,
@@ -398,7 +401,7 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
 
-              Album.create({ name: 'Album 2' }, function(err, album2) {
+              Album.create({name: 'Album 2'}, function(err, album2) {
                 if (err) return next(err);
                 role = {
                   principalType: ACL.USER, principalId: user.id,
@@ -593,12 +596,12 @@ describe('role model', function() {
 
       mappings.forEach(function(principalType) {
         var Model = principalTypesToModels[principalType];
-        Model.create({ name: 'test', email: 'x@y.com', password: 'foobar' }, function(err, model) {
+        Model.create({name: 'test', email: 'x@y.com', password: 'foobar'}, function(err, model) {
           if (err) return done(err);
           var uniqueRoleName = 'testRoleFor' + principalType;
-          Role.create({ name: uniqueRoleName }, function(err, role) {
+          Role.create({name: uniqueRoleName}, function(err, role) {
             if (err) return done(err);
-            role.principals.create({ principalType: principalType, principalId: model.id },
+            role.principals.create({principalType: principalType, principalId: model.id},
             function(err, p) {
               if (err) return done(err);
               var pluralName = Model.pluralModelName.toLowerCase();
@@ -632,9 +635,9 @@ describe('role model', function() {
           // Create models
           function(next) {
             Model.create([
-                { name: 'test', email: 'x@y.com', password: 'foobar' },
-                { name: 'test2', email: 'f@v.com', password: 'bargoo' },
-                { name: 'test3', email: 'd@t.com', password: 'bluegoo' }],
+                {name: 'test', email: 'x@y.com', password: 'foobar'},
+                {name: 'test2', email: 'f@v.com', password: 'bargoo'},
+                {name: 'test3', email: 'd@t.com', password: 'bluegoo'}],
               function(err, models) {
                 if (err) return next(err);
                 next(null, models);
@@ -646,8 +649,8 @@ describe('role model', function() {
             var uniqueRoleName = 'testRoleFor' + principalType;
             var otherUniqueRoleName = 'otherTestRoleFor' + principalType;
             Role.create([
-                { name: uniqueRoleName },
-                { name: otherUniqueRoleName }],
+                {name: uniqueRoleName},
+                {name: otherUniqueRoleName}],
               function(err, roles) {
                 if (err) return next(err);
                 next(null, models, roles);
@@ -659,7 +662,7 @@ describe('role model', function() {
             async.parallel([
               function(callback) {
                 roles[0].principals.create(
-                  { principalType: principalType, principalId: models[0].id },
+                  {principalType: principalType, principalId: models[0].id},
                   function(err, p) {
                     if (err) return callback(err);
                     callback(p);
@@ -667,7 +670,7 @@ describe('role model', function() {
               },
               function(callback) {
                 roles[1].principals.create(
-                  { principalType: principalType, principalId: models[1].id },
+                  {principalType: principalType, principalId: models[1].id},
                   function(err, p) {
                     if (err) return callback(err);
                     callback(p);
@@ -681,7 +684,7 @@ describe('role model', function() {
           // Run tests against unique Role
           function(models, roles, principles, next) {
             var pluralName = Model.pluralModelName.toLowerCase();
-            uniqueRole = roles[0];
+            var uniqueRole = roles[0];
             uniqueRole[pluralName](function(err, models) {
               if (err) return done(err);
               assert.equal(models.length, 1);
@@ -695,14 +698,14 @@ describe('role model', function() {
     });
 
     it('should apply query', function(done) {
-      User.create({ name: 'Raymond', email: 'x@y.com', password: 'foobar' }, function(err, user) {
+      User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
         if (err) return done(err);
-        Role.create({ name: 'userRole' }, function(err, role) {
+        Role.create({name: 'userRole'}, function(err, role) {
           if (err) return done(err);
-          role.principals.create({ principalType: RoleMapping.USER, principalId: user.id },
+          role.principals.create({principalType: RoleMapping.USER, principalId: user.id},
           function(err, p) {
             if (err) return done(err);
-            var query = { fields: ['id', 'name'] };
+            var query = {fields: ['id', 'name']};
             sandbox.spy(User, 'find');
             role.users(query, function(err, users) {
               if (err) return done(err);
@@ -720,16 +723,19 @@ describe('role model', function() {
 
   describe('isOwner', function() {
     it('supports app-local model registry', function(done) {
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
-      app.dataSource('db', { connector: 'memory' });
+      var app = loopback({localRegistry: true, loadBuiltinModels: true});
+      app.dataSource('db', {connector: 'memory'});
       // attach all auth-related models to 'db' datasource
-      app.enableAuth({ dataSource: 'db' });
+      app.enableAuth({dataSource: 'db'});
 
       var Role = app.models.Role;
       var User = app.models.User;
 
+      // Speed up the password hashing algorithm for tests
+      User.settings.saltWorkFactor = 4;
+
       var u = app.registry.findModel('User');
-      var credentials = { email: 'test@example.com', password: 'pass' };
+      var credentials = {email: 'test@example.com', password: 'pass'};
       User.create(credentials, function(err, user) {
         if (err) return done(err);
 

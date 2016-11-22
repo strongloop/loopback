@@ -7,6 +7,7 @@
  * Module Dependencies.
  */
 
+'use strict';
 var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var assert = require('assert');
@@ -47,7 +48,7 @@ module.exports = function(AccessToken) {
    * ```
    */
 
-  AccessToken.ANONYMOUS = new AccessToken({ id: '$anonymous' });
+  AccessToken.ANONYMOUS = new AccessToken({id: '$anonymous'});
 
   /**
    * Create a cryptographically random access token id.

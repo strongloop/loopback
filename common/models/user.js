@@ -7,6 +7,7 @@
  * Module Dependencies.
  */
 
+'use strict';
 var g = require('../../lib/globalize');
 var isEmail = require('isemail');
 var loopback = require('../../lib/loopback');
@@ -219,7 +220,7 @@ module.exports = function(User) {
       return fn.promise;
     }
 
-    self.findOne({ where: query }, function(err, user) {
+    self.findOne({where: query}, function(err, user) {
       var defaultError = new Error(g.f('login failed'));
       defaultError.statusCode = 401;
       defaultError.code = 'LOGIN_FAILED';
@@ -306,14 +307,14 @@ module.exports = function(User) {
   User.observe('before delete', function(ctx, next) {
     var AccessToken = ctx.Model.relations.accessTokens.modelTo;
     var pkName = ctx.Model.definition.idName() || 'id';
-    ctx.Model.find({ where: ctx.where, fields: [pkName] }, function(err, list) {
+    ctx.Model.find({where: ctx.where, fields: [pkName]}, function(err, list) {
       if (err) return next(err);
 
       var ids = list.map(function(u) { return u[pkName]; });
       ctx.where = {};
-      ctx.where[pkName] = { inq: ids };
+      ctx.where[pkName] = {inq: ids};
 
-      AccessToken.destroyAll({ userId: { inq: ids }}, next);
+      AccessToken.destroyAll({userId: {inq: ids}}, next);
     });
   });
 
@@ -431,7 +432,8 @@ module.exports = function(User) {
     options.templateFn = options.templateFn || createVerificationEmailBody;
 
     // Email model
-    var Email = options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
+    var Email =
+      options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
 
     // Set a default token generation function if one is not provided
     var tokenGenerator = options.generateVerificationToken || User.generateVerificationToken;
@@ -479,7 +481,7 @@ module.exports = function(User) {
           if (err) {
             fn(err);
           } else {
-            fn(null, { email: email, token: user.verificationToken, uid: user.id });
+            fn(null, {email: email, token: user.verificationToken, uid: user.id});
           }
         });
       }
@@ -492,7 +494,6 @@ module.exports = function(User) {
     var body = template(options);
     cb(null, body);
   }
-
 
   /**
    * A default verification token generator which accepts the user the token is
@@ -584,7 +585,7 @@ module.exports = function(User) {
     } catch (err) {
       return cb(err);
     }
-    UserModel.findOne({ where: { email: options.email }}, function(err, user) {
+    UserModel.findOne({where: {email: options.email}}, function(err, user) {
       if (err) {
         return cb(err);
       }
@@ -603,7 +604,7 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
+      user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
         if (err) {
           return cb(err);
         }
@@ -699,11 +700,11 @@ module.exports = function(User) {
     UserModel.observe('before save', function beforeEmailUpdate(ctx, next) {
       if (ctx.isNewInstance) return next();
       if (!ctx.where && !ctx.instance) return next();
-      var where = ctx.where || { id: ctx.instance.id };
-      ctx.Model.find({ where: where }, function(err, userInstances) {
+      var where = ctx.where || {id: ctx.instance.id};
+      ctx.Model.find({where: where}, function(err, userInstances) {
         if (err) return next(err);
         ctx.hookState.originalUserData = userInstances.map(function(u) {
-          return { id: u.id, email: u.email };
+          return {id: u.id, email: u.email};
         });
         if (ctx.instance) {
           var emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
@@ -735,7 +736,7 @@ module.exports = function(User) {
         return u.id;
       });
       if (!idsToExpire.length) return next();
-      AccessToken.deleteAll({ userId: { inq: idsToExpire }}, next);
+      AccessToken.deleteAll({userId: {inq: idsToExpire}}, next);
     });
 
     UserModel.remoteMethod(
@@ -743,10 +744,10 @@ module.exports = function(User) {
       {
         description: 'Login a user with username/email and password.',
         accepts: [
-          { arg: 'credentials', type: 'object', required: true, http: { source: 'body' }},
-          { arg: 'include', type: ['string'], http: { source: 'query' },
+          {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
+          {arg: 'include', type: ['string'], http: {source: 'query'},
             description: 'Related objects to include in the response. ' +
-            'See the description of return value for more details.' },
+            'See the description of return value for more details.'},
         ],
         returns: {
           arg: 'accessToken', type: 'object', root: true,
@@ -757,7 +758,7 @@ module.exports = function(User) {
             '  - `user` - `U+007BUserU+007D` - Data of the currently logged in user. ' +
             '{{(`include=user`)}}\n\n'),
         },
-        http: { verb: 'post' },
+        http: {verb: 'post'},
       }
     );
 
@@ -766,7 +767,7 @@ module.exports = function(User) {
       {
         description: 'Logout a user with access token.',
         accepts: [
-          { arg: 'access_token', type: 'string', required: true, http: function(ctx) {
+          {arg: 'access_token', type: 'string', required: true, http: function(ctx) {
             var req = ctx && ctx.req;
             var accessToken = req && req.accessToken;
             var tokenID = accessToken && accessToken.id;
@@ -776,7 +777,7 @@ module.exports = function(User) {
             'from request headers.',
           },
         ],
-        http: { verb: 'all' },
+        http: {verb: 'all'},
       }
     );
 
@@ -785,11 +786,11 @@ module.exports = function(User) {
       {
         description: 'Confirm a user registration with email verification token.',
         accepts: [
-          { arg: 'uid', type: 'string', required: true },
-          { arg: 'token', type: 'string', required: true },
-          { arg: 'redirect', type: 'string' },
+          {arg: 'uid', type: 'string', required: true},
+          {arg: 'token', type: 'string', required: true},
+          {arg: 'redirect', type: 'string'},
         ],
-        http: { verb: 'get', path: '/confirm' },
+        http: {verb: 'get', path: '/confirm'},
       }
     );
 
@@ -798,9 +799,9 @@ module.exports = function(User) {
       {
         description: 'Reset password for a user with email.',
         accepts: [
-          { arg: 'options', type: 'object', required: true, http: { source: 'body' }},
+          {arg: 'options', type: 'object', required: true, http: {source: 'body'}},
         ],
-        http: { verb: 'post', path: '/reset' },
+        http: {verb: 'post', path: '/reset'},
       }
     );
 
@@ -838,8 +839,8 @@ module.exports = function(User) {
       });
     } else {
       // Regular(Non-realm) users validation
-      UserModel.validatesUniquenessOf('email', { message: 'Email already exists' });
-      UserModel.validatesUniquenessOf('username', { message: 'User already exists' });
+      UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
+      UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
     }
 
     return UserModel;

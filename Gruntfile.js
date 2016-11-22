@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 /*global module:false*/
+'use strict';
 module.exports = function(grunt) {
   // Do not report warnings from unit-tests exercising deprecated paths
   process.env.NO_DEPRECATION = 'loopback';
@@ -201,7 +202,7 @@ module.exports = function(grunt) {
           },
 
           // Add browserify to preprocessors
-          preprocessors: { 'test/e2e/*': ['browserify'] },
+          preprocessors: {'test/e2e/*': ['browserify']},
         },
       },
     },

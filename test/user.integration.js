@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -34,7 +35,7 @@ describe('users - integration', function() {
 
     it('should create a new user', function(done) {
       this.post('/api/users')
-        .send({ username: 'x', email: 'x@y.com', password: 'x' })
+        .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -49,7 +50,7 @@ describe('users - integration', function() {
       var url = '/api/users/login';
 
       this.post(url)
-        .send({ username: 'x', email: 'x@y.com', password: 'x' })
+        .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -63,7 +64,7 @@ describe('users - integration', function() {
     it('should create post for a given user', function(done) {
       var url = '/api/users/' + userId + '/posts?access_token=' + accessToken;
       this.post(url)
-        .send({ title: 'T1', content: 'C1' })
+        .send({title: 'T1', content: 'C1'})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -100,7 +101,7 @@ describe('users - integration', function() {
       var url = '/api/myUsers';
 
       this.post(url)
-        .send({ username: 'x', email: 'x@y.com', password: 'x' })
+        .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -115,7 +116,7 @@ describe('users - integration', function() {
       var url = '/api/myUsers/login';
 
       this.post(url)
-        .send({ username: 'x', email: 'x@y.com', password: 'x' })
+        .send({username: 'x', email: 'x@y.com', password: 'x'})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -129,7 +130,7 @@ describe('users - integration', function() {
     it('should create blog for a given user', function(done) {
       var url = '/api/myUsers/' + userId + '/blogs?access_token=' + accessToken;
       this.post(url)
-        .send({ title: 'T1', content: 'C1' })
+        .send({title: 'T1', content: 'C1'})
         .expect(200, function(err, res) {
           if (err) {
             console.error(err);

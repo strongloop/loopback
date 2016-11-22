@@ -3,7 +3,12 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+var assert = require('assert');
+var expect = require('chai').expect;
+var loopback = require('../');
 var path = require('path');
+var request = require('supertest');
 
 describe('loopback.rest', function() {
   this.timeout(10000);
@@ -12,9 +17,9 @@ describe('loopback.rest', function() {
   beforeEach(function() {
     // override the global app object provided by test/support.js
     // and create a local one that does not share state with other tests
-    app = loopback({ localRegistry: true, loadBuiltinModels: true });
-    app.set('remoting', { errorHandler: { debug: true, log: false }});
-    var db = app.dataSource('db', { connector: 'memory' });
+    app = loopback({localRegistry: true, loadBuiltinModels: true});
+    app.set('remoting', {errorHandler: {debug: true, log: false}});
+    var db = app.dataSource('db', {connector: 'memory'});
     MyModel = app.registry.createModel('MyModel');
     MyModel.attachTo(db);
   });
@@ -30,7 +35,7 @@ describe('loopback.rest', function() {
   it('should report 200 for DELETE /:id found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({ name: 'm1' }, function(err, inst) {
+    MyModel.create({name: 'm1'}, function(err, inst) {
       request(app)
         .del('/mymodels/' + inst.id)
         .expect(200, function(err, res) {
@@ -73,7 +78,7 @@ describe('loopback.rest', function() {
       .end(function(err, res) {
         if (err) return done(err);
 
-        expect(res.body).to.eql({ exists: false });
+        expect(res.body).to.eql({exists: false});
 
         done();
       });
@@ -82,7 +87,7 @@ describe('loopback.rest', function() {
   it('should report 200 for GET /:id found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({ name: 'm1' }, function(err, inst) {
+    MyModel.create({name: 'm1'}, function(err, inst) {
       request(app).get('/mymodels/' + inst.id)
         .expect(200)
         .end(done);
@@ -92,7 +97,7 @@ describe('loopback.rest', function() {
   it('should report 200 for HEAD /:id found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({ name: 'm2' }, function(err, inst) {
+    MyModel.create({name: 'm2'}, function(err, inst) {
       request(app).head('/mymodels/' + inst.id)
         .expect(200)
         .end(done);
@@ -102,13 +107,13 @@ describe('loopback.rest', function() {
   it('should report 200 for GET /:id/exists found', function(done) {
     app.model(MyModel);
     app.use(loopback.rest());
-    MyModel.create({ name: 'm2' }, function(err, inst) {
+    MyModel.create({name: 'm2'}, function(err, inst) {
       request(app).get('/mymodels/' + inst.id + '/exists')
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
 
-          expect(res.body).to.eql({ exists: true });
+          expect(res.body).to.eql({exists: true});
 
           done();
         });
@@ -116,11 +121,11 @@ describe('loopback.rest', function() {
   });
 
   it('should honour `remoting.rest.supportedTypes`', function(done) {
-    var app = loopback({ localRegistry: true });
+    var app = loopback({localRegistry: true});
 
     // NOTE it is crucial to set `remoting` before creating any models
     var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
-    app.set('remoting', { rest: { supportedTypes: supportedTypes }});
+    app.set('remoting', {rest: {supportedTypes: supportedTypes}});
 
     app.model(MyModel);
     app.use(loopback.rest());
@@ -133,11 +138,11 @@ describe('loopback.rest', function() {
 
   it('allows models to provide a custom HTTP path', function(done) {
     var CustomModel = app.registry.createModel('CustomModel',
-      { name: String },
-      { http: { 'path': 'domain1/CustomModelPath' },
+      {name: String},
+      {http: {'path': 'domain1/CustomModelPath'},
     });
 
-    app.model(CustomModel, { dataSource: 'db' });
+    app.model(CustomModel, {dataSource: 'db'});
     app.use(loopback.rest());
 
     request(app).get('/domain1/CustomModelPath').expect(200).end(done);
@@ -145,11 +150,11 @@ describe('loopback.rest', function() {
 
   it('should report 200 for url-encoded HTTP path', function(done) {
     var CustomModel = app.registry.createModel('CustomModel',
-      { name: String },
-      { http: { path: 'domain%20one/CustomModelPath' },
+      {name: String},
+      {http: {path: 'domain%20one/CustomModelPath'},
     });
 
-    app.model(CustomModel, { dataSource: 'db' });
+    app.model(CustomModel, {dataSource: 'db'});
     app.use(loopback.rest());
 
     request(app).get('/domain%20one/CustomModelPath').expect(200).end(done);
@@ -157,7 +162,7 @@ describe('loopback.rest', function() {
 
   it('includes loopback.token when necessary', function(done) {
     givenUserModelWithAuth();
-    app.enableAuth({ dataSource: 'db' });
+    app.enableAuth({dataSource: 'db'});
     app.use(loopback.rest());
 
     givenLoggedInUser(function(err, token) {
@@ -176,8 +181,8 @@ describe('loopback.rest', function() {
       cb(null, req.accessToken ? req.accessToken.id : null);
     };
     loopback.remoteMethod(User.getToken, {
-      accepts: [{ type: 'object', http: { source: 'req' }}],
-      returns: [{ type: 'object', name: 'id' }],
+      accepts: [{type: 'object', http: {source: 'req'}}],
+      returns: [{type: 'object', name: 'id'}],
     });
 
     app.use(loopback.rest());
@@ -199,9 +204,11 @@ describe('loopback.rest', function() {
 
   function givenUserModelWithAuth() {
     var AccessToken = app.registry.getModel('AccessToken');
-    app.model(AccessToken, { dataSource: 'db' });
+    app.model(AccessToken, {dataSource: 'db'});
     var User = app.registry.getModel('User');
-    app.model(User, { dataSource: 'db' });
+    // Speed up the password hashing algorithm for tests
+    User.settings.saltWorkFactor = 4,
+    app.model(User, {dataSource: 'db'});
 
     // NOTE(bajtos) This is puzzling to me. The built-in User & AccessToken
     // models should come with both relations already set up, i.e. the
@@ -209,14 +216,14 @@ describe('loopback.rest', function() {
     // And it does behave that way when only tests in this file are run.
     // However, when I run the full test suite (all files), the relations
     // get broken.
-    AccessToken.belongsTo(User, { as: 'user', foreignKey: 'userId' });
-    User.hasMany(AccessToken, { as: 'accessTokens', foreignKey: 'userId' });
+    AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
+    User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
 
     return User;
   }
 
   function givenLoggedInUser(cb, done) {
-    var credentials = { email: 'user@example.com', password: 'pwd' };
+    var credentials = {email: 'user@example.com', password: 'pwd'};
     var User = app.models.User;
     User.create(credentials,
       function(err, user) {
@@ -261,9 +268,9 @@ describe('loopback.rest', function() {
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('model-config-default-true'));
         app.models.Todo.create([
-          { content: 'a' },
-          { content: 'b' },
-          { content: 'c' },
+          {content: 'a'},
+          {content: 'b'},
+          {content: 'c'},
         ], function() {
           request(app)
             .del('/todos')
@@ -309,9 +316,9 @@ describe('loopback.rest', function() {
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('config-default-true'));
         app.models.Todo.create([
-          { content: 'a' },
-          { content: 'b' },
-          { content: 'c' },
+          {content: 'a'},
+          {content: 'b'},
+          {content: 'c'},
         ], function() {
           request(app)
             .del('/todos')
