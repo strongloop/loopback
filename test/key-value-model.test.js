@@ -1,5 +1,5 @@
 'use strict';
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var http = require('http');
 var loopback = require('..');
 var supertest = require('supertest');
@@ -89,7 +89,7 @@ describe('KeyValueModel', function() {
           request.get('/CacheItems/ttl-key/ttl')
             .end(function(err, res) {
               if (err) return done(err);
-              expect(res.body).to.be.number;
+              expect(res.body).to.be.a('number');
               done();
             });
         });

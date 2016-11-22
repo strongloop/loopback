@@ -8,7 +8,7 @@ var loopback = require('../');
 var app;
 var assert = require('assert');
 var request = require('supertest');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 
 describe('loopback.errorHandler(options)', function() {
   it('should throw a descriptive error', function() {

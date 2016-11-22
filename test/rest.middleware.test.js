@@ -5,7 +5,7 @@
 
 'use strict';
 var assert = require('assert');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var loopback = require('../');
 var path = require('path');
 var request = require('supertest');
@@ -207,7 +207,7 @@ describe('loopback.rest', function() {
     app.model(AccessToken, {dataSource: 'db'});
     var User = app.registry.getModel('User');
     // Speed up the password hashing algorithm for tests
-    User.settings.saltWorkFactor = 4,
+    User.settings.saltWorkFactor = 4;
     app.model(User, {dataSource: 'db'});
 
     // NOTE(bajtos) This is puzzling to me. The built-in User & AccessToken

@@ -14,7 +14,7 @@ var loopback = require('../');
 var PersistedModel = loopback.PersistedModel;
 
 var describe = require('./util/describe');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var it = require('./util/it');
 var request = require('supertest');
 
@@ -91,7 +91,7 @@ describe('app', function() {
       app.middleware('routes:before',
         myHandler = handlerThatAddsHandler('my-handler'));
       var found = app._findLayerByHandler(myHandler);
-      expect(found).to.be.object;
+      expect(found).to.be.an('object');
       expect(myHandler).to.equal(found.handle);
       expect(found).have.property('phase', 'routes:before');
       executeMiddlewareHandlers(app, function(err) {
@@ -112,7 +112,7 @@ describe('app', function() {
         wrappedHandler['__NR_handler'] = myHandler;
         app.middleware('routes:before', wrappedHandler);
         var found = app._findLayerByHandler(myHandler);
-        expect(found).to.be.object;
+        expect(found).to.be.an('object');
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
           if (err) return done(err);
@@ -132,7 +132,7 @@ describe('app', function() {
         wrappedHandler['__handler'] = myHandler;
         app.middleware('routes:before', wrappedHandler);
         var found = app._findLayerByHandler(myHandler);
-        expect(found).to.be.object;
+        expect(found).to.be.an('object');
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
           if (err) return done(err);
@@ -380,7 +380,7 @@ describe('app', function() {
       executeMiddlewareHandlers(app, '/mountpath/test', function(err) {
         if (err) return done(err);
 
-        expect(mountWasEmitted, 'mountWasEmitted').to.be.true;
+        expect(mountWasEmitted, 'mountWasEmitted').to.be.true();
         expect(data).to.eql({
           mountpath: '/mountpath',
           parent: app,
@@ -666,7 +666,7 @@ describe('app', function() {
         remotedClass = sharedClass;
       });
       app.model(Color);
-      expect(remotedClass).to.exist;
+      expect(remotedClass).to.exist();
       expect(remotedClass).to.eql(Color.sharedClass);
     });
 
@@ -680,9 +680,9 @@ describe('app', function() {
       });
       app.model(Color);
       app.models.Color.disableRemoteMethodByName('findOne');
-      expect(remoteMethodDisabledClass).to.exist;
+      expect(remoteMethodDisabledClass).to.exist();
       expect(remoteMethodDisabledClass).to.eql(Color.sharedClass);
-      expect(disabledRemoteMethod).to.exist;
+      expect(disabledRemoteMethod).to.exist();
       expect(disabledRemoteMethod).to.eql('findOne');
     });
 

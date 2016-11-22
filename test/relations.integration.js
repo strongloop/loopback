@@ -10,7 +10,7 @@ var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var debug = require('debug')('loopback:test:relations.integration');
 var async = require('async');
 
@@ -138,7 +138,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(res.body).to.be.array;
+          expect(res.body).to.be.an('array');
 
           done();
         });
@@ -1410,7 +1410,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(err).to.not.exist;
+          expect(err).to.not.exist();
           expect(res.body.name).to.equal('Photo 1');
 
           done();
@@ -1492,8 +1492,8 @@ describe('relations - integration', function() {
       Book.nestRemoting('chapters');
       Image.nestRemoting('book');
 
-      expect(Book.prototype['__findById__pages__notes']).to.be.a.function;
-      expect(Image.prototype['__findById__book__pages']).to.be.a.function;
+      expect(Book.prototype['__findById__pages']).to.be.a('function');
+      expect(Image.prototype['__get__book']).to.be.a('function');
 
       Page.beforeRemote('prototype.__findById__notes', function(ctx, result, next) {
         ctx.res.set('x-before', 'before');
@@ -1563,7 +1563,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(res.body).to.be.an.array;
+          expect(res.body).to.be.an('array');
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
 
@@ -1579,7 +1579,7 @@ describe('relations - integration', function() {
 
           expect(res.headers['x-before']).to.equal('before');
           expect(res.headers['x-after']).to.equal('after');
-          expect(res.body).to.be.an.object;
+          expect(res.body).to.be.an('object');
           expect(res.body.text).to.equal('Page Note 1');
 
           done();
@@ -1592,7 +1592,7 @@ describe('relations - integration', function() {
         .expect(404, function(err, res) {
           if (err) return done(err);
 
-          expect(res.body.error).to.be.an.object;
+          expect(res.body.error).to.be.an('object');
           var expected = 'could not find a model with id unknown';
           expect(res.body.error.message).to.equal(expected);
           expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
@@ -1607,7 +1607,7 @@ describe('relations - integration', function() {
         .end(function(err, res) {
           if (err) return done(err);
 
-          expect(res.body).to.be.an.array;
+          expect(res.body).to.be.an('array');
           expect(res.body).to.have.length(1);
           expect(res.body[0].name).to.equal('Page 1');
 
@@ -1621,7 +1621,7 @@ describe('relations - integration', function() {
         .end(function(err, res) {
           if (err) return done(err);
 
-          expect(res.body).to.be.an.object;
+          expect(res.body).to.be.an('object');
           expect(res.body.name).to.equal('Page 1');
 
           done();
@@ -1634,7 +1634,7 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(res.body).to.be.an.array;
+          expect(res.body).to.be.an('array');
           expect(res.body).to.have.length(1);
           expect(res.body[0].text).to.equal('Page Note 1');
 
@@ -1650,7 +1650,7 @@ describe('relations - integration', function() {
 
           expect(res.headers['x-before']).to.equal('before');
           expect(res.headers['x-after']).to.equal('after');
-          expect(res.body).to.be.an.object;
+          expect(res.body).to.be.an('object');
           expect(res.body.text).to.equal('Page Note 1');
 
           done();
@@ -1663,8 +1663,8 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(res.headers['x-before']).to.empty;
-          expect(res.headers['x-after']).to.empty;
+          expect(res.headers['x-before']).to.empty();
+          expect(res.headers['x-after']).to.empty();
 
           done();
         });

@@ -8,7 +8,7 @@ var async = require('async');
 var debug = require('debug')('test');
 var extend = require('util')._extend;
 var loopback = require('../');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var supertest = require('supertest');
 
 describe('Replication over REST', function() {

@@ -6,7 +6,7 @@
 'use strict';
 var async = require('async');
 var loopback = require('../');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 
 var Checkpoint = loopback.Checkpoint.extend('TestCheckpoint');
 

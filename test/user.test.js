@@ -5,7 +5,7 @@
 
 'use strict';
 var assert = require('assert');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var request = require('supertest');
 var loopback = require('../');
 var User, AccessToken;

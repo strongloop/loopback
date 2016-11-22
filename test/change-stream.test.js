@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var loopback = require('../');
 
 describe('PersistedModel.createChangeStream()', function() {
