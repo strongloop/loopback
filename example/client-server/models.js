@@ -15,7 +15,8 @@ var CartItem = exports.CartItem = loopback.PersistedModel.extend('CartItem', {
 });
 
 CartItem.sum = function(cartId, callback) {
-  this.find({where: {cartId: 1}}, function(err, items) {
+  this.find({where: {cartId: cartId}}, function(err, items) {
+    if (err) return callback(err);
     var total = items
       .map(function(item) {
         return item.total();
