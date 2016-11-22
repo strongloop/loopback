@@ -708,7 +708,7 @@ module.exports = function(User) {
       ctx.Model.find({where: where}, function(err, userInstances) {
         if (err) return next(err);
         ctx.hookState.originalUserData = userInstances.map(function(u) {
-          return {id: u.id, email: u.email};
+          return {id: u.id, email: u.email, password: u.password};
         });
         if (ctx.instance) {
           var emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
