@@ -9,7 +9,7 @@ var describe = require('./util/describe');
 var Domain = require('domain');
 var EventEmitter = require('events').EventEmitter;
 var loopback = require('../');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var assert = require('assert');
 
 describe('loopback', function() {

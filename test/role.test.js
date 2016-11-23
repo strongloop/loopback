@@ -8,7 +8,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var loopback = require('../index');
 var async = require('async');
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var Promise = require('bluebird');
 
 function checkResult(err, result) {
@@ -144,7 +144,7 @@ describe('role model', function() {
       if (err) return done(err);
 
       Role.create({name: 'userRole'}, function(err, role) {
-        expect(err).to.exist;
+        expect(err).to.exist();
         expect(err).to.have.property('name', 'ValidationError');
         expect(err).to.have.deep.property('details.codes.name');
         expect(err.details.codes.name).to.contain('uniqueness');

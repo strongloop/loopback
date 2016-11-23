@@ -10,7 +10,7 @@ var loopback = require('../');
 var Change = loopback.Change;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
-var expect = require('chai').expect;
+var expect = require('./helpers/expect');
 var debug = require('debug')('test');
 
 describe('Replication / Change APIs', function() {
@@ -216,7 +216,7 @@ describe('Replication / Change APIs', function() {
         SourceModel.changes(FUTURE_CHECKPOINT, {}, function(err, changes) {
           if (err) return done(err);
 
-          expect(changes).to.be.empty;
+          expect(changes).to.be.empty();
 
           done();
         });

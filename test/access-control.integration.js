@@ -159,7 +159,7 @@ describe('access control - integration', function() {
       roleModel.registerResolver('$dynamic-role', function(role, context, callback) {
         if (!(context && context.accessToken && context.accessToken.userId)) {
           return process.nextTick(function() {
-            callback && callback(null, false);
+            if (callback) callback(null, false);
           });
         }
         var accessToken = context.accessToken;
@@ -216,7 +216,7 @@ describe('access control - integration', function() {
           if (context.remotingContext) {
             count++;
           }
-          callback && callback(null, false); // Always true
+          if (callback) callback(null, false); // Always true
         });
       });
     });

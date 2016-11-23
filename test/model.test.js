@@ -6,19 +6,16 @@
 'use strict';
 var assert = require('assert');
 var async = require('async');
-var chai = require('chai');
 var describe = require('./util/describe');
 var loopback = require('../');
 var ACL = loopback.ACL;
 var defineModelTestsWithDataSource = require('./util/model-tests');
 var PersistedModel = loopback.PersistedModel;
-var sinonChai = require('sinon-chai');
 var Promise = require('bluebird');
 var TaskEmitter = require('strong-task-emitter');
 var request = require('supertest');
 
-var expect = chai.expect;
-chai.use(sinonChai);
+var expect = require('./helpers/expect');
 
 describe('Model / PersistedModel', function() {
   defineModelTestsWithDataSource({
