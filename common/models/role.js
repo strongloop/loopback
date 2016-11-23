@@ -383,7 +383,12 @@ module.exports = function(Role) {
    * @param {Error} err Error object.
    * @param {String[]} roles An array of role IDs
    */
-  Role.getRoles = function(context, callback) {
+  Role.getRoles = function(context, options, callback) {
+    if (!callback && typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
@@ -433,15 +438,24 @@ module.exports = function(Role) {
       if (principalType && principalId) {
         // Please find() treat undefined matches all values
         inRoleTasks.push(function(done) {
-          roleMappingModel.find({where: {principalType: principalType,
-            principalId: principalId}}, function(err, mappings) {
+          var filter = {where: {principalType: principalType, principalId: principalId}};
+          if (options.returnOnlyRoleNames === true) {
+            filter.include = ['role'];
+          }
+          roleMappingModel.find(filter, function(err, mappings) {
             debug('Role mappings found: %s %j', err, mappings);
             if (err) {
               if (done) done(err);
               return;
             }
             mappings.forEach(function(m) {
-              addRole(m.roleId);
+              var role;
+              if (options.returnOnlyRoleNames === true) {
+                role = m.toJSON().role.name;
+              } else {
+                role = m.roleId;
+              }
+              addRole(role);
             });
             if (done) done();
           });
