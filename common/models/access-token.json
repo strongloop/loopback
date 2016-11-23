@@ -12,7 +12,8 @@
       "description": "time to live in seconds (2 weeks by default)"
     },
     "created": {
-      "type": "Date"
+      "type": "Date",
+      "defaultFn": "now"
     }
   },
   "relations": {
