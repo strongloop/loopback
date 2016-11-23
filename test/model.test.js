@@ -166,6 +166,72 @@ describe.onServer('Remote Methods', function() {
           done();
         });
     });
+
+    it('creates related models', function(done) {
+      User.create({first: 'Bob'}, function(err, res) {
+        expect(res).to.have.property('id');
+        var aPost = {title: 'A story', content: 'Once upon a time'};
+        request(app)
+          .post('/users/' + res.id + '/posts')
+          .send(aPost)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end(function(err, result) {
+            if (err) return done(err);
+            expect(result.body).to.have.property('id');
+            expect(result.body).to.have.property('title', aPost.title);
+            expect(result.body).to.have.property('content', aPost.content);
+            done();
+          });
+      });
+    });
+
+    it('creates array of hasMany models', function(done) {
+      User.create({first: 'Bob'}, function(err, res) {
+        expect(res).to.have.property('id');
+        var twoPosts = [
+          {title: 'One story', content: 'Content #1'},
+          {title: 'Two story', content: 'Content #2'},
+        ];
+        request(app)
+          .post('/users/' + res.id + '/posts')
+          .send(twoPosts)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end(function(err, result) {
+            if (err) return done(err);
+            expect(result.body.length).to.eql(2);
+            expect(result.body).to.have.deep.property('[0].title', 'One story');
+            expect(result.body).to.have.deep.property('[1].title', 'Two story');
+            done();
+          });
+      });
+    });
+
+    it('rejects array of obj input for hasOne relation', function(done) {
+      var Friend = app.registry.createModel('friend', {name: String});
+      app.model(Friend, {dataSource: 'db'});
+      User.hasOne(Friend);
+
+      User.create({first: 'Bob'}, function(err, res) {
+        expect(res).to.have.property('id');
+        var twoFriends = [
+          {name: 'bob'},
+          {name: 'rob'},
+        ];
+        request(app)
+          .post('/users/' + res.id + '/friend')
+          .send(twoFriends)
+          .expect('Content-Type', /json/)
+          .expect(400)
+          .end(function(err, result) {
+            if (err) return done(err);
+            var resError = result.body.error;
+            expect(resError.message).to.match(/value(.*?)not(.*?)object(\.?)/i);
+            done();
+          });
+      });
+    });
   });
   // destoryAll is not exposed as a remoteMethod by default
   describe('Model.destroyAll(callback)', function() {
