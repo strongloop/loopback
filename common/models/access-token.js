@@ -34,12 +34,6 @@ var DEFAULT_TOKEN_LEN = 64;
  */
 
 module.exports = function(AccessToken) {
-  // Workaround for https://github.com/strongloop/loopback/issues/292
-  AccessToken.definition.rawProperties.created.default =
-  AccessToken.definition.properties.created.default = function() {
-    return new Date();
-  };
-
   /**
    * Anonymous Token
    *
