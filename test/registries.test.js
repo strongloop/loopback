@@ -17,6 +17,27 @@ describe('Registry', function() {
       expect(function() { app.registry.createModel('aModel', props, opts); })
         .to.throw(/model\s`aModel`(.*)unknown\smodel\s`nonexistent`/);
     });
+
+    it('should throw error upon reserved relation name `trigger`', function() {
+      var app = loopback();
+      var fooModel = {
+        name: 'Foo',
+        properties: {
+          name: 'string',
+        },
+        options: {
+          relations: {
+            trigger: {
+              model: 'Bar',
+              type: 'hasMany',
+            },
+          },
+        },
+      };
+
+      expect(function() { app.registry.createModel(fooModel); })
+        .to.throw('Invalid relation name `trigger` for model `Foo`.');
+    });
   });
 
   describe('one per app', function() {
