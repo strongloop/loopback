@@ -115,5 +115,10 @@
       "debug": "*,-mocha:*,-eslint:*"
     }
   },
-  "license": "MIT"
+  "license": "MIT",
+  "ci": {
+    "downstreamIgnoreList": [
+      "loopback-connector-swagger"
+    ]
+  }
 }
