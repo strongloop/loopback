@@ -110,7 +110,11 @@
   },
   "config": {
     "ci": {
-      "debug": "*,-mocha:*,-eslint:*"
+      "debug": "*,-mocha:*,-eslint:*",
+      "downstreamIgnoreList" : [
+        "dashboard-controller",
+        "gateway-director-management-interface"
+      ]
     }
   },
   "license": "MIT"
