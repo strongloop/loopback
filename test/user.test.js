@@ -20,6 +20,8 @@ describe('User', function() {
     email: 'foo1@bar.com', password: 'bar1', emailVerified: true};
   var validCredentialsEmailVerifiedOverREST = {
     email: 'foo2@bar.com', password: 'bar2', emailVerified: true};
+  var validCredentialsWithRealm = {
+    email: 'foo3@bar.com', password: 'bar', realm: 'foobar'};
   var validCredentialsWithTTL = {email: 'foo@bar.com', password: 'bar', ttl: 3600};
   var validCredentialsWithTTLAndScope = {
     email: 'foo@bar.com', password: 'bar', ttl: 3600, scope: 'all'};
@@ -1923,6 +1925,58 @@ describe('User', function() {
 
             done();
           });
+      });
+
+      describe('User.resetPassword(options, cb) requiring realm', function() {
+        var realmUser;
+
+        beforeEach(function(done) {
+          User.create(validCredentialsWithRealm, function(err, u) {
+            if (err) return done(err);
+
+            realmUser = u;
+            done();
+          });
+        });
+
+        it('Reports when email is not found in realm', function(done) {
+          User.resetPassword({
+            email: realmUser.email,
+            realm: 'unknown',
+          }, function(err) {
+            assert(err);
+            assert.equal(err.code, 'EMAIL_NOT_FOUND');
+            assert.equal(err.statusCode, 404);
+
+            done();
+          });
+        });
+
+        it('Creates a temp accessToken to allow user in realm to change password', function(done) {
+          var calledBack = false;
+
+          User.resetPassword({
+            email: realmUser.email,
+            realm: realmUser.realm,
+          }, function() {
+            calledBack = true;
+          });
+
+          User.once('resetPasswordRequest', function(info) {
+            assert(info.email);
+            assert(info.accessToken);
+            assert(info.accessToken.id);
+            assert.equal(info.accessToken.ttl / 60, 15);
+            assert(calledBack);
+            info.accessToken.user(function(err, user) {
+              if (err) return done(err);
+
+              assert.equal(user.email, realmUser.email);
+
+              done();
+            });
+          });
+        });
       });
     });
   });
