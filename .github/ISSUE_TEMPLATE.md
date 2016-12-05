@@ -1,7 +1,4 @@
 <!--
-- DO NOT ask questions using GitHub issues (only bug or feature requests please,
-  see http://loopback.io/doc/en/contrib/Reporting-issues.html#asking-questions)
-
 - Please ask questions at https://groups.google.com/forum/#!forum/loopbackjs or
   https://gitter.im/strongloop/loopback
 
