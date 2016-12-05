@@ -3,7 +3,7 @@
   https://gitter.im/strongloop/loopback
 
 - Immediate support is available through our subscription plans, see
-  https://strongloop.com/node-js/subscription-plans
+  https://strongloop.com/api-connect-faqs/
 -->
 
 ### Bug or feature request
