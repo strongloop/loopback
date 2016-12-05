@@ -1,3 +1,93 @@
+2016-12-05, Version 3.1.0
+=========================
+
+ * Fix use-strict issue with connectors after merge (Loay)
+
+ * Fix connector naming in strict mode (ebarault)
+
+ * Add "returnOnlyRoleNames" option to Role.getRoles (Eric)
+
+ * Update translation files (Candy)
+
+ * Fix broken document for `upsertWithWhere` (Amir Jafarian)
+
+ * Fix js doc for deleteAll event (Candy)
+
+ * add allowArray to relations' create remoteMethod (David Cheung)
+
+ * Remove workaround for default value (Loay)
+
+ * Fix remote method example (Amir Jafarian)
+
+ * Remove `example/context` (Amir Jafarian)
+
+ * Turn on "no-unused-expressions" rule for eslint (Miroslav Bajtoš)
+
+ * Update eslint to loopback config v5 (Loay)
+
+ * Fix total calculation in example (Candy)
+
+ * make test individually runable (David Cheung)
+
+ * Add options to bulkUpdate (Kogulan Baskaran)
+
+ * Fix context within listByPrincipalType role method (codyolsen)
+
+ * Add Node v7 to Travis CI platforms (Miroslav Bajtoš)
+
+ * Drop support for Node v0.10 and v0.12 (Miroslav Bajtoš)
+
+ * Add templateFn option to User#verify() (Adrien Kiren)
+
+ * Require verification after email change (Loay)
+
+ * Update doc links (Candy)
+
+ * adding check of string for case insensitive emails (Dhaval Trivedi)
+
+ * Update test confirmation text in PR template (#2897) (Simon Ho)
+
+ * allow batch create for persisted models (David Cheung)
+
+ * Fix PR template to not link all PRs to #49 (#2887) (Miroslav Bajtoš)
+
+ * Need index on principalId for performance. (#2883) (Simon Ho)
+
+ * Remove redundant items in PR template (#2877) (Simon Ho)
+
+ * Refactor PR template based on feedback (#2865) (Simon Ho)
+
+ * Add pull request template (#2843) (Simon Ho)
+
+ * Update README.md (Rand McKinney)
+
+ * Reword ticking checkbox note in issue template (#2854) (Simon Ho)
+
+ * Add how to tick checkbox in issue template (#2851) (Simon Ho)
+
+ * Fix description of updateAll response (Miroslav Bajtoš)
+
+ * Allow tokens with eternal TTL (value -1) (Miroslav Bajtoš)
+
+ * Use GitHub issue templates (#2810) (Simon Ho)
+
+ * Update ja and nl translation files (Candy)
+
+ * Remove 3.0 DEVELOPING & RELEASE-NOTES (Miroslav Bajtoš)
+
+ * Fix support for remote hooks returning a Promise (Tim van der Staaij)
+
+ * Validate non-email property partial update (Loay)
+
+ * Update release notes (Amir Jafarian)
+
+ * Update translation files - round#2 (Candy)
+
+ * Add license text (Candy)
+
+ * Temporarily disable Karma tests on Windows CI (Miroslav Bajtoš)
+
+
 2016-09-22, Version 3.0.0
 =========================
 
