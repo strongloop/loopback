@@ -17,24 +17,26 @@ var Application = models.Application(dataSource);
 
 app.model(Application);
 
-var data = {pushSettings: [
-    {'platform': 'apns',
-        'apns': {
-          'pushOptions': {
-            'gateway': 'gateway.sandbox.push.apple.com',
-            'cert': 'credentials/apns_cert_dev.pem',
-            'key': 'credentials/apns_key_dev.pem',
-          },
+var data = {
+  pushSettings: [{
+    'platform': 'apns',
+    'apns': {
+      'pushOptions': {
+        'gateway': 'gateway.sandbox.push.apple.com',
+        'cert': 'credentials/apns_cert_dev.pem',
+        'key': 'credentials/apns_key_dev.pem',
+      },
 
-          'feedbackOptions': {
-            'gateway': 'feedback.sandbox.push.apple.com',
-            'cert': 'credentials/apns_cert_dev.pem',
-            'key': 'credentials/apns_key_dev.pem',
-            'batchFeedback': true,
-            'interval': 300,
-          },
-        }},
-]};
+      'feedbackOptions': {
+        'gateway': 'feedback.sandbox.push.apple.com',
+        'cert': 'credentials/apns_cert_dev.pem',
+        'key': 'credentials/apns_key_dev.pem',
+        'batchFeedback': true,
+        'interval': 300,
+      },
+    },
+  }],
+};
 
 Application.create(data, function(err, data) {
   g.log('Created: %s', data.toObject());

@@ -139,8 +139,7 @@ describe('loopback.rest', function() {
   it('allows models to provide a custom HTTP path', function(done) {
     var CustomModel = app.registry.createModel('CustomModel',
       {name: String},
-      {http: {'path': 'domain1/CustomModelPath'},
-    });
+      {http: {'path': 'domain1/CustomModelPath'}});
 
     app.model(CustomModel, {dataSource: 'db'});
     app.use(loopback.rest());
@@ -151,8 +150,7 @@ describe('loopback.rest', function() {
   it('should report 200 for url-encoded HTTP path', function(done) {
     var CustomModel = app.registry.createModel('CustomModel',
       {name: String},
-      {http: {path: 'domain%20one/CustomModelPath'},
-    });
+      {http: {path: 'domain%20one/CustomModelPath'}});
 
     app.model(CustomModel, {dataSource: 'db'});
     app.use(loopback.rest());

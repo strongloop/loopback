@@ -65,29 +65,30 @@ describe('Application', function() {
   });
 
   it('Create a new application with push settings', function(done) {
-    Application.create({owner: 'rfeng',
-        name: 'MyAppWithPush',
-        description: 'My push mobile application',
-        pushSettings: {
-          apns: {
-            production: false,
-            certData: 'cert',
-            keyData: 'key',
-            pushOptions: {
-              gateway: 'gateway.sandbox.push.apple.com',
-              port: 2195,
-            },
-            feedbackOptions: {
-              gateway: 'feedback.sandbox.push.apple.com',
-              port: 2196,
-              interval: 300,
-              batchFeedback: true,
-            },
+    Application.create({
+      owner: 'rfeng',
+      name: 'MyAppWithPush',
+      description: 'My push mobile application',
+      pushSettings: {
+        apns: {
+          production: false,
+          certData: 'cert',
+          keyData: 'key',
+          pushOptions: {
+            gateway: 'gateway.sandbox.push.apple.com',
+            port: 2195,
           },
-          gcm: {
-            serverApiKey: 'serverKey',
+          feedbackOptions: {
+            gateway: 'feedback.sandbox.push.apple.com',
+            port: 2196,
+            interval: 300,
+            batchFeedback: true,
           },
-        }},
+        },
+        gcm: {
+          serverApiKey: 'serverKey',
+        },
+      }},
       function(err, result) {
         var app = result;
         assert.deepEqual(app.pushSettings.toObject(), {

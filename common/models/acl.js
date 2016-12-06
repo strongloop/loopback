@@ -347,7 +347,7 @@ module.exports = function(ACL) {
 
     var self = this;
     this.find({where: {principalType: principalType, principalId: principalId,
-        model: model, property: propertyQuery, accessType: accessTypeQuery}},
+      model: model, property: propertyQuery, accessType: accessTypeQuery}},
       function(err, dynACLs) {
         if (err) {
           if (callback) callback(err);
