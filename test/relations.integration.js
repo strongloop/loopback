@@ -1468,6 +1468,12 @@ describe('relations - integration', function() {
       );
       app.model(Note, {dataSource: 'db'});
 
+      var subNote = app.registry.createModel(
+        'SubNote',
+        {text: 'string'}
+      );
+      app.model(subNote, {dataSource: 'db'});
+
       var Chapter = app.registry.createModel(
         'Chapter',
         {name: 'string'},
@@ -1478,6 +1484,7 @@ describe('relations - integration', function() {
       Book.hasMany(Page);
       Book.hasMany(Chapter);
       Page.hasMany(Note);
+      Note.hasMany(subNote);
       Chapter.hasMany(Note);
       Image.belongsTo(Book);
 
@@ -1488,7 +1495,9 @@ describe('relations - integration', function() {
 
       Page.remoteMethod('__throw__errors', {isStatic: false, http: {path: '/throws', verb: 'get'}});
 
+      Page.nestRemoting('notes');
       Book.nestRemoting('pages');
+      // Book.nestRemoting('notes');
       Book.nestRemoting('chapters');
       Image.nestRemoting('book');
 
@@ -1585,6 +1594,29 @@ describe('relations - integration', function() {
           done();
         });
     });
+
+    it('it has nested relationship routes - notes', function(done) {
+      var app = this.app;
+      var bookMethodsStringName = app._remotes._classes.Book._methods
+        .map(function(item) { return item.stringName; });
+      console.log(bookMethodsStringName);
+      expect(bookMethodsStringName).to.contain('Book.prototype.__get__pages__notes');
+      done();
+    });
+
+    it('it has nested relationship routes', function(done) {
+      var app = this.app;
+      var pageMethodsStringName = app._remotes._classes.Page._methods
+        .map(function(item) { return item.stringName; });
+      var bookMethodsStringName = app._remotes._classes.Book._methods
+        .map(function(item) { return item.stringName; });
+      console.log(pageMethodsStringName);
+      expect(pageMethodsStringName).to.contain('Page.prototype.__get__notes__subNotes');
+      expect(bookMethodsStringName).to.contain('Book.prototype.__get__pages__notes');
+      expect(bookMethodsStringName).to.contain('Book.prototype.__get__pages__notes__subNotes');
+      done();
+    });
+
 
     it('has a basic error handler', function(done) {
       var test = this;
