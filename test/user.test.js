@@ -1668,6 +1668,24 @@ describe('User', function() {
             done();
           });
       });
+
+      it('removes "options.template" from Email payload', function() {
+        var MailerMock = {
+          send: function(options, cb) { cb(null, options); },
+        };
+
+        return User.create({email: 'user@example.com', password: 'pass'})
+          .then(function(user) {
+            return user.verify({
+              type: 'email',
+              from: 'noreply@example.com',
+              mailer: MailerMock,
+            });
+          })
+          .then(function(result) {
+            expect(result.email).to.not.have.property('template');
+          });
+      });
     });
 
     describe('User.confirm(options, fn)', function() {
