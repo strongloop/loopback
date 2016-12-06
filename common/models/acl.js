@@ -34,6 +34,7 @@ var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
 var async = require('async');
+var extend = require('util')._extend;
 var assert = require('assert');
 var debug = require('debug')('loopback:security:acl');
 
@@ -204,11 +205,12 @@ module.exports = function(ACL) {
   /*!
    * Resolve permission from the ACLs
    * @param {Object[]) acls The list of ACLs
-   * @param {Object} req The request
-   * @returns {AccessRequest} result The effective ACL
+   * @param {AccessRequest} req The access request
+   * @returns {AccessRequest} result The resolved access request
    */
   ACL.resolvePermission = function resolvePermission(acls, req) {
     if (!(req instanceof AccessRequest)) {
+      req.registry = this.registry;
       req = new AccessRequest(req);
     }
     // Sort by the matching score in descending order
@@ -250,9 +252,16 @@ module.exports = function(ACL) {
         debug('with score:', acl.score(req));
       });
     }
+    var res = new AccessRequest({
+      model: req.model,
+      property: req.property,
+      accessType: req.accessType,
+      permission: permission || ACL.DEFAULT,
+      registry: this.registry});
 
-    var res = new AccessRequest(req.model, req.property, req.accessType,
-        permission || ACL.DEFAULT);
+    // Elucidate permission status if DEFAULT
+    res.settleDefaultPermission();
+
     return res;
   };
 
@@ -316,8 +325,8 @@ module.exports = function(ACL) {
    * @param {String} property The property/method/relation name.
    * @param {String} accessType The access type.
    * @callback {Function} callback Callback function.
-   * @param {String|Error} err The error object
-   * @param {AccessRequest} result The access permission
+   * @param {String|Error} err The error object.
+   * @param {AccessRequest} result The resolved access request.
    */
   ACL.checkPermission = function checkPermission(principalType, principalId,
                                                  model, property, accessType,
@@ -332,10 +341,11 @@ module.exports = function(ACL) {
     var accessTypeQuery = (accessType === ACL.ALL) ? undefined :
       {inq: [accessType, ACL.ALL, ACL.EXECUTE]};
 
-    var req = new AccessRequest(model, property, accessType);
+    var req = new AccessRequest({model, property, accessType, registry: this.registry});
 
     var acls = this.getStaticACLs(model, property);
 
+    // resolved is an instance of AccessRequest
     var resolved = this.resolvePermission(acls, req);
 
     if (resolved && resolved.permission === ACL.DENY) {
@@ -355,11 +365,8 @@ module.exports = function(ACL) {
           return callback(err);
         }
         acls = acls.concat(dynACLs);
+        // resolved is an instance of AccessRequest
         resolved = self.resolvePermission(acls, req);
-        if (resolved && resolved.permission === ACL.DEFAULT) {
-          var modelClass = self.registry.findModel(model);
-          resolved.permission = (modelClass && modelClass.settings.defaultPermission) || ACL.ALLOW;
-        }
         return callback(null, resolved);
       });
     return callback.promise;
@@ -377,30 +384,63 @@ module.exports = function(ACL) {
     }
   };
 
+  // NOTE Regarding ACL.isAllowed() and ACL.prototype.isAllowed()
+  // Extending existing logic, including from ACL.checkAccessForContext() method,
+  // ACL instance with missing property `permission` are not promoted to
+  // permission = ACL.DEFAULT config. Such ACL instances will hence always be
+  // inefective
+
+  /**
+   * Test if ACL's permission is ALLOW
+   * @param {String} permission The permission to test, expects one of 'ALLOW', 'DENY', 'DEFAULT'
+   * @param {String} defaultPermission The default permission to apply if not providing a finite one in the permission parameter
+   * @returns {Boolean} true if ACL permission is ALLOW
+   */
+  ACL.isAllowed = function(permission, defaultPermission) {
+    if (permission === ACL.DEFAULT) {
+      permission = defaultPermission || ACL.ALLOW;
+    }
+    return permission !== loopback.ACL.DENY;
+  };
+
+  /**
+   * Test if ACL's permission is ALLOW
+   * @param {String} defaultPermission The default permission to apply if missing in ACL instance
+   * @returns {Boolean} true if ACL permission is ALLOW
+   */
+  ACL.prototype.isAllowed = function(defaultPermission) {
+    return this.constructor.isAllowed(this.permission, defaultPermission);
+  };
+
   /**
    * Check if the request has the permission to access.
-   * @options {Object} context See below.
+   * @options {AccessContext|Object} context
+   * An AccessContext instance or a plain object with the following properties.
    * @property {Object[]} principals An array of principals.
    * @property {String|Model} model The model name or model class.
-   * @property {*} id The model instance ID.
+   * @property {*} modelId The model instance ID.
    * @property {String} property The property/method/relation name.
    * @property {String} accessType The access type:
-   *   READ, REPLICATE, WRITE, or EXECUTE.
-   * @param {Function} callback Callback function
+   * READ, REPLICATE, WRITE, or EXECUTE.
+   * @callback {Function} callback Callback function
+   * @param {String|Error} err The error object.
+   * @param {AccessRequest} result The resolved access request.
    */
-
   ACL.checkAccessForContext = function(context, callback) {
     if (!callback) callback = utils.createPromiseCallback();
     var self = this;
     self.resolveRelatedModels();
     var roleModel = self.roleModel;
 
-    context.registry = this.registry;
     if (!(context instanceof AccessContext)) {
+      context.registry = this.registry;
       context = new AccessContext(context);
     }
 
+    var authorizedRoles = {};
+    var remotingContext = context.remotingContext;
     var model = context.model;
+    var modelDefaultPermission = model && model.settings.defaultPermission;
     var property = context.property;
     var accessType = context.accessType;
     var modelName = context.modelName;
@@ -414,7 +454,13 @@ module.exports = function(ACL) {
         {inq: [ACL.REPLICATE, ACL.WRITE, ACL.ALL]} :
         {inq: [accessType, ACL.ALL]};
 
-    var req = new AccessRequest(modelName, property, accessType, ACL.DEFAULT, methodNames);
+    var req = new AccessRequest({
+      model: modelName,
+      property,
+      accessType,
+      permission: ACL.DEFAULT,
+      methodNames,
+      registry: this.registry});
 
     var effectiveACLs = [];
     var staticACLs = self.getStaticACLs(model.modelName, property);
@@ -445,6 +491,9 @@ module.exports = function(ACL) {
               function(err, inRole) {
                 if (!err && inRole) {
                   effectiveACLs.push(acl);
+                  // add the role to authorizedRoles if allowed
+                  if (acl.isAllowed(modelDefaultPermission))
+                    authorizedRoles[acl.principalId] = true;
                 }
                 done(err, acl);
               });
@@ -455,17 +504,30 @@ module.exports = function(ACL) {
       async.parallel(inRoleTasks, function(err, results) {
         if (err) return callback(err, null);
 
+        // resolved is an instance of AccessRequest
         var resolved = self.resolvePermission(effectiveACLs, req);
-        if (resolved && resolved.permission === ACL.DEFAULT) {
-          resolved.permission = (model && model.settings.defaultPermission) || ACL.ALLOW;
-        }
         debug('---Resolved---');
         resolved.debug();
+
+        // set authorizedRoles in remotingContext options argument if
+        // resolved AccessRequest permission is ALLOW, else set it to empty object
+        authorizedRoles = resolved.isAllowed() ? authorizedRoles : {};
+        saveAuthorizedRolesToRemotingContext(remotingContext, authorizedRoles);
         return callback(null, resolved);
       });
     });
     return callback.promise;
   };
+
+  function saveAuthorizedRolesToRemotingContext(remotingContext, authorizedRoles) {
+    const options = remotingContext && remotingContext.args && remotingContext.args.options;
+    // authorizedRoles key/value map is added to the options argument only if
+    // the latter exists and is an object. This means that the feature's availability
+    // will depend on the app configuration
+    if (options && typeof options === 'object') { // null is object too
+      options.authorizedRoles = authorizedRoles;
+    }
+  }
 
   /**
    * Check if the given access token can invoke the method
@@ -489,9 +551,9 @@ module.exports = function(ACL) {
       modelId: modelId,
     });
 
-    this.checkAccessForContext(context, function(err, access) {
+    this.checkAccessForContext(context, function(err, accessRequest) {
       if (err) callback(err);
-      else callback(null, access.permission !== ACL.DENY);
+      else callback(null, accessRequest.isAllowed());
     });
     return callback.promise;
   };
@@ -510,7 +572,9 @@ module.exports = function(ACL) {
    * Resolve a principal by type/id
    * @param {String} type Principal type - ROLE/APP/USER
    * @param {String|Number} id Principal id or name
-   * @param {Function} cb Callback function
+   * @callback {Function} callback Callback function
+   * @param {String|Error} err The error object
+   * @param {Object} result An instance of principal (Role, Application or User)
    */
   ACL.resolvePrincipal = function(type, id, cb) {
     cb = cb || utils.createPromiseCallback();
@@ -530,7 +594,7 @@ module.exports = function(ACL) {
           {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb);
         break;
       default:
-        // try resolving a user model that matches principalType
+        // try resolving a user model with a name matching the principalType
         var userModel = this.registry.findModel(type);
         if (userModel) {
           userModel.findOne(
@@ -553,7 +617,9 @@ module.exports = function(ACL) {
    * @param {String} principalType Principal type
    * @param {String|*} principalId Principal id/name
    * @param {String|*} role Role id/name
-   * @param {Function} cb Callback function
+   * @callback {Function} callback Callback function
+   * @param {String|Error} err The error object
+   * @param {Boolean} isMapped is the ACL mapped to the role
    */
   ACL.isMappedToRole = function(principalType, principalId, role, cb) {
     cb = cb || utils.createPromiseCallback();

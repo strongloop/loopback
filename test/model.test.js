@@ -897,7 +897,7 @@ describe.onServer('Remote Methods', function() {
       request(app).get('/TestModels/saveOptions')
         .expect(204, function(err) {
           if (err) return done(err);
-          expect(actualOptions).to.eql({accessToken: null});
+          expect(actualOptions).to.include({accessToken: null});
           done();
         });
     });
