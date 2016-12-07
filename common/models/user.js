@@ -477,6 +477,10 @@ module.exports = function(User) {
       function setHtmlContentAndSend(html) {
         options.html = html;
 
+        // Remove options.template to prevent rejection by certain
+        // nodemailer transport plugins.
+        delete options.template;
+
         Email.send(options, function(err, email) {
           if (err) {
             fn(err);
