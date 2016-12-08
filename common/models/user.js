@@ -747,8 +747,12 @@ module.exports = function(User) {
       });
       var idsToExpire = idsToExpireEmail.concat(idsToExpirePass);
       if (!idsToExpire.length) return next();
-      AccessToken.deleteAll({userId: {inq: idsToExpire}}, next);
+      UserModel.invalidateAccessTokens(AccessToken, idsToExpire, next);
     });
+
+    User.invalidateAccessTokens = function(token, id, cb) {
+      token.deleteAll({userId: {inq: id}}, cb);
+    };
 
     UserModel.remoteMethod(
       'login',
