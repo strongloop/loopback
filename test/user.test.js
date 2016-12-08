@@ -1998,7 +1998,7 @@ describe('User', function() {
       it('keeps sessions AS IS if firstName is added using `replaceAttributes`', function(done) {
         user.replaceAttributes({
           email: currentEmailCredentials.email,
-          password: currentEmailCredentials.password,
+          password: user.password,
           firstName: 'Candy',
         }, function(err, userInstance) {
           if (err) return done(err);
@@ -2011,7 +2011,7 @@ describe('User', function() {
           id: user.id,
           firstName: 'Loay',
           email: currentEmailCredentials.email,
-          password: currentEmailCredentials.password,
+          password: user.password,
         }, function(err, userInstance) {
           if (err) return done(err);
           assertUntouchedTokens(done);
@@ -2024,7 +2024,7 @@ describe('User', function() {
           {
             firstName: 'Miroslav',
             email: currentEmailCredentials.email,
-            password: currentEmailCredentials.password,
+            password: user.password,
           }, function(err, userInstance) {
             if (err) return done(err);
             assertUntouchedTokens(done);
@@ -2351,6 +2351,105 @@ describe('User', function() {
 
       User.resetPassword({email: email}, function(err) {
         if (err) return done (err);
+        done();
+      });
+    });
+  });
+
+  describe('Session validation after password reset', function() {
+    it('invalidates session when password is reset', function(done) {
+      var email = 'original@example.com';
+      var password = 'originalPass';
+      var user;
+
+      async.series([
+        function createOriginalAccount(next) {
+          User.create({email: email, password: password}, function(err, userInstance) {
+            if (err) return next(err);
+            user = userInstance;
+            next();
+          });
+        },
+        function(next) {
+          User.login({email: email, password: password}, function(err, accessToken1) {
+            if (err) return next(err);
+            assert(accessToken1);
+            next();
+          });
+        },
+        function(next) {
+          User.login({email: email, password: password}, function(err, accessToken2) {
+            if (err) return next(err);
+            assert(accessToken2);
+            next();
+          });
+        },
+        function(next) {
+          user.updateAttribute('password', 'newPass', function(err, user2) {
+            if (err) return next(err);
+            assert(user2);
+            next();
+          });
+        },
+        function(next) {
+          AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
+            if (err) return next (err);
+            //There should be no accessTokens as the password reset step
+            // is skipped here. Password is directly updated.
+            expect(tokens.length).to.equal(0);
+            next();
+          });
+        },
+      ], function(err) {
+        if (err) return done(err);
+        done();
+      });
+    });
+
+    it('preserves other user sessions if their password is  untouched', function(done) {
+      var user1, user2, user1Token;
+      async.series([
+        function(next) {
+          User.create({email: 'user1@example.com', password: 'u1pass'}, function(err, u1) {
+            if (err) return done(err);
+            User.create({email: 'user2@example.com', password: 'u2pass'}, function(err, u2) {
+              if (err) return done(err);
+              user1 = u1;
+              user2 = u2;
+              next();
+            });
+          });
+        },
+        function(next) {
+          User.login({email: 'user1@example.com', password: 'u1pass'}, function(err, at1) {
+            User.login({email: 'user2@example.com', password: 'u2pass'}, function(err, at2) {
+              assert(at1.userId);
+              assert(at2.userId);
+              user1Token = at1.id;
+              next();
+            });
+          });
+        },
+        function(next) {
+          user2.updateAttribute('password', 'newPass', function(err, user2Instance) {
+            if (err) return next(err);
+            assert(user2Instance);
+            next();
+          });
+        },
+        function(next) {
+          AccessToken.find({where: {userId: user1.id}}, function(err, tokens1) {
+            if (err) return next(err);
+            AccessToken.find({where: {userId: user2.id}}, function(err, tokens2) {
+              if (err) return next(err);
+              expect(tokens1.length).to.equal(1);
+              expect(tokens2.length).to.equal(0);
+              assert.equal(tokens1[0].id, user1Token);
+              next();
+            });
+          });
+        },
+      ], function(err) {
         done();
       });
     });

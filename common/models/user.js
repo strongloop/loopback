@@ -708,7 +708,7 @@ module.exports = function(User) {
       ctx.Model.find({where: where}, function(err, userInstances) {
         if (err) return next(err);
         ctx.hookState.originalUserData = userInstances.map(function(u) {
-          return {id: u.id, email: u.email};
+          return {id: u.id, email: u.email, password: u.password};
         });
         if (ctx.instance) {
           var emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
@@ -732,16 +732,27 @@ module.exports = function(User) {
       var AccessToken = ctx.Model.relations.accessTokens.modelTo;
       if (!ctx.instance && !ctx.data) return next();
       var newEmail = (ctx.instance || ctx.data).email;
-      if (!newEmail) return next();
+      var newPassword = (ctx.instance || ctx.data).password;
+      if (!newEmail && !newPassword) return next();
       if (!ctx.hookState.originalUserData) return next();
-      var idsToExpire = ctx.hookState.originalUserData.filter(function(u) {
+      var idsToExpireEmail = ctx.hookState.originalUserData.filter(function(u) {
         return u.email !== newEmail;
       }).map(function(u) {
         return u.id;
       });
+      var idsToExpirePass = ctx.hookState.originalUserData.filter(function(u) {
+        return u.password !== newPassword;
+      }).map(function(u) {
+        return u.id;
+      });
+      var idsToExpire = idsToExpireEmail.concat(idsToExpirePass);
       if (!idsToExpire.length) return next();
-      AccessToken.deleteAll({userId: {inq: idsToExpire}}, next);
+      UserModel.invalidateAccessTokens(AccessToken, idsToExpire, next);
     });
+
+    User.invalidateAccessTokens = function(token, id, cb) {
+      token.deleteAll({userId: {inq: id}}, cb);
+    };
 
     UserModel.remoteMethod(
       'login',
