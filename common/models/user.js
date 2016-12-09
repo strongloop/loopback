@@ -682,15 +682,6 @@ module.exports = function(User) {
       }
     };
 
-    // Access token to normalize email credentials
-    UserModel.observe('access', function normalizeEmailCase(ctx, next) {
-      if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
-          ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
-        ctx.query.where.email = ctx.query.where.email.toLowerCase();
-      }
-      next();
-    });
-
     // Make sure emailVerified is not set by creation
     UserModel.beforeRemote('create', function(ctx, user, next) {
       var body = ctx.req.body;
@@ -817,6 +808,15 @@ module.exports = function(User) {
   //
   // Important: Operation hooks are inherited by subclassed models,
   // therefore they must be registered outside of setup() function
+
+  // Access token to normalize email credentials
+  User.observe('access', function normalizeEmailCase(ctx, next) {
+    if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
+        ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
+      ctx.query.where.email = ctx.query.where.email.toLowerCase();
+    }
+    next();
+  });
 
   // Delete old sessions once email is updated
   User.observe('before save', function beforeEmailUpdate(ctx, next) {
