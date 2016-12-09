@@ -648,6 +648,19 @@ module.exports = function(User) {
     err.statusCode = 422;
     throw err;
   };
+
+  User._invalidateAccessTokensOfUsers = function(userIds, cb) {
+    if (!Array.isArray(userIds) || !userIds.length)
+      return process.nextTick(cb);
+
+    var accessTokenRelation = this.relations.accessTokens;
+    if (!accessTokenRelation)
+      return process.nextTick(cb);
+
+    var AccessToken = accessTokenRelation.modelTo;
+    AccessToken.deleteAll({userId: {inq: userIds}}, cb);
+  };
+
   /*!
    * Setup an extended user model.
    */
@@ -823,6 +836,18 @@ module.exports = function(User) {
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
     var where = ctx.where || {id: ctx.instance.id};
+
+    var isPartialUpdateChangingPassword = ctx.data && 'password' in ctx.data;
+
+    // Full replace of User instance => assume password change.
+    // HashPassword returns a different value for each invocation,
+    // therefore we cannot tell whether ctx.instance.password is the same
+    // or not.
+    var isFullReplaceChangingPassword = !!ctx.instance;
+
+    ctx.hookState.isPasswordChange = isPartialUpdateChangingPassword ||
+      isFullReplaceChangingPassword;
+
     ctx.Model.find({where: where}, function(err, userInstances) {
       if (err) return next(err);
       ctx.hookState.originalUserData = userInstances.map(function(u) {
@@ -841,24 +866,26 @@ module.exports = function(User) {
           ctx.data.emailVerified = false;
         }
       }
+
       next();
     });
   });
 
   User.observe('after save', function afterEmailUpdate(ctx, next) {
-    if (!ctx.Model.relations.accessTokens) return next();
-    var AccessToken = ctx.Model.relations.accessTokens.modelTo;
     if (!ctx.instance && !ctx.data) return next();
-    var newEmail = (ctx.instance || ctx.data).email;
-    if (!newEmail) return next();
     if (!ctx.hookState.originalUserData) return next();
-    var idsToExpire = ctx.hookState.originalUserData.filter(function(u) {
-      return u.email !== newEmail;
+
+    var newEmail = (ctx.instance || ctx.data).email;
+    var isPasswordChange = ctx.hookState.isPasswordChange;
+
+    if (!newEmail && !isPasswordChange) return next();
+
+    var userIdsToExpire = ctx.hookState.originalUserData.filter(function(u) {
+      return (newEmail && u.email !== newEmail) || isPasswordChange;
     }).map(function(u) {
       return u.id;
     });
-    if (!idsToExpire.length) return next();
-    AccessToken.deleteAll({userId: {inq: idsToExpire}}, next);
+    ctx.Model._invalidateAccessTokensOfUsers(userIdsToExpire, next);
   });
 };
 
