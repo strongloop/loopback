@@ -679,15 +679,6 @@ module.exports = function(User) {
       }
     };
 
-    // Access token to normalize email credentials
-    UserModel.observe('access', function normalizeEmailCase(ctx, next) {
-      if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
-          ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
-        ctx.query.where.email = ctx.query.where.email.toLowerCase();
-      }
-      next();
-    });
-
     // Make sure emailVerified is not set by creation
     UserModel.beforeRemote('create', function(ctx, user, next) {
       var body = ctx.req.body;
@@ -695,50 +686,6 @@ module.exports = function(User) {
         body.emailVerified = false;
       }
       next();
-    });
-
-    // Delete old sessions once email is updated
-    UserModel.observe('before save', function beforeEmailUpdate(ctx, next) {
-      var emailChanged;
-      if (ctx.isNewInstance) return next();
-      if (!ctx.where && !ctx.instance) return next();
-      var where = ctx.where || { id: ctx.instance.id };
-      ctx.Model.find({ where: where }, function(err, userInstances) {
-        if (err) return next(err);
-        ctx.hookState.originalUserData = userInstances.map(function(u) {
-          return { id: u.id, email: u.email };
-        });
-        if (ctx.instance) {
-          emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
-          if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
-            ctx.instance.emailVerified = false;
-          }
-        } else {
-          emailChanged = ctx.hookState.originalUserData.some(function(data) {
-            return data.email != ctx.data.email;
-          });
-          if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
-            ctx.data.emailVerified = false;
-          }
-        }
-        next();
-      });
-    });
-
-    UserModel.observe('after save', function afterEmailUpdate(ctx, next) {
-      if (!ctx.Model.relations.accessTokens) return next();
-      var AccessToken = ctx.Model.relations.accessTokens.modelTo;
-      if (!ctx.instance && !ctx.data) return next();
-      var newEmail = (ctx.instance || ctx.data).email;
-      if (!newEmail) return next();
-      if (!ctx.hookState.originalUserData) return next();
-      var idsToExpire = ctx.hookState.originalUserData.filter(function(u) {
-        return u.email !== newEmail;
-      }).map(function(u) {
-        return u.id;
-      });
-      if (!idsToExpire.length) return next();
-      AccessToken.deleteAll({ userId: { inq: idsToExpire }}, next);
     });
 
     UserModel.remoteMethod(
@@ -843,6 +790,63 @@ module.exports = function(User) {
 
   User.setup();
 
+  // --- OPERATION HOOKS ---
+  //
+  // Important: Operation hooks are inherited by subclassed models,
+  // therefore they must be registered outside of setup() function
+
+  // Access token to normalize email credentials
+  User.observe('access', function normalizeEmailCase(ctx, next) {
+    if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
+        ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
+      ctx.query.where.email = ctx.query.where.email.toLowerCase();
+    }
+    next();
+  });
+
+  // Delete old sessions once email is updated
+  User.observe('before save', function beforeEmailUpdate(ctx, next) {
+    var emailChanged;
+    if (ctx.isNewInstance) return next();
+    if (!ctx.where && !ctx.instance) return next();
+    var where = ctx.where || { id: ctx.instance.id };
+    ctx.Model.find({ where: where }, function(err, userInstances) {
+      if (err) return next(err);
+      ctx.hookState.originalUserData = userInstances.map(function(u) {
+        return { id: u.id, email: u.email };
+      });
+      if (ctx.instance) {
+        emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
+        if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
+          ctx.instance.emailVerified = false;
+        }
+      } else {
+        emailChanged = ctx.hookState.originalUserData.some(function(data) {
+          return data.email != ctx.data.email;
+        });
+        if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
+          ctx.data.emailVerified = false;
+        }
+      }
+      next();
+    });
+  });
+
+  User.observe('after save', function afterEmailUpdate(ctx, next) {
+    if (!ctx.Model.relations.accessTokens) return next();
+    var AccessToken = ctx.Model.relations.accessTokens.modelTo;
+    if (!ctx.instance && !ctx.data) return next();
+    var newEmail = (ctx.instance || ctx.data).email;
+    if (!newEmail) return next();
+    if (!ctx.hookState.originalUserData) return next();
+    var idsToExpire = ctx.hookState.originalUserData.filter(function(u) {
+      return u.email !== newEmail;
+    }).map(function(u) {
+      return u.id;
+    });
+    if (!idsToExpire.length) return next();
+    AccessToken.deleteAll({ userId: { inq: idsToExpire }}, next);
+  });
 };
 
 function emailValidator(err, done) {
