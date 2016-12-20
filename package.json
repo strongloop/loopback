@@ -1,6 +1,9 @@
 {
   "name": "loopback",
-  "version": "2.36.0",
+  "version": "2.36.1",
+  "publishConfig": {
+    "tag": "lts"
+  },
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [
