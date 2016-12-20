@@ -23,6 +23,14 @@ LoopBack tools include:
 
 For more details, see [http://loopback.io/](http://loopback.io/).
 
+## Supported versions
+
+Current|Long Term Support
+:-:|:-:
+3.x|2.x
+
+Learn more about our LTS plan in [docs](http://loopback.io/doc/en/contrib/Long-term-support.html).
+
 ## LoopBack modules
 
 The LoopBack framework is a set of Node.js modules that you can use independently or together.
