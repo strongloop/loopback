@@ -1,3 +1,23 @@
+2016-12-21, Version 3.1.1
+=========================
+
+ * Update package.json for LB3 release (Simon Ho)
+
+ * Invalidate AccessTokens on password change (Miroslav Bajtoš)
+
+ * Fix registration of operation hooks in User model (Miroslav Bajtoš)
+
+ * Remove "options.template" from Email payload (Miroslav Bajtoš)
+
+ * Upgrade eslint config and grunt-eslint to latest (Miroslav Bajtoš)
+
+ * Update paid support URL (siddhipai)
+
+ * Update paid support URL (Siddhi Pai)
+
+ * Remove duplicate warning in issue template (Siddhi Pai)
+
+
 2016-12-05, Version 3.1.0
 =========================
 
