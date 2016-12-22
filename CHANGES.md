@@ -1,3 +1,35 @@
+2016-12-22, Version 2.36.2
+==========================
+
+ * Add option disabling periodic change rectification (kobaska)
+
+ * Release LTS LB2 (Simon Ho)
+
+ * Invalidate AccessTokens on password change (Miroslav Bajtoš)
+
+ * Fix registration of operation hooks in User model (Miroslav Bajtoš)
+
+ * Remove "options.template" from Email payload (Miroslav Bajtoš)
+
+ * Opt-out downstream builds that are unstable (David Cheung)
+
+ * Allow password reset request for users in realms (Bram Borggreve)
+
+ * Add "returnOnlyRoleNames" option to Role.getRoles (Eric)
+
+ * Fix context within listByPrincipalType role method (codyolsen)
+
+ * Add templateFn option to User#verify() (Adrien Kiren)
+
+ * Add options to bulkUpdate (Kogulan Baskaran)
+
+ * Require verification after email change (Loay)
+
+ * adding check of string for case insensitive emails (Dhaval Trivedi)
+
+ * Fix PR template to not link all PRs to #49 (#2887) (Miroslav Bajtoš)
+
+
 2016-10-24, Version 2.36.0
 ==========================
 

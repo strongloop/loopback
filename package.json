@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "version": "2.36.1",
+  "version": "2.36.2",
   "publishConfig": {
     "tag": "lts"
   },
@@ -114,7 +114,7 @@
   "config": {
     "ci": {
       "debug": "*,-mocha:*,-eslint:*",
-      "downstreamIgnoreList" : [
+      "downstreamIgnoreList": [
         "dashboard-controller",
         "gateway-director-management-interface"
       ]
