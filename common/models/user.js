@@ -845,7 +845,7 @@ module.exports = function(User) {
         if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
           ctx.instance.emailVerified = false;
         }
-      } else {
+      } else if (ctx.data.email) {
         emailChanged = ctx.hookState.originalUserData.some(function(data) {
           return data.email != ctx.data.email;
         });
