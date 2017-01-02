@@ -128,6 +128,28 @@ describe('OptionsFromRemotingContext', function() {
     });
   });
 
+  it('honours injectOptionsFromRemoteContext in sharedCtor', function() {
+    var settings = {
+      forceId: false,
+      injectOptionsFromRemoteContext: false,
+    };
+    var TestModel = app.registry.createModel('TestModel', {}, settings);
+    app.model(TestModel, {dataSource: 'db'});
+
+    TestModel.prototype.dummy = function(cb) { cb(); };
+    TestModel.remoteMethod('dummy', {isStatic: false});
+
+    observeOptionsOnAccess(TestModel);
+
+    return TestModel.create({id: 1})
+      .then(function() {
+        return request.post('/TestModels/1/dummy').expect(204);
+      })
+      .then(function() {
+        expect(actualOptions).to.eql({});
+      });
+  });
+
   // Catch: because relations methods are defined on "modelFrom",
   // they will invoke createOptionsFromRemotingContext on "modelFrom" too,
   // despite the fact that under the hood a method on "modelTo" is called.
@@ -212,10 +234,15 @@ describe('OptionsFromRemotingContext', function() {
     });
 
     function givenCategoryHasManyProductsThroughAnotherModel() {
+      var settings = {
+        forceId: false,
+        replaceOnPUT: true,
+        injectOptionsFromRemoteContext: true,
+      };
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true});
+        settings);
 
       app.model(Category, {dataSource: 'db'});
       // This is a shortcut for creating CategoryProduct "through" model
@@ -284,10 +311,15 @@ describe('OptionsFromRemotingContext', function() {
     });
 
     function givenCategoryHasOneProduct() {
+      var settings = {
+        forceId: false,
+        replaceOnPUT: true,
+        injectOptionsFromRemoteContext: true,
+      };
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true});
+        settings);
 
       app.model(Category, {dataSource: 'db'});
       Category.hasOne(Product);
@@ -328,10 +360,15 @@ describe('OptionsFromRemotingContext', function() {
     });
 
     function givenCategoryBelongsToProduct() {
+      var settings = {
+        forceId: false,
+        replaceOnPUT: true,
+        injectOptionsFromRemoteContext: true,
+      };
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true});
+        settings);
 
       app.model(Category, {dataSource: 'db'});
       Category.belongsTo(Product);
@@ -358,10 +395,16 @@ describe('OptionsFromRemotingContext', function() {
     app = loopback({localRegistry: true});
     app.dataSource('db', {connector: 'memory'});
 
+    var settings = {
+      forceId: false,
+      replaceOnPUT: true,
+      injectOptionsFromRemoteContext: true,
+    };
+
     Product = app.registry.createModel(
       'Product',
       {name: String},
-      {forceId: false, replaceOnPUT: true});
+      settings);
 
     Product.createOptionsFromRemotingContext = function(ctx) {
       return {injectedFrom: 'Product'};
