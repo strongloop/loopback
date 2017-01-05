@@ -617,6 +617,7 @@ module.exports = function(User) {
           email: options.email,
           accessToken: accessToken,
           user: user,
+          options: options,
         });
       });
     });
