@@ -868,7 +868,7 @@ module.exports = function(User) {
         }
       } else if (ctx.data.email) {
         var emailChanged = ctx.hookState.originalUserData.some(function(data) {
-          return data.email != ctx.data.email;
+          return ctx.data.email && data.email != ctx.data.email;
         });
         if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
           ctx.data.emailVerified = false;
