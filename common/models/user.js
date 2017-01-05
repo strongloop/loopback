@@ -559,11 +559,12 @@ module.exports = function(User) {
   };
 
   /**
-   * Create a short lived acess token for temporary login. Allows users
+   * Create a short lived access token for temporary login. Allows users
    * to change passwords if forgotten.
    *
    * @options {Object} options
    * @prop {String} email The user's email address
+   * @property {String} realm The user's realm (optional)
    * @callback {Function} callback
    * @param {Error} err
    * @promise
@@ -589,7 +590,13 @@ module.exports = function(User) {
     } catch (err) {
       return cb(err);
     }
-    UserModel.findOne({where: {email: options.email}}, function(err, user) {
+    var where = {
+      email: options.email,
+    };
+    if (options.realm) {
+      where.realm = options.realm;
+    }
+    UserModel.findOne({where: where}, function(err, user) {
       if (err) {
         return cb(err);
       }
