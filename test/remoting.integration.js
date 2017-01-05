@@ -9,6 +9,7 @@ var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
+var expect = require('chai').expect;
 
 describe('remoting - integration', function() {
   before(function(done) {
@@ -263,6 +264,33 @@ describe('With model.settings.replaceOnPUT true', function() {
   });
 });
 
+describe('injectContextFromRemotingContext', function() {
+  it('is disabled by default for DAO, scope and belongsTo methods', function() {
+    var storeClass = findClass('store');
+    var violations = getMethodsAcceptingComputedOptions(storeClass.methods);
+    expect(violations).to.eql([]);
+  });
+
+  it('is disabled by default for belongsTo methods', function() {
+    var widgetClass = findClass('widget');
+    var violations = getMethodsAcceptingComputedOptions(widgetClass.methods);
+    expect(violations).to.eql([]);
+  });
+
+  function getMethodsAcceptingComputedOptions(methods) {
+    return methods
+      .filter(function(m) {
+        return m.accepts.some(function(a) {
+          return a.arg === 'options' && a.type === 'object' &&
+            a.http && typeof a.http === 'function';
+        });
+      })
+      .map(function(m) {
+        return m.name;
+      });
+  }
+});
+
 function formatReturns(m) {
   var returns = m.returns;
   if (!returns || returns.length === 0) {
@@ -285,7 +313,9 @@ function formatMethod(m) {
     arr.push([
       m.name,
       '(',
-      m.accepts.map(function(a) {
+      m.accepts.filter(function(a) {
+        return !(a.http && typeof a.http === 'function');
+      }).map(function(a) {
         return a.arg + ':' + a.type + (a.model ? ':' + a.model : '');
       }).join(','),
       ')',

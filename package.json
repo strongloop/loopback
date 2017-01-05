@@ -96,7 +96,8 @@
     "sinon-chai": "^2.8.0",
     "strong-error-handler": "^1.0.1",
     "strong-task-emitter": "^0.0.6",
-    "supertest": "^2.0.0"
+    "supertest": "^2.0.0",
+    "supertest-as-promised": "^4.0.2"
   },
   "repository": {
     "type": "git",
