@@ -2315,6 +2315,28 @@ describe('User', function() {
       ], done);
     });
 
+    it('should not set verification to false after something other than email is updated',
+      function(done) {
+        User.settings.emailVerificationRequired = true;
+        async.series([
+          function updateUser(next) {
+            userInstance.updateAttribute('realm', 'test', function(err, info) {
+              if (err) return next (err);
+              assert.equal(info.realm, 'test');
+              next();
+            });
+          },
+          function findUser(next) {
+            User.findById(userInstance.id, function(err, info) {
+              if (err) return next (err);
+              assert.equal(info.realm, 'test');
+              assert.equal(info.emailVerified, true);
+              next();
+            });
+          },
+        ], done);
+      });
+
     function createOriginalUser(done) {
       var userData = {
         email: 'original@example.com',
