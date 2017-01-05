@@ -1806,7 +1806,10 @@ describe('User', function() {
 
   describe('Password Reset', function() {
     describe('User.resetPassword(options, cb)', function() {
-      var email = 'foo@bar.com';
+      var options = {
+        email: 'foo@bar.com',
+        redirect: 'http://foobar.com/reset-password',
+      };
 
       it('Requires email address to reset password', function(done) {
         User.resetPassword({ }, function(err) {
@@ -1840,11 +1843,27 @@ describe('User', function() {
         });
       });
 
+      it('Checks that options exist', function(done) {
+        var calledBack = false;
+
+        User.resetPassword(options, function() {
+          calledBack = true;
+        });
+
+        User.once('resetPasswordRequest', function(info) {
+          assert(info.options);
+          assert.equal(info.options, options);
+          assert(calledBack);
+
+          done();
+        });
+      });
+
       it('Creates a temp accessToken to allow a user to change password', function(done) {
         var calledBack = false;
 
         User.resetPassword({
-          email: email
+          email: options.email,
         }, function() {
           calledBack = true;
         });
@@ -1858,7 +1877,7 @@ describe('User', function() {
           info.accessToken.user(function(err, user) {
             if (err) return done(err);
 
-            assert.equal(user.email, email);
+            assert.equal(user.email, options.email);
 
             done();
           });
@@ -1887,7 +1906,7 @@ describe('User', function() {
           .post('/test-users/reset')
           .expect('Content-Type', /json/)
           .expect(204)
-          .send({ email: email })
+          .send({email: options.email})
           .end(function(err, res) {
             if (err) return done(err);
 
