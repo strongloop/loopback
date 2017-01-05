@@ -43,11 +43,17 @@ describe('User', function() {
     app.model(Email, { dataSource: 'email' });
 
     // attach User and related models
-    // forceId is set to false for the purpose of updating the same affected user within the
-    // `Email Update` test cases.
-    User = app.registry.createModel('TestUser', {}, {
+    User = app.registry.createModel({
+      name: 'TestUser',
       base: 'User',
-      http: { path: 'test-users' },
+      properties: {
+        // Use a custom id property to verify that User methods
+        // are correctly looking up the primary key
+        pk: {type: 'String', defaultFn: 'guid', id: true},
+      },
+      http: {path: 'test-users'},
+      // forceId is set to false for the purpose of updating the same affected user within the
+      // `Email Update` test cases.
       forceId: false,
     });
     app.model(User, { dataSource: 'db' });
@@ -83,7 +89,7 @@ describe('User', function() {
     it('Create a new user', function(done) {
       User.create({email: 'f@b.com', password: 'bar'}, function(err, user) {
         assert(!err);
-        assert(user.id);
+        assert(user.pk);
         assert(user.email);
 
         done();
@@ -95,7 +101,7 @@ describe('User', function() {
       User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
         if (err) return done(err);
 
-        assert(user.id);
+        assert(user.pk);
         assert.equal(user.email, user.email.toLowerCase());
 
         done();
@@ -106,7 +112,7 @@ describe('User', function() {
       User.create({email: 'F@b.com', password: 'bar'}, function(err, user) {
         if (err) return done(err);
 
-        assert(user.id);
+        assert(user.pk);
         assert(user.email);
         assert.notEqual(user.email, user.email.toLowerCase());
 
@@ -246,7 +252,7 @@ describe('User', function() {
       async.series([
         function(next) {
           User.create({ email: 'b@c.com', password: 'bar' }, function(err, user) {
-            usersId = user.id;
+            usersId = user.pk;
             next(err);
           });
         },
@@ -289,7 +295,7 @@ describe('User', function() {
             { name: 'myname', email: 'd@c.com', password: 'bar' },
           ], function(err, users) {
             userIds = users.map(function(u) {
-              return u.id;
+              return u.pk;
             });
             next(err);
           });
@@ -418,7 +424,7 @@ describe('User', function() {
     it('accepts passwords that are exactly 72 characters long', function(done) {
       User.create({ email: 'b@c.com', password: pass72Char }, function(err, user) {
         if (err) return done(err);
-        User.findById(user.id, function(err, userFound)  {
+        User.findById(user.pk, function(err, userFound)  {
           if (err) return done(err);
           assert(userFound);
           done();
@@ -1068,7 +1074,7 @@ describe('User', function() {
     it('logs in a user by with realm', function(done) {
       User.login(credentialWithRealm, function(err, accessToken) {
         assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.id);
+        assert.equal(accessToken.userId, user1.pk);
 
         done();
       });
@@ -1077,7 +1083,7 @@ describe('User', function() {
     it('logs in a user by with realm in username', function(done) {
       User.login(credentialRealmInUsername, function(err, accessToken) {
         assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.id);
+        assert.equal(accessToken.userId, user1.pk);
 
         done();
       });
@@ -1086,7 +1092,7 @@ describe('User', function() {
     it('logs in a user by with realm in email', function(done) {
       User.login(credentialRealmInEmail, function(err, accessToken) {
         assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.id);
+        assert.equal(accessToken.userId, user1.pk);
 
         done();
       });
@@ -1104,7 +1110,7 @@ describe('User', function() {
       it('logs in a user by with realm', function(done) {
         User.login(credentialWithRealm, function(err, accessToken) {
           assertGoodToken(accessToken);
-          assert.equal(accessToken.userId, user1.id);
+          assert.equal(accessToken.userId, user1.pk);
 
           done();
         });
@@ -1222,7 +1228,7 @@ describe('User', function() {
       var u = new User({username: 'a', password: 'b', email: 'z@z.net'});
 
       u.save(function(err, user) {
-        User.findById(user.id, function(err, uu) {
+        User.findById(user.pk, function(err, uu) {
           uu.hasPassword('b', function(err, isMatch) {
             assert(isMatch);
 
@@ -1234,7 +1240,7 @@ describe('User', function() {
 
     it('should match a password after it is changed', function(done) {
       User.create({email: 'foo@baz.net', username: 'bat', password: 'baz'}, function(err, user) {
-        User.findById(user.id, function(err, foundUser) {
+        User.findById(user.pk, function(err, foundUser) {
           assert(foundUser);
           foundUser.hasPassword('baz', function(err, isMatch) {
             assert(isMatch);
@@ -1242,7 +1248,7 @@ describe('User', function() {
             foundUser.save(function(err, updatedUser) {
               updatedUser.hasPassword('baz2', function(err, isMatch) {
                 assert(isMatch);
-                User.findById(user.id, function(err, uu) {
+                User.findById(user.pk, function(err, uu) {
                   uu.hasPassword('baz2', function(err, isMatch) {
                     assert(isMatch);
 
@@ -2038,7 +2044,7 @@ describe('User', function() {
 
     it('invalidates sessions when email is changed using `updateOrCreate`', function(done) {
       User.updateOrCreate({
-        id: user.id,
+        pk: user.pk,
         email: updatedEmailCredentials.email,
       }, function(err, userInstance) {
         if (err) return done(err);
@@ -2049,7 +2055,7 @@ describe('User', function() {
     it('invalidates sessions after `replaceById`', function(done) {
       // The way how the invalidation is implemented now, all sessions
       // are invalidated on a full replace
-      User.replaceById(user.id, currentEmailCredentials, function(err, userInstance) {
+      User.replaceById(user.pk, currentEmailCredentials, function(err, userInstance) {
         if (err) return done(err);
         assertNoAccessTokens(done);
       });
@@ -2059,7 +2065,7 @@ describe('User', function() {
       // The way how the invalidation is implemented now, all sessions
       // are invalidated on a full replace
       User.replaceOrCreate({
-        id: user.id,
+        pk: user.pk,
         email: currentEmailCredentials.email,
         password: currentEmailCredentials.password,
       }, function(err, userInstance) {
@@ -2077,7 +2083,7 @@ describe('User', function() {
 
     it('keeps sessions AS IS if firstName is added using `updateOrCreate`', function(done) {
       User.updateOrCreate({
-        id: user.id,
+        pk: user.pk,
         firstName: 'Loay',
         email: currentEmailCredentials.email,
       }, function(err, userInstance) {
@@ -2144,7 +2150,7 @@ describe('User', function() {
         },
         function updatePartialUser(next) {
           User.updateAll(
-            {id: userPartial.id},
+            {pk: userPartial.pk},
             {age: userPartial.age + 1},
             function(err, info) {
               if (err) return next(err);
@@ -2152,7 +2158,7 @@ describe('User', function() {
             });
         },
         function verifyTokensOfPartialUser(next) {
-          AccessToken.find({where: {userId: userPartial.id}}, function(err, tokens1) {
+          AccessToken.find({where: {userId: userPartial.pk}}, function(err, tokens1) {
             if (err) return next(err);
             expect(tokens1.length).to.equal(1);
             next();
@@ -2204,11 +2210,11 @@ describe('User', function() {
           });
         },
         function(next) {
-          AccessToken.find({where: {userId: user1.id}}, function(err, tokens1) {
+          AccessToken.find({where: {userId: user1.pk}}, function(err, tokens1) {
             if (err) return next(err);
-            AccessToken.find({where: {userId: user2.id}}, function(err, tokens2) {
+            AccessToken.find({where: {userId: user2.pk}}, function(err, tokens2) {
               if (err) return next(err);
-              AccessToken.find({where: {userId: user3.id}}, function(err, tokens3) {
+              AccessToken.find({where: {userId: user3.pk}}, function(err, tokens3) {
                 if (err) return next(err);
 
                 expect(tokens1.length).to.equal(1);
@@ -2249,7 +2255,7 @@ describe('User', function() {
                 });
         },
         function verifyTokensOfSpecialUser(next) {
-          AccessToken.find({where: {userId: userSpecial.id}}, function(err, tokens1) {
+          AccessToken.find({where: {userId: userSpecial.pk}}, function(err, tokens1) {
             if (err) return done(err);
             expect(tokens1.length, 'tokens - special user tokens').to.equal(0);
             next();
@@ -2270,7 +2276,7 @@ describe('User', function() {
       var options = {accessToken: originalUserToken1};
       user.updateAttribute('email', 'new@example.com', options, function(err) {
         if (err) return done(err);
-        AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
+        AccessToken.find({where: {userId: user.pk}}, function(err, tokens) {
           if (err) return done(err);
           var tokenIds = tokens.map(function(t) { return t.id; });
           expect(tokenIds).to.eql([originalUserToken1.id]);
@@ -2311,9 +2317,9 @@ describe('User', function() {
           });
         },
         function(next) {
-          AccessToken.find({where: {userId: user1.id}}, function(err, tokens1) {
+          AccessToken.find({where: {userId: user1.pk}}, function(err, tokens1) {
             if (err) return next(err);
-            AccessToken.find({where: {userId: user2.id}}, function(err, tokens2) {
+            AccessToken.find({where: {userId: user2.pk}}, function(err, tokens2) {
               if (err) return next(err);
               expect(tokens1.length).to.equal(1);
               expect(tokens2.length).to.equal(0);
@@ -2339,7 +2345,7 @@ describe('User', function() {
     });
 
     function assertPreservedTokens(done) {
-      AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
+      AccessToken.find({where: {userId: user.pk}}, function(err, tokens) {
         if (err) return done(err);
         var actualIds = tokens.map(function(t) { return t.id; });
         actualIds.sort();
@@ -2351,7 +2357,7 @@ describe('User', function() {
     }
 
     function assertNoAccessTokens(done) {
-      AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
+      AccessToken.find({where: {userId: user.pk}}, function(err, tokens) {
         if (err) return done(err);
         expect(tokens.length).to.equal(0);
         done();
@@ -2377,7 +2383,7 @@ describe('User', function() {
           });
         },
         function findUser(next) {
-          User.findById(userInstance.id, function(err, info) {
+          User.findById(userInstance.pk, function(err, info) {
             if (err) return next(err);
             assert.equal(info.email, NEW_EMAIL);
             assert.equal(info.emailVerified, false);
@@ -2399,7 +2405,7 @@ describe('User', function() {
           });
         },
         function findUser(next) {
-          User.findById(userInstance.id, function(err, info) {
+          User.findById(userInstance.pk, function(err, info) {
             if (err) return next(err);
             assert.equal(info.email, NEW_EMAIL);
             assert.equal(info.emailVerified, true);
@@ -2421,7 +2427,7 @@ describe('User', function() {
             });
           },
           function findUser(next) {
-            User.findById(userInstance.id, function(err, info) {
+            User.findById(userInstance.pk, function(err, info) {
               if (err) return next(err);
               assert.equal(info.realm, 'test');
               assert.equal(info.emailVerified, true);
