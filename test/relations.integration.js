@@ -1604,7 +1604,7 @@ describe('relations - integration', function() {
       done();
     });
 
-    it('it has nested relationship routes', function(done) {
+    it.only('it has nested relationship routes', function(done) {
       var app = this.app;
       var pageMethodsStringName = app._remotes._classes.Page._methods
         .map(function(item) { return item.stringName; });
