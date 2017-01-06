@@ -704,7 +704,7 @@ describe('relations - integration', function() {
     });
 
     it.skip('allows to find related objects via where filter', function(done) {
-      //TODO https://github.com/strongloop/loopback-datasource-juggler/issues/94
+      // TODO https://github.com/strongloop/loopback-datasource-juggler/issues/94
       var expectedProduct = this.product;
       this.get('/api/products?filter[where][categoryId]=' + this.category.id)
         .expect(200, function(err, res) {
@@ -760,7 +760,7 @@ describe('relations - integration', function() {
     });
 
     it.skip('includes requested related models in `findById`', function(done) {
-      //TODO https://github.com/strongloop/loopback-datasource-juggler/issues/93
+      // TODO https://github.com/strongloop/loopback-datasource-juggler/issues/93
       var expectedProduct = this.product;
       // Note: the URL format is not final
       var url = '/api/categories/' + this.category.id + '?include=products';

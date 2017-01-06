@@ -387,7 +387,7 @@ describe('User', function() {
     it('rejects passwords longer than 72 characters', function(done) {
       try {
         User.create({email: 'b@c.com', password: pass73Char}, function(err) {
-          if (err) return done (err);
+          if (err) return done(err);
           done(new Error('User.create() should have thrown an error.'));
         });
       } catch (e) {
@@ -410,7 +410,7 @@ describe('User', function() {
       User.create({email: 'b@c.com', password: pass72Char}, function(err, user) {
         if (err) return done(err);
         User.findById(user.id, function(err, userFound)  {
-          if (err) return done (err);
+          if (err) return done(err);
           assert(userFound);
           done();
         });
@@ -431,7 +431,7 @@ describe('User', function() {
 
     it('rejects password reset when password is more than 72 chars', function(done) {
       User.create({email: 'b@c.com', password: pass72Char}, function(err) {
-        if (err) return done (err);
+        if (err) return done(err);
         User.resetPassword({email: 'b@c.com', password: pass73Char}, function(err) {
           assert(err);
           expect(err).to.match(/Password too long/);
@@ -2128,14 +2128,14 @@ describe('User', function() {
           User.create(
             {email: 'partial@example.com', password: 'pass1', age: 25},
             function(err, partialInstance) {
-              if (err) return next (err);
+              if (err) return next(err);
               userPartial = partialInstance;
               next();
             });
         },
         function loginPartiallUser(next) {
           User.login({email: 'partial@example.com', password: 'pass1'}, function(err, ats) {
-            if (err) return next (err);
+            if (err) return next(err);
             next();
           });
         },
@@ -2144,13 +2144,13 @@ describe('User', function() {
             {id: userPartial.id},
             {age: userPartial.age + 1},
             function(err, info) {
-              if (err) return next (err);
+              if (err) return next(err);
               next();
             });
         },
         function verifyTokensOfPartialUser(next) {
           AccessToken.find({where: {userId: userPartial.id}}, function(err, tokens1) {
-            if (err) return next (err);
+            if (err) return next(err);
             expect(tokens1.length).to.equal(1);
             next();
           });
@@ -2226,14 +2226,14 @@ describe('User', function() {
           User.create(
               {email: 'special@example.com', password: 'pass1', name: 'Special'},
               function(err, specialInstance) {
-                if (err) return next (err);
+                if (err) return next(err);
                 userSpecial = specialInstance;
                 next();
               });
         },
         function loginSpecialUser(next) {
           User.login({email: 'special@example.com', password: 'pass1'}, function(err, ats) {
-            if (err) return next (err);
+            if (err) return next(err);
             next();
           });
         },
@@ -2241,13 +2241,13 @@ describe('User', function() {
           User.updateAll(
                 {name: 'Special'},
                 {email: 'superspecial@example.com'}, function(err, info) {
-                  if (err) return next (err);
+                  if (err) return next(err);
                   next();
                 });
         },
         function verifyTokensOfSpecialUser(next) {
           AccessToken.find({where: {userId: userSpecial.id}}, function(err, tokens1) {
-            if (err) return done (err);
+            if (err) return done(err);
             expect(tokens1.length, 'tokens - special user tokens').to.equal(0);
             next();
           });
@@ -2350,14 +2350,14 @@ describe('User', function() {
       async.series([
         function updateUser(next) {
           userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
-            if (err) return next (err);
+            if (err) return next(err);
             assert.equal(info.email, NEW_EMAIL);
             next();
           });
         },
         function findUser(next) {
           User.findById(userInstance.id, function(err, info) {
-            if (err) return next (err);
+            if (err) return next(err);
             assert.equal(info.email, NEW_EMAIL);
             assert.equal(info.emailVerified, false);
             next();
@@ -2372,14 +2372,14 @@ describe('User', function() {
       async.series([
         function updateUser(next) {
           userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
-            if (err) return next (err);
+            if (err) return next(err);
             assert.equal(info.email, NEW_EMAIL);
             next();
           });
         },
         function findUser(next) {
           User.findById(userInstance.id, function(err, info) {
-            if (err) return next (err);
+            if (err) return next(err);
             assert.equal(info.email, NEW_EMAIL);
             assert.equal(info.emailVerified, true);
             next();
@@ -2394,14 +2394,14 @@ describe('User', function() {
         async.series([
           function updateUser(next) {
             userInstance.updateAttribute('realm', 'test', function(err, info) {
-              if (err) return next (err);
+              if (err) return next(err);
               assert.equal(info.realm, 'test');
               next();
             });
           },
           function findUser(next) {
             User.findById(userInstance.id, function(err, info) {
-              if (err) return next (err);
+              if (err) return next(err);
               assert.equal(info.realm, 'test');
               assert.equal(info.emailVerified, true);
               next();
@@ -2431,7 +2431,7 @@ describe('User', function() {
       var email = validCredentialsEmailVerified.email;
 
       User.resetPassword({email: email}, function(err, info) {
-        if (err) return done (err);
+        if (err) return done(err);
         done();
       });
     });
@@ -2445,7 +2445,7 @@ describe('User', function() {
         assert(err);
         assert.equal(err.code, 'RESET_FAILED_EMAIL_NOT_VERIFIED');
         assert.equal(err.statusCode, 401);
-        done ();
+        done();
       });
     });
 
@@ -2455,7 +2455,7 @@ describe('User', function() {
       var email = validCredentialsEmail;
 
       User.resetPassword({email: email}, function(err) {
-        if (err) return done (err);
+        if (err) return done(err);
         done();
       });
     });
