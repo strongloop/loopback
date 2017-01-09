@@ -1,3 +1,27 @@
+2017-01-09, Version 3.2.0
+=========================
+
+ * Upgrade eslint-config to 7.x (Miroslav Bajtoš)
+
+ * Allow password reset request for users in realms (Bram Borggreve)
+
+ * Fix construction of sharedCtor remoting metadata (Miroslav Bajtoš)
+
+ * Add option disabling periodic change rectification (kobaska)
+
+ * Fix annotation for persistedModel.count (lschricke)
+
+ * Applied as reviewed by @flowersinthesand (박대선)
+
+ * Fix false emailVerified on user model update (박대선)
+
+ * Contextify DAO and relation methods (Miroslav Bajtoš)
+
+ * Implement new http arg mapping optionsFromRequest (Miroslav Bajtoš)
+
+ * Emit resetPasswordRequest event with options (Sergey Reus)
+
+
 2016-12-21, Version 3.1.1
 =========================
 
