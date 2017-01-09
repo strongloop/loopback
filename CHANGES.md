@@ -1,4 +1,20 @@
-2016-12-22, Version 2.36.2
+2017-01-09, Version 2.37.0
+==========================
+
+ * Emit resetPasswordRequest event with options (Sergey Reus)
+
+ * Fix false emailVerified on user model update (박대선)
+
+ * Add new flag injectOptionsFromRemoteContext (Miroslav Bajtoš)
+
+ * Contextify DAO and relation methods (Miroslav Bajtoš)
+
+ * Implement new http arg mapping optionsFromRequest (Miroslav Bajtoš)
+
+ * Fix package.json CI downstreamIgnoreList nesting (David Cheung)
+
+
+2016-12-21, Version 2.36.2
 ==========================
 
  * Add option disabling periodic change rectification (kobaska)
