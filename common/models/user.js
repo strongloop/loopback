@@ -425,9 +425,7 @@ module.exports = function(User) {
       displayPort +
       urlPath +
       '?uid=' +
-      options.user.id +
-      '&redirect=' +
-      options.redirect;
+      options.user.id;
 
     options.templateFn = options.templateFn || createVerificationEmailBody;
 
@@ -453,7 +451,8 @@ module.exports = function(User) {
 
     // TODO - support more verification types
     function sendEmail(user) {
-      options.verifyHref += '&token=' + user.verificationToken;
+      options.verifyHref += '&token=' + user.verificationToken +
+        '&redirect=' + options.redirect;
 
       options.text = options.text || g.f('Please verify your email by opening ' +
         'this link in a web browser:\n\t%s', options.verifyHref);
