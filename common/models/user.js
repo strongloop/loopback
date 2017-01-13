@@ -669,48 +669,8 @@ module.exports = function(User) {
     AccessToken.deleteAll({userId: {inq: userIds}}, cb);
   };
 
-  /*!
-   * Setup an extended user model.
-   */
-
-  User.setup = function() {
-    // We need to call the base class's setup method
-    User.base.setup.call(this);
+  User.setupRemoteMethods = function() {
     var UserModel = this;
-
-    // max ttl
-    this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
-    this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
-
-    UserModel.setter.email = function(value) {
-      if (!UserModel.settings.caseSensitiveEmail) {
-        this.$email = value.toLowerCase();
-      } else {
-        this.$email = value;
-      }
-    };
-
-    UserModel.setter.password = function(plain) {
-      if (typeof plain !== 'string') {
-        return;
-      }
-      if (plain.indexOf('$2a$') === 0 && plain.length === 60) {
-        // The password is already hashed. It can be the case
-        // when the instance is loaded from DB
-        this.$password = plain;
-      } else {
-        this.$password = this.constructor.hashPassword(plain);
-      }
-    };
-
-    // Make sure emailVerified is not set by creation
-    UserModel.beforeRemote('create', function(ctx, user, next) {
-      var body = ctx.req.body;
-      if (body && body.emailVerified) {
-        body.emailVerified = false;
-      }
-      next();
-    });
 
     UserModel.remoteMethod(
       'login',
@@ -788,13 +748,35 @@ module.exports = function(User) {
       }
       next();
     });
+  };
+
+  User.setupEmail = function() {
+    var UserModel = this;
+
+    UserModel.setter.email = function(value) {
+      if (!UserModel.settings.caseSensitiveEmail) {
+        this.$email = value.toLowerCase();
+      } else {
+        this.$email = value;
+      }
+    };
+
+    // Make sure emailVerified is not set by creation
+    UserModel.beforeRemote('create', function(ctx, user, next) {
+      var body = ctx.req.body;
+      if (body && body.emailVerified) {
+        body.emailVerified = false;
+      }
+      next();
+    });
 
     // default models
     assert(loopback.Email, 'Email model must be defined before User model');
     UserModel.email = loopback.Email;
+  };
 
-    assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
-    UserModel.accessToken = loopback.AccessToken;
+  User.setupValidations = function() {
+    var UserModel = this;
 
     UserModel.validate('email', emailValidator, {
       message: g.f('Must provide a valid email'),
@@ -815,6 +797,42 @@ module.exports = function(User) {
       UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
       UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
     }
+  };
+
+  /*!
+   * Setup an extended user model.
+   */
+
+  User.setup = function() {
+    // We need to call the base class's setup method
+    User.base.setup.call(this);
+    var UserModel = this;
+
+    // max ttl
+    this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
+    this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
+
+    UserModel.setter.password = function(plain) {
+      if (typeof plain !== 'string') {
+        return;
+      }
+      if (plain.indexOf('$2a$') === 0 && plain.length === 60) {
+        // The password is already hashed. It can be the case
+        // when the instance is loaded from DB
+        this.$password = plain;
+      } else {
+        this.$password = this.constructor.hashPassword(plain);
+      }
+    };
+
+    UserModel.setupEmail();
+
+    UserModel.setupRemoteMethods();
+
+    assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
+    UserModel.accessToken = loopback.AccessToken;
+
+    UserModel.setupValidations();
 
     return UserModel;
   };
@@ -825,22 +843,25 @@ module.exports = function(User) {
 
   User.setup();
 
+  User.helpers = {};
+
   // --- OPERATION HOOKS ---
   //
   // Important: Operation hooks are inherited by subclassed models,
   // therefore they must be registered outside of setup() function
 
   // Access token to normalize email credentials
-  User.observe('access', function normalizeEmailCase(ctx, next) {
+  User.helpers.normalizeEmailCase = function(ctx, next) {
     if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
         ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
       ctx.query.where.email = ctx.query.where.email.toLowerCase();
     }
     next();
-  });
+  };
+  User.observe('access', User.helpers.normalizeEmailCase);
 
   // Delete old sessions once email is updated
-  User.observe('before save', function beforeEmailUpdate(ctx, next) {
+  User.helpers.beforeEmailUpdate = function(ctx, next) {
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
     var where = ctx.where || {id: ctx.instance.id};
@@ -877,9 +898,10 @@ module.exports = function(User) {
 
       next();
     });
-  });
+  };
+  User.observe('before save', User.helpers.beforeEmailUpdate);
 
-  User.observe('after save', function afterEmailUpdate(ctx, next) {
+  User.helpers.afterEmailUpdate = function(ctx, next) {
     if (!ctx.instance && !ctx.data) return next();
     if (!ctx.hookState.originalUserData) return next();
 
@@ -894,7 +916,9 @@ module.exports = function(User) {
       return u.id;
     });
     ctx.Model._invalidateAccessTokensOfUsers(userIdsToExpire, next);
-  });
+  };
+
+  User.observe('after save', User.helpers.afterEmailUpdate);
 };
 
 function emailValidator(err, done) {
