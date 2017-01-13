@@ -92,6 +92,20 @@ describe('users - integration', function() {
           done();
         });
     });
+
+    it('should preserve current session when invalidating tokens', function(done) {
+      var url = '/api/users/' + userId;
+      var self = this;
+      this.patch(url)
+        .send({email: 'new@example.com'})
+        .set('Authorization', accessToken)
+        .expect(200, function(err) {
+          if (err) return done(err);
+          self.get(url)
+            .set('Authorization', accessToken)
+            .expect(200, done);
+        });
+    });
   });
 
   describe('sub-user', function() {

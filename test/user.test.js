@@ -2263,6 +2263,19 @@ describe('User', function() {
       });
     });
 
+    it('preserves current session', function(done) {
+      var options = {accessToken: originalUserToken1};
+      user.updateAttribute('email', 'new@example.com', options, function(err) {
+        if (err) return done(err);
+        AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
+          if (err) return done(err);
+          var tokenIds = tokens.map(function(t) { return t.id; });
+          expect(tokenIds).to.eql([originalUserToken1.id]);
+          done();
+        });
+      });
+    });
+
     it('preserves other user sessions if their password is  untouched', function(done) {
       var user1, user2, user1Token;
       async.series([

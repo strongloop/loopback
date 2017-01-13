@@ -657,7 +657,12 @@ module.exports = function(User) {
     throw err;
   };
 
-  User._invalidateAccessTokensOfUsers = function(userIds, cb) {
+  User._invalidateAccessTokensOfUsers = function(userIds, options, cb) {
+    if (typeof options === 'function' && cb === undefined) {
+      cb = options;
+      options = {};
+    }
+
     if (!Array.isArray(userIds) || !userIds.length)
       return process.nextTick(cb);
 
@@ -666,7 +671,14 @@ module.exports = function(User) {
       return process.nextTick(cb);
 
     var AccessToken = accessTokenRelation.modelTo;
-    AccessToken.deleteAll({userId: {inq: userIds}}, cb);
+
+    var query = {userId: {inq: userIds}};
+    var tokenPK = AccessToken.definition.idName() || 'id';
+    if (options.accessToken && tokenPK in options.accessToken) {
+      query[tokenPK] = {neq: options.accessToken[tokenPK]};
+    }
+
+    AccessToken.deleteAll(query, options, cb);
   };
 
   /*!
@@ -893,7 +905,7 @@ module.exports = function(User) {
     }).map(function(u) {
       return u.id;
     });
-    ctx.Model._invalidateAccessTokensOfUsers(userIdsToExpire, next);
+    ctx.Model._invalidateAccessTokensOfUsers(userIdsToExpire, ctx.options, next);
   });
 };
 
