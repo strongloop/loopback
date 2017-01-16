@@ -215,13 +215,11 @@ module.exports = function(Role) {
       var ownerId = inst.userId || inst.owner;
       // Ensure ownerId exists and is not a function/relation
       if (ownerId && 'function' !== typeof ownerId) {
-        console.log('\n', 'callback line 219', '\n');
         if (callback && matches(ownerId, userId)) callback(null, true);
         return;
       }
 
       // Finally DENY the owner role after sending
-      console.log('\n', 'callback line 225', '\n');
       if (callback) callback(null, false);
     });
   };
