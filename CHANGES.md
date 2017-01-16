@@ -1,3 +1,11 @@
+2017-01-16, Version 2.37.1
+==========================
+
+ * Preserve current session when invalidating tokens (Miroslav Bajtoš)
+
+ * Clean up access-token-invalidation tests (Miroslav Bajtoš)
+
+
 2017-01-09, Version 2.37.0
 ==========================
 
