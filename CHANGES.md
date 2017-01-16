@@ -1,3 +1,17 @@
+2017-01-16, Version 3.2.1
+=========================
+
+ * Preserve current session when invalidating tokens (Miroslav Bajtoš)
+
+ * Clean up access-token-invalidation tests (Miroslav Bajtoš)
+
+ * Update docs.json (Rand McKinney)
+
+ * Simplify issue template (#3083) (Simon Ho)
+
+ * Warn about injectOptionsFromRemoteContext (Miroslav Bajtoš)
+
+
 2017-01-09, Version 3.2.0
 =========================
 
