@@ -1989,7 +1989,7 @@ describe('User', function() {
           User.login(currentEmailCredentials, function(err, accessToken1) {
             if (err) return next(err);
             assert(accessToken1.userId);
-            originalUserToken1 = accessToken1.id;
+            originalUserToken1 = accessToken1;
             next();
           });
         },
@@ -1997,7 +1997,7 @@ describe('User', function() {
           User.login(currentEmailCredentials, function(err, accessToken2) {
             if (err) return next(err);
             assert(accessToken2.userId);
-            originalUserToken2 = accessToken2.id;
+            originalUserToken2 = accessToken2;
             next();
           });
         },
@@ -2057,7 +2057,7 @@ describe('User', function() {
     it('keeps sessions AS IS if firstName is added using `updateAttributes`', function(done) {
       user.updateAttributes({'firstName': 'Janny'}, function(err, userInstance) {
         if (err) return done(err);
-        assertUntouchedTokens(done);
+        assertPreservedTokens(done);
       });
     });
 
@@ -2068,7 +2068,7 @@ describe('User', function() {
         email: currentEmailCredentials.email,
       }, function(err, userInstance) {
         if (err) return done(err);
-        assertUntouchedTokens(done);
+        assertPreservedTokens(done);
       });
     });
 
@@ -2252,6 +2252,19 @@ describe('User', function() {
       });
     });
 
+    it('preserves current session', function(done) {
+      var options = {accessToken: originalUserToken1};
+      user.updateAttribute('email', 'new@example.com', options, function(err) {
+        if (err) return done(err);
+        AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
+          if (err) return done(err);
+          var tokenIds = tokens.map(function(t) { return t.id; });
+          expect(tokenIds).to.eql([originalUserToken1.id]);
+          done();
+        });
+      });
+    });
+
     it('preserves other user sessions if their password is  untouched', function(done) {
       var user1, user2, user1Token;
       async.series([
@@ -2303,9 +2316,11 @@ describe('User', function() {
     function assertPreservedTokens(done) {
       AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
         if (err) return done(err);
-        expect(tokens.length).to.equal(2);
-        expect([tokens[0].id, tokens[1].id]).to.have.members([originalUserToken1,
-          originalUserToken2]);
+        var actualIds = tokens.map(function(t) { return t.id; });
+        actualIds.sort();
+        var expectedIds = [originalUserToken1.id, originalUserToken2.id];
+        expectedIds.sort();
+        expect(actualIds).to.eql(expectedIds);
         done();
       });
     }
@@ -2314,14 +2329,6 @@ describe('User', function() {
       AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
         if (err) return done(err);
         expect(tokens.length).to.equal(0);
-        done();
-      });
-    }
-
-    function assertUntouchedTokens(done) {
-      AccessToken.find({where: {userId: user.id}}, function(err, tokens) {
-        if (err) return done(err);
-        expect(tokens.length).to.equal(2);
         done();
       });
     }

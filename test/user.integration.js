@@ -100,6 +100,54 @@ describe('users - integration', function() {
           done();
         });
     });
+
+    it('invalidates current session when options are not injected', function(done) {
+      // "injectOptionsFromRemoteContext" is disabled by default,
+      // therefore the code invalidating sessions cannot tell what
+      // is the current session, and thus invalidates all sessions
+      var url = '/api/users/' + userId;
+      var self = this;
+      this.request.patch(url)
+        .send({email: 'new@example.com'})
+        .set('Authorization', accessToken)
+        .expect(200, function(err) {
+          if (err) return done(err);
+          self.get(url)
+            .set('Authorization', accessToken)
+            .expect(401, done);
+        });
+    });
+
+    it('should preserve current session when invalidating tokens', function(done) {
+      var UserWithContext = app.registry.createModel({
+        name: 'UserWithContext',
+        plural: 'ctx-users',
+        base: 'User',
+        injectOptionsFromRemoteContext: true
+      });
+      app.model(UserWithContext, {dataSource: 'db'});
+
+      var self = this;
+      var CREDENTIALS = {email: 'ctx@example.com', password: 'pass'};
+      UserWithContext.create(CREDENTIALS, function(err, user) {
+        if (err) return done(err);
+
+        UserWithContext.login(CREDENTIALS, function(err, token) {
+          if (err) return done(err);
+
+          var url = '/api/ctx-users/' + user.id;
+          self.request.patch(url)
+            .send({email: 'new@example.com'})
+            .set('Authorization', token.id)
+            .expect(200, function(err) {
+              if (err) return done(err);
+              self.get(url)
+                .set('Authorization', token.id)
+                .expect(200, done);
+            });
+        });
+      });
+    });
   });
 
   describe('sub-user', function() {
