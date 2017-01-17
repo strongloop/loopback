@@ -23,6 +23,7 @@
       "disableStackTrace": false
     }
   },
+  "logoutSessionsOnSensitiveChanges": true,
   "legacyExplorer": false
 }
 

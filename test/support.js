@@ -23,6 +23,7 @@ loopback.User.settings.saltWorkFactor = 4;
 
 beforeEach(function() {
   this.app = app = loopback();
+  app.set('logoutSessionsOnSensitiveChanges', true);
 
   // setup default data sources
   loopback.setDefaultDataSourceForType('db', {

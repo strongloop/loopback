@@ -856,6 +856,7 @@ describe.onServer('Remote Methods', function() {
 
     function setupAppAndRequest() {
       app = loopback({localRegistry: true, loadBuiltinModels: true});
+      app.set('logoutSessionsOnSensitiveChanges', true);
 
       app.dataSource('db', {connector: 'memory'});
 

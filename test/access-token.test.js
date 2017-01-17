@@ -590,6 +590,7 @@ function createTestApp(testToken, settings, done) {
   }, settings.token);
 
   var app = loopback();
+  app.set('logoutSessionsOnSensitiveChanges', true);
 
   app.use(cookieParser('secret'));
   app.use(loopback.token(tokenSettings));
@@ -652,6 +653,7 @@ function createTestApp(testToken, settings, done) {
 
 function givenLocalTokenModel() {
   var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+  app.set('logoutSessionsOnSensitiveChanges', true);
   app.dataSource('db', { connector: 'memory' });
 
   var User = app.registry.getModel('User');

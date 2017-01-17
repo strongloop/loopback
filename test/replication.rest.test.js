@@ -462,6 +462,7 @@ describe('Replication over REST', function() {
 
   function setupServer(done) {
     serverApp = loopback();
+    serverApp.set('logoutSessionsOnSensitiveChanges', true);
     serverApp.enableAuth();
 
     serverApp.dataSource('db', { connector: 'memory' });
@@ -514,6 +515,7 @@ describe('Replication over REST', function() {
 
   function setupClient() {
     clientApp = loopback();
+    clientApp.set('logoutSessionsOnSensitiveChanges', true);
     clientApp.dataSource('db', { connector: 'memory' });
     clientApp.dataSource('remote', {
       connector: 'remote',
