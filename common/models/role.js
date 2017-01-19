@@ -172,6 +172,14 @@ module.exports = function(Role) {
     assert(modelClass, 'Model class is required');
     debug('isOwner(): %s %s userId: %s', modelClass && modelClass.modelName, modelId, userId);
 
+    // If no requester id, deny the resolver
+    if (!userId) {
+      process.nextTick(function() {
+        callback(null, false);
+      });
+      return;
+    }
+
     // Is the modelClass User or a subclass of User?
     if (isUserClass(modelClass)) {
       process.nextTick(function() {
