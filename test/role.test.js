@@ -15,7 +15,7 @@ function checkResult(err, result) {
   assert(!err);
 }
 
-describe.only('role model', function() {
+describe('role model', function() {
   this.timeout(10000);
 
   var app, Role, RoleMapping, User, Application, ACL;
