@@ -1,3 +1,11 @@
+2017-01-20, Version 2.38.0
+==========================
+
+ * Add app setting logoutSessionsOnSensitiveChanges (Miroslav Bajtoš)
+
+ * Fix User.resetPassword to call createAccessToken() (João Ribeiro)
+
+
 2017-01-16, Version 2.37.1
 ==========================
 
