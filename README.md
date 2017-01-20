@@ -18,8 +18,7 @@ LoopBack consists of:
   * Client SDKs for iOS, Android, and web clients.
 
 LoopBack tools include:
-  * Command-line tool `slc loopback` to create applications, models, data sources, and so on.
-  * StrongLoop Arc, a graphical tool for editing LoopBack applications; and for deploying and monitoring applications.
+  * Command-line tool `loopback-cli` to create applications, models, data sources, and so on.
 
 For more details, see [http://loopback.io/](http://loopback.io/).
 
