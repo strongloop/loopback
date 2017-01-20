@@ -605,7 +605,7 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
+      user.createAccessToken(ttl, function(err, accessToken) {
         if (err) {
           return cb(err);
         }

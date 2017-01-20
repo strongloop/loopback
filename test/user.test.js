@@ -1884,6 +1884,19 @@ describe('User', function() {
         });
       });
 
+      it('calls createAccessToken() to create the token', function(done) {
+        User.prototype.createAccessToken = function(ttl, cb) {
+          cb(null, new AccessToken({id: 'custom-token'}));
+        };
+
+        User.resetPassword({email: options.email}, function() {});
+
+        User.once('resetPasswordRequest', function(info) {
+          expect(info.accessToken.id).to.equal('custom-token');
+          done();
+        });
+      });
+
       it('Password reset over REST rejected without email address', function(done) {
         request(app)
           .post('/test-users/reset')
