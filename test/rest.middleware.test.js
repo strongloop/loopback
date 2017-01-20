@@ -13,6 +13,7 @@ describe('loopback.rest', function() {
     // override the global app object provided by test/support.js
     // and create a local one that does not share state with other tests
     app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    app.set('logoutSessionsOnSensitiveChanges', true);
     var db = app.dataSource('db', { connector: 'memory' });
     MyModel = app.registry.createModel('MyModel');
     MyModel.attachTo(db);

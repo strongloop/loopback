@@ -31,6 +31,7 @@ describe('User', function() {
     // override the global app object provided by test/support.js
     // and create a local one that does not share state with other tests
     app = loopback({ localRegistry: true, loadBuiltinModels: true });
+    app.set('logoutSessionsOnSensitiveChanges', true);
     app.dataSource('db', { connector: 'memory' });
 
     // setup Email model, it's needed by User tests
@@ -2324,6 +2325,17 @@ describe('User', function() {
       ], function(err) {
         done();
       });
+    });
+
+    it('preserves all sessions when logoutSessionsOnSensitiveChanges is disabled',
+    function(done) {
+      app.set('logoutSessionsOnSensitiveChanges', false);
+      user.updateAttributes(
+        {email: updatedEmailCredentials.email},
+        function(err, userInstance) {
+          if (err) return done(err);
+          assertPreservedTokens(done);
+        });
     });
 
     function assertPreservedTokens(done) {

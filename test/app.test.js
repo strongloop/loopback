@@ -718,6 +718,7 @@ describe('app', function() {
 
     beforeEach(function() {
       app = loopback();
+      app.set('logoutSessionsOnSensitiveChanges', true);
       app.dataSource('db', {
         connector: 'memory'
       });
@@ -922,6 +923,7 @@ describe('app', function() {
       var AUTH_MODELS = ['User', 'ACL', 'AccessToken', 'Role', 'RoleMapping'];
       var app = loopback({ localRegistry: true, loadBuiltinModels: true });
       require('../lib/builtin-models')(app.registry);
+      app.set('logoutSessionsOnSensitiveChanges', true);
       var db = app.dataSource('db', { connector: 'memory' });
 
       app.enableAuth({ dataSource: 'db' });
@@ -937,6 +939,7 @@ describe('app', function() {
 
     it('detects already configured subclass of a required model', function() {
       var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      app.set('logoutSessionsOnSensitiveChanges', true);
       var db = app.dataSource('db', { connector: 'memory' });
       var Customer = app.registry.createModel('Customer', {}, { base: 'User' });
       app.model(Customer, { dataSource: 'db' });
