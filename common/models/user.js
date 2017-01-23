@@ -384,6 +384,7 @@ module.exports = function(User) {
     var user = this;
     var userModel = this.constructor;
     var registry = userModel.registry;
+    var pkName = userModel.definition.idName() || 'id';
     assert(typeof options === 'object', 'options required when calling user.verify()');
     assert(options.type, 'You must supply a verification type (options.type)');
     assert(options.type === 'email', 'Unsupported verification type');
@@ -418,7 +419,7 @@ module.exports = function(User) {
       displayPort +
       urlPath +
       '?uid=' +
-      options.user.id +
+      options.user[pkName] +
       '&redirect=' +
       options.redirect;
 
@@ -477,7 +478,7 @@ module.exports = function(User) {
           if (err) {
             fn(err);
           } else {
-            fn(null, { email: email, token: user.verificationToken, uid: user.id });
+            fn(null, {email: email, token: user.verificationToken, uid: user[pkName]});
           }
         });
       }
@@ -862,6 +863,7 @@ module.exports = function(User) {
     var emailChanged;
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
+    var pkName = ctx.Model.definition.idName() || 'id';
 
     var isPartialUpdateChangingPassword = ctx.data && 'password' in ctx.data;
 
@@ -874,11 +876,21 @@ module.exports = function(User) {
     ctx.hookState.isPasswordChange = isPartialUpdateChangingPassword ||
       isFullReplaceChangingPassword;
 
-    var where = ctx.where || {id: ctx.instance.id};
+    var where;
+    if (ctx.where) {
+      where = ctx.where;
+    } else {
+      where = {};
+      where[pkName] = ctx.instance[pkName];
+    }
+
     ctx.Model.find({where: where}, function(err, userInstances) {
       if (err) return next(err);
       ctx.hookState.originalUserData = userInstances.map(function(u) {
-        return { id: u.id, email: u.email };
+        var user = {};
+        user[pkName] = u[pkName];
+        user['email'] = u['email'];
+        return user;
       });
       if (ctx.instance) {
         emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
@@ -904,6 +916,7 @@ module.exports = function(User) {
     if (!ctx.instance && !ctx.data) return next();
     if (!ctx.hookState.originalUserData) return next();
 
+    var pkName = ctx.Model.definition.idName() || 'id';
     var newEmail = (ctx.instance || ctx.data).email;
     var isPasswordChange = ctx.hookState.isPasswordChange;
 
@@ -912,7 +925,7 @@ module.exports = function(User) {
     var userIdsToExpire = ctx.hookState.originalUserData.filter(function(u) {
       return (newEmail && u.email !== newEmail) || isPasswordChange;
     }).map(function(u) {
-      return u.id;
+      return u[pkName];
     });
     ctx.Model._invalidateAccessTokensOfUsers(userIdsToExpire, ctx.options, next);
   });
