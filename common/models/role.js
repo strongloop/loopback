@@ -36,9 +36,9 @@ module.exports = function(Role) {
   Role.resolveRelatedModels = function() {
     if (!this.userModel) {
       var reg = this.registry;
-      this.roleMappingModel = reg.getModelByType(loopback.RoleMapping);
-      this.userModel = reg.getModelByType(loopback.User);
-      this.applicationModel = reg.getModelByType(loopback.Application);
+      this.roleMappingModel = reg.getModelByType('RoleMapping');
+      this.userModel = reg.getModelByType('User');
+      this.applicationModel = reg.getModelByType('Application');
     }
   };
 
