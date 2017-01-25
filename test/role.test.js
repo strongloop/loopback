@@ -47,9 +47,6 @@ describe('role model', function() {
     ACL.roleMappingModel = RoleMapping;
     ACL.userModel = User;
     ACL.applicationModel = Application;
-    Role.roleMappingModel = RoleMapping;
-    Role.userModel = User;
-    Role.applicationModel = Application;
   });
 
   it('should define role/role relations', function(done) {
