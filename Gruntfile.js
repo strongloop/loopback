@@ -88,7 +88,8 @@ module.exports = function(grunt) {
         src: 'test/*.js',
         options: {
           reporter: 'dot',
-        }
+          require: require.resolve('./test/helpers/use-english.js'),
+        },
       },
       'unit-xml': {
         src: 'test/*.js',
