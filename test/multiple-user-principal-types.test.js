@@ -8,6 +8,7 @@ var expect = require('./helpers/expect');
 var request = require('supertest');
 var loopback = require('../');
 var ctx = require('../lib/access-context');
+var extend = require('util')._extend;
 var AccessContext = ctx.AccessContext;
 var Principal = ctx.Principal;
 var Promise = require('bluebird');
@@ -22,6 +23,7 @@ describe('Multiple users with custom principalType', function() {
   beforeEach(function setupAppAndModels() {
     // create a local app object that does not share state with other tests
     app = loopback({localRegistry: true, loadBuiltinModels: true});
+    app.set('_verifyAuthModelRelations', false);
     app.dataSource('db', {connector: 'memory'});
 
     var userModelOptions = {
@@ -350,37 +352,38 @@ describe('Multiple users with custom principalType', function() {
       });
     });
 
-    describe('built-in role resolver', function() {
-      it('supports AUTHENTICATED', function() {
+    describe('built-in role resolvers', function() {
+      it('supports $authenticated', function() {
         return Role.isInRole(Role.AUTHENTICATED, userOneBaseContext)
           .then(function(isInRole) {
             expect(isInRole).to.be.true();
           });
       });
 
-      it('supports UNAUTHENTICATED', function() {
+      it('supports $unauthenticated', function() {
         return Role.isInRole(Role.UNAUTHENTICATED, userOneBaseContext)
           .then(function(isInRole) {
             expect(isInRole).to.be.false();
           });
       });
 
-      it('supports OWNER', function() {
-        var Album = app.registry.createModel('Album', {
-          name: String,
-          userId: Number,
-        }, {
-          relations: {
-            user: {
-              type: 'belongsTo',
-              model: 'OneUser',
-              foreignKey: 'userId',
+      describe('$owner', function() {
+        it('supports legacy behavior with relations', function() {
+          var Album = app.registry.createModel('Album', {
+            name: String,
+            userId: Number,
+          }, {
+            relations: {
+              user: {
+                type: 'belongsTo',
+                model: 'OneUser',
+                foreignKey: 'userId',
+              },
             },
-          },
-        });
-        app.model(Album, {dataSource: 'db'});
+          });
+          app.model(Album, {dataSource: 'db'});
 
-        return Album.create({name: 'album', userId: userFromOneModel.id})
+          return Album.create({name: 'album', userId: userFromOneModel.id})
           .then(function(album) {
             var validContext = {
               principalType: OneUser.modelName,
@@ -393,37 +396,197 @@ describe('Multiple users with custom principalType', function() {
           .then(function(isOwner) {
             expect(isOwner).to.be.true();
           });
-      });
-
-      it('expects OWNER to resolve false if owner has incorrect principalType', function() {
-        var Album = app.registry.createModel('Album', {
-          name: String,
-          userId: Number,
-        }, {
-          relations: {
-            user: {
-              type: 'belongsTo',
-              model: 'OneUser',
-              foreignKey: 'userId',
-            },
-          },
         });
-        app.model(Album, {dataSource: 'db'});
 
-        return Album.create({name: 'album', userId: userFromOneModel.id})
+        // With multiple users config, we cannot resolve a user based just on
+        // his id, as many users from different models could have the same id.
+        it('legacy behavior resolves false without belongsTo relation', function() {
+          var Album = app.registry.createModel('Album', {
+            name: String,
+            userId: Number,
+            owner: Number,
+          });
+          app.model(Album, {dataSource: 'db'});
+
+          return Album.create({
+            name: 'album',
+            userId: userFromOneModel.id,
+            owner: userFromOneModel.id,
+          })
           .then(function(album) {
-            var invalidContext = {
-              principalType: AnotherUser.modelName,
+            var authContext = {
+              principalType: OneUser.modelName,
               principalId: userFromOneModel.id,
               model: Album,
               id: album.id,
             };
-            return Role.isInRole(Role.OWNER, invalidContext);
+            return Role.isInRole(Role.OWNER, authContext);
           })
           .then(function(isOwner) {
             expect(isOwner).to.be.false();
           });
+        });
+
+        it('legacy behavior resolves false if owner has incorrect principalType', function() {
+          var Album = app.registry.createModel('Album', {
+            name: String,
+            userId: Number,
+          }, {
+            relations: {
+              user: {
+                type: 'belongsTo',
+                model: 'OneUser',
+                foreignKey: 'userId',
+              },
+            },
+          });
+          app.model(Album, {dataSource: 'db'});
+
+          return Album.create({name: 'album', userId: userFromOneModel.id})
+          .then(function(album) {
+            var invalidPrincipalTypes = [
+              'invalidContextName',
+              'USER',
+              AnotherUser.modelName,
+            ];
+            var invalidContexts = invalidPrincipalTypes.map(principalType => {
+              return {
+                principalType,
+                principalId: userFromOneModel.id,
+                model: Album,
+                id: album.id,
+              };
+            });
+            return Promise.map(invalidContexts, context => {
+              return Role.isInRole(Role.OWNER, context)
+                .then(isOwner => {
+                  return {
+                    principalType: context.principalType,
+                    isOwner,
+                  };
+                });
+            });
+          })
+          .then(result => {
+            expect(result).to.eql([
+              {principalType: 'invalidContextName', isOwner: false},
+              {principalType: 'USER', isOwner: false},
+              {principalType: AnotherUser.modelName, isOwner: false},
+            ]);
+          });
+        });
+
+        it.skip('resolves the owner using the corrent belongsTo relation',
+        function() {
+          // passing {ownerRelations: true} will enable the new $owner role resolver
+          // with any belongsTo relation allowing to resolve truthy
+          var Message = createModelWithOptions(
+            'ModelWithAllRelations',
+            {ownerRelations: true}
+          );
+
+          var messages = [
+            {content: 'firstMessage', customerId: userFromOneModel.id},
+            {
+              content: 'secondMessage',
+              customerId: userFromOneModel.id,
+              shopKeeperId: userFromAnotherModel.id,
+            },
+
+            // this is the incriminated message where two foreignKeys have the
+            // same id but points towards two different user models. Although
+            // customers should come from userFromOneModel and shopKeeperIds should
+            // come from userFromAnotherModel. The inverted situation still resolves
+            // isOwner true for both the customer and the shopKeeper
+            {
+              content: 'thirdMessage',
+              customerId: userFromAnotherModel.id,
+              shopKeeperId: userFromOneModel.id,
+            },
+
+            {content: 'fourthMessage', customerId: userFromAnotherModel.id},
+            {content: 'fifthMessage'},
+          ];
+          return Promise.map(messages, msg => {
+            return Message.create(msg);
+          })
+          .then(messages => {
+            return Promise.all([
+              isOwnerForMessage(userFromOneModel, messages[0]),
+              isOwnerForMessage(userFromAnotherModel, messages[0]),
+              isOwnerForMessage(userFromOneModel, messages[1]),
+              isOwnerForMessage(userFromAnotherModel, messages[1]),
+
+              isOwnerForMessage(userFromOneModel, messages[2]),
+              isOwnerForMessage(userFromAnotherModel, messages[2]),
+
+              isOwnerForMessage(userFromAnotherModel, messages[3]),
+              isOwnerForMessage(userFromOneModel, messages[4]),
+            ]);
+          })
+          .then(result => {
+            expect(result).to.eql([
+              {userFrom: 'OneUser', msg: 'firstMessage', isOwner: true},
+              {userFrom: 'AnotherUser', msg: 'firstMessage', isOwner: false},
+              {userFrom: 'OneUser', msg: 'secondMessage', isOwner: true},
+              {userFrom: 'AnotherUser', msg: 'secondMessage', isOwner: true},
+
+              // these 2 tests fail because we cannot resolve ownership with
+              // multiple owners on a single model instance with a classic
+              // belongsTo relation, we need to use belongsTo with polymorphic
+              // discriminator to distinguish between the 2 models
+              {userFrom: 'OneUser', msg: 'thirdMessage', isOwner: false},
+              {userFrom: 'AnotherUser', msg: 'thirdMessage', isOwner: false},
+
+              {userFrom: 'AnotherUser', msg: 'fourthMessage', isOwner: false},
+              {userFrom: 'OneUser', msg: 'fifthMessage', isOwner: false},
+            ]);
+          });
+        });
       });
+
+      // helpers
+      function isOwnerForMessage(user, msg) {
+        var accessContext = {
+          principalType: user.constructor.modelName,
+          principalId: user.id,
+          model: msg.constructor,
+          id: msg.id,
+        };
+        return Role.isInRole(Role.OWNER, accessContext)
+          .then(isOwner => {
+            return {
+              userFrom: user.constructor.modelName,
+              msg: msg.content,
+              isOwner,
+            };
+          });
+      }
+
+      function createModelWithOptions(name, options) {
+        var baseOptions = {
+          relations: {
+            sender: {
+              type: 'belongsTo',
+              model: 'OneUser',
+              foreignKey: 'customerId',
+            },
+            receiver: {
+              type: 'belongsTo',
+              model: 'AnotherUser',
+              foreignKey: 'shopKeeperId',
+            },
+          },
+        };
+        options = extend(baseOptions, options);
+        var Model = app.registry.createModel(
+          name,
+          {content: String, senderType: String},
+          options
+        );
+        app.model(Model, {dataSource: 'db'});
+        return Model;
+      }
     });
 
     describe('isMappedToRole()', function() {
