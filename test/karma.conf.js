@@ -21,7 +21,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/es5-shim/es5-shim.js',
-      'test/support.js',
       'test/loopback.test.js',
       'test/model.test.js',
       // [rfeng] Browserified common/models/application.js
