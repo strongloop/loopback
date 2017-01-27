@@ -305,6 +305,56 @@ describe('role model', function() {
     });
   });
 
+  it('supports isInRole() returning a Promise', function(done) {
+    var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
+    User.create(userData, function(err, user) {
+      if (err) return done(err);
+      Role.create({name: 'userRole'}, function(err, role) {
+        if (err) return done(err);
+        var principalData = {
+          principalType: RoleMapping.USER,
+          principalId: user.id,
+        };
+        role.principals.create(principalData, function(err, p) {
+          if (err) return done(err);
+          Role.isInRole('userRole', principalData)
+            .then(function(inRole) {
+              expect(inRole).to.be.true();
+              done();
+            })
+            .catch(done);
+        });
+      });
+    });
+  });
+
+  it('supports getRole() returning a Promise', function(done) {
+    var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
+    User.create(userData, function(err, user) {
+      if (err) return done(err);
+      Role.create({name: 'userRole'}, function(err, role) {
+        if (err) return done(err);
+        var principalData = {
+          principalType: RoleMapping.USER,
+          principalId: user.id,
+        };
+        role.principals.create(principalData, function(err, p) {
+          if (err) return done(err);
+          Role.getRoles(principalData)
+            .then(function(roles) {
+              expect(roles).to.eql([
+                Role.AUTHENTICATED,
+                Role.EVERYONE,
+                role.id,
+              ]);
+              done();
+            })
+            .catch(done);
+        });
+      });
+    });
+  });
+
   it('should support owner role resolver', function(done) {
     Role.registerResolver('returnPromise', function(role, context) {
       return new Promise(function(resolve) {
@@ -730,6 +780,30 @@ describe('role model', function() {
         });
       });
     });
+
+    it('supports Promise API', function(done) {
+      var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
+      User.create(userData, function(err, user) {
+        if (err) return done(err);
+        Role.create({name: 'userRole'}, function(err, role) {
+          if (err) return done(err);
+          var principalData = {
+            principalType: RoleMapping.USER,
+            principalId: user.id,
+          };
+          role.principals.create(principalData, function(err, p) {
+            if (err) return done(err);
+            role.users()
+              .then(function(users) {
+                var userIds = users.map(function(u) { return u.id; });
+                expect(userIds).to.eql([user.id]);
+                done();
+              })
+              .catch(done);
+          });
+        });
+      });
+    });
   });
 
   describe('isOwner', function() {
@@ -757,6 +831,20 @@ describe('role model', function() {
 
           done();
         });
+      });
+    });
+
+    it('supports Promise API', function(done) {
+      var credentials = {email: 'test@example.com', password: 'pass'};
+      User.create(credentials, function(err, user) {
+        if (err) return done(err);
+
+        Role.isOwner(User, user.id, user.id)
+          .then(function(result) {
+            expect(result, 'isOwner result').to.equal(true);
+            done();
+          })
+          .catch(done);
       });
     });
   });
