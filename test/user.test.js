@@ -1193,6 +1193,22 @@ describe('User', function() {
       }
     });
 
+    it('fails when accessToken is not provided', function(done) {
+      User.logout(undefined, function(err) {
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('status', 401);
+        done();
+      });
+    });
+
+    it('fails when accessToken is not found', function(done) {
+      User.logout('expired-access-token', function(err) {
+        expect(err).to.have.property('message');
+        expect(err).to.have.property('status', 401);
+        done();
+      });
+    });
+
     function verify(token, done) {
       assert(token);
 
