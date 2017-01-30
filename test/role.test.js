@@ -431,6 +431,58 @@ describe('role model', function() {
     });
   });
 
+  it('should be able to handle multiple owners roles', function(done) {
+    var Message = app.registry.createModel('Message', {
+      name: String,
+      userId: Number,
+      senderId: Number,
+    }, {
+      relations: {
+        user: {
+          type: 'belongsTo',
+          model: 'User',
+          foreignKey: 'userId',
+        },
+        sender: {
+          type: 'belongsTo',
+          model: 'User',
+          foreignKey: 'senderId',
+        },
+      },
+    });
+
+    app.model(Message, {dataSource: 'db'});
+
+    User.create([
+      {name: 'pierre', email: 'pierre@xyz.com', password: 'foobar'},
+      {name: 'henry', email: 'henry@xyz.com', password: 'foobar'},
+    ], function(err, users) {
+      if (err) return done(err);
+      Message.create([
+        {name: 'message1', userId: users[0].id, senderId: users[1].id},
+        {name: 'message2'},
+      ], function(err, messages) {
+        var role1 = {
+          principalType: ACL.USER, principalId: users[0].id,
+          model: Message, id: messages[0].id,
+        };
+        var role2 = {
+          principalType: ACL.USER, principalId: users[1].id,
+          model: Message, id: messages[0].id,
+        };
+        Role.isInRole(Role.OWNER, role1, function(err, yes) {
+          if (err) return done(err);
+          assert(yes);
+          Role.isInRole(Role.OWNER, role2, function(err, yes) {
+            if (err) return done(err);
+            assert(yes);
+            done();
+          });
+        });
+      });
+    });
+  });
+
   describe('isMappedToRole', function() {
     var user, app, role;
 

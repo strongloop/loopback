@@ -171,7 +171,8 @@ module.exports = function(Role) {
   Role.isOwner = function isOwner(modelClass, modelId, userId, callback) {
     assert(modelClass, 'Model class is required');
     debug('isOwner(): %s %s userId: %s', modelClass && modelClass.modelName, modelId, userId);
-    // No userId is present
+
+    // If no requester id, deny the resolver
     if (!userId) {
       process.nextTick(function() {
         callback(null, false);
@@ -193,34 +194,41 @@ module.exports = function(Role) {
         if (callback) callback(err, false);
         return;
       }
-      debug('Model found: %j', inst);
-      var ownerId = inst.userId || inst.owner;
-      // Ensure ownerId exists and is not a function/relation
-      if (ownerId && 'function' !== typeof ownerId) {
-        if (callback) callback(null, matches(ownerId, userId));
-        return;
-      } else {
-        // Try to follow belongsTo
-        for (var r in modelClass.relations) {
-          var rel = modelClass.relations[r];
-          if (rel.type === 'belongsTo' && isUserClass(rel.modelTo)) {
-            debug('Checking relation %s to %s: %j', r, rel.modelTo.modelName, rel);
-            inst[r](processRelatedUser);
-            return;
-          }
+
+      // Try to follow belongsTo
+      for (var r in modelClass.relations) {
+        var rel = modelClass.relations[r];
+
+        if (rel.type === 'belongsTo' && isUserClass(rel.modelTo)) {
+          debug('Checking relation %s to %s: %j', r, rel.modelTo.modelName, rel);
+          if (inst[r](processRelatedUser)) return callback(null, true);
         }
+
         debug('No matching belongsTo relation found for model %j and user: %j', modelId, userId);
-        if (callback) callback(null, false);
       }
 
       function processRelatedUser(err, user) {
         if (!err && user) {
           debug('User found: %j', user.id);
-          if (callback) callback(null, matches(user.id, userId));
-        } else {
-          if (callback) callback(err, false);
+          if (callback && matches(user.id, userId)) {
+            return true;
+          }
+          return false;
         }
       }
+
+      // Checking the userId or owner field for resolving owner role
+      // is now done after fetching belongsTo relation to make possible
+      // to have multiple resolver role
+      var ownerId = inst.userId || inst.owner;
+      // Ensure ownerId exists and is not a function/relation
+      if (ownerId && 'function' !== typeof ownerId) {
+        if (callback && matches(ownerId, userId)) callback(null, true);
+        return;
+      }
+
+      // Finally DENY the owner role after sending
+      if (callback) callback(null, false);
     });
   };
 
