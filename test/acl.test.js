@@ -90,6 +90,41 @@ describe('security scopes', function() {
 });
 
 describe('security ACLs', function() {
+  it('supports checkPermission() returning a promise', function() {
+    return ACL.create({
+      principalType: ACL.USER,
+      principalId: 'u001',
+      model: 'testModel',
+      property: ACL.ALL,
+      accessType: ACL.ALL,
+      permission: ACL.ALLOW,
+    })
+    .then(function() {
+      return ACL.checkPermission(ACL.USER, 'u001', 'testModel', 'name', ACL.ALL);
+    })
+    .then(function(access) {
+      assert(access.permission === ACL.ALLOW);
+    });
+  });
+
+  it('supports checkAccessForContext() returning a promise', function() {
+    var testModel = ds.createModel('testModel', {
+      acls: [
+        {principalType: ACL.USER, principalId: 'u001',
+          accessType: ACL.ALL, permission: ACL.ALLOW},
+      ],
+    });
+
+    return ACL.checkAccessForContext({
+      principals: [{type: ACL.USER, id: 'u001'}],
+      model: 'testModel',
+      accessType: ACL.ALL,
+    })
+    .then(function(access) {
+      assert(access.permission === ACL.ALLOW);
+    });
+  });
+
   it('should order ACL entries based on the matching score', function() {
     var acls = [
       {

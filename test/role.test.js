@@ -539,6 +539,13 @@ describe('role model', function() {
       });
     });
 
+    it('supports ACL.resolvePrincipal() returning a promise', function() {
+      return ACL.resolvePrincipal(ACL.USER, user.id)
+        .then(function(u) {
+          expect(u.id).to.eql(user.id);
+        });
+    });
+
     it('should resolve user by id', function(done) {
       ACL.resolvePrincipal(ACL.USER, user.id, function(err, u) {
         if (err) return done(err);
@@ -587,6 +594,13 @@ describe('role model', function() {
 
         done();
       });
+    });
+
+    it('supports ACL.isMappedToRole() returning a promise', function() {
+      return ACL.isMappedToRole(ACL.USER, user.username, 'admin')
+        .then(function(flag) {
+          expect(flag).to.be.true();
+        });
     });
 
     it('should report isMappedToRole by user.username', function(done) {
