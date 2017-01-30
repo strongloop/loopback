@@ -2097,6 +2097,13 @@ describe('User', function() {
       });
     });
 
+    it('keeps sessions AS IS when calling save() with no changes', function(done) {
+      user.save(function(err) {
+        if (err) return done(err);
+        assertPreservedTokens(done);
+      });
+    });
+
     it('keeps sessions AS IS if firstName is added using `updateOrCreate`', function(done) {
       User.updateOrCreate({
         pk: user.pk,

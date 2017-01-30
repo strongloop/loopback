@@ -866,30 +866,16 @@ module.exports = function(User) {
     next();
   });
 
-  // Delete old sessions once email is updated
-  User.observe('before save', function beforeEmailUpdate(ctx, next) {
+  User.observe('before save', function prepareForTokenInvalidation(ctx, next) {
     if (!ctx.Model.app.get('logoutSessionsOnSensitiveChanges')) return next();
 
-    var emailChanged;
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
+
     var pkName = ctx.Model.definition.idName() || 'id';
 
-    var isPartialUpdateChangingPassword = ctx.data && 'password' in ctx.data;
-
-    // Full replace of User instance => assume password change.
-    // HashPassword returns a different value for each invocation,
-    // therefore we cannot tell whether ctx.instance.password is the same
-    // or not.
-    var isFullReplaceChangingPassword = !!ctx.instance;
-
-    ctx.hookState.isPasswordChange = isPartialUpdateChangingPassword ||
-      isFullReplaceChangingPassword;
-
-    var where;
-    if (ctx.where) {
-      where = ctx.where;
-    } else {
+    var where = ctx.where;
+    if (!where) {
       where = {};
       where[pkName] = ctx.instance[pkName];
     }
@@ -899,9 +885,11 @@ module.exports = function(User) {
       ctx.hookState.originalUserData = userInstances.map(function(u) {
         var user = {};
         user[pkName] = u[pkName];
-        user['email'] = u['email'];
+        user.email = u.email;
+        user.password = u.password;
         return user;
       });
+      var emailChanged;
       if (ctx.instance) {
         emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
         if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
@@ -920,7 +908,7 @@ module.exports = function(User) {
     });
   });
 
-  User.observe('after save', function afterEmailUpdate(ctx, next) {
+  User.observe('after save', function invalidateOtherTokens(ctx, next) {
     if (!ctx.Model.app.get('logoutSessionsOnSensitiveChanges')) return next();
 
     if (!ctx.instance && !ctx.data) return next();
@@ -928,12 +916,13 @@ module.exports = function(User) {
 
     var pkName = ctx.Model.definition.idName() || 'id';
     var newEmail = (ctx.instance || ctx.data).email;
-    var isPasswordChange = ctx.hookState.isPasswordChange;
+    var newPassword = (ctx.instance || ctx.data).password;
 
-    if (!newEmail && !isPasswordChange) return next();
+    if (!newEmail && !newPassword) return next();
 
     var userIdsToExpire = ctx.hookState.originalUserData.filter(function(u) {
-      return (newEmail && u.email !== newEmail) || isPasswordChange;
+      return (newEmail && u.email !== newEmail) ||
+        (newPassword && u.password !== newPassword);
     }).map(function(u) {
       return u[pkName];
     });
