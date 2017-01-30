@@ -8,8 +8,8 @@
  * loopback ~ public api
  */
 
-var loopback = module.exports = require('./lib/loopback');
-var datasourceJuggler = require('loopback-datasource-juggler');
+const loopback = module.exports = require('./lib/loopback');
+const datasourceJuggler = require('loopback-datasource-juggler');
 
 /**
  * Connectors

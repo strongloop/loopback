@@ -16,11 +16,10 @@ module.exports = function(config) {
     basePath: '../',
 
     // testing framework to use (jasmine/mocha/qunit/...)
-    frameworks: ['mocha', 'browserify'],
+    frameworks: ['es6-shim', 'browserify', 'mocha'],
 
     // list of files / patterns to load in the browser
     files: [
-      'node_modules/es5-shim/es5-shim.js',
       'test/loopback.test.js',
       'test/model.test.js',
       // [rfeng] Browserified common/models/application.js
@@ -63,6 +62,7 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       'karma-browserify',
+      'karma-es6-shim',
       'karma-mocha',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher',
@@ -104,7 +104,9 @@ module.exports = function(config) {
         'superagent',
         'supertest',
       ],
-      // transform: ['coffeeify'],
+      transform: [
+        ['babelify', {presets: 'es2015'}],
+      ],
       debug: true,
       // noParse: ['jquery'],
       watch: true,
