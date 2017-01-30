@@ -12,11 +12,12 @@
       "required": true
     },
     "description": "string",
-
     "created": {
+      "type":"date",
       "defaultFn": "now"
     },
     "modified": {
+      "type":"date",
       "defaultFn": "now"
     }
   },

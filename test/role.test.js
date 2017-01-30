@@ -96,6 +96,14 @@ describe('role model', function() {
     });
   });
 
+  it('should generate created/modified properties', () => {
+    return Role.create({name: 'ADMIN'})
+      .then(role => {
+        expect(role.toJSON().created).to.be.instanceOf(Date);
+        expect(role.toJSON().modified).to.be.instanceOf(Date);
+      });
+  });
+
   it('should define role/user relations', function(done) {
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
       if (err) return done(err);
