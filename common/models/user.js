@@ -293,8 +293,9 @@ module.exports = function(User) {
   User.logout = function(tokenId, fn) {
     fn = fn || utils.createPromiseCallback();
 
+    var err;
     if (!tokenId) {
-      var err = new Error(g.f('{{accessToken}} is required to logout'));
+      err = new Error(g.f('{{accessToken}} is required to logout'));
       err.status = 401;
       process.nextTick(fn, err);
       return fn.promise;
@@ -304,7 +305,7 @@ module.exports = function(User) {
       if (err) {
         fn(err);
       } else if ('count' in info && info.count === 0) {
-        var err = new Error(g.f('Could not find {{accessToken}}'));
+        err = new Error(g.f('Could not find {{accessToken}}'));
         err.status = 401;
         fn(err);
       } else {
@@ -867,10 +868,9 @@ module.exports = function(User) {
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
     var pkName = ctx.Model.definition.idName() || 'id';
-    if (ctx.where) {
-      var where = ctx.where;
-    } else {
-      var where = {};
+    var where = ctx.where;
+    if (!where) {
+      where = {};
       where[pkName] = ctx.instance[pkName];
     }
 
@@ -893,13 +893,14 @@ module.exports = function(User) {
         user['email'] = u['email'];
         return user;
       });
+      var emailChanged;
       if (ctx.instance) {
-        var emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
+        emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
         if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
           ctx.instance.emailVerified = false;
         }
       } else if (ctx.data.email) {
-        var emailChanged = ctx.hookState.originalUserData.some(function(data) {
+        emailChanged = ctx.hookState.originalUserData.some(function(data) {
           return data.email != ctx.data.email;
         });
         if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
