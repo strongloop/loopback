@@ -5,6 +5,7 @@
 
 'use strict';
 var loopback = require('../../lib/loopback');
+var utils = require('../../lib/utils');
 
 /**
  * The `RoleMapping` model extends from the built in `loopback.Model` type.
@@ -26,9 +27,9 @@ module.exports = function(RoleMapping) {
   RoleMapping.resolveRelatedModels = function() {
     if (!this.userModel) {
       var reg = this.registry;
-      this.roleModel = reg.getModelByType(loopback.Role);
-      this.userModel = reg.getModelByType(loopback.User);
-      this.applicationModel = reg.getModelByType(loopback.Application);
+      this.roleModel = reg.getModelByType('Role');
+      this.userModel = reg.getModelByType('User');
+      this.applicationModel = reg.getModelByType('Application');
     }
   };
 
@@ -39,6 +40,7 @@ module.exports = function(RoleMapping) {
    * @param {Application} application
    */
   RoleMapping.prototype.application = function(callback) {
+    callback = callback || utils.createPromiseCallback();
     this.constructor.resolveRelatedModels();
 
     if (this.principalType === RoleMapping.APPLICATION) {
@@ -46,9 +48,10 @@ module.exports = function(RoleMapping) {
       applicationModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
-        if (callback) callback(null, null);
+        callback(null, null);
       });
     }
+    return callback.promise;
   };
 
   /**
@@ -58,15 +61,18 @@ module.exports = function(RoleMapping) {
    * @param {User} user
    */
   RoleMapping.prototype.user = function(callback) {
+    callback = callback || utils.createPromiseCallback();
     this.constructor.resolveRelatedModels();
+
     if (this.principalType === RoleMapping.USER) {
       var userModel = this.constructor.userModel;
       userModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
-        if (callback) callback(null, null);
+        callback(null, null);
       });
     }
+    return callback.promise;
   };
 
   /**
@@ -76,6 +82,7 @@ module.exports = function(RoleMapping) {
    * @param {User} childUser
    */
   RoleMapping.prototype.childRole = function(callback) {
+    callback = callback || utils.createPromiseCallback();
     this.constructor.resolveRelatedModels();
 
     if (this.principalType === RoleMapping.ROLE) {
@@ -83,8 +90,9 @@ module.exports = function(RoleMapping) {
       roleModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
-        if (callback) callback(null, null);
+        callback(null, null);
       });
     }
+    return callback.promise;
   };
 };
