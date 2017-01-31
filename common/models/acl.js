@@ -32,6 +32,7 @@
 
 var g = require('../../lib/globalize');
 var loopback = require('../../lib/loopback');
+var utils = require('../../lib/utils');
 var async = require('async');
 var assert = require('assert');
 var debug = require('debug')('loopback:security:acl');
@@ -321,6 +322,7 @@ module.exports = function(ACL) {
   ACL.checkPermission = function checkPermission(principalType, principalId,
                                                  model, property, accessType,
                                                  callback) {
+    if (!callback) callback = utils.createPromiseCallback();
     if (principalId !== null && principalId !== undefined && (typeof principalId !== 'string')) {
       principalId = principalId.toString();
     }
@@ -340,9 +342,9 @@ module.exports = function(ACL) {
       debug('Permission denied by statically resolved permission');
       debug(' Resolved Permission: %j', resolved);
       process.nextTick(function() {
-        if (callback) callback(null, resolved);
+        callback(null, resolved);
       });
-      return;
+      return callback.promise;
     }
 
     var self = this;
@@ -350,8 +352,7 @@ module.exports = function(ACL) {
       model: model, property: propertyQuery, accessType: accessTypeQuery}},
       function(err, dynACLs) {
         if (err) {
-          if (callback) callback(err);
-          return;
+          return callback(err);
         }
         acls = acls.concat(dynACLs);
         resolved = self.resolvePermission(acls, req);
@@ -359,8 +360,9 @@ module.exports = function(ACL) {
           var modelClass = self.registry.findModel(model);
           resolved.permission = (modelClass && modelClass.settings.defaultPermission) || ACL.ALLOW;
         }
-        if (callback) callback(null, resolved);
+        return callback(null, resolved);
       });
+    return callback.promise;
   };
 
   ACL.prototype.debug = function() {
@@ -388,6 +390,7 @@ module.exports = function(ACL) {
    */
 
   ACL.checkAccessForContext = function(context, callback) {
+    if (!callback) callback = utils.createPromiseCallback();
     var self = this;
     self.resolveRelatedModels();
     var roleModel = self.roleModel;
@@ -417,10 +420,7 @@ module.exports = function(ACL) {
 
     this.find({where: {model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery}}, function(err, acls) {
-      if (err) {
-        if (callback) callback(err);
-        return;
-      }
+      if (err) return callback(err);
       var inRoleTasks = [];
 
       acls = acls.concat(staticACLs);
@@ -452,10 +452,7 @@ module.exports = function(ACL) {
       });
 
       async.parallel(inRoleTasks, function(err, results) {
-        if (err) {
-          if (callback) callback(err, null);
-          return;
-        }
+        if (err) return callback(err, null);
 
         var resolved = self.resolvePermission(effectiveACLs, req);
         if (resolved && resolved.permission === ACL.DEFAULT) {
@@ -463,9 +460,10 @@ module.exports = function(ACL) {
         }
         debug('---Resolved---');
         resolved.debug();
-        if (callback) callback(null, resolved);
+        return callback(null, resolved);
       });
     });
+    return callback.promise;
   };
 
   /**
@@ -480,7 +478,7 @@ module.exports = function(ACL) {
    */
   ACL.checkAccessForToken = function(token, model, modelId, method, callback) {
     assert(token, 'Access token is required');
-
+    if (!callback) callback = utils.createPromiseCallback();
     var context = new AccessContext({
       accessToken: token,
       model: model,
@@ -490,12 +488,10 @@ module.exports = function(ACL) {
     });
 
     this.checkAccessForContext(context, function(err, access) {
-      if (err) {
-        if (callback) callback(err);
-        return;
-      }
-      if (callback) callback(null, access.permission !== ACL.DENY);
+      if (err) callback(err);
+      else callback(null, access.permission !== ACL.DENY);
     });
+    return callback.promise;
   };
 
   ACL.resolveRelatedModels = function() {
@@ -515,6 +511,7 @@ module.exports = function(ACL) {
    * @param {Function} cb Callback function
    */
   ACL.resolvePrincipal = function(type, id, cb) {
+    cb = cb || utils.createPromiseCallback();
     type = type || ACL.ROLE;
     this.resolveRelatedModels();
     switch (type) {
@@ -536,6 +533,7 @@ module.exports = function(ACL) {
           cb(err);
         });
     }
+    return cb.promise;
   };
 
   /**
@@ -546,6 +544,7 @@ module.exports = function(ACL) {
    * @param {Function} cb Callback function
    */
   ACL.isMappedToRole = function(principalType, principalId, role, cb) {
+    cb = cb || utils.createPromiseCallback();
     var self = this;
     this.resolvePrincipal(principalType, principalId,
       function(err, principal) {
@@ -568,5 +567,6 @@ module.exports = function(ACL) {
           });
         });
       });
+    return cb.promise;
   };
 };
