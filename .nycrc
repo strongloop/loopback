@@ -1,0 +1,7 @@
+{
+  "exclude":  [
+    "Gruntfile.js",
+    "test/**/*.js"
+  ],
+  "cache": true
+}

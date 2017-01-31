@@ -32,7 +32,8 @@
     "mBaaS"
   ],
   "scripts": {
-    "test": "grunt mocha-and-karma"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test": "nyc grunt mocha-and-karma"
   },
   "dependencies": {
     "async": "^2.0.1",
@@ -67,6 +68,7 @@
     "browserify": "^13.1.0",
     "chai": "^3.5.0",
     "es5-shim": "^4.1.0",
+    "coveralls": "^2.11.15",
     "express-session": "^1.14.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
@@ -90,6 +92,7 @@
     "loopback-datasource-juggler": "^2.19.1",
     "loopback-testing": "^1.4.0",
     "mocha": "^3.0.0",
+    "nyc": "^10.1.2",
     "phantomjs-prebuilt": "^2.1.7",
     "sinon": "^1.13.0",
     "sinon-chai": "^2.8.0",
