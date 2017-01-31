@@ -867,7 +867,9 @@ module.exports = function(User) {
   });
 
   User.observe('before save', function prepareForTokenInvalidation(ctx, next) {
-    if (!ctx.Model.app.get('logoutSessionsOnSensitiveChanges')) return next();
+    var invalidationEnabled = ctx.Model.app &&
+      ctx.Model.app.get('logoutSessionsOnSensitiveChanges');
+    if (!invalidationEnabled) return next();
 
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
@@ -909,7 +911,9 @@ module.exports = function(User) {
   });
 
   User.observe('after save', function invalidateOtherTokens(ctx, next) {
-    if (!ctx.Model.app.get('logoutSessionsOnSensitiveChanges')) return next();
+    var invalidationEnabled = ctx.Model.app &&
+      ctx.Model.app.get('logoutSessionsOnSensitiveChanges');
+    if (!invalidationEnabled) return next();
 
     if (!ctx.instance && !ctx.data) return next();
     if (!ctx.hookState.originalUserData) return next();
