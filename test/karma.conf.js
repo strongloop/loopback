@@ -106,7 +106,15 @@ module.exports = function(config) {
       ],
       transform: [
         ['babelify', {
-          presets: 'es2015',
+          presets: [
+            ['es2015', {
+              // Disable transform-es2015-modules-commonjs which adds
+              // "use strict" to all files, even those that don't work
+              // in strict mode
+              // (e.g. chai, loopback-datasource-juggler, etc.)
+              modules: false,
+            }],
+          ],
           // By default, browserify does not transform node_modules
           // As a result, our dependencies like strong-remoting and juggler
           // are kept in original ES6 form that does not work in PhantomJS
@@ -114,15 +122,7 @@ module.exports = function(config) {
           // Prevent SyntaxError in strong-task-emitter:
           //   strong-task-emitter/lib/task.js (83:4):
           //   arguments is a reserved word in strict mode
-          // Prevent TypeError in chai:
-          //   'caller', 'callee', and 'arguments' properties may not be
-          //   accessed on strict mode functions or the arguments objects
-          //   for calls to them
-          // Prevent TypeError in loopback-datasource-juggler:
-          //   'caller', 'callee', and 'arguments' properties may not be
-          //   accessed on strict mode functions or the arguments objects
-          //   for calls to them
-          ignore: /node_modules\/(strong-task-emitter|chai|loopback-datasource-juggler)\//,
+          ignore: /node_modules\/(strong-task-emitter)\//,
         }],
       ],
       // transform: ['coffeeify'],
