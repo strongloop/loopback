@@ -105,7 +105,25 @@ module.exports = function(config) {
         'supertest',
       ],
       transform: [
-        ['babelify', {presets: 'es2015'}],
+        ['babelify', {
+          presets: 'es2015',
+          // By default, browserify does not transform node_modules
+          // As a result, our dependencies like strong-remoting and juggler
+          // are kept in original ES6 form that does not work in PhantomJS
+          global: true,
+          // Prevent SyntaxError in strong-task-emitter:
+          //   strong-task-emitter/lib/task.js (83:4):
+          //   arguments is a reserved word in strict mode
+          // Prevent TypeError in chai:
+          //   'caller', 'callee', and 'arguments' properties may not be
+          //   accessed on strict mode functions or the arguments objects
+          //   for calls to them
+          // Prevent TypeError in loopback-datasource-juggler:
+          //   'caller', 'callee', and 'arguments' properties may not be
+          //   accessed on strict mode functions or the arguments objects
+          //   for calls to them
+          ignore: /node_modules\/(strong-task-emitter|chai|loopback-datasource-juggler)\//,
+        }],
       ],
       debug: true,
       // noParse: ['jquery'],
@@ -113,6 +131,6 @@ module.exports = function(config) {
     },
 
     // Add browserify to preprocessors
-    preprocessors: {'test/*': ['browserify']},
+    preprocessors: {'test/**/*.js': ['browserify']},
   });
 };
