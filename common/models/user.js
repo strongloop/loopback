@@ -683,13 +683,18 @@ module.exports = function(User) {
       return process.nextTick(cb);
 
     var AccessToken = accessTokenRelation.modelTo;
-
     var query = {userId: {inq: userIds}};
     var tokenPK = AccessToken.definition.idName() || 'id';
     if (options.accessToken && tokenPK in options.accessToken) {
       query[tokenPK] = {neq: options.accessToken[tokenPK]};
     }
-
+    // add principalType in AccessToken.query if using polymorphic relations
+    // between AccessToken and User
+    var relatedUser = AccessToken.relations.user;
+    var isRelationPolymorphic = relatedUser.polymorphic && !relatedUser.modelTo;
+    if (isRelationPolymorphic) {
+      query.principalType = this.modelName;
+    }
     AccessToken.deleteAll(query, options, cb);
   };
 

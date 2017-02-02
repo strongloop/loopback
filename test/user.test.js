@@ -28,11 +28,12 @@ describe('User', function() {
   var validMixedCaseEmailCredentials = {email: 'Foo@bar.com', password: 'bar'};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
   var incompleteCredentials = {password: 'bar1'};
+  var validCredentialsUser, validCredentialsEmailVerifiedUser;
 
   // Create a local app variable to prevent clashes with the global
   // variable shared by all tests. While this should not be necessary if
   // the tests were written correctly, it turns out that's not the case :(
-  var app;
+  var app = null;
 
   beforeEach(function setupAppAndModels(done) {
     // override the global app object provided by test/support.js
@@ -89,8 +90,12 @@ describe('User', function() {
 
     User.create(validCredentials, function(err, user) {
       if (err) return done(err);
-
-      User.create(validCredentialsEmailVerified, done);
+      validCredentialsUser = user;
+      User.create(validCredentialsEmailVerified, function(err, user) {
+        if (err) return done(err);
+        validCredentialsEmailVerifiedUser = user;
+        done();
+      });
     });
   });
 
@@ -279,14 +284,15 @@ describe('User', function() {
 
     it('invalidates the user\'s accessToken when the user is deleted all', function(done) {
       var userIds = [];
-      var accessTokenId;
+      var users;
       async.series([
         function(next) {
           User.create([
             {name: 'myname', email: 'b@c.com', password: 'bar'},
             {name: 'myname', email: 'd@c.com', password: 'bar'},
-          ], function(err, users) {
-            userIds = users.map(function(u) {
+          ], function(err, createdUsers) {
+            users = createdUsers;
+            userIds = createdUsers.map(function(u) {
               return u.pk;
             });
             next(err);
@@ -294,17 +300,15 @@ describe('User', function() {
         },
         function(next) {
           User.login({email: 'b@c.com', password: 'bar'}, function(err, accessToken) {
-            accessTokenId = accessToken.userId;
             if (err) return next(err);
-            assert(accessTokenId);
+            assertGoodToken(accessToken, users[0]);
             next();
           });
         },
         function(next) {
           User.login({email: 'd@c.com', password: 'bar'}, function(err, accessToken) {
-            accessTokenId = accessToken.userId;
             if (err) return next(err);
-            assert(accessTokenId);
+            assertGoodToken(accessToken, users[1]);
             next();
           });
         },
@@ -424,12 +428,11 @@ describe('User', function() {
     });
 
     it('allows login with password exactly 72 characters long', function(done) {
-      User.create({email: 'b@c.com', password: pass72Char}, function(err) {
+      User.create({email: 'b@c.com', password: pass72Char}, function(err, user) {
         if (err) return done(err);
         User.login({email: 'b@c.com', password: pass72Char}, function(err, accessToken) {
           if (err) return done(err);
-          assertGoodToken(accessToken);
-          assert(accessToken.id);
+          assertGoodToken(accessToken, user);
           done();
         });
       });
@@ -502,9 +505,7 @@ describe('User', function() {
   describe('User.login', function() {
     it('Login a user by providing credentials', function(done) {
       User.login(validCredentials, function(err, accessToken) {
-        assert(accessToken.userId);
-        assert(accessToken.id);
-        assert.equal(accessToken.id.length, 64);
+        assertGoodToken(accessToken, validCredentialsUser);
 
         done();
       });
@@ -513,9 +514,7 @@ describe('User', function() {
     it('Login a user by providing email credentials (email case-sensitivity off)', function(done) {
       User.settings.caseSensitiveEmail = false;
       User.login(validMixedCaseEmailCredentials, function(err, accessToken) {
-        assert(accessToken.userId);
-        assert(accessToken.id);
-        assert.equal(accessToken.id.length, 64);
+        assertGoodToken(accessToken, validCredentialsUser);
 
         done();
       });
@@ -531,10 +530,8 @@ describe('User', function() {
 
     it('Login a user by providing credentials with TTL', function(done) {
       User.login(validCredentialsWithTTL, function(err, accessToken) {
-        assert(accessToken.userId);
-        assert(accessToken.id);
+        assertGoodToken(accessToken, validCredentialsUser);
         assert.equal(accessToken.ttl, validCredentialsWithTTL.ttl);
-        assert.equal(accessToken.id.length, 64);
 
         done();
       });
@@ -547,10 +544,8 @@ describe('User', function() {
 
         User.findById(accessToken.userId, function(err, user) {
           user.createAccessToken(120, function(err, accessToken) {
-            assert(accessToken.userId);
-            assert(accessToken.id);
+            assertGoodToken(accessToken, validCredentialsUser);
             assert.equal(accessToken.ttl, 120);
-            assert.equal(accessToken.id.length, 64);
 
             done();
           });
@@ -566,10 +561,8 @@ describe('User', function() {
         User.findById(accessToken.userId, function(err, user) {
           user.createAccessToken(120)
             .then(function(accessToken) {
-              assert(accessToken.userId);
-              assert(accessToken.id);
+              assertGoodToken(accessToken, validCredentialsUser);
               assert.equal(accessToken.ttl, 120);
-              assert.equal(accessToken.id.length, 64);
 
               done();
             })
@@ -588,17 +581,13 @@ describe('User', function() {
         this.accessTokens.create({ttl: ttl / 2}, cb);
       };
       User.login(validCredentialsWithTTL, function(err, accessToken) {
-        assert(accessToken.userId);
-        assert(accessToken.id);
+        assertGoodToken(accessToken, validCredentialsUser);
         assert.equal(accessToken.ttl, 1800);
-        assert.equal(accessToken.id.length, 64);
 
         User.findById(accessToken.userId, function(err, user) {
           user.createAccessToken(120, function(err, accessToken) {
-            assert(accessToken.userId);
-            assert(accessToken.id);
+            assertGoodToken(accessToken, validCredentialsUser);
             assert.equal(accessToken.ttl, 60);
-            assert.equal(accessToken.id.length, 64);
             // Restore create access token
             User.prototype.createAccessToken = createToken;
 
@@ -617,18 +606,14 @@ describe('User', function() {
           this.accessTokens.create({ttl: ttl / 2, scopes: options.scope}, cb);
         };
         User.login(validCredentialsWithTTLAndScope, function(err, accessToken) {
-          assert(accessToken.userId);
-          assert(accessToken.id);
+          assertGoodToken(accessToken, validCredentialsUser);
           assert.equal(accessToken.ttl, 1800);
-          assert.equal(accessToken.id.length, 64);
           assert.equal(accessToken.scopes, 'all');
 
           User.findById(accessToken.userId, function(err, user) {
             user.createAccessToken(120, {scope: 'default'}, function(err, accessToken) {
-              assert(accessToken.userId);
-              assert(accessToken.id);
+              assertGoodToken(accessToken, validCredentialsUser);
               assert.equal(accessToken.ttl, 60);
-              assert.equal(accessToken.id.length, 64);
               assert.equal(accessToken.scopes, 'default');
               // Restore create access token
               User.prototype.createAccessToken = createToken;
@@ -652,13 +637,13 @@ describe('User', function() {
     it('Login should only allow correct credentials - promise variant', function(done) {
       User.login(invalidCredentials)
         .then(function(accessToken) {
-          assert(!accessToken);
+          expect(accessToken, 'accessToken').to.not.exist();
 
           done();
         })
         .catch(function(err) {
-          assert(err);
-          assert.equal(err.code, 'LOGIN_FAILED');
+          expect(err, 'err').to.exist();
+          expect(err).to.have.property('code', 'LOGIN_FAILED');
 
           done();
         });
@@ -666,8 +651,8 @@ describe('User', function() {
 
     it('Login a user providing incomplete credentials', function(done) {
       User.login(incompleteCredentials, function(err, accessToken) {
-        assert(err);
-        assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
+        expect(err, 'err').to.exist();
+        expect(err).to.have.property('code', 'USERNAME_EMAIL_REQUIRED');
 
         done();
       });
@@ -676,13 +661,13 @@ describe('User', function() {
     it('Login a user providing incomplete credentials - promise variant', function(done) {
       User.login(incompleteCredentials)
         .then(function(accessToken) {
-          assert(!accessToken);
+          expect(accessToken, 'accessToken').to.not.exist();
 
           done();
         })
         .catch(function(err) {
-          assert(err);
-          assert.equal(err.code, 'USERNAME_EMAIL_REQUIRED');
+          expect(err, 'err').to.exist();
+          expect(err).to.have.property('code', 'USERNAME_EMAIL_REQUIRED');
 
           done();
         });
@@ -699,9 +684,7 @@ describe('User', function() {
 
           var accessToken = res.body;
 
-          assert(accessToken.userId);
-          assert(accessToken.id);
-          assert.equal(accessToken.id.length, 64);
+          assertGoodToken(accessToken, validCredentialsUser);
           assert(accessToken.user === undefined);
 
           done();
@@ -811,8 +794,11 @@ describe('User', function() {
     });
   });
 
-  function assertGoodToken(accessToken) {
-    assert(accessToken.userId);
+  function assertGoodToken(accessToken, user) {
+    if (accessToken instanceof AccessToken) {
+      accessToken = accessToken.toJSON();
+    }
+    expect(accessToken).to.have.property('userId', user.pk);
     assert(accessToken.id);
     assert.equal(accessToken.id.length, 64);
   }
@@ -880,7 +866,7 @@ describe('User', function() {
 
     it('Login a user by with email verification', function(done) {
       User.login(validCredentialsEmailVerified, function(err, accessToken) {
-        assertGoodToken(accessToken);
+        assertGoodToken(accessToken, validCredentialsEmailVerifiedUser);
 
         done();
       });
@@ -889,7 +875,7 @@ describe('User', function() {
     it('Login a user by with email verification - promise variant', function(done) {
       User.login(validCredentialsEmailVerified)
         .then(function(accessToken) {
-          assertGoodToken(accessToken);
+          assertGoodToken(accessToken, validCredentialsEmailVerifiedUser);
 
           done();
         })
@@ -909,7 +895,7 @@ describe('User', function() {
 
           var accessToken = res.body;
 
-          assertGoodToken(accessToken);
+          assertGoodToken(accessToken, validCredentialsEmailVerifiedUser);
           assert(accessToken.user === undefined);
 
           done();
@@ -1079,8 +1065,7 @@ describe('User', function() {
 
     it('logs in a user by with realm', function(done) {
       User.login(credentialWithRealm, function(err, accessToken) {
-        assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.pk);
+        assertGoodToken(accessToken, user1);
 
         done();
       });
@@ -1088,8 +1073,7 @@ describe('User', function() {
 
     it('logs in a user by with realm in username', function(done) {
       User.login(credentialRealmInUsername, function(err, accessToken) {
-        assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.pk);
+        assertGoodToken(accessToken, user1);
 
         done();
       });
@@ -1097,8 +1081,7 @@ describe('User', function() {
 
     it('logs in a user by with realm in email', function(done) {
       User.login(credentialRealmInEmail, function(err, accessToken) {
-        assertGoodToken(accessToken);
-        assert.equal(accessToken.userId, user1.pk);
+        assertGoodToken(accessToken, user1);
 
         done();
       });
@@ -1115,8 +1098,7 @@ describe('User', function() {
 
       it('logs in a user by with realm', function(done) {
         User.login(credentialWithRealm, function(err, accessToken) {
-          assertGoodToken(accessToken);
-          assert.equal(accessToken.userId, user1.pk);
+          assertGoodToken(accessToken, user1);
 
           done();
         });
@@ -1139,7 +1121,7 @@ describe('User', function() {
       login(logout);
 
       function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+        User.login(validCredentials, fn);
       }
 
       function logout(err, accessToken) {
@@ -1152,7 +1134,7 @@ describe('User', function() {
       login(logout);
 
       function login(fn) {
-        User.login({email: 'foo@bar.com', password: 'bar'}, fn);
+        User.login(validCredentials, fn);
       }
 
       function logout(err, accessToken) {
@@ -1171,14 +1153,12 @@ describe('User', function() {
           .post('/test-users/login')
           .expect('Content-Type', /json/)
           .expect(200)
-          .send({email: 'foo@bar.com', password: 'bar'})
+          .send(validCredentials)
           .end(function(err, res) {
             if (err) return done(err);
 
             var accessToken = res.body;
-
-            assert(accessToken.userId);
-            assert(accessToken.id);
+            assertGoodToken(accessToken, validCredentialsUser);
 
             fn(null, accessToken.id);
           });

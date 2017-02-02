@@ -63,9 +63,17 @@ module.exports = function(RoleMapping) {
   RoleMapping.prototype.user = function(callback) {
     callback = callback || utils.createPromiseCallback();
     this.constructor.resolveRelatedModels();
+    var userModel;
 
     if (this.principalType === RoleMapping.USER) {
-      var userModel = this.constructor.userModel;
+      userModel = this.constructor.userModel;
+      userModel.findById(this.principalId, callback);
+      return callback.promise;
+    }
+
+    // try resolving a user model that matches principalType
+    userModel = this.constructor.registry.findModel(this.principalType);
+    if (userModel) {
       userModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {

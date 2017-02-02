@@ -395,6 +395,7 @@ module.exports = function(ACL) {
     self.resolveRelatedModels();
     var roleModel = self.roleModel;
 
+    context.registry = this.registry;
     if (!(context instanceof AccessContext)) {
       context = new AccessContext(context);
     }
@@ -480,6 +481,7 @@ module.exports = function(ACL) {
     assert(token, 'Access token is required');
     if (!callback) callback = utils.createPromiseCallback();
     var context = new AccessContext({
+      registry: this.registry,
       accessToken: token,
       model: model,
       property: method,
@@ -514,6 +516,7 @@ module.exports = function(ACL) {
     cb = cb || utils.createPromiseCallback();
     type = type || ACL.ROLE;
     this.resolveRelatedModels();
+
     switch (type) {
       case ACL.ROLE:
         this.roleModel.findOne({where: {or: [{name: id}, {id: id}]}}, cb);
@@ -527,11 +530,20 @@ module.exports = function(ACL) {
           {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb);
         break;
       default:
-        process.nextTick(function() {
-          var err = new Error(g.f('Invalid principal type: %s', type));
-          err.statusCode = 400;
-          cb(err);
-        });
+        // try resolving a user model that matches principalType
+        var userModel = this.registry.findModel(type);
+        if (userModel) {
+          userModel.findOne(
+            {where: {or: [{username: id}, {email: id}, {id: id}]}},
+            cb);
+        } else {
+          process.nextTick(function() {
+            var err = new Error(g.f('Invalid principal type: %s', type));
+            err.statusCode = 400;
+            err.code = 'INVALID_PRINCIPAL_TYPE';
+            cb(err);
+          });
+        }
     }
     return cb.promise;
   };
