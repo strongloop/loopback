@@ -439,7 +439,7 @@ module.exports = function(User) {
       '?uid=' +
       options.user[pkName] +
       '&redirect=' +
-      options.redirect;
+      encodeURIComponent(options.redirect);
 
     options.templateFn = options.templateFn || createVerificationEmailBody;
 
@@ -812,7 +812,7 @@ module.exports = function(User) {
         if (!ctx.res) {
           return next(new Error(g.f('The transport does not support HTTP redirects.')));
         }
-        ctx.res.location(ctx.args.redirect);
+        ctx.res.location(decodeURIComponent(ctx.args.redirect));
         ctx.res.status(302);
       }
       next();
