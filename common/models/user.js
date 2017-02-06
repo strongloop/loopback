@@ -13,6 +13,7 @@ var isEmail = require('isemail');
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
 var path = require('path');
+var qs = require('querystring');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
 var MAX_PASSWORD_LENGTH = 72;
@@ -436,10 +437,10 @@ module.exports = function(User) {
       options.host +
       displayPort +
       urlPath +
-      '?uid=' +
-      options.user[pkName] +
-      '&redirect=' +
-      options.redirect;
+      '?' + qs.stringify({
+        uid: options.user[pkName],
+        redirect: options.redirect,
+      });
 
     options.templateFn = options.templateFn || createVerificationEmailBody;
 
