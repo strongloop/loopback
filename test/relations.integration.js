@@ -191,7 +191,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           this.req = this.http.req;
-          this.res = this.http.res;
+          this.res = this.http.response;
 
           done();
         }.bind(this));

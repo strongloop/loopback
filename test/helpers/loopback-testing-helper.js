@@ -184,7 +184,7 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
       var test = this;
       this.http.end(function(err) {
         test.req = test.http.req;
-        test.res = test.http.res;
+        test.res = test.http.response;
         delete test.url;
 
         cb();
