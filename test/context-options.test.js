@@ -7,7 +7,7 @@
 
 var expect = require('chai').expect;
 var loopback = require('..');
-var supertest = require('supertest-as-promised')(require('bluebird'));
+var supertest = require('supertest');
 
 describe('OptionsFromRemotingContext', function() {
   var app, request, accessToken, userId, Product, actualOptions;
