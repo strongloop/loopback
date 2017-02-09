@@ -839,7 +839,10 @@ module.exports = function(User) {
         '%s\'s settings (typically via common/models/*.json file).',
         'This setting is required for the invalidation algorithm to keep ',
         'the current session valid.',
-        ''
+        '',
+        'Learn more in our documentation at',
+        'https://loopback.io/doc/en/lb2/AccessToken-invalidation.html',
+        '',
       ].join('\n'), UserModel.modelName, UserModel.modelName);
     });
 
