@@ -7,6 +7,7 @@ require('./support');
 var loopback = require('../');
 var User, AccessToken;
 var async = require('async');
+var url = require('url');
 
 describe('User', function() {
   this.timeout(10000);
@@ -1698,6 +1699,29 @@ describe('User', function() {
           })
           .then(function(result) {
             expect(result.email).to.not.have.property('template');
+          });
+      });
+
+      it('allows hash fragment in redirectUrl', function() {
+        return User.create({email: 'test@example.com', password: 'pass'})
+          .then(function(user) {
+            var actualVerifyHref;
+            return user.verify({
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '#/some-path?a=1&b=2',
+              templateFn: function(options, cb) {
+                actualVerifyHref = options.verifyHref;
+                cb(null, 'dummy body');
+              },
+            })
+            .then(function() { return actualVerifyHref; });
+          })
+          .then(function(verifyHref) {
+            var parsed = url.parse(verifyHref, true);
+            expect(parsed.query.redirect, 'redirect query')
+              .to.equal('#/some-path?a=1&b=2');
           });
       });
     });
