@@ -1,21 +1,29 @@
-<!-- Please ask questions at https://groups.google.com/forum/#!forum/loopbackjs
-or https://gitter.im/strongloop/loopback
+<!--
+Questions:
+  https://groups.google.com/forum/#!forum/loopbackjs
+  https://gitter.im/strongloop/loopback
+Immediate support:
+  https://strongloop.com/api-connect-faqs/
+  https://strongloop.com/node-js/subscription-plans/
+-->
 
-Immediate support is available through our subscription plans,
-see https://strongloop.com/api-connect-faqs/ -->
+# Description/Steps to reproduce
 
-### Bug/Feature request
+<!--
+If feature: A description of the feature
+If bug: Steps to reproduce + link to sample repo
+-->
 
-<!-- Description of feature
-or steps to reproduce/link to sample repo if bug -->
+# Expected result
 
-### Expected result
+<!--
+Also include actual results if bug
+-->
 
-<!-- Include both expected and actual results if bug -->
+# Additional information
 
-### Additional information
-
-<!-- Copy/paste the output of the following commands:
-
-node -e 'console.log(process.platform, process.arch, process.versions.node)'
-npm ls --prod --depth 0 | grep loopback -->
+<!--
+Copy+paste the output of these two commands:
+  node -e 'console.log(process.platform, process.arch, process.versions.node)'
+  npm ls --prod --depth 0 | grep loopback
+-->
