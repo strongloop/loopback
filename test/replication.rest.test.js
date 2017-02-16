@@ -76,6 +76,34 @@ describe('Replication over REST', function() {
         .expect(200, done);
       });
 
+      it('supports "since" argument of "diff" method', function(done) {
+        ServerCar.checkpoint(function(err, cp) {
+          if (err) return done(err);
+          ServerCar.getChangeModel().findOne(function(err, change) {
+            if (err) return done(err);
+
+            change.id = 'client-change';
+            change.rev = 'modified';
+
+            request.post('/Cars/diff?since=' + cp.seq)
+              .set('Authorization', peterToken)
+              .send([change])
+              .expect(200, function(err, res) {
+                if (err) return done(err);
+                // When the "since" filter is applied, our change
+                // is considered a "delta" to apply.
+                // If the "since" filter was not applied, the change
+                // would be considered as a conflict, because the server
+                // has a change recording modification of the same model
+                // instance
+                expect(res.body.deltas, 'deltas').to.have.length(1);
+                expect(res.body.conflicts, 'conflics').to.be.empty();
+                done();
+              });
+          });
+        });
+      });
+
       function listCars() {
         return request.get('/Cars');
       }
