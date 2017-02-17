@@ -1,3 +1,55 @@
+2017-02-17, Version 3.3.0
+=========================
+
+ * Fix Role.isOwner() for multiple user models (ebarault)
+
+ * Update ISSUE_TEMPLATE.md (Simon Ho)
+
+ * Upgrade supertest to 3.x (Miroslav Bajtoš)
+
+ * Fix creation of verification links (Miroslav Bajtoš)
+
+ * Enable multiple user models (Eric)
+
+ * Babelify juggler for Karma tests (Miroslav Bajtoš)
+
+ * Fix Karma config to babelify node_modules too (Miroslav Bajtoš)
+
+ * Add promise support to built-in model RoleMapping (ebarault)
+
+ * Add promise support to built-in model ACL (ebarault)
+
+ * Add nyc coverage, report data to coveralls.io (Miroslav Bajtoš)
+
+ * Upgrade eslint config, fix linter errors (Miroslav Bajtoš)
+
+ * Add missing type to Role properties definition (David Hernandez)
+
+ * Preserve sessions on User.save() making no changes (Miroslav Bajtoš)
+
+ * Fix logout to handle no or missing accessToken (Ritchie Martori)
+
+ * Promise-ify built-in Role model (Miroslav Bajtoš)
+
+ * Remove .jscsrc that's no longer used (Miroslav Bajtoš)
+
+ * Enable ES6/ES2015 goodness (Miroslav Bajtoš)
+
+ * Remove test/support.js from karma config (Miroslav Bajtoš)
+
+ * Use English when running Mocha tests (Miroslav Bajtoš)
+
+ * Update ISSUE_TEMPLATE (Simon Ho)
+
+ * Updating README - add cli and remove arc (Joe Sepi)
+
+ * Fix User methods to use correct Primary Key (Aris Kemper)
+
+ * Fix User.resetPassword to call createAccessToken() (João Ribeiro)
+
+ * Role model: resolves related models by name (Benjamin Kroeger)
+
+
 2017-01-16, Version 3.2.1
 =========================
 
