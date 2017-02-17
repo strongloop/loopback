@@ -204,8 +204,8 @@ describe('Multiple users with custom principalType', function() {
       accessContext = new AccessContext({registry: OneUser.registry});
     });
 
-    describe('getUserId()', function() {
-      it('returns userId although principals contain non USER principals',
+    describe('getUser()', function() {
+      it('returns user although principals contain non USER principals',
       function() {
         return Promise.try(function() {
           addToAccessContext([
@@ -214,12 +214,15 @@ describe('Multiple users with custom principalType', function() {
             {type: Principal.SCOPE},
             {type: OneUser.modelName, id: userFromOneModel.id},
           ]);
-          var userId = accessContext.getUserId();
-          expect(userId).to.equal(userFromOneModel.id);
+          var user = accessContext.getUser();
+          expect(user).to.eql({
+            id: userFromOneModel.id,
+            principalType: OneUser.modelName,
+          });
         });
       });
 
-      it('returns userId although principals contain invalid principals',
+      it('returns user although principals contain invalid principals',
       function() {
         return Promise.try(function() {
           addToAccessContext([
@@ -227,8 +230,11 @@ describe('Multiple users with custom principalType', function() {
             {type: 'invalidModelName'},
             {type: OneUser.modelName, id: userFromOneModel.id},
           ]);
-          var userId = accessContext.getUserId();
-          expect(userId).to.equal(userFromOneModel.id);
+          var user = accessContext.getUser();
+          expect(user).to.eql({
+            id: userFromOneModel.id,
+            principalType: OneUser.modelName,
+          });
         });
       });
 
@@ -238,8 +244,11 @@ describe('Multiple users with custom principalType', function() {
         return ThirdUser.create(commonCredentials)
         .then(function(userFromThirdModel) {
           accessContext.addPrincipal(ThirdUser.modelName, userFromThirdModel.id);
-          var userId = accessContext.getUserId();
-          expect(userId).to.equal(userFromThirdModel.id);
+          var user = accessContext.getUser();
+          expect(user).to.eql({
+            id: userFromThirdModel.id,
+            principalType: ThirdUser.modelName,
+          });
         });
       });
     });
@@ -373,17 +382,46 @@ describe('Multiple users with custom principalType', function() {
 
         return Album.create({name: 'album', userId: userFromOneModel.id})
           .then(function(album) {
-            return Role.isInRole(
-              Role.OWNER,
-              {
-                principalType: OneUser.modelName,
-                principalId: userFromOneModel.id,
-                model: Album,
-                id: album.id,
-              });
+            var validContext = {
+              principalType: OneUser.modelName,
+              principalId: userFromOneModel.id,
+              model: Album,
+              id: album.id,
+            };
+            return Role.isInRole(Role.OWNER, validContext);
           })
-          .then(function(isInRole) {
-            expect(isInRole).to.be.true();
+          .then(function(isOwner) {
+            expect(isOwner).to.be.true();
+          });
+      });
+
+      it('expects OWNER to resolve false if owner has incorrect principalType', function() {
+        var Album = app.registry.createModel('Album', {
+          name: String,
+          userId: Number,
+        }, {
+          relations: {
+            user: {
+              type: 'belongsTo',
+              model: 'OneUser',
+              foreignKey: 'userId',
+            },
+          },
+        });
+        app.model(Album, {dataSource: 'db'});
+
+        return Album.create({name: 'album', userId: userFromOneModel.id})
+          .then(function(album) {
+            var invalidContext = {
+              principalType: AnotherUser.modelName,
+              principalId: userFromOneModel.id,
+              model: Album,
+              id: album.id,
+            };
+            return Role.isInRole(Role.OWNER, invalidContext);
+          })
+          .then(function(isOwner) {
+            expect(isOwner).to.be.false();
           });
       });
     });

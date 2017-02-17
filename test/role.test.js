@@ -489,6 +489,50 @@ describe('role model', function() {
     });
   });
 
+  it('resolves OWNER via "userId" property with no relation', function() {
+    var Album = app.registry.createModel('Album', {
+      name: String,
+      userId: Number,
+    });
+    app.model(Album, {dataSource: 'db'});
+
+    var user;
+    return User.create({email: 'test@example.com', password: 'pass'})
+      .then(u => {
+        user = u;
+        return Album.create({name: 'Album 1', userId: user.id});
+      })
+      .then(album => {
+        return Role.isInRole(Role.OWNER, {
+          principalType: ACL.USER, principalId: user.id,
+          model: Album, id: album.id,
+        });
+      })
+      .then(isInRole => expect(isInRole).to.be.true());
+  });
+
+  it('resolves OWNER via "owner" property with no relation', function() {
+    var Album = app.registry.createModel('Album', {
+      name: String,
+      owner: Number,
+    });
+    app.model(Album, {dataSource: 'db'});
+
+    var user;
+    return User.create({email: 'test@example.com', password: 'pass'})
+      .then(u => {
+        user = u;
+        return Album.create({name: 'Album 1', owner: user.id});
+      })
+      .then(album => {
+        return Role.isInRole(Role.OWNER, {
+          principalType: ACL.USER, principalId: user.id,
+          model: Album, id: album.id,
+        });
+      })
+      .then(isInRole => expect(isInRole).to.be.true());
+  });
+
   describe('isMappedToRole', function() {
     var user, app, role;
 
