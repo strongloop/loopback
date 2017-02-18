@@ -182,7 +182,8 @@ module.exports = function(Role) {
     var user = context.getUser();
     var userId = user && user.id;
     var principalType = user && user.principalType;
-    Role.isOwner(modelClass, modelId, userId, principalType, callback);
+    var opts = {accessToken: context.accessToken};
+    Role.isOwner(modelClass, modelId, userId, principalType, opts, callback);
   });
 
   function isUserClass(modelClass) {
@@ -213,15 +214,21 @@ module.exports = function(Role) {
    * @param {*} modelId The model ID
    * @param {*} userId The user ID
    * @param {String} principalType The user principalType (optional)
+   * @options {Object} options
+   * @property {accessToken} The access token used to authorize the current user.
    * @callback {Function} [callback] The callback function
    * @param {String|Error} err The error string or object
    * @param {Boolean} isOwner True if the user is an owner.
    * @promise
    */
-  Role.isOwner = function isOwner(modelClass, modelId, userId, principalType, callback) {
-    if (!callback && typeof principalType === 'function') {
+  Role.isOwner = function isOwner(modelClass, modelId, userId, principalType, options, callback) {
+    if (!callback && typeof options === 'function') {
+      callback = options;
+      options = {};
+    } else if (!callback && typeof principalType === 'function') {
       callback = principalType;
       principalType = undefined;
+      options = {};
     }
     principalType = principalType || Principal.USER;
 
@@ -251,7 +258,7 @@ module.exports = function(Role) {
       return callback.promise;
     }
 
-    modelClass.findById(modelId, function(err, inst) {
+    modelClass.findById(modelId, options, function(err, inst) {
       if (err || !inst) {
         debug('Model not found for id %j', modelId);
         return callback(err, false);
