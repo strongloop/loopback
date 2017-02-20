@@ -448,18 +448,20 @@ module.exports = function(User) {
     var Email =
       options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
 
-    // Set a default token generation function if one is not provided
-    let tokenGenerator = new Promise(function(resolve, reject){
-      if (options.generateVerificationToken)
-        resolve(options.generateVerificationToken);        
+     // Set a default token generation function if one is not provided    
+    if(!options.generateVerificationToken){
       User.generateVerificationToken(user, function(err, token) {
-        if (err) { reject(err); }
-        resolve(token);
-      });
-    });
-
-    tokenGenerator.then(function(token){
-      user.verificationToken = token;
+        if (err) { return fn(err); }
+        user.verificationToken = token;
+        saveAndSend(user);
+      })   
+    } else {
+      user.verificationToken = options.generateVerificationToken;
+      saveAndSend(user);
+    }
+  
+    //Save and sendEmail
+    function saveAndSend(user){
       user.save(function(err) {
         if (err) {
           fn(err);
@@ -467,8 +469,7 @@ module.exports = function(User) {
           sendEmail(user);
         }
       });
-    })
-    .catch(function(err){fn(err);});
+    }
 
     // TODO - support more verification types
     function sendEmail(user) {
