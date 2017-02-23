@@ -692,7 +692,8 @@ module.exports = function(User) {
     // add principalType in AccessToken.query if using polymorphic relations
     // between AccessToken and User
     var relatedUser = AccessToken.relations.user;
-    var isRelationPolymorphic = relatedUser.polymorphic && !relatedUser.modelTo;
+    var isRelationPolymorphic = relatedUser && relatedUser.polymorphic &&
+      !relatedUser.modelTo;
     if (isRelationPolymorphic) {
       query.principalType = this.modelName;
     }
