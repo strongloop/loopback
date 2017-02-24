@@ -2370,6 +2370,28 @@ describe('User', function() {
       });
     });
 
+    // See https://github.com/strongloop/loopback/issues/3215
+    it('handles subclassed user with no accessToken relation', () => {
+      // setup a new LoopBack app, we don't want to use shared models
+      app = loopback({localRegistry: true, loadBuiltinModels: true});
+      app.set('remoting', {errorHandler: {debug: true, log: false}});
+      app.dataSource('db', {connector: 'memory'});
+      const User = app.registry.createModel({
+        name: 'user',
+        base: 'User',
+      });
+      app.model(User, {dataSource: 'db'});
+      app.enableAuth({dataSource: 'db'});
+      expect(app.models.User.modelName).to.eql('user');
+
+      return User.create(validCredentials)
+        .then(u => {
+          u.email = 'updated@example.com';
+          return u.save();
+          // the test passes when save() does not throw any error
+        });
+    });
+
     function assertPreservedTokens(done) {
       AccessToken.find({where: {userId: user.pk}}, function(err, tokens) {
         if (err) return done(err);
