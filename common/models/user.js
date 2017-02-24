@@ -448,20 +448,14 @@ module.exports = function(User) {
     var Email =
       options.mailer || this.constructor.email || registry.getModelByType(loopback.Email);
 
-     // Set a default token generation function if one is not provided    
-    if(!options.generateVerificationToken){
-      User.generateVerificationToken(user, function(err, token) {
-        if (err) { return fn(err); }
-        user.verificationToken = token;
-        saveAndSend(user);
-      })   
-    } else {
-      user.verificationToken = options.generateVerificationToken;
-      saveAndSend(user);
-    }
-  
-    //Save and sendEmail
-    function saveAndSend(user){
+    // Set a default token generation function if one is not provided
+    var tokenGenerator = options.generateVerificationToken || User.generateVerificationToken;
+    assert(typeof tokenGenerator === 'function', 'generateVerificationToken must be a function');
+
+    tokenGenerator(user, function(err, token) {
+      if (err) { return fn(err); }
+
+      user.verificationToken = token;
       user.save(function(err) {
         if (err) {
           fn(err);
@@ -469,12 +463,14 @@ module.exports = function(User) {
           sendEmail(user);
         }
       });
-    }
+    });
 
     // TODO - support more verification types
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
 
+      options.verificationToken = user.verificationToken;
+      
       options.text = options.text || g.f('Please verify your email by opening ' +
         'this link in a web browser:\n\t%s', options.verifyHref);
 
