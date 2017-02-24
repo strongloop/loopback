@@ -2374,6 +2374,7 @@ describe('User', function() {
     it('handles subclassed user with no accessToken relation', () => {
       // setup a new LoopBack app, we don't want to use shared models
       app = loopback({localRegistry: true, loadBuiltinModels: true});
+      app.set('_verifyAuthModelRelations', false);
       app.set('remoting', {errorHandler: {debug: true, log: false}});
       app.dataSource('db', {connector: 'memory'});
       const User = app.registry.createModel({

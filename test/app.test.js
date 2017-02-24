@@ -888,6 +888,10 @@ describe('app', function() {
       var Customer = app.registry.createModel('Customer', {}, {base: 'User'});
       app.model(Customer, {dataSource: 'db'});
 
+      // Fix AccessToken's "belongsTo user" relation to use our new Customer model
+      const AccessToken = app.registry.getModel('AccessToken');
+      AccessToken.settings.relations.user.model = 'Customer';
+
       app.enableAuth({dataSource: 'db'});
 
       expect(Object.keys(app.models)).to.not.include('User');

@@ -454,6 +454,10 @@ describe('app.enableAuth()', function() {
 
     ACL = app.registry.getModel('ACL');
 
+    // Fix User's "hasMany accessTokens" relation to use our new MyToken model
+    const User = app.registry.getModel('User');
+    User.settings.relations.accessTokens.model = 'MyToken';
+
     app.enableAuth({dataSource: 'db'});
   });
   beforeEach(createTestingToken);
