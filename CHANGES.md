@@ -1,3 +1,15 @@
+2017-02-24, Version 3.4.0
+=========================
+
+ * Fix access-token invalidation for missing relation (Miroslav Bajtoš)
+
+ * Configure Travis CI to cache phantomjs binaries (Miroslav Bajtoš)
+
+ * Optimise replication (kobaska)
+
+ * Improve "filter" arg description (Raymond Camden)
+
+
 2017-02-17, Version 3.3.0
 =========================
 
