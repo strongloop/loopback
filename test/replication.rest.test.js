@@ -466,15 +466,13 @@ describe('Replication over REST', function() {
   };
 
   function setupServer(done) {
-    serverApp = loopback();
+    serverApp = loopback({localRegistry: true, loadBuiltinModels: true});
     serverApp.set('remoting', {errorHandler: {debug: true, log: false}});
-    serverApp.enableAuth();
-
     serverApp.dataSource('db', {connector: 'memory'});
 
     // Setup a custom access-token model that is not shared
     // with the client app
-    var ServerToken = loopback.createModel('ServerToken', {}, {
+    var ServerToken = serverApp.registry.createModel('ServerToken', {}, {
       base: 'AccessToken',
       relations: {
         user: {
@@ -485,18 +483,17 @@ describe('Replication over REST', function() {
       },
     });
     serverApp.model(ServerToken, {dataSource: 'db', public: false});
-    serverApp.model(loopback.ACL, {dataSource: 'db', public: false});
-    serverApp.model(loopback.Role, {dataSource: 'db', public: false});
-    serverApp.model(loopback.RoleMapping, {dataSource: 'db', public: false});
 
-    ServerUser = loopback.createModel('ServerUser', USER_PROPS, USER_OPTS);
+    ServerUser = serverApp.registry.createModel('ServerUser', USER_PROPS, USER_OPTS);
     serverApp.model(ServerUser, {
       dataSource: 'db',
       public: true,
       relations: {accessTokens: {model: 'ServerToken'}},
     });
 
-    ServerCar = loopback.createModel('ServerCar', CAR_PROPS, CAR_OPTS);
+    serverApp.enableAuth({dataSource: 'db'});
+
+    ServerCar = serverApp.registry.createModel('ServerCar', CAR_PROPS, CAR_OPTS);
     serverApp.model(ServerCar, {dataSource: 'db', public: true});
 
     serverApp.use(function(req, res, next) {
@@ -518,7 +515,7 @@ describe('Replication over REST', function() {
   }
 
   function setupClient() {
-    clientApp = loopback();
+    clientApp = loopback({localRegistry: true, loadBuiltinModels: true});
     clientApp.dataSource('db', {connector: 'memory'});
     clientApp.dataSource('remote', {
       connector: 'remote',
@@ -529,23 +526,26 @@ describe('Replication over REST', function() {
     // model. This causes the in-process replication to work differently
     // than client-server replication.
     // As a workaround, we manually setup unique Checkpoint for ClientModel.
-    var ClientCheckpoint = loopback.Checkpoint.extend('ClientCheckpoint');
+    var ClientCheckpoint = clientApp.registry.createModel({
+      name: 'ClientCheckpoint',
+      base: 'Checkpoint',
+    });
     ClientCheckpoint.attachTo(clientApp.dataSources.db);
 
-    LocalUser = loopback.createModel('LocalUser', USER_PROPS, USER_OPTS);
+    LocalUser = clientApp.registry.createModel('LocalUser', USER_PROPS, USER_OPTS);
     if (LocalUser.Change) LocalUser.Change.Checkpoint = ClientCheckpoint;
     clientApp.model(LocalUser, {dataSource: 'db'});
 
-    LocalCar = loopback.createModel('LocalCar', CAR_PROPS, CAR_OPTS);
+    LocalCar = clientApp.registry.createModel('LocalCar', CAR_PROPS, CAR_OPTS);
     LocalCar.Change.Checkpoint = ClientCheckpoint;
     clientApp.model(LocalCar, {dataSource: 'db'});
 
     var remoteOpts = createRemoteModelOpts(USER_OPTS);
-    RemoteUser = loopback.createModel('RemoteUser', USER_PROPS, remoteOpts);
+    RemoteUser = clientApp.registry.createModel('RemoteUser', USER_PROPS, remoteOpts);
     clientApp.model(RemoteUser, {dataSource: 'remote'});
 
     remoteOpts = createRemoteModelOpts(CAR_OPTS);
-    RemoteCar = loopback.createModel('RemoteCar', CAR_PROPS, remoteOpts);
+    RemoteCar = clientApp.registry.createModel('RemoteCar', CAR_PROPS, remoteOpts);
     clientApp.model(RemoteCar, {dataSource: 'remote'});
   }
 
