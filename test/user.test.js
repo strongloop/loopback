@@ -1714,6 +1714,30 @@ describe('User', function() {
               .to.equal('#/some-path?a=1&b=2');
           });
       });
+
+      it('build additional confirmation url and pass on template', function() {
+        return User.create({email: 'test1@example.com', password: 'pass'})
+          .then(user => {
+            let newVerifyUrl;
+            return user.verify({
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '#/some-path?a=1&b=2',
+              templateFn: (options, cb) => {
+                options.verifyMovil = '/redirect.html?uid=' + user.id + ';token=' + options.verificationToken;
+                newVerifyUrl = options.verifyMovil;
+                let template = loopback.template(options.template);
+                let body = template(options);
+                cb(null, body);
+              },
+            })
+            .then(() => newVerifyUrl);
+          })
+          .then(newVerifyUrl => {
+            assert(newVerifyUrl.split(';token=')[1]);
+          });
+      });
     });
 
     describe('User.confirm(options, fn)', function() {

@@ -470,7 +470,7 @@ module.exports = function(User) {
       options.verifyHref += '&token=' + user.verificationToken;
 
       options.verificationToken = user.verificationToken;
-      
+
       options.text = options.text || g.f('Please verify your email by opening ' +
         'this link in a web browser:\n\t%s', options.verifyHref);
 
