@@ -1715,27 +1715,24 @@ describe('User', function() {
           });
       });
 
-      it('build additional confirmation url and pass on template', function() {
+      it('verify that options.templateFn receives options.verificationToken', function() {
         return User.create({email: 'test1@example.com', password: 'pass'})
           .then(user => {
-            let newVerifyUrl;
+            let actualVerificationToken;
             return user.verify({
               type: 'email',
               to: user.email,
               from: 'noreply@myapp.org',
               redirect: '#/some-path?a=1&b=2',
               templateFn: (options, cb) => {
-                options.verifyMovil = '/redirect.html?uid=' + user.id + ';token=' + options.verificationToken;
-                newVerifyUrl = options.verifyMovil;
-                let template = loopback.template(options.template);
-                let body = template(options);
-                cb(null, body);
+                actualVerificationToken = options.verificationToken;
+                cb(null, 'dummy body');
               },
             })
-            .then(() => newVerifyUrl);
+            .then(() => actualVerificationToken);
           })
-          .then(newVerifyUrl => {
-            assert(newVerifyUrl.split(';token=')[1]);
+          .then(token => {
+            expect(token).to.exist();
           });
       });
     });
