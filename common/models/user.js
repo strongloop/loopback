@@ -464,7 +464,7 @@ module.exports = function(User) {
         }
       });
     });
-    
+
     // TODO - support more verification types
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
