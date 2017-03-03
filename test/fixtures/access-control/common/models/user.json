@@ -20,5 +20,5 @@
       "principalId": "$everyone"
     }
   ],
-  "replaceOnPUT": false  
+  "replaceOnPUT": false
 }
