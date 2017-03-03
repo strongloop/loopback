@@ -533,6 +533,35 @@ describe('role model', function() {
       .then(isInRole => expect(isInRole).to.be.true());
   });
 
+  it('passes accessToken to modelClass.findById when resolving OWNER', () => {
+    const Album = app.registry.createModel('Album', {name: String});
+    app.model(Album, {dataSource: 'db'});
+    Album.belongsTo(User);
+
+    let observedOptions = null;
+    Album.observe('access', ctx => {
+      observedOptions = ctx.options;
+      return Promise.resolve();
+    });
+
+    let user, token;
+    return User.create({email: 'test@example.com', password: 'pass'})
+      .then(u => {
+        user = u;
+        return Album.create({name: 'Album 1', userId: user.id});
+      })
+      .then(album => {
+        return Role.isInRole(Role.OWNER, {
+          principalType: ACL.USER, principalId: user.id,
+          model: Album, id: album.id,
+          accessToken: 'test-token',
+        });
+      })
+      .then(isInRole => {
+        expect(observedOptions).to.eql({accessToken: 'test-token'});
+      });
+  });
+
   describe('isMappedToRole', function() {
     var user, app, role;
 
