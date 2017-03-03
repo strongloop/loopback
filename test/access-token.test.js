@@ -13,17 +13,23 @@ var loopback = require('../');
 var extend = require('util')._extend;
 var session = require('express-session');
 var request = require('supertest');
-var app = loopback();
 
-var Token = loopback.AccessToken.extend('MyToken');
-var ds = loopback.createDataSource({connector: loopback.Memory});
-Token.attachTo(ds);
-var ACL = loopback.ACL;
+var Token, ACL;
 
 describe('loopback.token(options)', function() {
   var app;
   beforeEach(function(done) {
-    app = loopback();
+    app = loopback({localRegistry: true, loadBuiltinModels: true});
+    app.dataSource('db', {connector: 'memory'});
+
+    Token = app.registry.createModel({
+      name: 'MyToken',
+      base: 'AccessToken',
+    });
+    app.model(Token, {dataSource: 'db'});
+
+    ACL = app.registry.getModel('ACL');
+
     createTestingToken.call(this, done);
   });
 
@@ -284,7 +290,6 @@ describe('loopback.token(options)', function() {
       ' when enableDoubkecheck is true',
     function(done) {
       var token = this.token;
-      var app = loopback();
       app.use(function(req, res, next) {
         req.accessToken = null;
         next();
@@ -319,7 +324,6 @@ describe('loopback.token(options)', function() {
     function(done) {
       var token = this.token;
       var tokenStub = {id: 'stub id'};
-      var app = loopback();
       app.use(function(req, res, next) {
         req.accessToken = tokenStub;
 
@@ -439,8 +443,22 @@ describe('AccessToken', function() {
 describe('app.enableAuth()', function() {
   var app;
   beforeEach(function setupAuthWithModels() {
-    app = loopback();
-    app.enableAuth({dataSource: ds});
+    app = loopback({localRegistry: true, loadBuiltinModels: true});
+    app.dataSource('db', {connector: 'memory'});
+
+    Token = app.registry.createModel({
+      name: 'MyToken',
+      base: 'AccessToken',
+    });
+    app.model(Token, {dataSource: 'db'});
+
+    ACL = app.registry.getModel('ACL');
+
+    // Fix User's "hasMany accessTokens" relation to use our new MyToken model
+    const User = app.registry.getModel('User');
+    User.settings.relations.accessTokens.model = 'MyToken';
+
+    app.enableAuth({dataSource: 'db'});
   });
   beforeEach(createTestingToken);
 
@@ -517,7 +535,7 @@ describe('app.enableAuth()', function() {
   });
 
   it('stores token in the context', function(done) {
-    var TestModel = loopback.createModel('TestModel', {base: 'Model'});
+    var TestModel = app.registry.createModel('TestModel', {base: 'Model'});
     TestModel.getToken = function(cb) {
       var ctx = LoopBackContext.getCurrentContext();
       cb(null, ctx && ctx.get('accessToken') || null);
@@ -527,7 +545,6 @@ describe('app.enableAuth()', function() {
       http: {verb: 'GET', path: '/token'},
     });
 
-    var app = loopback();
     app.model(TestModel, {dataSource: null});
 
     app.enableAuth();
@@ -552,8 +569,6 @@ describe('app.enableAuth()', function() {
 
   // See https://github.com/strongloop/loopback-context/issues/6
   it('checks whether context is active', function(done) {
-    var app = loopback();
-
     app.enableAuth();
     app.use(contextMiddleware());
     app.use(session({
@@ -603,7 +618,8 @@ function createTestApp(testToken, settings, done) {
     currentUserLiteral: 'me',
   }, settings.token);
 
-  var app = loopback();
+  var app = loopback({localRegistry: true, loadBuiltinModels: true});
+  app.dataSource('db', {connector: 'memory'});
 
   app.use(cookieParser('secret'));
   app.use(loopback.token(tokenSettings));
@@ -635,7 +651,7 @@ function createTestApp(testToken, settings, done) {
     res.status(200).send(result);
   });
   app.use(loopback.rest());
-  app.enableAuth();
+  app.enableAuth({dataSource: 'db'});
 
   Object.keys(appSettings).forEach(function(key) {
     app.set(key, appSettings[key]);
@@ -657,10 +673,8 @@ function createTestApp(testToken, settings, done) {
     modelOptions[key] = modelSettings[key];
   });
 
-  var TestModel = loopback.PersistedModel.extend('test', {}, modelOptions);
-
-  TestModel.attachTo(loopback.memory());
-  app.model(TestModel);
+  var TestModel = app.registry.createModel('test', {}, modelOptions);
+  app.model(TestModel, {dataSource: 'db'});
 
   return app;
 }
