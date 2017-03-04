@@ -1714,6 +1714,27 @@ describe('User', function() {
               .to.equal('#/some-path?a=1&b=2');
           });
       });
+
+      it('verify that options.templateFn receives options.verificationToken', function() {
+        return User.create({email: 'test1@example.com', password: 'pass'})
+          .then(user => {
+            let actualVerificationToken;
+            return user.verify({
+              type: 'email',
+              to: user.email,
+              from: 'noreply@myapp.org',
+              redirect: '#/some-path?a=1&b=2',
+              templateFn: (options, cb) => {
+                actualVerificationToken = options.verificationToken;
+                cb(null, 'dummy body');
+              },
+            })
+            .then(() => actualVerificationToken);
+          })
+          .then(token => {
+            expect(token).to.exist();
+          });
+      });
     });
 
     describe('User.confirm(options, fn)', function() {
