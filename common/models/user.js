@@ -450,6 +450,7 @@ module.exports = function(User) {
 
     // Set a default token generation function if one is not provided
     var tokenGenerator = options.generateVerificationToken || User.generateVerificationToken;
+    assert(typeof tokenGenerator === 'function', 'generateVerificationToken must be a function');
 
     tokenGenerator(user, function(err, token) {
       if (err) { return fn(err); }
@@ -467,6 +468,8 @@ module.exports = function(User) {
     // TODO - support more verification types
     function sendEmail(user) {
       options.verifyHref += '&token=' + user.verificationToken;
+
+      options.verificationToken = user.verificationToken;
 
       options.text = options.text || g.f('Please verify your email by opening ' +
         'this link in a web browser:\n\t%s', options.verifyHref);
