@@ -14,7 +14,7 @@ var extend = require('util')._extend;
 var session = require('express-session');
 var request = require('supertest');
 
-var Token, ACL;
+var Token, ACL, User, TestModel;
 
 describe('loopback.token(options)', function() {
   var app;
@@ -22,15 +22,97 @@ describe('loopback.token(options)', function() {
     app = loopback({localRegistry: true, loadBuiltinModels: true});
     app.dataSource('db', {connector: 'memory'});
 
+    ACL = app.registry.getModel('ACL');
+    app.model(ACL, {dataSource: 'db'});
+
+    User = app.registry.getModel('User');
+    app.model(User, {dataSource: 'db'});
+
     Token = app.registry.createModel({
       name: 'MyToken',
       base: 'AccessToken',
     });
     app.model(Token, {dataSource: 'db'});
 
-    ACL = app.registry.getModel('ACL');
+    TestModel = app.registry.createModel({
+      name: 'TestModel',
+      base: 'Model',
+    });
+    TestModel.getToken = function(options, cb) {
+      cb(null, options && options.accessToken || null);
+    };
+    TestModel.remoteMethod('getToken', {
+      accepts: {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+      returns: {arg: 'token', type: 'object'},
+      http: {verb: 'GET', path: '/token'},
+    });
+    app.model(TestModel, {dataSource: 'db'});
 
     createTestingToken.call(this, done);
+  });
+
+  it('defaults to built-in AccessToken model', function() {
+    var BuiltInToken = app.registry.getModel('AccessToken');
+    app.model(BuiltInToken, {dataSource: 'db'});
+
+    app.enableAuth({dataSource: 'db'});
+    app.use(loopback.token());
+    app.use(loopback.rest());
+
+    return BuiltInToken.create({userId: 123}).then(function(token) {
+      return request(app)
+        .get('/TestModels/token?_format=json')
+        .set('authorization', token.id)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then(res => {
+          expect(res.body.token.id).to.eql(token.id);
+        });
+    });
+  });
+
+  it('uses correct custom AccessToken model from model class param', function() {
+    User.hasMany(Token, {
+      as: 'accessTokens',
+      options: {disableInclude: true},
+    });
+
+    app.enableAuth();
+    app.use(loopback.token({model: Token}));
+    app.use(loopback.rest());
+
+    return Token.create({userId: 123}).then(function(token) {
+      return request(app)
+        .get('/TestModels/token?_format=json')
+        .set('authorization', token.id)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then(res => {
+          expect(res.body.token.id).to.eql(token.id);
+        });
+    });
+  });
+
+  it('uses correct custom AccessToken model from string param', function() {
+    User.hasMany(Token, {
+      as: 'accessTokens',
+      options: {disableInclude: true},
+    });
+
+    app.enableAuth();
+    app.use(loopback.token({model: Token.modelName}));
+    app.use(loopback.rest());
+
+    return Token.create({userId: 123}).then(function(token) {
+      return request(app)
+        .get('/TestModels/token?_format=json')
+        .set('authorization', token.id)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .then(res => {
+          expect(res.body.token.id).to.eql(token.id);
+        });
+    });
   });
 
   it('should populate req.token from the query string', function(done) {
@@ -287,7 +369,7 @@ describe('loopback.token(options)', function() {
     });
 
     it('should overwrite invalid existing token (is !== undefined and has no "id" property) ' +
-      ' when enableDoubkecheck is true',
+      ' when enableDoublecheck is true',
     function(done) {
       var token = this.token;
       app.use(function(req, res, next) {
@@ -607,9 +689,10 @@ function createTestAppAndRequest(testToken, settings, done) {
 }
 
 function createTestApp(testToken, settings, done) {
-  done = arguments[arguments.length - 1];
-  if (settings == done) settings = {};
-  settings = settings || {};
+  if (!done && typeof settings === 'function') {
+    done = settings;
+    settings = {};
+  }
 
   var appSettings = settings.app || {};
   var modelSettings = settings.model || {};

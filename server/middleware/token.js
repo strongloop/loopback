@@ -95,13 +95,7 @@ function token(options) {
     var app = req.app;
     var registry = app.registry;
     if (!TokenModel) {
-      if (registry === loopback.registry) {
-        TokenModel = options.model || loopback.AccessToken;
-      } else if (options.model) {
-        TokenModel = registry.getModel(options.model);
-      } else {
-        TokenModel = registry.getModel('AccessToken');
-      }
+      TokenModel = registry.getModel(options.model || 'AccessToken');
     }
 
     assert(typeof TokenModel === 'function',
