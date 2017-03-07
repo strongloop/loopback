@@ -430,7 +430,7 @@ module.exports = function(User) {
       displayPort +
       urlPath +
       '?' + qs.stringify({
-        uid: options.user[pkName],
+        uid: '' + options.user[pkName],
         redirect: options.redirect,
       });
 
