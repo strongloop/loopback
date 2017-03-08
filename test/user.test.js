@@ -1414,6 +1414,53 @@ describe('User', function() {
           });
       });
 
+      it('Verify uid exists in verify result when type object', function(done) {
+        var idString = '58be263abc88dd483956030a';
+
+        User.afterRemote('create', function(ctx, user, next) {
+          assert(user, 'afterRemote should include result');
+
+          var options = {
+            type: 'email',
+            to: user.email,
+            from: 'noreply@myapp.org',
+            redirect: '/',
+            protocol: ctx.req.protocol,
+            host: ctx.req.get('host'),
+            templateFn: function(options, cb) {
+              // console.log('idString: ' + idString);
+              // console.log('verifyHref: ' + options.verifyHref);
+              expect(options.verifyHref.indexOf('uid=' + idString)).to.be.at.least(1); // ?uid=xxxxxxxx
+              cb(null, options.verifyHref);
+            },
+          };
+
+          // replace the string id with an object
+          // TODO: find a better way to do this
+          Object.defineProperty(user, 'pk', {
+            get: function() { return this.__data.pk; },
+            set: function(value) { this.__data.pk = value; },
+          });
+          user.pk = {toString: function() { return idString; }};
+
+          user.verify(options, function(err, result) {
+            expect(result.uid).to.exist();
+            expect(typeof result.uid).to.equal('object');
+            expect(result.uid.toString()).to.equal(idString);
+            done();
+          });
+        });
+
+        request(app)
+          .post('/test-users')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .send({email: 'bar@bat.com', password: 'bar', pk: idString})
+          .end(function(err, res) {
+            if (err) return done(err);
+          });
+      });
+
       it('Verify a user\'s email address with custom token generator', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
