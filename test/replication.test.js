@@ -1905,3 +1905,131 @@ describe('Replication / Change APIs', function() {
     });
   }
 });
+
+describe('Replication / Change APIs with custom change properties', function() {
+  this.timeout(10000);
+  var dataSource, useSinceFilter, SourceModel, TargetModel, startingCheckpoint;
+  var tid = 0; // per-test unique id used e.g. to build unique model names
+
+  beforeEach(function() {
+    tid++;
+    useSinceFilter = false;
+    var test = this;
+
+    dataSource = this.dataSource = loopback.createDataSource({
+      connector: loopback.Memory,
+    });
+    SourceModel = this.SourceModel = PersistedModel.extend(
+      'SourceModelWithCustomChangeProperties-' + tid,
+      {
+        id: {id: true, type: String, defaultFn: 'guid'},
+        customProperty: {type: 'string'},
+      },
+      {
+        trackChanges: true,
+        additionalChangeModelProperties: {customProperty: {type: 'string'}},
+      });
+
+    SourceModel.createChangeFilter = function(since, modelFilter) {
+      const filter = this.base.createChangeFilter.apply(this, arguments);
+      if (modelFilter && modelFilter.where && modelFilter.where.customProperty)
+        filter.where.customProperty = modelFilter.where.customProperty;
+      return filter;
+    };
+
+    SourceModel.prototype.fillCustomChangeProperties = function(change, cb) {
+      const customProperty = this.customProperty;
+      const base = this.constructor.base;
+      base.prototype.fillCustomChangeProperties.call(this, change, err => {
+        if (err) return cb(err);
+        change.customProperty = customProperty;
+        cb();
+      });
+    };
+
+    SourceModel.attachTo(dataSource);
+
+    TargetModel = this.TargetModel = PersistedModel.extend(
+      'TargetModelWithCustomChangeProperties-' + tid,
+      {
+        id: {id: true, type: String, defaultFn: 'guid'},
+        customProperty: {type: 'string'},
+      },
+      {
+        trackChanges: true,
+        additionalChangeModelProperties: {customProperty: {type: 'string'}},
+      });
+
+    var ChangeModelForTarget = TargetModel.Change;
+    ChangeModelForTarget.Checkpoint = loopback.Checkpoint.extend('TargetCheckpoint');
+    ChangeModelForTarget.Checkpoint.attachTo(dataSource);
+
+    TargetModel.attachTo(dataSource);
+
+    startingCheckpoint = -1;
+  });
+
+  describe('Model._defineChangeModel()', function() {
+    it('defines change model with custom properties', function() {
+      var changeModel = SourceModel.getChangeModel();
+      var changeModelProperties = changeModel.definition.properties;
+
+      expect(changeModelProperties).to.have.property('customProperty');
+    });
+  });
+
+  describe('Model.changes(since, filter, callback)', function() {
+    beforeEach(givenSomeSourceModelInstances);
+
+    it('queries changes using customized filter', function(done) {
+      var filterUsed = mockChangeFind(this.SourceModel);
+
+      SourceModel.changes(
+        startingCheckpoint,
+        {where: {customProperty: '123'}},
+        function(err, changes) {
+          if (err) return done(err);
+          expect(filterUsed[0]).to.eql({
+            where: {
+              checkpoint: {gte: -1},
+              modelName: SourceModel.modelName,
+              customProperty: '123',
+            },
+          });
+          done();
+        });
+    });
+
+    it('query returns the matching changes', function(done) {
+      SourceModel.changes(
+        startingCheckpoint,
+        {where: {customProperty: '123'}},
+        function(err, changes) {
+          expect(changes).to.have.length(1);
+          expect(changes[0]).to.have.property('customProperty', '123');
+          done();
+        });
+    });
+
+    function givenSomeSourceModelInstances(done) {
+      const data = [
+        {name: 'foo', customProperty: '123'},
+        {name: 'foo', customPropertyValue: '456'},
+      ];
+      this.SourceModel.create(data, done);
+    }
+  });
+
+  function mockChangeFind(Model) {
+    var filterUsed = [];
+
+    Model.getChangeModel().find = function(filter, cb) {
+      filterUsed.push(filter);
+      if (cb) {
+        process.nextTick(cb);
+      }
+    };
+
+    return filterUsed;
+  }
+});

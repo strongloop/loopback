@@ -9,9 +9,9 @@ var async = require('async');
 var expect = require('./helpers/expect');
 var loopback = require('../');
 
-var Change, TestModel;
-
 describe('Change', function() {
+  let Change, TestModel;
+
   beforeEach(function() {
     var memory = loopback.createDataSource({
       connector: loopback.Memory,
@@ -321,7 +321,6 @@ describe('Change', function() {
       change.rectify()
         .then(function(ch) {
           assert.equal(ch.rev, test.revisionForModel);
-
           done();
         })
         .catch(done);
@@ -607,5 +606,70 @@ describe('Change', function() {
         done();
       });
     });
+  });
+});
+
+describe('Change with with custom properties', function() {
+  let Change, TestModel;
+
+  beforeEach(function() {
+    let memory = loopback.createDataSource({
+      connector: loopback.Memory,
+    });
+
+    TestModel = loopback.PersistedModel.extend('ChangeTestModelWithTenant',
+      {
+        id: {id: true, type: 'string', defaultFn: 'guid'},
+        tenantId: 'string',
+      },
+      {
+        trackChanges: true,
+        additionalChangeModelProperties: {tenantId: 'string'},
+      });
+    this.modelName = TestModel.modelName;
+
+    TestModel.prototype.fillCustomChangeProperties = function(change, cb) {
+      var inst = this;
+
+      if (inst && inst.tenantId) {
+        change.tenantId = inst.tenantId;
+      } else {
+        change.tenantId = null;
+      }
+
+      cb();
+    };
+
+    TestModel.attachTo(memory);
+    TestModel._defineChangeModel();
+    Change = TestModel.getChangeModel();
+  });
+
+  describe('change.rectify', function() {
+    const TENANT_ID = '123';
+    let change;
+
+    beforeEach(givenChangeInstance);
+
+    it('stores the custom property in the Change instance', function() {
+      return change.rectify().then(function(ch) {
+        expect(ch.toObject()).to.have.property('tenantId', TENANT_ID);
+      });
+    });
+
+    function givenChangeInstance() {
+      const data = {
+        foo: 'bar',
+        tenantId: TENANT_ID,
+      };
+
+      return TestModel.create(data)
+        .then(function(model) {
+          const modelName = TestModel.modelName;
+          return Change.findOrCreateChange(modelName, model.id);
+        }).then(function(ch) {
+          change = ch;
+        });
+    }
   });
 });
