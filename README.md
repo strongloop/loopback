@@ -84,6 +84,7 @@ See [loopback-example](https://github.com/strongloop/loopback-example) for detai
 
   * [Documentation](http://loopback.io/doc/).
   * [API documentation](http://apidocs.strongloop.com/loopback).
+  * [LoopBack Announcements](https://groups.google.com/forum/#!forum/loopbackjs-announcements)
   * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
   * [GitHub issues](https://github.com/strongloop/loopback/issues).
   * [Gitter chat](https://gitter.im/strongloop/loopback).
