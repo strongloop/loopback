@@ -1,3 +1,31 @@
+2017-03-13, Version 2.38.1
+==========================
+
+ * Fix User.verify to convert uid to string (phairow)
+
+ * Configure Travis CI to cache phantomjs binaries (Miroslav Bajtoš)
+
+ * Improve "filter" arg description (Raymond Camden)
+
+ * Fix creation of verification links (Miroslav Bajtoš)
+
+ * Include link to docs in logoutSessions warning (Miroslav Bajtoš)
+
+ * Fix detection of logoutSessionsOnSensitiveChanges (Miroslav Bajtoš)
+
+ * Preserve sessions on User.save() making no changes (Miroslav Bajtoš)
+
+ * Remove unused dependencies (Miroslav Bajtoš)
+
+ * Fix logout to handle no or missing accessToken (Ritchie Martori)
+
+ * Use English when running Mocha tests (Miroslav Bajtoš)
+
+ * Role model: resolves related models by name (Benjamin Kroeger)
+
+ * Fix User methods to use correct Primary Key (Aris Kemper)
+
+
 2017-01-20, Version 2.38.0
 ==========================
 
