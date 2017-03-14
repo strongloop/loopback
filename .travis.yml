@@ -5,6 +5,7 @@ node_js:
   - "0.12"
   - "4"
   - "6"
+after_success: npm run coverage
 
 # see https://www.npmjs.com/package/phantomjs-prebuilt#continuous-integration
 cache:
