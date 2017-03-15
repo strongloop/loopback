@@ -3,7 +3,8 @@ language: node_js
 node_js:
   - "4"
   - "6"
-  - "7.7.1" # locked down because of https://github.com/nodejs/node/pull/11762
+  - "7"
+
 after_success: npm run coverage
 
 # see https://www.npmjs.com/package/phantomjs-prebuilt#continuous-integration
