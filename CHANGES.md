@@ -1,3 +1,11 @@
+2017-03-17, Version 2.38.2
+==========================
+
+ * Fix file patch (Raymond Feng)
+
+ * Add nyc coverage, report data to coveralls.io (Miroslav Bajtoš)
+
+
 2017-03-13, Version 2.38.1
 ==========================
 
