@@ -5,7 +5,7 @@
     "lib/server-app.js",
     "lib/loopback.js",
     "lib/registry.js",
-    "server/current-context.js",
+    "lib/current-context.js",
     "lib/access-context.js",
 { "title": "Base models", "depth": 2 },
     "lib/model.js",
