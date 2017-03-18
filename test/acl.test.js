@@ -186,6 +186,41 @@ describe('security ACLs', function() {
     // });
   });
 
+  it('should order ACL entries based on the matching score even with wildcard req', function() {
+    var acls = [
+      {
+        'model': 'account',
+        'accessType': '*',
+        'permission': 'DENY',
+        'principalType': 'ROLE',
+        'principalId': '$everyone',
+      },
+      {
+        'model': 'account',
+        'accessType': '*',
+        'permission': 'ALLOW',
+        'principalType': 'ROLE',
+        'principalId': '$owner',
+      }];
+    var req = {
+      model: 'account',
+      property: '*',
+      accessType: 'WRITE',
+    };
+
+    acls = acls.map(function(a) { return new ACL(a); });
+
+    var perm = ACL.resolvePermission(acls, req);
+    // remove the registry from AccessRequest instance to ease asserting.
+    // Check the above test case for more info.
+    delete perm.registry;
+    assert.deepEqual(perm, {model: 'account',
+      property: '*',
+      accessType: 'WRITE',
+      permission: 'ALLOW',
+      methodNames: []});
+  });
+
   it('should allow access to models for the given principal by wildcard', function() {
     // jscs:disable validateIndentation
     ACL.create({

@@ -243,6 +243,7 @@ module.exports = function(ACL) {
         var permissionOrder = AccessContext.permissionOrder[permission];
         if (candidateOrder > permissionOrder) {
           permission = candidate.permission;
+          break;
         }
       }
     }
