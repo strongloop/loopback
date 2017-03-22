@@ -117,6 +117,67 @@ describe('users - integration', function() {
         .set('Authorization', 'unknown-token')
         .expect(401, done);
     });
+
+    it('updates the user\'s password', function() {
+      const User = app.models.User;
+      const credentials = {email: 'change@example.com', password: 'pass'};
+      return User.create(credentials)
+        .then(u => {
+          this.user = u;
+          return User.login(credentials);
+        })
+        .then(token => {
+          return this.post('/api/users/change-password')
+            .set('Authorization', token.id)
+            .send({
+              oldPassword: credentials.password,
+              newPassword: 'new password',
+            })
+            .expect(204);
+        })
+        .then(() => {
+          return User.findById(this.user.id);
+        })
+        .then(user => {
+          return user.hasPassword('new password');
+        })
+        .then(isMatch => expect(isMatch, 'user has new password').to.be.true());
+    });
+
+    it('rejects unauthenticated change password request', function() {
+      return this.post('/api/users/change-password')
+        .send({
+          oldPassword: 'old password',
+          newPassword: 'new password',
+        })
+        .expect(401);
+    });
+
+    it('injects change password options from remoting context', function() {
+      const User = app.models.User;
+      const credentials = {email: 'inject@example.com', password: 'pass'};
+
+      let injectedOptions;
+      User.observe('before save', (ctx, next) => {
+        injectedOptions = ctx.options;
+        next();
+      });
+
+      return User.create(credentials)
+        .then(u => User.login(credentials))
+        .then(token => {
+          return this.post('/api/users/change-password')
+            .set('Authorization', token.id)
+            .send({
+              oldPassword: credentials.password,
+              newPassword: 'new password',
+            })
+            .expect(204);
+        })
+        .then(() => {
+          expect(injectedOptions).to.have.property('accessToken');
+        });
+    });
   });
 
   describe('sub-user', function() {

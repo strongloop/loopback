@@ -1267,6 +1267,124 @@ describe('User', function() {
     });
   });
 
+  describe('User.changePassword()', () => {
+    let userId, currentPassword;
+    beforeEach(givenUserIdAndPassword);
+
+    it('changes the password - callback-style', done => {
+      User.changePassword(userId, currentPassword, 'new password', (err) => {
+        if (err) return done(err);
+        expect(arguments.length, 'changePassword callback arguments length')
+          .to.be.at.most(1);
+
+        User.findById(userId, (err, user) => {
+          if (err) return done(err);
+          user.hasPassword('new password', (err, isMatch) => {
+            if (err) return done(err);
+            expect(isMatch, 'user has new password').to.be.true();
+            done();
+          });
+        });
+      });
+    });
+
+    it('changes the password - Promise-style', () => {
+      return User.changePassword(userId, currentPassword, 'new password')
+        .then(() => {
+          expect(arguments.length, 'changePassword promise resolution')
+            .to.equal(0);
+          return User.findById(userId);
+        })
+        .then(user => {
+          return user.hasPassword('new password');
+        })
+        .then(isMatch => {
+          expect(isMatch, 'user has new password').to.be.true();
+        });
+    });
+
+    it('changes the password - instance method', () => {
+      validCredentialsUser.changePassword(currentPassword, 'new password')
+        .then(() => {
+          expect(arguments.length, 'changePassword promise resolution')
+            .to.equal(0);
+          return User.findById(userId);
+        })
+        .then(user => {
+          return user.hasPassword('new password');
+        })
+        .then(isMatch => {
+          expect(isMatch, 'user has new password').to.be.true();
+        });
+    });
+
+    it('fails when current password does not match', () => {
+      return User.changePassword(userId, 'bad password', 'new password').then(
+        success => { throw new Error('changePassword should have failed'); },
+        err => {
+          // workaround for chai problem
+          //   object tested must be an array, an object,
+          //   or a string, but error given
+          const props = Object.assign({}, err);
+          expect(props).to.contain({
+            code: 'INVALID_PASSWORD',
+            statusCode: 400,
+          });
+        });
+    });
+
+    it('fails with 401 for unknown user id', () => {
+      return User.changePassword('unknown-id', 'pass', 'pass').then(
+        success => { throw new Error('changePassword should have failed'); },
+        err => {
+          // workaround for chai problem
+          //   object tested must be an array, an object, or a string,
+          //    but error given
+          const props = Object.assign({}, err);
+          expect(props).to.contain({
+            code: 'USER_NOT_FOUND',
+            statusCode: 401,
+          });
+        });
+    });
+
+    it('forwards the "options" argument', () => {
+      const options = {testFlag: true};
+      const observedOptions = [];
+
+      saveObservedOptionsForHook('access');
+      saveObservedOptionsForHook('before save');
+
+      return User.changePassword(userId, currentPassword, 'new', options)
+        .then(() => expect(observedOptions).to.eql([
+          // findById
+          {hook: 'access', testFlag: true},
+
+          // "before save" hook prepareForTokenInvalidation
+          // FIXME(bajtos) the hook should be forwarding the options too!
+          {hook: 'access'},
+
+          // updateAttributes
+          {hook: 'before save', testFlag: true},
+
+          // validate uniqueness of User.email
+          {hook: 'access', testFlag: true},
+        ]));
+
+      function saveObservedOptionsForHook(name) {
+        User.observe(name, (ctx, next) => {
+          observedOptions.push(Object.assign({hook: name}, ctx.options));
+          next();
+        });
+      }
+    });
+
+    function givenUserIdAndPassword() {
+      userId = validCredentialsUser.id;
+      currentPassword = validCredentials.password;
+    }
+  });
+
   describe('Verification', function() {
     describe('user.verify(options, fn)', function() {
       it('Verify a user\'s email address', function(done) {

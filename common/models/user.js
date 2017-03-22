@@ -354,6 +354,80 @@ module.exports = function(User) {
   };
 
   /**
+   * Change this user's password.
+   *
+   * @param {*} userId Id of the user changing the password
+   * @param {string} oldPassword Current password, required in order
+   *   to strongly verify the identity of the requesting user
+   * @param {string} newPassword The new password to use.
+   * @param {object} [options]
+   * @callback {Function} callback
+   * @param {Error} err Error object
+   * @promise
+   */
+  User.changePassword = function(userId, oldPassword, newPassword, options, cb) {
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+    cb = cb || utils.createPromiseCallback();
+
+    // Make sure to use the constructor of the (sub)class
+    // where the method is invoked from (`this` instead of `User`)
+    this.findById(userId, options, (err, inst) => {
+      if (err) return cb(err);
+
+      if (!inst) {
+        const err = new Error(`User ${userId} not found`);
+        Object.assign(err, {
+          code: 'USER_NOT_FOUND',
+          statusCode: 401,
+        });
+        return cb(err);
+      }
+
+      inst.changePassword(oldPassword, newPassword, options, cb);
+    });
+
+    return cb.promise;
+  };
+
+  /**
+   * Change this user's password (prototype/instance version).
+   *
+   * @param {string} oldPassword Current password, required in order
+   *   to strongly verify the identity of the requesting user
+   * @param {string} newPassword The new password to use.
+   * @param {object} [options]
+   * @callback {Function} callback
+   * @param {Error} err Error object
+   * @promise
+   */
+  User.prototype.changePassword = function(oldPassword, newPassword, options, cb) {
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+    cb = cb || utils.createPromiseCallback();
+
+    this.hasPassword(oldPassword, (err, isMatch) => {
+      if (err) return cb(err);
+      if (!isMatch) {
+        const err = new Error('Invalid current password');
+        Object.assign(err, {
+          code: 'INVALID_PASSWORD',
+          statusCode: 400,
+        });
+        return cb(err);
+      }
+
+      const delta = {password: newPassword};
+      this.patchAttributes(delta, options, (err, updated) => cb(err));
+    });
+    return cb.promise;
+  };
+
+  /**
    * Verify a user's identity by sending them a confirmation email.
    *
    * ```js
@@ -809,6 +883,22 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', required: true, http: {source: 'body'}},
         ],
         http: {verb: 'post', path: '/reset'},
+      }
+    );
+
+    UserModel.remoteMethod(
+      'changePassword',
+      {
+        description: 'Change a user\'s password.',
+        accepts: [
+          {arg: 'id', type: 'any',
+            http: ctx => ctx.req.accessToken && ctx.req.accessToken.userId,
+          },
+          {arg: 'oldPassword', type: 'string', required: true, http: {source: 'form'}},
+          {arg: 'newPassword', type: 'string', required: true, http: {source: 'form'}},
+          {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+        ],
+        http: {verb: 'POST', path: '/change-password'},
       }
     );
 
