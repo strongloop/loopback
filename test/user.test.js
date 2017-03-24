@@ -11,6 +11,7 @@ var loopback = require('../');
 var User, AccessToken;
 var async = require('async');
 var url = require('url');
+var extend = require('util')._extend;
 
 describe('User', function() {
   this.timeout(10000);
@@ -1380,8 +1381,7 @@ describe('User', function() {
           {hook: 'access', testFlag: true},
 
           // "before save" hook prepareForTokenInvalidation
-          // FIXME(bajtos) the hook should be forwarding the options too!
-          {hook: 'access'},
+          {hook: 'access', testFlag: true},
 
           // updateAttributes
           {hook: 'before save', testFlag: true},
@@ -2525,6 +2525,37 @@ describe('User', function() {
           done();
         });
       });
+    });
+
+    it('forwards the "options" argument', function(done) {
+      var options = {testFlag: true};
+      var observedOptions = [];
+
+      saveObservedOptionsForHook('access', User);
+      saveObservedOptionsForHook('before delete', AccessToken);
+
+      user.updateAttribute('password', 'newPass', options, function(err, updated) {
+        if (err) return done(err);
+
+        expect(observedOptions).to.eql([
+          // prepareForTokenInvalidation - load current instance data
+          {hook: 'access', testFlag: true},
+
+          // validate uniqueness of User.email
+          {hook: 'access', testFlag: true},
+
+          // _invalidateAccessTokensOfUsers - deleteAll
+          {hook: 'before delete', testFlag: true},
+        ]);
+        done();
+      });
+
+      function saveObservedOptionsForHook(name, model) {
+        model.observe(name, function(ctx, next) {
+          observedOptions.push(extend({hook: name}, ctx.options));
+          next();
+        });
+      }
     });
 
     it('preserves other user sessions if their password is  untouched', function(done) {
