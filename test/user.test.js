@@ -449,6 +449,25 @@ describe('User', function() {
         });
       });
     });
+
+    it('rejects changePassword when new password is longer than 72 chars', function() {
+      return User.create({email: 'test@example.com', password: pass72Char})
+        .then(u => u.changePassword(pass72Char, pass73Char))
+        .then(
+          success => { throw new Error('changePassword should have failed'); },
+          err => {
+            expect(err.message).to.match(/Password too long/);
+
+            // workaround for chai problem
+            //   object tested must be an array, an object, or a string,
+            //   but error given
+            const props = Object.assign({}, err);
+            expect(props).to.contain({
+              code: 'PASSWORD_TOO_LONG',
+              statusCode: 422,
+            });
+          });
+    });
   });
 
   describe('Access-hook for queries with email NOT case-sensitive', function() {
@@ -1339,7 +1358,7 @@ describe('User', function() {
         err => {
           // workaround for chai problem
           //   object tested must be an array, an object, or a string,
-          //    but error given
+          //   but error given
           const props = Object.assign({}, err);
           expect(props).to.contain({
             code: 'USER_NOT_FOUND',
