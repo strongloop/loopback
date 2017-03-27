@@ -256,6 +256,7 @@ module.exports = function(ACL) {
       model: req.model,
       property: req.property,
       accessType: req.accessType,
+      accessScope: req.accessScope,
       permission: permission || ACL.DEFAULT,
       registry: this.registry});
 
@@ -443,6 +444,7 @@ module.exports = function(ACL) {
     var modelDefaultPermission = model && model.settings.defaultPermission;
     var property = context.property;
     var accessType = context.accessType;
+    var accessScope = context.accessScope;
     var modelName = context.modelName;
 
     var methodNames = context.methodNames;
@@ -458,9 +460,19 @@ module.exports = function(ACL) {
       model: modelName,
       property,
       accessType,
+      accessScope,
       permission: ACL.DEFAULT,
       methodNames,
       registry: this.registry});
+
+    if (!context.isScopeAllowed()) {
+      req.permission = ACL.DENY;
+      debug('--Denied by scope config--');
+      debug('Scopes allowed:', context.accessToken.scopes || '<default>');
+      debug('Scope required:', accessScope || '<default>');
+      context.debug();
+      return callback(null, req);
+    }
 
     var effectiveACLs = [];
     var staticACLs = self.getStaticACLs(model.modelName, property);
