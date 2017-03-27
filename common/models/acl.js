@@ -98,6 +98,8 @@ module.exports = function(ACL) {
   ACL.ROLE = Principal.ROLE;
   ACL.SCOPE = Principal.SCOPE;
 
+  ACL.DEFAULT_SCOPE = ctx.DEFAULT_SCOPES[0];
+
   /**
    * Calculate the matching score for the given rule and request
    * @param {ACL} rule The ACL entry
@@ -461,6 +463,16 @@ module.exports = function(ACL) {
       permission: ACL.DEFAULT,
       methodNames,
       registry: this.registry});
+
+    if (!context.isScopeAllowed()) {
+      req.permission = ACL.DENY;
+      debug('--Denied by scope config--');
+      debug('Scopes allowed:', context.accessToken.scopes || ctx.DEFAULT_SCOPES);
+      debug('Scope required:', context.getScopes());
+      context.debug();
+      callback(null, req);
+      return callback.promise;
+    }
 
     var effectiveACLs = [];
     var staticACLs = self.getStaticACLs(model.modelName, property);

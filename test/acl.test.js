@@ -30,6 +30,12 @@ before(function() {
   ds = loopback.createDataSource({connector: loopback.Memory});
 });
 
+describe('ACL model', function() {
+  it('provides DEFAULT_SCOPE constant', () => {
+    expect(ACL).to.have.property('DEFAULT_SCOPE', 'DEFAULT');
+  });
+});
+
 describe('security scopes', function() {
   beforeEach(function() {
     var ds = this.ds = loopback.createDataSource({connector: loopback.Memory});
