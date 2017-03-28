@@ -183,9 +183,15 @@ module.exports = function(User) {
    *
    * ```js
    *    User.login({username: 'foo', password: 'bar'}, function (err, token) {
-  *      console.log(token.id);
-  *    });
+   *      console.log(token.id);
+   *    });
    * ```
+   *
+   * If the `emailVerificationRequired` flag is set for the inherited user model
+   * and the email has not yet been verified then the method will return a 401
+   * error that will contain the user's id. This id can be used to call the
+   * `api/verify` remote method to generate a new email verification token and
+   * send back the related email to the user.
    *
    * @param {Object} credentials username/password or email/password
    * @param {String[]|String} [include] Optionally set it to "user" to include
@@ -273,6 +279,9 @@ module.exports = function(User) {
               err = new Error(g.f('login failed as the email has not been verified'));
               err.statusCode = 401;
               err.code = 'LOGIN_FAILED_EMAIL_NOT_VERIFIED';
+              err.details = {
+                userId: user.id,
+              };
               fn(err);
             } else {
               if (user.createAccessToken.length === 2) {
@@ -527,42 +536,152 @@ module.exports = function(User) {
   };
 
   /**
-   * Verify a user's identity by sending them a confirmation email.
+   * Returns default verification options to use when calling User.prototype.verify()
+   * from remote method /user/:id/verify.
+   *
+   * NOTE: the User.getVerifyOptions() method can also be used to ease the
+   * building of identity verification options.
    *
    * ```js
-   *    var verifyOptions = {
-   *      type: 'email',
-   *      from: noreply@example.com,
-   *      template: 'verify.ejs',
-   *      redirect: '/',
-   *      tokenGenerator: function (user, cb) { cb("random-token"); }
-   *    };
+   * var verifyOptions = MyUser.getVerifyOptions();
+   * user.verify(verifyOptions);
+   * ```
    *
-   *    user.verify(verifyOptions, options, next);
+   * This is the full list of possible params, with example values
+   *
+   * ```js
+   * {
+   *   type: 'email',
+   *   mailer: {
+   *     send(verifyOptions, options, cb) {
+   *       // send the email
+   *       cb(err, result);
+   *     }
+   *   },
+   *   to: 'test@email.com',
+   *   from: 'noreply@email.com'
+   *   subject: 'verification email subject',
+   *   text: 'Please verify your email by opening this link in a web browser',
+   *   headers: {'Mime-Version': '1.0'},
+   *   template: 'path/to/template.ejs',
+   *   templateFn: function(verifyOptions, options, cb) {
+   *     cb(null, 'some body template');
+   *   }
+   *   redirect: '/',
+   *   verifyHref: 'http://localhost:3000/api/user/confirm',
+   *   host: 'localhost'
+   *   protocol: 'http'
+   *   port: 3000,
+   *   restApiRoot= '/api',
+   *   generateVerificationToken: function (user, options, cb) {
+   *     cb(null, 'random-token');
+   *   }
+   * }
+   * ```
+   *
+   * NOTE: param `to` internally defaults to user's email but can be overriden for
+   * test purposes or advanced customization.
+   *
+   * Static default params can be modified in your custom user model json definition
+   * using `settings.verifyOptions`. Any default param can be programmatically modified
+   * like follows:
+   *
+   * ```js
+   * customUserModel.getVerifyOptions = function() {
+   *   const base = MyUser.base.getVerifyOptions();
+   *   return Object.assign({}, base, {
+   *     // custom values
+   *   });
+   * }
+   * ```
+   *
+   * Usually you should only require to modify a subset of these params
+   * See `User.verify()` and `User.prototype.verify()` doc for params reference
+   * and their default values.
+   */
+
+  User.getVerifyOptions = function() {
+    const verifyOptions = {
+      type: 'email',
+      from: 'noreply@example.com',
+    };
+    return this.settings.verifyOptions || verifyOptions;
+  };
+
+  /**
+   * Verify a user's identity by sending them a confirmation message.
+   * NOTE: Currently only email verification is supported
+   *
+   * ```js
+   * var verifyOptions = {
+   *   type: 'email',
+   *   from: 'noreply@example.com'
+   *   template: 'verify.ejs',
+   *   redirect: '/',
+   *   generateVerificationToken: function (user, options, cb) {
+   *     cb('random-token');
+   *   }
+   * };
+   *
+   * user.verify(verifyOptions);
+   * ```
+   *
+   * NOTE: the User.getVerifyOptions() method can also be used to ease the
+   * building of identity verification options.
+   *
+   * ```js
+   * var verifyOptions = MyUser.getVerifyOptions();
+   * user.verify(verifyOptions);
    * ```
    *
    * @options {Object} verifyOptions
-   * @property {String} type Must be 'email'.
+   * @property {String} type Must be `'email'` in the current implementation.
+   * @property {Function} mailer A mailer function with a static `.send() method.
+   *  The `.send()` method must accept the verifyOptions object, the method's
+   *  remoting context options object and a callback function with `(err, email)`
+   *  as parameters.
+   *  Defaults to provided `userModel.email` function, or ultimately to LoopBack's
+   *  own mailer function.
    * @property {String} to Email address to which verification email is sent.
-   * @property {String} from Sender email addresss, for example
-   *   `'noreply@myapp.com'`.
+   *  Defaults to user's email. Can also be overriden to a static value for test
+   *  purposes.
+   * @property {String} from Sender email address
+   *  For example `'noreply@example.com'`.
    * @property {String} subject Subject line text.
+   *  Defaults to `'Thanks for Registering'` or a local equivalent.
    * @property {String} text Text of email.
-   * @property {String} template Name of template that displays verification
-   *  page, for example, `'verify.ejs'.
+   *  Defaults to `'Please verify your email by opening this link in a web browser:`
+   *  followed by the verify link.
+   * @property {Object} headers Email headers. None provided by default.
+   * @property {String} template Relative path of template that displays verification
+   *  page. Defaults to `'../../templates/verify.ejs'`.
    * @property {Function} templateFn A function generating the email HTML body
-   * from `verify()` options object and generated attributes like `options.verifyHref`.
-   * It must accept the option object and a callback function with `(err, html)`
-   * as parameters
+   *  from `verify()` options object and generated attributes like `options.verifyHref`.
+   *  It must accept the verifyOptions object, the method's remoting context options
+   *  object and a callback function with `(err, html)` as parameters.
+   *  A default templateFn function is provided, see `createVerificationEmailBody()`
+   *  for implementation details.
    * @property {String} redirect Page to which user will be redirected after
-   *  they verify their email, for example `'/'` for root URI.
+   *  they verify their email. Defaults to `'/'`.
+   * @property {String} verifyHref The link to include in the user's verify message.
+   *  Defaults to an url analog to:
+   *  `http://host:port/restApiRoot/userRestPath/confirm?uid=userId&redirect=/``
+   * @property {String} host The API host. Defaults to app's host or `localhost`.
+   * @property {String} protocol The API protocol. Defaults to `'http'`.
+   * @property {Number} port The API port. Defaults to app's port or `3000`.
+   * @property {String} restApiRoot The API root path. Defaults to app's restApiRoot
+   *  or `'/api'`
    * @property {Function} generateVerificationToken A function to be used to
-   *  generate the verification token. It must accept the user object and a
-   *  callback function. This function should NOT add the token to the user
-   *  object, instead simply execute the callback with the token! User saving
-   *  and email sending will be handled in the `verify()` method.
-   * @param {Object} options remote context options.
+   *  generate the verification token.
+   *  It must accept the verifyOptions object, the method's remoting context options
+   *  object and a callback function with `(err, hexStringBuffer)` as parameters.
+   *  This function should NOT add the token to the user object, instead simply
+   *  execute the callback with the token! User saving and email sending will be
+   *  handled in the `verify()` method.
+   *  A default token generation function is provided, see `generateVerificationToken()`
+   *  for implementation details.
    * @callback {Function} cb Callback function.
+   * @param {Object} options remote context options.
    * @param {Error} err Error object.
    * @param {Object} object Contains email, token, uid.
    * @promise
@@ -585,9 +704,11 @@ module.exports = function(User) {
 
     // Set a default template generation function if none provided
     verifyOptions.templateFn = verifyOptions.templateFn || createVerificationEmailBody;
+
     // Set a default token generation function if none provided
     verifyOptions.generateVerificationToken = verifyOptions.generateVerificationToken ||
       User.generateVerificationToken;
+
     // Set a default mailer function if none provided
     verifyOptions.mailer = verifyOptions.mailer || userModel.email ||
       registry.getModelByType(loopback.Email);
@@ -654,10 +775,8 @@ module.exports = function(User) {
     function sendEmail(user) {
       verifyOptions.verifyHref += '&token=' + user.verificationToken;
       verifyOptions.verificationToken = user.verificationToken;
-
       verifyOptions.text = verifyOptions.text || g.f('Please verify your email by opening ' +
         'this link in a web browser:\n\t%s', verifyOptions.verifyHref);
-
       verifyOptions.text = verifyOptions.text.replace(/\{href\}/g, verifyOptions.verifyHref);
 
       // argument "options" is passed depending on templateFn function requirements
@@ -1004,9 +1123,21 @@ module.exports = function(User) {
     );
 
     UserModel.remoteMethod(
+      'prototype.verify',
+      {
+        description: 'Trigger user\'s identity verification with configured verifyOptions',
+        accepts: [
+          {arg: 'verifyOptions', type: 'object', http: ctx => this.getVerifyOptions()},
+          {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+        ],
+        http: {verb: 'post'},
+      }
+    );
+
+    UserModel.remoteMethod(
       'confirm',
       {
-        description: 'Confirm a user registration with email verification token.',
+        description: 'Confirm a user registration with identity verification token.',
         accepts: [
           {arg: 'uid', type: 'string', required: true},
           {arg: 'token', type: 'string', required: true},

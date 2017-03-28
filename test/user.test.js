@@ -854,7 +854,7 @@ describe('User', function() {
       User.settings.emailVerificationRequired = false;
     });
 
-    it('Require valid and complete credentials for email verification error', function(done) {
+    it('requires valid and complete credentials for email verification', function(done) {
       User.login({email: validCredentialsEmail}, function(err, accessToken) {
         // strongloop/loopback#931
         // error message should be "login failed"
@@ -862,12 +862,15 @@ describe('User', function() {
         assert(err && !/verified/.test(err.message),
           'expecting "login failed" error message, received: "' + err.message + '"');
         assert.equal(err.code, 'LOGIN_FAILED');
+        // as login is failing because of invalid credentials it should to return
+        // the user id in the error message
+        assert.equal(err.details, undefined);
 
         done();
       });
     });
 
-    it('Require valid and complete credentials for email verification error - promise variant',
+    it('requires valid and complete credentials for email verification - promise variant',
     function(done) {
       User.login({email: validCredentialsEmail})
         .then(function(accessToken) {
@@ -879,34 +882,30 @@ describe('User', function() {
         assert(err && !/verified/.test(err.message),
           'expecting "login failed" error message, received: "' + err.message + '"');
         assert.equal(err.code, 'LOGIN_FAILED');
-
+        assert.equal(err.details, undefined);
         done();
       });
     });
 
-    it('Login a user by without email verification', function(done) {
-      User.login(validCredentials, function(err, accessToken) {
-        assert(err);
-        assert.equal(err.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
-
-        done();
-      });
+    it('does not login a user with unverified email but provides userId', function() {
+      return User.login(validCredentials).then(
+        function(user) {
+          throw new Error('User.login() should have failed');
+        },
+        function(err, accessToken) {
+          err = Object.assign({}, err);
+          expect(err).to.eql({
+            statusCode: 401,
+            code: 'LOGIN_FAILED_EMAIL_NOT_VERIFIED',
+            details: {
+              userId: validCredentialsUser.pk,
+            },
+          });
+        }
+      );
     });
 
-    it('Login a user by without email verification - promise variant', function(done) {
-      User.login(validCredentials)
-        .then(function(err, accessToken) {
-          done();
-        })
-        .catch(function(err) {
-          assert(err);
-          assert.equal(err.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
-
-          done();
-        });
-    });
-
-    it('Login a user by with email verification', function(done) {
+    it('login a user with verified email', function(done) {
       User.login(validCredentialsEmailVerified, function(err, accessToken) {
         assertGoodToken(accessToken, validCredentialsEmailVerifiedUser);
 
@@ -914,7 +913,7 @@ describe('User', function() {
       });
     });
 
-    it('Login a user by with email verification - promise variant', function(done) {
+    it('login a user with verified email - promise variant', function(done) {
       User.login(validCredentialsEmailVerified)
         .then(function(accessToken) {
           assertGoodToken(accessToken, validCredentialsEmailVerifiedUser);
@@ -926,7 +925,7 @@ describe('User', function() {
         });
     });
 
-    it('Login a user over REST when email verification is required', function(done) {
+    it('login a user over REST when email verification is required', function(done) {
       request(app)
         .post('/test-users/login')
         .expect('Content-Type', /json/)
@@ -944,7 +943,7 @@ describe('User', function() {
         });
     });
 
-    it('Login user over REST require complete and valid credentials ' +
+    it('login user over REST require complete and valid credentials ' +
     'for email verification error message',
     function(done) {
       request(app)
@@ -967,7 +966,10 @@ describe('User', function() {
         });
     });
 
-    it('Login a user over REST without email verification when it is required', function(done) {
+    it('login a user over REST without email verification when it is required', function(done) {
+      // make sure the app is configured in production mode
+      app.set('remoting', {errorHandler: {debug: false, log: false}});
+
       request(app)
         .post('/test-users/login')
         .expect('Content-Type', /json/)
@@ -977,7 +979,19 @@ describe('User', function() {
           if (err) return done(err);
 
           var errorResponse = res.body.error;
-          assert.equal(errorResponse.code, 'LOGIN_FAILED_EMAIL_NOT_VERIFIED');
+
+          // extracting code and details error response
+          let errorExcerpts = {
+            code: errorResponse.code,
+            details: errorResponse.details,
+          };
+
+          expect(errorExcerpts).to.eql({
+            code: 'LOGIN_FAILED_EMAIL_NOT_VERIFIED',
+            details: {
+              userId: validCredentialsUser.pk,
+            },
+          });
 
           done();
         });
@@ -1511,7 +1525,7 @@ describe('User', function() {
     }
   });
 
-  describe('Verification', function() {
+  describe('Identity verification', function() {
     describe('user.verify(verifyOptions, options, cb)', function() {
       const ctxOptions = {testFlag: true};
       let verifyOptions;
@@ -1524,7 +1538,44 @@ describe('User', function() {
         };
       });
 
-      it('Verify a user\'s email address', function(done) {
+      describe('User.getVerifyOptions()', function() {
+        it('returns default verify options', function(done) {
+          const verifyOptions = User.getVerifyOptions();
+          expect(verifyOptions).to.eql({
+            type: 'email',
+            from: 'noreply@example.com',
+          });
+          done();
+        });
+
+        it('handles custom verify options defined via model.settings', function(done) {
+          User.settings.verifyOptions = {
+            type: 'email',
+            from: 'test@example.com',
+          };
+          const verifyOptions = User.getVerifyOptions();
+          expect(verifyOptions).to.eql(User.settings.verifyOptions);
+          done();
+        });
+
+        it('can be extended by user', function(done) {
+          User.getVerifyOptions = function() {
+            const base = User.base.getVerifyOptions();
+            return Object.assign({}, base, {
+              redirect: '/redirect',
+            });
+          };
+          const verifyOptions = User.getVerifyOptions();
+          expect(verifyOptions).to.eql({
+            type: 'email',
+            from: 'noreply@example.com',
+            redirect: '/redirect',
+          });
+          done();
+        });
+      });
+
+      it('verifies a user\'s email address', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
@@ -1550,7 +1601,7 @@ describe('User', function() {
           });
       });
 
-      it('Verify a user\'s email address - promise variant', function(done) {
+      it('verifies a user\'s email address - promise variant', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
@@ -1580,7 +1631,7 @@ describe('User', function() {
           });
       });
 
-      it('Verify a user\'s email address with custom header', function(done) {
+      it('verifies a user\'s email address with custom header', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
@@ -1604,7 +1655,7 @@ describe('User', function() {
           });
       });
 
-      it('Verify a user\'s email address with custom template function', function(done) {
+      it('verifies a user\'s email address with custom template function', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
@@ -1674,7 +1725,7 @@ describe('User', function() {
           });
       });
 
-      it('Verify a user\'s email address with custom token generator', function(done) {
+      it('verifies a user\'s email address with custom token generator', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
@@ -1711,7 +1762,7 @@ describe('User', function() {
           });
       });
 
-      it('Fails if custom token generator returns error', function(done) {
+      it('fails if custom token generator returns error', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
@@ -1742,7 +1793,7 @@ describe('User', function() {
       });
 
       describe('Verification link port-squashing', function() {
-        it('Do not squash non-80 ports for HTTP links', function(done) {
+        it('does not squash non-80 ports for HTTP links', function(done) {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
@@ -1769,7 +1820,7 @@ describe('User', function() {
             });
         });
 
-        it('Squash port 80 for HTTP links', function(done) {
+        it('squashes port 80 for HTTP links', function(done) {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
@@ -1796,7 +1847,7 @@ describe('User', function() {
             });
         });
 
-        it('Do not squash non-443 ports for HTTPS links', function(done) {
+        it('does not squash non-443 ports for HTTPS links', function(done) {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
@@ -1824,7 +1875,7 @@ describe('User', function() {
             });
         });
 
-        it('Squash port 443 for HTTPS links', function(done) {
+        it('squashes port 443 for HTTPS links', function(done) {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
@@ -1853,7 +1904,7 @@ describe('User', function() {
         });
       });
 
-      it('should hide verification tokens from user JSON', function(done) {
+      it('hides verification tokens from user JSON', function(done) {
         var user = new User({
           email: 'bar@bat.com',
           password: 'bar',
@@ -1865,7 +1916,7 @@ describe('User', function() {
         done();
       });
 
-      it('should squash "//" when restApiRoot is "/"', function(done) {
+      it('squashes "//" when restApiRoot is "/"', function(done) {
         var emailBody;
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
@@ -2019,6 +2070,26 @@ describe('User', function() {
         return User.create({email: 'test@example.com', password: 'pass'})
           .then(u => user = u);
       }
+
+      it('is called over REST method /User/:id/verify', function() {
+        return User.create({email: 'bar@bat.com', password: 'bar'})
+          .then(user => {
+            return request(app)
+              .post('/test-users/' + user.pk + '/verify')
+              .expect('Content-Type', /json/)
+              // we already tested before that User.verify(id) works correctly
+              // having the remote method returning 204 is enough to make sure
+              // User.verify() was called successfully
+              .expect(204);
+          });
+      });
+
+      it('fails over REST method /User/:id/verify with invalid user id', function() {
+        return request(app)
+          .post('/test-users/' + 'invalid-id' + '/verify')
+          .expect('Content-Type', /json/)
+          .expect(404);
+      });
     });
 
     describe('User.confirm(options, fn)', function() {
