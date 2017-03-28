@@ -421,6 +421,12 @@ module.exports = function(User) {
         return cb(err);
       }
 
+      try {
+        User.validatePassword(newPassword);
+      } catch (err) {
+        return cb(err);
+      }
+
       const delta = {password: newPassword};
       this.patchAttributes(delta, options, (err, updated) => cb(err));
     });
