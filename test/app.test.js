@@ -686,6 +686,33 @@ describe('app', function() {
       expect(disabledRemoteMethod).to.eql('findOne');
     });
 
+    it('emits a `remoteMethodAdded` event', function() {
+      app.dataSource('db', {connector: 'memory'});
+      var Book = app.registry.createModel(
+        'Book',
+        {name: 'string'},
+        {plural: 'books'}
+      );
+      app.model(Book, {dataSource: 'db'});
+
+      var Page = app.registry.createModel(
+        'Page',
+        {name: 'string'},
+        {plural: 'pages'}
+      );
+      app.model(Page, {dataSource: 'db'});
+
+      Book.hasMany(Page);
+
+      var remoteMethodAddedClass;
+      app.on('remoteMethodAdded', function(sharedClass) {
+        remoteMethodAddedClass = sharedClass;
+      });
+      Book.nestRemoting('pages');
+      expect(remoteMethodAddedClass).to.exist();
+      expect(remoteMethodAddedClass).to.eql(Book.sharedClass);
+    });
+
     it.onServer('updates REST API when a new model is added', function(done) {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
