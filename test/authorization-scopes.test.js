@@ -69,6 +69,45 @@ describe('Authorization scopes', () => {
     });
   });
 
+  describe('scope config defined at model-level', () => {
+    beforeEach(logAllServerErrors);
+
+    it('hounours scope defined for method name', () => {
+      User.settings.accessScopes = {
+        findById: ['read'],
+      };
+
+      return givenScopedToken(['read']).then(() => {
+        return request.get('/users/' + testUser.id)
+          .set('Authorization', scopedToken.id)
+          .expect(200);
+      });
+    });
+
+    it('honours scope defined for method alias', () => {
+      User.settings.accessScopes = {
+        'prototype.updateAttributes': ['write'],
+      };
+
+      return givenScopedToken(['write']).then(() => {
+        return request.patch('/users/' + testUser.id)
+          .send({username: 'test-user'})
+          .set('Authorization', scopedToken.id)
+          .expect(200);
+      });
+    });
+
+    it('adds model-level scopes to method-level scopes', () => {
+      User.settings.accessScopes = {
+        findById: ['read'],
+      };
+
+      return request.get('/users/' + testUser.id)
+        .set('Authorization', regularToken.id)
+        .expect(200);
+    });
+  });
+
   function givenAppAndRequest() {
     app = loopback({localRegistry: true, loadBuiltinModels: true});
     app.set('remoting', {rest: {handleErrors: false}});
