@@ -1,3 +1,43 @@
+2017-03-31, Version 3.6.0
+=========================
+
+ * Add new event "remoteMethodAdded" (Flavien DAVID)
+
+ * Forward options in prepareForTokenInvalidation (Miroslav Bajtoš)
+
+ * Check max password length in User.changePassword (Miroslav Bajtoš)
+
+ * Add User.changePassword(id, old, new, cb) (Miroslav Bajtoš)
+
+ * Propagate authorized roles in remoting context (ebarault)
+
+ * Run the latest Node.js 7 version on Travis again (Miroslav Bajtoš)
+
+ * Lock down Travis CI Node 7 version to 7.7.1 (Miroslav Bajtoš)
+
+ * README: add a link to our announcements list (Miroslav Bajtoš)
+
+ * Allow custom properties of Change Model (agriwebb build)
+
+ * Fix User.verify to convert uid to string (phairow)
+
+ * Pass options.verificationToken to templateFn (Hiran del Castillo)
+
+ * fix custom token model in token middleware (ebarault)
+
+ * Update runtime dependencies (Miroslav Bajtoš)
+
+ * Verify User and AccessToken relations at startup (Miroslav Bajtoš)
+
+ * Deep-clone model settings in lib/builtin-models (Miroslav Bajtoš)
+
+ * Use local registry in test/replication.rest.test (Miroslav Bajtoš)
+
+ * Fix test/access-token.test to use local registry (Miroslav Bajtoš)
+
+ * Fix context passing in OWNER role resolver (Benjamin Schuster-Boeckler)
+
+
 2017-02-24, Version 3.4.0
 =========================
 
