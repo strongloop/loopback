@@ -852,6 +852,42 @@ describe.onServer('Remote Methods', function() {
 
       expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass, 'findOne');
     });
+
+    it('emits a `remoteMethodAdded` event', function() {
+      var app = loopback();
+      app.dataSource('db', {connector: 'memory'});
+
+      var User = app.registry.getModel('User');
+      app.model(User, {dataSource: 'db'});
+
+      var Token = app.registry.getModel('AccessToken');
+      app.model(Token, {dataSource: 'db'});
+
+      var callbackSpy = require('sinon').spy();
+      var TestModel = app.models.User;
+      TestModel.on('remoteMethodAdded', callbackSpy);
+      TestModel.nestRemoting('accessTokens');
+
+      expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass);
+    });
+  });
+
+  it('emits a `remoteMethodAdded` event from remoteMethod', function() {
+    var app = loopback();
+    var model = PersistedModel.extend('TestModelForAddingRemoteMethod');
+    app.dataSource('db', {connector: 'memory'});
+    app.model(model, {dataSource: 'db'});
+
+    var callbackSpy = require('sinon').spy();
+    var TestModel = app.models.TestModelForAddingRemoteMethod;
+    TestModel.on('remoteMethodAdded', callbackSpy);
+    TestModel.remoteMethod('getTest', {
+      accepts: {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+      returns: {arg: 'test', type: 'object'},
+      http: {verb: 'GET', path: '/test'},
+    });
+
+    expect(callbackSpy).to.have.been.calledWith(TestModel.sharedClass);
   });
 
   describe('Model.getApp(cb)', function() {
