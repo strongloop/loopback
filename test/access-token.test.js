@@ -190,6 +190,26 @@ describe('loopback.token(options)', function() {
         });
     });
 
+  it('should generate a 401 on a current user literal route without an authToken',
+    function(done) {
+      var app = createTestApp(null, done);
+      request(app)
+        .get('/users/me')
+        .set('authorization', null)
+        .expect(401)
+        .end(done);
+    });
+
+  it('should generate a 401 on a current user literal route with invalid authToken',
+    function(done) {
+      var app = createTestApp(this.token, done);
+      request(app)
+        .get('/users/me')
+        .set('Authorization', 'invald-token-id')
+        .expect(401)
+        .end(done);
+    });
+
   it('should skip when req.token is already present', function(done) {
     var tokenStub = { id: 'stub id' };
     app.use(function(req, res, next) {
