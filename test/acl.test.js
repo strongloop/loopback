@@ -165,7 +165,6 @@ describe('security ACLs', function() {
     assert.deepEqual(perm, {model: 'account',
       property: 'find',
       accessType: 'WRITE',
-      accessScope: undefined,
       permission: 'ALLOW',
       methodNames: []});
 
