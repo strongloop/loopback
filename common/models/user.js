@@ -886,7 +886,7 @@ module.exports = function(User) {
       where[pkName] = ctx.instance[pkName];
     }
 
-    ctx.Model.find({where: where}, function(err, userInstances) {
+    ctx.Model.find({where: where}, ctx.options, function(err, userInstances) {
       if (err) return next(err);
       ctx.hookState.originalUserData = userInstances.map(function(u) {
         var user = {};

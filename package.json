@@ -80,7 +80,7 @@
     "grunt-karma": "^2.0.0",
     "grunt-mocha-test": "^0.12.7",
     "karma": "^1.1.2",
-    "karma-browserify": "^4.4.2",
+    "karma-browserify": "^5.1.1",
     "karma-chrome-launcher": "^1.0.1",
     "karma-firefox-launcher": "^1.0.0",
     "karma-html2js-preprocessor": "^1.0.0",
