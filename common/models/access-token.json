@@ -11,6 +11,10 @@
       "default": 1209600,
       "description": "time to live in seconds (2 weeks by default)"
     },
+    "scopes": {
+      "type": ["string"],
+      "description": "Array of scopes granted to this access token."
+    },
     "created": {
       "type": "Date",
       "defaultFn": "now"

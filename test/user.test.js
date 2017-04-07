@@ -624,18 +624,18 @@ describe('User', function() {
         // Override createAccessToken
         User.prototype.createAccessToken = function(ttl, options, cb) {
           // Reduce the ttl by half for testing purpose
-          this.accessTokens.create({ttl: ttl / 2, scopes: options.scope}, cb);
+          this.accessTokens.create({ttl: ttl / 2, scopes: [options.scope]}, cb);
         };
         User.login(validCredentialsWithTTLAndScope, function(err, accessToken) {
           assertGoodToken(accessToken, validCredentialsUser);
           assert.equal(accessToken.ttl, 1800);
-          assert.equal(accessToken.scopes, 'all');
+          assert.deepEqual(accessToken.scopes, ['all']);
 
           User.findById(accessToken.userId, function(err, user) {
             user.createAccessToken(120, {scope: 'default'}, function(err, accessToken) {
               assertGoodToken(accessToken, validCredentialsUser);
               assert.equal(accessToken.ttl, 60);
-              assert.equal(accessToken.scopes, 'default');
+              assert.deepEqual(accessToken.scopes, ['default']);
               // Restore create access token
               User.prototype.createAccessToken = createToken;
 
