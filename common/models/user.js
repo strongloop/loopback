@@ -421,15 +421,82 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      try {
-        User.validatePassword(newPassword);
-      } catch (err) {
+      this.setPassword(newPassword, options, cb);
+    });
+    return cb.promise;
+  };
+
+  /**
+   * Set this user's password after a password-reset request was made.
+   *
+   * @param {*} userId Id of the user changing the password
+   * @param {string} newPassword The new password to use.
+   * @param {Object} [options] Additional options including remoting context
+   * @callback {Function} callback
+   * @param {Error} err Error object
+   * @promise
+   */
+  User.setPassword = function(userId, newPassword, options, cb) {
+    assert(userId != null && userId !== '', 'userId is a required argument');
+    assert(!!newPassword, 'newPassword is a required argument');
+
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+    cb = cb || utils.createPromiseCallback();
+
+    // Make sure to use the constructor of the (sub)class
+    // where the method is invoked from (`this` instead of `User`)
+    this.findById(userId, options, (err, inst) => {
+      if (err) return cb(err);
+
+      if (!inst) {
+        const err = new Error(`User ${userId} not found`);
+        Object.assign(err, {
+          code: 'USER_NOT_FOUND',
+          statusCode: 401,
+        });
         return cb(err);
       }
 
-      const delta = {password: newPassword};
-      this.patchAttributes(delta, options, (err, updated) => cb(err));
+      inst.setPassword(newPassword, options, cb);
     });
+
+    return cb.promise;
+  };
+
+  /**
+   * Set this user's password. The callers of this method
+   * must ensure the client making the request is authorized
+   * to change the password, typically by providing the correct
+   * current password or a password-reset token.
+   *
+   * @param {string} newPassword The new password to use.
+   * @param {Object} [options] Additional options including remoting context
+   * @callback {Function} callback
+   * @param {Error} err Error object
+   * @promise
+   */
+  User.prototype.setPassword = function(newPassword, options, cb) {
+    assert(!!newPassword, 'newPassword is a required argument');
+
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+    cb = cb || utils.createPromiseCallback();
+
+    try {
+      this.constructor.validatePassword(newPassword);
+    } catch (err) {
+      cb(err);
+      return cb.promise;
+    }
+
+    const delta = {password: newPassword};
+    this.patchAttributes(delta, options, (err, updated) => cb(err));
+
     return cb.promise;
   };
 
@@ -933,6 +1000,21 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
         ],
         http: {verb: 'POST', path: '/change-password'},
+      }
+    );
+
+    UserModel.remoteMethod(
+      'setPassword',
+      {
+        description: 'Reset user\'s password via a password-reset token.',
+        accepts: [
+          {arg: 'id', type: 'any',
+            http: ctx => ctx.req.accessToken && ctx.req.accessToken.userId,
+          },
+          {arg: 'newPassword', type: 'string', required: true, http: {source: 'form'}},
+          {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+        ],
+        http: {verb: 'POST', path: '/reset-password'},
       }
     );
 

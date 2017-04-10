@@ -471,6 +471,25 @@ describe('User', function() {
             });
           });
     });
+
+    it('rejects setPassword when new password is longer than 72 chars', function() {
+      return User.create({email: 'test@example.com', password: pass72Char})
+        .then(u => u.setPassword(pass73Char))
+        .then(
+          success => { throw new Error('setPassword should have failed'); },
+          err => {
+            expect(err.message).to.match(/Password too long/);
+
+            // workaround for chai problem
+            //   object tested must be an array, an object, or a string,
+            //   but error given
+            const props = Object.assign({}, err);
+            expect(props).to.contain({
+              code: 'PASSWORD_TOO_LONG',
+              statusCode: 422,
+            });
+          });
+    });
   });
 
   describe('Access-hook for queries with email NOT case-sensitive', function() {
@@ -1403,6 +1422,92 @@ describe('User', function() {
     function givenUserIdAndPassword() {
       userId = validCredentialsUser.id;
       currentPassword = validCredentials.password;
+    }
+  });
+
+  describe('User.setPassword()', () => {
+    let userId;
+    beforeEach(givenUserId);
+
+    it('changes the password - callback-style', done => {
+      User.setPassword(userId, 'new password', (err) => {
+        if (err) return done(err);
+        expect(arguments.length, 'changePassword callback arguments length')
+          .to.be.at.most(1);
+
+        User.findById(userId, (err, user) => {
+          if (err) return done(err);
+          user.hasPassword('new password', (err, isMatch) => {
+            if (err) return done(err);
+            expect(isMatch, 'user has new password').to.be.true();
+            done();
+          });
+        });
+      });
+    });
+
+    it('changes the password - Promise-style', () => {
+      return User.setPassword(userId, 'new password')
+        .then(() => {
+          expect(arguments.length, 'changePassword promise resolution')
+            .to.equal(0);
+          return User.findById(userId);
+        })
+        .then(user => {
+          return user.hasPassword('new password');
+        })
+        .then(isMatch => {
+          expect(isMatch, 'user has new password').to.be.true();
+        });
+    });
+
+    it('fails with 401 for unknown user', () => {
+      return User.setPassword('unknown-id', 'pass').then(
+        success => { throw new Error('setPassword should have failed'); },
+        err => {
+          // workaround for chai problem
+          //   object tested must be an array, an object, or a string,
+          //   but error given
+          const props = Object.assign({}, err);
+          expect(props).to.contain({
+            code: 'USER_NOT_FOUND',
+            statusCode: 401,
+          });
+        });
+    });
+
+    it('forwards the "options" argument', () => {
+      const options = {testFlag: true};
+      const observedOptions = [];
+
+      saveObservedOptionsForHook('access');
+      saveObservedOptionsForHook('before save');
+
+      return User.setPassword(userId, 'new', options)
+        .then(() => expect(observedOptions).to.eql([
+          // findById
+          {hook: 'access', testFlag: true},
+
+          // "before save" hook prepareForTokenInvalidation
+          {hook: 'access', testFlag: true},
+
+          // updateAttributes
+          {hook: 'before save', testFlag: true},
+
+          // validate uniqueness of User.email
+          {hook: 'access', testFlag: true},
+        ]));
+
+      function saveObservedOptionsForHook(name) {
+        User.observe(name, (ctx, next) => {
+          observedOptions.push(Object.assign({hook: name}, ctx.options));
+          next();
+        });
+      }
+    });
+
+    function givenUserId() {
+      userId = validCredentialsUser.id;
     }
   });
 

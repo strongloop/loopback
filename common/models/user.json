@@ -89,6 +89,13 @@
       "permission": "ALLOW",
       "property": "changePassword",
       "accessType": "EXECUTE"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "setPassword",
+      "accessType": "EXECUTE"
     }
   ],
   "relations": {
