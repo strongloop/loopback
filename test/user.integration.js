@@ -155,13 +155,13 @@ describe('users - integration', function() {
         .expect(401);
     });
 
-    it('injects change password options from remoting context', function() {
+    it('uses change password options provided by the remoting context', function() {
       const User = app.models.User;
       const credentials = {email: 'inject@example.com', password: 'pass'};
 
-      let injectedOptions;
+      let observedOptions;
       User.observe('before save', (ctx, next) => {
-        injectedOptions = ctx.options;
+        observedOptions = ctx.options;
         next();
       });
 
@@ -177,11 +177,11 @@ describe('users - integration', function() {
             .expect(204);
         })
         .then(() => {
-          expect(injectedOptions).to.have.property('accessToken');
+          expect(observedOptions).to.have.property('accessToken');
         });
     });
 
-    it('resets user\'s password', function() {
+    it('resets the user\'s password', function() {
       const User = app.models.User;
       const credentials = {email: 'reset@example.com', password: 'pass'};
       return User.create(credentials)
@@ -206,7 +206,7 @@ describe('users - integration', function() {
         .then(isMatch => expect(isMatch, 'user has new password').to.be.true());
     });
 
-    it('rejects unauthenticated reset password request', function() {
+    it('rejects unauthenticated reset password requests', function() {
       return this.post('/api/users/reset-password')
         .send({
           newPassword: 'new password',
@@ -214,13 +214,13 @@ describe('users - integration', function() {
         .expect(401);
     });
 
-    it('injects reset password options from remoting context', function() {
+    it('uses password reset options provided by the remoting context', function() {
       const User = app.models.User;
       const credentials = {email: 'inject-reset@example.com', password: 'pass'};
 
-      let injectedOptions;
+      let observedOptions;
       User.observe('before save', (ctx, next) => {
-        injectedOptions = ctx.options;
+        observedOptions = ctx.options;
         next();
       });
 
@@ -235,7 +235,7 @@ describe('users - integration', function() {
             .expect(204);
         })
         .then(() => {
-          expect(injectedOptions).to.have.property('accessToken');
+          expect(observedOptions).to.have.property('accessToken');
         });
     });
   });

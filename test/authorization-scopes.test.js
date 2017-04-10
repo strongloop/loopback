@@ -82,7 +82,7 @@ describe('Authorization scopes', () => {
   }
 
   function givenRemoteMethodWithCustomScope() {
-    // Delete any previosly registered instance of the method "scoped"
+    // Delete any previously registered instance of the method "scoped"
     User.sharedClass._methods = User.sharedClass._methods
       .filter(m => m.name !== 'scoped');
 
