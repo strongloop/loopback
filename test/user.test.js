@@ -8,10 +8,12 @@ var assert = require('assert');
 var expect = require('./helpers/expect');
 var request = require('supertest');
 var loopback = require('../');
-var User, AccessToken;
 var async = require('async');
 var url = require('url');
 var extend = require('util')._extend;
+var Promise = require('bluebird');
+
+var User, AccessToken;
 
 describe('User', function() {
   this.timeout(10000);
@@ -30,14 +32,14 @@ describe('User', function() {
   var validMixedCaseEmailCredentials = {email: 'Foo@bar.com', password: 'bar'};
   var invalidCredentials = {email: 'foo1@bar.com', password: 'invalid'};
   var incompleteCredentials = {password: 'bar1'};
-  var validCredentialsUser, validCredentialsEmailVerifiedUser;
+  var validCredentialsUser, validCredentialsEmailVerifiedUser, user;
 
   // Create a local app variable to prevent clashes with the global
   // variable shared by all tests. While this should not be necessary if
   // the tests were written correctly, it turns out that's not the case :(
   var app = null;
 
-  beforeEach(function setupAppAndModels(done) {
+  beforeEach(function setupAppAndModels() {
     // override the global app object provided by test/support.js
     // and create a local one that does not share state with other tests
     app = loopback({localRegistry: true, loadBuiltinModels: true});
@@ -90,14 +92,13 @@ describe('User', function() {
     app.use(loopback.token({model: AccessToken}));
     app.use(loopback.rest());
 
-    User.create(validCredentials, function(err, user) {
-      if (err) return done(err);
-      validCredentialsUser = user;
-      User.create(validCredentialsEmailVerified, function(err, user) {
-        if (err) return done(err);
-        validCredentialsEmailVerifiedUser = user;
-        done();
-      });
+    // create 2 users: with and without verified email
+    return Promise.map(
+      [validCredentials, validCredentialsEmailVerified],
+      credentials => User.create(credentials)
+    ).then(users => {
+      validCredentialsUser = user = users[0];
+      validCredentialsEmailVerifiedUser = users[1];
     });
   });
 
@@ -1405,21 +1406,23 @@ describe('User', function() {
   });
 
   describe('Verification', function() {
-    describe('user.verify(options, fn)', function() {
+    describe('user.verify(verifyOptions, options, cb)', function() {
+      const ctxOptions = {testFlag: true};
+      let verifyOptions;
+
+      beforeEach(function() {
+        // reset verifyOptions before each test
+        verifyOptions = {
+          type: 'email',
+          from: 'noreply@example.org',
+        };
+      });
+
       it('Verify a user\'s email address', function(done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-          };
-
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             assert(result.email);
             assert(result.email.response);
             assert(result.token);
@@ -1445,16 +1448,7 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-          };
-
-          user.verify(options)
+          user.verify(verifyOptions)
             .then(function(result) {
               assert(result.email);
               assert(result.email.response);
@@ -1484,17 +1478,9 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            headers: {'message-id': 'custom-header-value'},
-          };
+          verifyOptions.headers = {'message-id': 'custom-header-value'};
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             assert(result.email);
             assert.equal(result.email.messageId, 'custom-header-value');
 
@@ -1516,19 +1502,11 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            templateFn: function(options, cb) {
-              cb(null, 'custom template  - verify url: ' + options.verifyHref);
-            },
+          verifyOptions.templateFn = function(verifyOptions, cb) {
+            cb(null, 'custom template  - verify url: ' + verifyOptions.verifyHref);
           };
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             assert(result.email);
             assert(result.email.response);
             assert(result.token);
@@ -1558,17 +1536,9 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            templateFn: function(options, cb) {
-              actualVerifyHref = options.verifyHref;
-              cb(null, 'dummy body');
-            },
+          verifyOptions.templateFn = function(verifyOptions, cb) {
+            actualVerifyHref = verifyOptions.verifyHref;
+            cb(null, 'dummy body');
           };
 
           // replace the string id with an object
@@ -1579,7 +1549,7 @@ describe('User', function() {
           });
           user.pk = {toString: function() { return idString; }};
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             expect(result.uid).to.exist().and.be.an('object');
             expect(result.uid.toString()).to.equal(idString);
             const parsed = url.parse(actualVerifyHref, true);
@@ -1602,26 +1572,18 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            generateVerificationToken: function(user, cb) {
-              assert(user);
-              assert.equal(user.email, 'bar@bat.com');
-              assert(cb);
-              assert.equal(typeof cb, 'function');
-              // let's ensure async execution works on this one
-              process.nextTick(function() {
-                cb(null, 'token-123456');
-              });
-            },
+          verifyOptions.generateVerificationToken = function(user, cb) {
+            assert(user);
+            assert.equal(user.email, 'bar@bat.com');
+            assert(cb);
+            assert.equal(typeof cb, 'function');
+            // let's ensure async execution works on this one
+            process.nextTick(function() {
+              cb(null, 'token-123456');
+            });
           };
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             assert(result.email);
             assert(result.email.response);
             assert(result.token);
@@ -1647,22 +1609,14 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
-            protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
-            generateVerificationToken: function(user, cb) {
-              // let's ensure async execution works on this one
-              process.nextTick(function() {
-                cb(new Error('Fake error'));
-              });
-            },
+          verifyOptions.generateVerificationToken = function(user, cb) {
+            // let's ensure async execution works on this one
+            process.nextTick(function() {
+              cb(new Error('Fake error'));
+            });
           };
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             assert(err);
             assert.equal(err.message, 'Fake error');
             assert.equal(result, undefined);
@@ -1686,17 +1640,12 @@ describe('User', function() {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
-            var options = {
-              type: 'email',
-              to: user.email,
-              from: 'noreply@myapp.org',
-              redirect: '/',
-              protocol: 'http',
+            Object.assign(verifyOptions, {
               host: 'myapp.org',
               port: 3000,
-            };
+            });
 
-            user.verify(options, function(err, result) {
+            user.verify(verifyOptions, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('http://myapp.org:3000/'));
 
@@ -1718,17 +1667,12 @@ describe('User', function() {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
-            var options = {
-              type: 'email',
-              to: user.email,
-              from: 'noreply@myapp.org',
-              redirect: '/',
-              protocol: 'http',
+            Object.assign(verifyOptions, {
               host: 'myapp.org',
               port: 80,
-            };
+            });
 
-            user.verify(options, function(err, result) {
+            user.verify(verifyOptions, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('http://myapp.org/'));
 
@@ -1750,17 +1694,13 @@ describe('User', function() {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
-            var options = {
-              type: 'email',
-              to: user.email,
-              from: 'noreply@myapp.org',
-              redirect: '/',
-              protocol: 'https',
+            Object.assign(verifyOptions, {
               host: 'myapp.org',
               port: 3000,
-            };
+              protocol: 'https',
+            });
 
-            user.verify(options, function(err, result) {
+            user.verify(verifyOptions, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('https://myapp.org:3000/'));
 
@@ -1782,17 +1722,13 @@ describe('User', function() {
           User.afterRemote('create', function(ctx, user, next) {
             assert(user, 'afterRemote should include result');
 
-            var options = {
-              type: 'email',
-              to: user.email,
-              from: 'noreply@myapp.org',
-              redirect: '/',
-              protocol: 'https',
+            Object.assign(verifyOptions, {
               host: 'myapp.org',
+              protocol: 'https',
               port: 443,
-            };
+            });
 
-            user.verify(options, function(err, result) {
+            user.verify(verifyOptions, function(err, result) {
               var msg = result.email.response.toString('utf-8');
               assert(~msg.indexOf('https://myapp.org/'));
 
@@ -1828,17 +1764,13 @@ describe('User', function() {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          var options = {
-            type: 'email',
-            to: user.email,
-            from: 'noreply@myapp.org',
-            redirect: '/',
+          Object.assign(verifyOptions, {
             host: 'myapp.org',
             port: 3000,
             restApiRoot: '/',
-          };
+          });
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             if (err) return next(err);
             emailBody = result.email.response.toString('utf-8');
             next();
@@ -1858,40 +1790,31 @@ describe('User', function() {
           });
       });
 
-      it('removes "options.template" from Email payload', function() {
+      it('removes "verifyOptions.template" from Email payload', function() {
         var MailerMock = {
-          send: function(options, cb) { cb(null, options); },
+          send: function(verifyOptions, cb) { cb(null, verifyOptions); },
         };
+        verifyOptions.mailer = MailerMock;
 
-        return User.create({email: 'user@example.com', password: 'pass'})
-          .then(function(user) {
-            return user.verify({
-              type: 'email',
-              from: 'noreply@example.com',
-              mailer: MailerMock,
-            });
-          })
+        return user.verify(verifyOptions)
           .then(function(result) {
             expect(result.email).to.not.have.property('template');
           });
       });
 
       it('allows hash fragment in redirectUrl', function() {
-        return User.create({email: 'test@example.com', password: 'pass'})
-          .then(user => {
-            let actualVerifyHref;
-            return user.verify({
-              type: 'email',
-              to: user.email,
-              from: 'noreply@myapp.org',
-              redirect: '#/some-path?a=1&b=2',
-              templateFn: (options, cb) => {
-                actualVerifyHref = options.verifyHref;
-                cb(null, 'dummy body');
-              },
-            })
-            .then(() => actualVerifyHref);
-          })
+        let actualVerifyHref;
+
+        Object.assign(verifyOptions, {
+          redirect: '#/some-path?a=1&b=2',
+          templateFn: (verifyOptions, cb) => {
+            actualVerifyHref = verifyOptions.verifyHref;
+            cb(null, 'dummy body');
+          },
+        });
+
+        return user.verify(verifyOptions)
+          .then(() => actualVerifyHref)
           .then(verifyHref => {
             var parsed = url.parse(verifyHref, true);
             expect(parsed.query.redirect, 'redirect query')
@@ -1899,36 +1822,107 @@ describe('User', function() {
           });
       });
 
-      it('verify that options.templateFn receives options.verificationToken', function() {
-        return User.create({email: 'test1@example.com', password: 'pass'})
-          .then(user => {
-            let actualVerificationToken;
-            return user.verify({
-              type: 'email',
-              to: user.email,
-              from: 'noreply@myapp.org',
-              redirect: '#/some-path?a=1&b=2',
-              templateFn: (options, cb) => {
-                actualVerificationToken = options.verificationToken;
-                cb(null, 'dummy body');
-              },
-            })
-            .then(() => actualVerificationToken);
-          })
+      it('verifies that verifyOptions.templateFn receives verifyOptions.verificationToken',
+      function() {
+        let actualVerificationToken;
+
+        Object.assign(verifyOptions, {
+          redirect: '#/some-path?a=1&b=2',
+          templateFn: (verifyOptions, cb) => {
+            actualVerificationToken = verifyOptions.verificationToken;
+            cb(null, 'dummy body');
+          },
+        });
+
+        return user.verify(verifyOptions)
+          .then(() => actualVerificationToken)
           .then(token => {
             expect(token).to.exist();
           });
       });
+
+      it('forwards the "options" argument to user.save() ' +
+        'when adding verification token', function() {
+        let onBeforeSaveCtx = {};
+
+        // before save operation hook to capture remote ctx when saving
+        // verification token in user instance
+        User.observe('before save', function(ctx, next) {
+          onBeforeSaveCtx = ctx || {};
+          next();
+        });
+
+        return user.verify(verifyOptions, ctxOptions)
+          .then(() => {
+            // not checking equality since other properties are added by user.save()
+            expect(onBeforeSaveCtx.options).to.contain({testFlag: true});
+          });
+      });
+
+      it('forwards the "options" argument to a custom templateFn function', function() {
+        let templateFnOptions;
+
+        // custom templateFn function accepting the options argument
+        verifyOptions.templateFn = (verifyOptions, options, cb) => {
+          templateFnOptions = options;
+          cb(null, 'dummy body');
+        };
+
+        return user.verify(verifyOptions, ctxOptions)
+          .then(() => {
+            // not checking equality since other properties are added by user.save()
+            expect(templateFnOptions).to.contain({testFlag: true});
+          });
+      });
+
+      it('forwards the "options" argment to a custom token generator function', function() {
+        let generateTokenOptions;
+
+        // custom generateVerificationToken function accepting the options argument
+        verifyOptions.generateVerificationToken = (user, options, cb) => {
+          generateTokenOptions = options;
+          cb(null, 'dummy token');
+        };
+
+        return user.verify(verifyOptions, ctxOptions)
+          .then(() => {
+            // not checking equality since other properties are added by user.save()
+            expect(generateTokenOptions).to.contain({testFlag: true});
+          });
+      });
+
+      it('forwards the "options" argument to a custom mailer function', function() {
+        let mailerOptions;
+
+        // custom mailer function accepting the options argument
+        const mailer = function() {};
+        mailer.send = function(verifyOptions, options, cb) {
+          mailerOptions = options;
+          cb(null, 'dummy result');
+        };
+        verifyOptions.mailer = mailer;
+
+        return user.verify(verifyOptions, ctxOptions)
+          .then(() => {
+            // not checking equality since other properties are added by user.save()
+            expect(mailerOptions).to.contain({testFlag: true});
+          });
+      });
+
+      function givenUser() {
+        return User.create({email: 'test@example.com', password: 'pass'})
+          .then(u => user = u);
+      }
     });
 
     describe('User.confirm(options, fn)', function() {
-      var options;
+      var verifyOptions;
 
       function testConfirm(testFunc, done) {
         User.afterRemote('create', function(ctx, user, next) {
           assert(user, 'afterRemote should include result');
 
-          options = {
+          verifyOptions = {
             type: 'email',
             to: user.email,
             from: 'noreply@myapp.org',
@@ -1937,7 +1931,7 @@ describe('User', function() {
             host: ctx.req.get('host'),
           };
 
-          user.verify(options, function(err, result) {
+          user.verify(verifyOptions, function(err, result) {
             if (err) return done(err);
 
             testFunc(result, done);
@@ -1959,7 +1953,7 @@ describe('User', function() {
           request(app)
             .get('/test-users/confirm?uid=' + (result.uid) +
               '&token=' + encodeURIComponent(result.token) +
-              '&redirect=' + encodeURIComponent(options.redirect))
+              '&redirect=' + encodeURIComponent(verifyOptions.redirect))
             .expect(302)
             .end(function(err, res) {
               if (err) return done(err);
@@ -2011,7 +2005,7 @@ describe('User', function() {
           request(app)
             .get('/test-users/confirm?uid=' + (result.uid + '_invalid') +
                '&token=' + encodeURIComponent(result.token) +
-               '&redirect=' + encodeURIComponent(options.redirect))
+               '&redirect=' + encodeURIComponent(verifyOptions.redirect))
             .expect(404)
             .end(function(err, res) {
               if (err) return done(err);
@@ -2030,7 +2024,7 @@ describe('User', function() {
           request(app)
             .get('/test-users/confirm?uid=' + result.uid +
               '&token=' + encodeURIComponent(result.token) + '_invalid' +
-              '&redirect=' + encodeURIComponent(options.redirect))
+              '&redirect=' + encodeURIComponent(verifyOptions.redirect))
             .expect(400)
             .end(function(err, res) {
               if (err) return done(err);
