@@ -12,6 +12,12 @@ const loopback = module.exports = require('./lib/loopback');
 const datasourceJuggler = require('loopback-datasource-juggler');
 
 /**
+ * Loopback Datasource Juggler
+ */
+
+loopback.datasourceJuggler = datasourceJuggler
+
+/**
  * Connectors
  */
 
