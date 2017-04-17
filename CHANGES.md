@@ -1,3 +1,17 @@
+2017-04-17, Version 2.38.3
+==========================
+
+ * use lower version of karma-browserify (Diana Lau)
+
+ * update karma-browserify to 5.x (Diana Lau)
+
+ * update translation msg (Diana Lau)
+
+ * Fix user-literal rewrite for anonymous requests (Aaron Buchanan)
+
+ * Forward options in prepareForTokenInvalidation (Miroslav Bajtoš)
+
+
 2017-03-17, Version 2.38.2
 ==========================
 
