@@ -10,6 +10,8 @@ var app = loopback();
 
 app.use(loopback.rest());
 
+// just playing around
+
 var schema = {
   name: String,
 };
