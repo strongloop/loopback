@@ -79,12 +79,26 @@ module.exports = function(User) {
    * Create access token for the logged in user. This method can be overridden to
    * customize how access tokens are generated
    *
-   * @param {Number} ttl The requested ttl
-   * @param {Object} [options] The options for access token, such as scope, appId
+   * Supported flavours:
+   *
+   * ```js
+   * createAccessToken(ttl, cb)
+   * createAccessToken(ttl, options, cb);
+   * createAccessToken(options, cb);
+   * // recent addition:
+   * createAccessToken(data, options, cb);
+   * ```
+   *
+   * @options {Number|Object} [ttl|data] Either the requested ttl,
+   * or an object with token properties to set (see below).
+   * @property {Number} [ttl] The requested ttl
+   * @property {String[]} [scopes] The access scopes granted to the token.
+   * @param {Object} [options] Additional options including remoting context
    * @callback {Function} cb The callback function
    * @param {String|Error} err The error string or object
    * @param {AccessToken} token The generated access token object
    * @promise
+   *
    */
   User.prototype.createAccessToken = function(ttl, options, cb) {
     if (cb === undefined && typeof options === 'function') {
@@ -95,17 +109,21 @@ module.exports = function(User) {
 
     cb = cb || utils.createPromiseCallback();
 
-    if (typeof ttl === 'object' && !options) {
-      // createAccessToken(options, cb)
-      options = ttl;
-      ttl = options.ttl;
+    let tokenData;
+    if (typeof ttl !== 'object') {
+      // createAccessToken(ttl[, options], cb)
+      tokenData = {ttl};
+    } else if (options) {
+      // createAccessToken(data, options, cb)
+      tokenData = ttl;
+    } else {
+      // createAccessToken(options, cb);
+      tokenData = {};
     }
-    options = options || {};
-    var userModel = this.constructor;
-    ttl = Math.min(ttl || userModel.settings.ttl, userModel.settings.maxTTL);
-    this.accessTokens.create({
-      ttl: ttl,
-    }, cb);
+
+    var userSettings = this.constructor.settings;
+    tokenData.ttl = Math.min(tokenData.ttl || userSettings.ttl, userSettings.maxTTL);
+    this.accessTokens.create(tokenData, options, cb);
     return cb.promise;
   };
 
@@ -421,15 +439,90 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      try {
-        User.validatePassword(newPassword);
-      } catch (err) {
+      this.setPassword(newPassword, options, cb);
+    });
+    return cb.promise;
+  };
+
+  /**
+   * Set this user's password after a password-reset request was made.
+   *
+   * @param {*} userId Id of the user changing the password
+   * @param {string} newPassword The new password to use.
+   * @param {Object} [options] Additional options including remoting context
+   * @callback {Function} callback
+   * @param {Error} err Error object
+   * @promise
+   */
+  User.setPassword = function(userId, newPassword, options, cb) {
+    assert(userId != null && userId !== '', 'userId is a required argument');
+    assert(!!newPassword, 'newPassword is a required argument');
+
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+    cb = cb || utils.createPromiseCallback();
+
+    // Make sure to use the constructor of the (sub)class
+    // where the method is invoked from (`this` instead of `User`)
+    this.findById(userId, options, (err, inst) => {
+      if (err) return cb(err);
+
+      if (!inst) {
+        const err = new Error(`User ${userId} not found`);
+        Object.assign(err, {
+          code: 'USER_NOT_FOUND',
+          statusCode: 401,
+        });
         return cb(err);
       }
 
-      const delta = {password: newPassword};
-      this.patchAttributes(delta, options, (err, updated) => cb(err));
+      inst.setPassword(newPassword, options, cb);
     });
+
+    return cb.promise;
+  };
+
+  /**
+   * Set this user's password. The callers of this method
+   * must ensure the client making the request is authorized
+   * to change the password, typically by providing the correct
+   * current password or a password-reset token.
+   *
+   * @param {string} newPassword The new password to use.
+   * @param {Object} [options] Additional options including remoting context
+   * @callback {Function} callback
+   * @param {Error} err Error object
+   * @promise
+   */
+  User.prototype.setPassword = function(newPassword, options, cb) {
+    assert(!!newPassword, 'newPassword is a required argument');
+
+    if (cb === undefined && typeof options === 'function') {
+      cb = options;
+      options = undefined;
+    }
+    cb = cb || utils.createPromiseCallback();
+
+    try {
+      this.constructor.validatePassword(newPassword);
+    } catch (err) {
+      cb(err);
+      return cb.promise;
+    }
+
+    // We need to modify options passed to patchAttributes, but we don't want
+    // to modify the original options object passed to us by setPassword caller
+    options = Object.assign({}, options);
+
+    // patchAttributes() does not allow callers to modify the password property
+    // unless "options.setPassword" is set.
+    options.setPassword = true;
+
+    const delta = {password: newPassword};
+    this.patchAttributes(delta, options, (err, updated) => cb(err));
+
     return cb.promise;
   };
 
@@ -739,7 +832,21 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      user.createAccessToken(ttl, function(err, accessToken) {
+      if (UserModel.settings.restrictResetPasswordTokenScope) {
+        const tokenData = {
+          ttl: ttl,
+          scopes: ['reset-password'],
+        };
+        user.createAccessToken(tokenData, options, onTokenCreated);
+      } else {
+        // We need to preserve backwards-compatibility with
+        // user-supplied implementations of "createAccessToken"
+        // that may not support "options" argument (we have such
+        // examples in our test suite).
+        user.createAccessToken(ttl, onTokenCreated);
+      }
+
+      function onTokenCreated(err, accessToken) {
         if (err) {
           return cb(err);
         }
@@ -750,7 +857,7 @@ module.exports = function(User) {
           user: user,
           options: options,
         });
-      });
+      }
     });
 
     return cb.promise;
@@ -936,6 +1043,25 @@ module.exports = function(User) {
       }
     );
 
+    const setPasswordScopes = UserModel.settings.restrictResetPasswordTokenScope ?
+      ['reset-password'] : undefined;
+
+    UserModel.remoteMethod(
+      'setPassword',
+      {
+        description: 'Reset user\'s password via a password-reset token.',
+        accepts: [
+          {arg: 'id', type: 'any',
+            http: ctx => ctx.req.accessToken && ctx.req.accessToken.userId,
+          },
+          {arg: 'newPassword', type: 'string', required: true, http: {source: 'form'}},
+          {arg: 'options', type: 'object', http: 'optionsFromRequest'},
+        ],
+        accessScopes: setPasswordScopes,
+        http: {verb: 'POST', path: '/reset-password'},
+      }
+    );
+
     UserModel.afterRemote('confirm', function(ctx, inst, next) {
       if (ctx.args.redirect !== undefined) {
         if (!ctx.res) {
@@ -995,6 +1121,46 @@ module.exports = function(User) {
       ctx.query.where.email = ctx.query.where.email.toLowerCase();
     }
     next();
+  });
+
+  User.observe('before save', function rejectInsecurePasswordChange(ctx, next) {
+    const UserModel = ctx.Model;
+    if (!UserModel.settings.rejectPasswordChangesViaPatchOrReplace) {
+      // In legacy password flow, any DAO method can change the password
+      return next();
+    }
+
+    if (ctx.isNewInstance) {
+      // The password can be always set when creating a new User instance
+      return next();
+    }
+    const data = ctx.data || ctx.instance;
+    const isPasswordChange = 'password' in data;
+
+    // This is the option set by `setPassword()` API
+    // when calling `this.patchAttritubes()` to change user's password
+    if (ctx.options.setPassword) {
+      // Verify that only the password is changed and nothing more or less.
+      if (Object.keys(data).length > 1 || !isPasswordChange) {
+        // This is a programmer's error, use the default status code 500
+        return next(new Error(
+          'Invalid use of "options.setPassword". Only "password" can be ' +
+          'changed when using this option.'));
+      }
+
+      return next();
+    }
+
+    if (!isPasswordChange) {
+      return next();
+    }
+
+    const err = new Error(
+      'Changing user password via patch/replace API is not allowed. ' +
+      'Use changePassword() or setPassword() instead.');
+    err.statusCode = 401;
+    err.code = 'PASSWORD_CHANGE_NOT_ALLOWED';
+    next(err);
   });
 
   User.observe('before save', function prepareForTokenInvalidation(ctx, next) {

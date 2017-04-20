@@ -10,6 +10,8 @@ var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'user-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var expect = require('./helpers/expect');
+const Promise = require('bluebird');
+const waitForEvent = require('./helpers/wait-for-event');
 
 describe('users - integration', function() {
   lt.beforeEach.withApp(app);
@@ -153,13 +155,13 @@ describe('users - integration', function() {
         .expect(401);
     });
 
-    it('injects change password options from remoting context', function() {
+    it('uses change password options provided by the remoting context', function() {
       const User = app.models.User;
       const credentials = {email: 'inject@example.com', password: 'pass'};
 
-      let injectedOptions;
+      let observedOptions;
       User.observe('before save', (ctx, next) => {
-        injectedOptions = ctx.options;
+        observedOptions = ctx.options;
         next();
       });
 
@@ -175,7 +177,65 @@ describe('users - integration', function() {
             .expect(204);
         })
         .then(() => {
-          expect(injectedOptions).to.have.property('accessToken');
+          expect(observedOptions).to.have.property('accessToken');
+        });
+    });
+
+    it('resets the user\'s password', function() {
+      const User = app.models.User;
+      const credentials = {email: 'reset@example.com', password: 'pass'};
+      return User.create(credentials)
+        .then(u => {
+          this.user = u;
+          return triggerPasswordReset(credentials.email);
+        })
+        .then(info => {
+          return this.post('/api/users/reset-password')
+            .set('Authorization', info.accessToken.id)
+            .send({
+              newPassword: 'new password',
+            })
+            .expect(204);
+        })
+        .then(() => {
+          return User.findById(this.user.id);
+        })
+        .then(user => {
+          return user.hasPassword('new password');
+        })
+        .then(isMatch => expect(isMatch, 'user has new password').to.be.true());
+    });
+
+    it('rejects unauthenticated reset password requests', function() {
+      return this.post('/api/users/reset-password')
+        .send({
+          newPassword: 'new password',
+        })
+        .expect(401);
+    });
+
+    it('uses password reset options provided by the remoting context', function() {
+      const User = app.models.User;
+      const credentials = {email: 'inject-reset@example.com', password: 'pass'};
+
+      let observedOptions;
+      User.observe('before save', (ctx, next) => {
+        observedOptions = ctx.options;
+        next();
+      });
+
+      return User.create(credentials)
+        .then(u => triggerPasswordReset(credentials.email))
+        .then(info => {
+          return this.post('/api/users/reset-password')
+            .set('Authorization', info.accessToken.id)
+            .send({
+              newPassword: 'new password',
+            })
+            .expect(204);
+        })
+        .then(() => {
+          expect(observedOptions).to.have.property('accessToken');
         });
     });
   });
@@ -246,4 +306,13 @@ describe('users - integration', function() {
         });
     });
   });
+
+  function triggerPasswordReset(email) {
+    const User = app.models.User;
+    return Promise.all([
+      User.resetPassword({email: email}),
+      waitForEvent(app.models.User, 'resetPasswordRequest'),
+    ])
+    .spread((reset, info) => info);
+  }
 });
