@@ -964,6 +964,12 @@ describe.onServer('Remote Methods', function() {
         });
     });
 
+    it('sets empty options.accessToken for requests coming from websocket/primus adapters', function() {
+      const primusContext = {};
+      const opts = TestModel.createOptionsFromRemotingContext(primusContext);
+      expect(opts).to.have.property('accessToken', null);
+    });
+
     it('allows apps to add options before remoting hooks', function(done) {
       TestModel.createOptionsFromRemotingContext = function(ctx) {
         return {hooks: []};
