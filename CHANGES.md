@@ -1,3 +1,25 @@
+2017-04-27, Version 3.7.0
+=========================
+
+ * Remote method /user/:id/verify (ebarault)
+
+ * Implement more secure password flow (Miroslav Bajtoš)
+
+ * Add User.setPassword(id, new, cb) (Miroslav Bajtoš)
+
+ * Fix method setup in authorization-scopes.test (Miroslav Bajtoš)
+
+ * Add missing tests for reset password flow (Miroslav Bajtoš)
+
+ * forwarding context options in user.verify (ebarault)
+
+ * update deprecated dependencies (Diana Lau)
+
+ * Add support for scoped access tokens (Miroslav Bajtoš)
+
+ * Fix user-literal rewrite for anonymous requests (Aaron Buchanan)
+
+
 2017-03-31, Version 3.6.0
 =========================
 
