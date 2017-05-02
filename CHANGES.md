@@ -1,3 +1,9 @@
+2017-05-02, Version 3.8.0
+=========================
+
+ * Refactor access token to make it extensible (Raymond Feng)
+
+
 2017-04-27, Version 3.7.0
 =========================
 
