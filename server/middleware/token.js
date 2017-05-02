@@ -88,6 +88,9 @@ function escapeRegExp(str) {
  * @property {Boolean} [overwriteExistingToken] only has effect in combination with `enableDoublecheck`. If truthy, will allow to overwrite an existing accessToken.
  * @property {Function|String} [model] AccessToken model name or class to use.
  * @property {String} [currentUserLiteral] String literal for the current user.
+ * @property {Boolean} [bearerTokenBase64Encoded] Defaults to `true`. For `Bearer` token based `Authorization` headers,
+ * decode the value from `Base64`. If set to `false`, the decoding will be skipped and the token id will be the raw value
+ * parsed from the header.
  * @header loopback.token([options])
  */
 
@@ -104,6 +107,9 @@ function token(options) {
     currentUserLiteral = escapeRegExp(currentUserLiteral);
   }
 
+  if (options.bearerTokenBase64Encoded === undefined) {
+    options.bearerTokenBase64Encoded = true;
+  }
   var enableDoublecheck = !!options.enableDoublecheck;
   var overwriteExistingToken = !!options.overwriteExistingToken;
 
