@@ -55,6 +55,7 @@
     "nodemailer-stub-transport": "^1.0.0",
     "serve-favicon": "^2.2.0",
     "stable": "^0.1.5",
+    "strong-error-handler": "^2.1.0",
     "strong-globalize": "^2.7.0",
     "strong-remoting": "^3.0.0",
     "uid2": "0.0.3",
@@ -95,7 +96,6 @@
     "phantomjs-prebuilt": "^2.1.7",
     "sinon": "^1.13.0",
     "sinon-chai": "^2.8.0",
-    "strong-error-handler": "^1.0.1",
     "strong-task-emitter": "^0.0.6",
     "supertest": "^3.0.0"
   },
