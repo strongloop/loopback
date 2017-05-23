@@ -95,8 +95,8 @@
     "phantomjs-prebuilt": "^2.1.7",
     "sinon": "^1.13.0",
     "sinon-chai": "^2.8.0",
-    "strong-task-emitter": "^0.0.6",
     "strong-error-handler": "^2.1.0",
+    "strong-task-emitter": "^0.0.6",
     "supertest": "^3.0.0"
   },
   "repository": {
