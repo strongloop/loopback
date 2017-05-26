@@ -121,7 +121,8 @@
   "ci": {
     "downstreamIgnoreList": [
       "dashboard-controller",
-      "gateway-director-management-interface"
+      "gateway-director-management-interface",
+      "strong-mesh-client"
     ]
   },
   "license": "MIT"
