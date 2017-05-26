@@ -114,6 +114,11 @@ describe('OptionsFromRemotingContext', function() {
       return request.get('/products/count').expect(200)
         .then(expectInjectedOptions);
     });
+
+    it('injects options to createChangeStream()', function() {
+      return request.get('/products/change-stream').expect(200)
+        .then(expectInjectedOptions);
+    });
   });
 
   context('when invoking prototype methods', function() {
