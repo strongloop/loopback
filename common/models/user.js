@@ -1113,7 +1113,7 @@ module.exports = function(User) {
             var accessToken = req && req.accessToken;
             var tokenID = accessToken ? accessToken.id : undefined;
 
-            return tokenID;
+            return tokenID || '';
           }, description: 'Do not supply this argument, it is automatically extracted ' +
             'from request headers.',
           },
