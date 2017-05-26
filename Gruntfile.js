@@ -235,6 +235,10 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', ['browserify']);
 
+  grunt.registerTask('set-test-env', function() {
+    process.env.NODE_ENV = 'test';
+  });
+
   grunt.registerTask('test', [
     'eslint',
     process.env.JENKINS_HOME ? 'mochaTest:unit-xml' : 'mochaTest:unit',
@@ -243,5 +247,5 @@ module.exports = function(grunt) {
   ]);
 
   // alias for sl-ci-run and `npm test`
-  grunt.registerTask('mocha-and-karma', ['test']);
+  grunt.registerTask('mocha-and-karma', ['set-test-env', 'test']);
 };
