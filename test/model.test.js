@@ -652,6 +652,53 @@ describe.onServer('Remote Methods', function() {
       assert.equal(user.a, 'foo');
       assert.equal(user.b, 'bar');
     });
+
+    it('Extended should inherit validations', function(done) {
+      var datasource = loopback.createDataSource({
+        connector: loopback.Memory,
+      });
+      //setup parent
+      var Parent = PersistedModel.extend('Parent', { 'name': String });
+      Parent.attachTo(datasource);
+      Parent.validatesLengthOf(
+        'name', { min: 5, message: { min: 'too short' }}
+      );
+      //setup child
+      var Child = Parent.extend('Child');
+      Child.attachTo(datasource);
+      var aChild = new Child({ name: 'foo1' });
+      aChild.save(function(err, res) {
+        assert(err.message.match('too short'), 'Should have error message');
+        done();
+      });
+    });
+
+    it('Child should be able to extend validations', function(done) {
+      var datasource = loopback.createDataSource({
+        connector: loopback.Memory,
+      });
+      var Parent = PersistedModel.extend('Parent', { 'name': String });
+      Parent.attachTo(datasource);
+      Parent.validatesLengthOf(
+        'name', { min: 5, message: { min: 'too short' }}
+      );
+      var Child = Parent.extend('Child');
+      Child.attachTo(datasource);
+
+      //child validation
+      Child.validatesFormatOf(
+        'name', { with: 'right', message: { with: 'Not right' }}
+      );
+      var aChild = new Child({ name: 'foo1' });
+      var aChild2 = new Child({ name: 'right' });
+      aChild.save(function(err, res) {
+        assert(err.details.messages.name[0] == 'too short',
+          'Have error message');
+        assert(err.details.messages.name[1].with == 'Not right',
+          'Have error message');
+        done();
+      });
+    });
   });
 
   describe('Model.extend() events', function() {
