@@ -1059,8 +1059,8 @@ module.exports = function(User) {
     };
 
     UserModel.setter.password = function(plain) {
-      if (typeof plain !== 'string') {
-        return;
+      if (typeof plain === 'number') {
+        plain = plain.toString();
       }
       if (plain.indexOf('$2a$') === 0 && plain.length === 60) {
         // The password is already hashed. It can be the case
