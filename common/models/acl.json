@@ -3,13 +3,18 @@
   "properties": {
     "model": {
       "type": "string",
+      "index": true,
       "description": "The name of the model"
     },
     "property": {
       "type": "string",
+      "index": true,
       "description": "The name of the property, method, scope, or relation"
     },
-    "accessType": "string",
+    "accessType": {
+      "type": "string",
+      "index": true
+    },
     "permission": "string",
     "principalType": "string",
     "principalId": "string"

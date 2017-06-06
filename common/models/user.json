@@ -5,7 +5,8 @@
       "type": "string"
     },
     "username": {
-      "type": "string"
+      "type": "string",
+      "index": true
     },
     "password": {
       "type": "string",
@@ -21,7 +22,8 @@
     },
     "email": {
       "type": "string",
-      "required": true
+      "required": true,
+      "index": true
     },
     "emailVerified": "boolean",
     "verificationToken": "string",
