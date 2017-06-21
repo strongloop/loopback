@@ -89,6 +89,7 @@
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-script-launcher": "^1.0.0",
     "loopback-boot": "^2.7.0",
+    "loopback-component-storage": "^3.2.0",
     "loopback-context": "^1.0.0",
     "mocha": "^3.0.0",
     "nyc": "^10.1.2",

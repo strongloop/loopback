@@ -1,0 +1,12 @@
+{
+  "My-Object-Storage": {
+    "username": "0",
+    "password": "*",
+    "name": "My-Object-Storage",
+    "authUrl": "https://identity.open.softlayer.com",
+    "tenantId": "1",
+    "domainId": "2",
+    "region": "dallas",
+    "connector": "object-storage"
+  }
+}
