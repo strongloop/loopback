@@ -1,0 +1,5 @@
+{
+  "name": "object-storage-app",
+  "version": "1.0.0",
+  "main": "server/server.js"
+}
