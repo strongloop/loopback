@@ -839,8 +839,7 @@ describe('app', function() {
       app.set('host', undefined);
 
       app.listen(function() {
-        var host = process.platform === 'win32' ? 'localhost' : app.get('host');
-        var expectedUrl = 'http://' + host + ':' + app.get('port') + '/';
+        var expectedUrl = 'http://localhost:' + app.get('port') + '/';
         expect(app.get('url'), 'url').to.equal(expectedUrl);
 
         done();
