@@ -5,6 +5,7 @@
 
 'use strict';
 var expect = require('./helpers/expect');
+var sinon = require('sinon');
 var loopback = require('../');
 
 describe('PersistedModel.createChangeStream()', function() {
@@ -20,6 +21,8 @@ describe('PersistedModel.createChangeStream()', function() {
       });
     });
 
+    afterEach(verifyObserversRemoval);
+
     it('should detect create', function(done) {
       var Score = this.Score;
 
@@ -27,7 +30,6 @@ describe('PersistedModel.createChangeStream()', function() {
         changes.on('data', function(change) {
           expect(change.type).to.equal('create');
           changes.destroy();
-
           done();
         });
 
@@ -67,6 +69,32 @@ describe('PersistedModel.createChangeStream()', function() {
         });
       });
     });
+
+    it('should not emit changes after destroy', function(done) {
+      var Score = this.Score;
+
+      var spy = sinon.spy();
+
+      Score.createChangeStream(function(err, changes) {
+        changes.on('data', function() {
+          spy();
+          changes.destroy();
+        });
+
+        Score.create({team: 'foo'})
+          .then(() => Score.deleteAll())
+          .then(() => {
+            expect(spy.calledOnce);
+            done();
+          });
+      });
+    });
+
+    function verifyObserversRemoval() {
+      var Score = this.Score;
+      expect(Score._observers['after save']).to.be.empty();
+      expect(Score._observers['after delete']).to.be.empty();
+    }
   });
 
   // TODO(ritch) implement multi-server support
