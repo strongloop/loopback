@@ -1,3 +1,21 @@
+2017-07-12, Version 3.9.0
+=========================
+
+ * Remove observers from Model on end of the stream (Alexei Smirnov)
+
+ * Fix Model#settings.acls doc type signature (Farid Nouri Neshat)
+
+ * Use `localhost` instead of `::` for local (Daijiro Wachi)
+
+ * Fix API doc for Model class property type (Candy)
+
+ * Update package.json (sqlwwx)
+
+ * Support remoting adapters with no ctx.req object (Piero Maltese)
+
+ * update strong-error-handler (sqlwwx)
+
+
 2017-05-02, Version 3.8.0
 =========================
 
