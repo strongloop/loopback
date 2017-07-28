@@ -20,7 +20,7 @@ LoopBack consists of:
 LoopBack tools include:
   * Command-line tool `loopback-cli` to create applications, models, data sources, and so on.
 
-For more details, see [http://loopback.io/](http://loopback.io/).
+For more details, see [https://loopback.io/](https://loopback.io/).
 
 ## Supported versions
 
@@ -28,7 +28,7 @@ Current|Long Term Support
 :-:|:-:
 3.x|2.x
 
-Learn more about our LTS plan in [docs](http://loopback.io/doc/en/contrib/Long-term-support.html).
+Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
 
 ## LoopBack modules
 
@@ -55,7 +55,7 @@ The LoopBack framework is a set of Node.js modules that you can use independentl
 
 ### Community Connectors
 
-The LoopBack community has created and supports a number of additional connectors.  See [Community connectors](http://loopback.io/doc/en/lb2/Community-connectors.html) for details.
+The LoopBack community has created and supports a number of additional connectors.  See [Community connectors](https://loopback.io/doc/en/lb2/Community-connectors.html) for details.
 
 ### Components
 * [loopback-component-push](https://github.com/strongloop/loopback-component-push)
@@ -78,12 +78,12 @@ The LoopBack community has created and supports a number of additional connector
 
 StrongLoop provides a number of example applications that illustrate various key LoopBack features. In some cases, they have accompanying step-by-step instructions (tutorials).
 
-See [loopback-example](https://github.com/strongloop/loopback-example) for details.
+See [examples at loopback.io](https://loopback.io/examples/) for details.
 
 ## Resources
 
-  * [Documentation](http://loopback.io/doc/).
-  * [API documentation](http://apidocs.strongloop.com/loopback).
+  * [Documentation](https://loopback.io/doc/).
+  * [API documentation](https://apidocs.strongloop.com/loopback).
   * [LoopBack Announcements](https://groups.google.com/forum/#!forum/loopbackjs-announcements)
   * [LoopBack Google Group](https://groups.google.com/forum/#!forum/loopbackjs).
   * [GitHub issues](https://github.com/strongloop/loopback/issues).
@@ -91,10 +91,10 @@ See [loopback-example](https://github.com/strongloop/loopback-example) for detai
 
 ## Contributing
 
-Contributions to the LoopBack project are welcome! See [Contributing to LoopBack](http://loopback.io/doc/en/contrib/index.html) for more information.
+Contributions to the LoopBack project are welcome! See [Contributing to LoopBack](https://loopback.io/doc/en/contrib/index.html) for more information.
 
 ## Reporting issues
 
-One of the easiest ways to contribute to LoopBack is to report an issue. See [Reporting issues](http://loopback.io/doc/en/contrib/Reporting-issues.html) for more information.
+One of the easiest ways to contribute to LoopBack is to report an issue. See [Reporting issues](https://loopback.io/doc/en/contrib/Reporting-issues.html) for more information.
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
