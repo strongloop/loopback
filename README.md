@@ -78,7 +78,7 @@ The LoopBack community has created and supports a number of additional connector
 
 StrongLoop provides a number of example applications that illustrate various key LoopBack features. In some cases, they have accompanying step-by-step instructions (tutorials).
 
-See [loopback-example](https://loopback.io/examples/) for details.
+See [examples at loopback.io](https://loopback.io/examples/) for details.
 
 ## Resources
 
