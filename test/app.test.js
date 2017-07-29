@@ -1009,25 +1009,120 @@ describe('app', function() {
     expect(app.loopback).to.equal(loopback);
   });
 
-  describe('normalizeHttpPath option', function() {
-    var app, db;
+  function setupUserModels(app, options, done) {
+    app.dataSource('db', {connector: 'memory'});
+    var UserAccount = app.registry.createModel(
+      'UserAccount',
+      {name: 'string'},
+      options
+    );
+    var UserRole = app.registry.createModel(
+      'UserRole',
+      {name: 'string'}
+    );
+    app.model(UserAccount, {dataSource: 'db'});
+    app.model(UserRole, {dataSource: 'db'});
+    UserAccount.hasMany(UserRole);
+    UserAccount.create({
+      name: 'user',
+    }, function(err, user) {
+      if (err) return done(err);
+      app.use(loopback.rest());
+      done();
+    });
+  }
+
+  describe('Model-level normalizeHttpPath option', function() {
+    var app;
     beforeEach(function() {
       app = loopback();
-      db = loopback.createDataSource({connector: loopback.Memory});
     });
 
-    it.onServer('normalizes the http path', function(done) {
-      var UserAccount = PersistedModel.extend(
-        'UserAccount',
-        {name: String},
-        {
-          remoting: {normalizeHttpPath: true},
+    it.onServer('honours Model-level setting of `false`', function(done) {
+      setupUserModels(app, {
+        remoting: {normalizeHttpPath: false},
+      }, function(err) {
+        if (err) return done(err);
+        request(app).get('/UserAccounts').expect(200, function(err) {
+          if (err) return done(err);
+          request(app).get('/UserAccounts/1/userRoles').expect(200, function(err) {
+            if (err) return done(err);
+            done();
+          });
         });
-      app.model(UserAccount);
-      UserAccount.attachTo(db);
+      });
+    });
 
-      app.use(loopback.rest());
-      request(app).get('/user-accounts').expect(200, done);
+    it.onServer('honours Model-level setting of `true`', function(done) {
+      setupUserModels(app, {
+        remoting: {normalizeHttpPath: true},
+      }, function(err) {
+        if (err) return done(err);
+        request(app).get('/user-accounts').expect(200, function(err) {
+          if (err) return done(err);
+          request(app).get('/user-accounts/1/user-roles').expect(200, function(err) {
+            if (err) return done(err);
+            done();
+          });
+        });
+      });
+    });
+  });
+  describe('app-level normalizeHttpPath option', function() {
+    var app;
+    beforeEach(function() {
+      app = loopback();
+    });
+
+    it.onServer('honours app-level setting of `false`', function(done) {
+      app.set('remoting', {rest: {normalizeHttpPath: false}});
+      setupUserModels(app, null, function(err) {
+        if (err) return done(err);
+        request(app).get('/UserAccounts').expect(200, function(err) {
+          if (err) return done(err);
+          request(app).get('/UserAccounts/1/userRoles').expect(200, function(err) {
+            if (err) return done(err);
+            done();
+          });
+        });
+      });
+    });
+
+    it.onServer('honours app-level setting of `true`', function(done) {
+      app.set('remoting', {rest: {normalizeHttpPath: true}});
+      setupUserModels(app, null, function(err) {
+        if (err) return done(err);
+        request(app).get('/user-accounts').expect(200, function(err) {
+          if (err) return done(err);
+          request(app).get('/user-accounts/1/user-roles').expect(200, function(err) {
+            if (err) return done(err);
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  describe('Model-level and app-level normalizeHttpPath options', function() {
+    var app;
+    beforeEach(function() {
+      app = loopback();
+    });
+
+    it.onServer('prioritizes Model-level setting over the app-level one', function(done) {
+      app.set('remoting', {rest: {normalizeHttpPath: true}});
+      setupUserModels(app, {
+        remoting: {normalizeHttpPath: false},
+      }, function(err) {
+        if (err) return done(err);
+        request(app).get('/UserAccounts').expect(200, function(err) {
+          if (err) return done(err);
+          request(app).get('/UserAccounts/1/userRoles').expect(200, function(err) {
+            if (err) return done(err);
+            done();
+          });
+        });
+      });
     });
   });
 });
