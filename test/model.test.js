@@ -14,6 +14,7 @@ var PersistedModel = loopback.PersistedModel;
 var Promise = require('bluebird');
 var TaskEmitter = require('strong-task-emitter');
 var request = require('supertest');
+var path = require('path');
 
 var expect = require('./helpers/expect');
 
@@ -1031,5 +1032,13 @@ describe.onServer('Remote Methods', function() {
           userId = token.userId;
         });
     }
+  });
+
+  describe('Create Model with remote methods from JSON description', function() {
+    it('does not add isStatic properties to the method settings', function() {
+      var app = require(path.join(__dirname,
+        'fixtures/remote-methods/server/server.js'));
+      assert.deepEqual(app.models.Foo.settings.methods.staticMethod, {});
+    });
   });
 });
