@@ -2615,7 +2615,6 @@ describe('User', function() {
           });
         },
         function updatePartialUser(next) {
-          delete User.validations;
           User.updateAll(
             {pk: userPartial.pk},
             {age: userPartial.age + 1},
@@ -2714,7 +2713,6 @@ describe('User', function() {
           });
         },
         function updateSpecialUser(next) {
-          delete User.validations;
           User.updateAll(
                 {name: 'Special'},
                 {email: 'superspecial@example.com'}, function(err, info) {
