@@ -177,13 +177,54 @@ describe('Replication / Change APIs', function() {
         },
         function(data, callback) {
           SourceModel.replicate(TargetModel, callback);
-          // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
+          // replicate should call `rectifyOnDelete` and then `rectifyChange` not `rectifyAllChanges` through `after delete` operation
         }
       ], function(err, results) {
         if (err) return done(err);
 
         expect(calls).to.eql(['rectifyChange']);
 
+        done();
+      });
+    });
+
+    it('rectifyOnDelete for destroyAll should call rectifyAllChanges', function(done) {
+      var sourceCalls = mockSourceModelRectify();
+      async.waterfall([
+        function(callback) {
+          SourceModel.destroyAll({name: 'Jane'}, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnDelete` and then `rectifyAllChanges` not `rectifyChange` through `after delete` operation
+        }
+      ], function(err, result) {
+        if (err) return done(err);
+        expect(sourceCalls).to.eql(['rectifyAllChanges']);
+
+        done();
+      });
+    });
+
+    it('rectifyOnDelete for destroyAll should call rectifyChange instead of rectifyAllChanges when overwritten', function(done) {
+      var sourceCalls = mockSourceModelRectify();
+
+      // overwrite rectifyOnSave
+      SourceModel.rectifyOnDelete = function(ctx, next) {
+        var id = 'abc';
+        ctx.Model.rectifyChange(id, next);
+      };
+      async.waterfall([
+        function(callback) {
+          SourceModel.destroyAll({name: 'Jane'}, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnDelete` and then `rectifyChange` not `rectifyAllChanges` through `after delete` operation
+        }
+      ], function(err, result) {
+        if (err) return done(err);
+        expect(sourceCalls).to.eql(['rectifyChange']);
         done();
       });
     });
