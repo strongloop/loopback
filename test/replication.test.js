@@ -208,6 +208,49 @@ describe('Replication / Change APIs', function() {
       });
     });
 
+    it('rectifyOnSave for updateAll should call rectifyAllChanges', function(done) {
+      var sourceCalls = mockSourceModelRectify();
+      var newData = {'name': 'Janie'};
+      async.waterfall([
+        function(callback) {
+          SourceModel.updateAll({name: 'Jane'}, newData, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnSave` and then `rectifyAllChanges` not `rectifyChange` through `after save` operation
+        }
+      ], function(err, result) {
+        if (err) return done(err);
+        expect(sourceCalls).to.eql(['rectifyAllChanges']);
+
+        done();
+      });
+    });
+
+    it('rectifyOnSave for updateAll should call rectifyChange instead of rectifyAllChanges when overwritten', function(done) {
+      var sourceCalls = mockSourceModelRectify();
+      var newData = {'name': 'Janie'};
+
+      // overwrite rectifyOnSave
+      SourceModel.rectifyOnSave = function(ctx, next) {
+        var id = 'abc';
+        ctx.Model.rectifyChange(id, next);
+      };
+      async.waterfall([
+        function(callback) {
+          SourceModel.updateAll({name: 'Jane'}, newData, callback);
+        },
+        function(data, callback) {
+          SourceModel.replicate(TargetModel, callback);
+          // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
+        }
+      ], function(err, result) {
+        if (err) return done(err);
+        expect(sourceCalls).to.eql(['rectifyChange']);
+        done();
+      });
+    });
+
     it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges', function(done) {
       var calls = mockTargetModelRectify();
       var newData = [{name: 'Janie', surname: 'Doe'}];
