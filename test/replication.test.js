@@ -248,7 +248,7 @@ describe('Replication / Change APIs', function() {
     it('rectifyOnDelete for destroyAll should call rectifyChange instead of rectifyAllChanges when overwritten', function(done) {
       var sourceCalls = mockSourceModelRectify();
 
-      // overwrite rectifyOnSave
+      // overwrite rectifyOnDelete
       SourceModel.getIdsFromWhere = function(where, cb) {
         var ids = where.name === 'Jane' ? ['abc', 'def'] : null;
         cb(null, ids);
