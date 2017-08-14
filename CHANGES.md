@@ -1,3 +1,35 @@
+2017-08-14, Version 3.10.0
+==========================
+
+ * Allow glob-style patterns for remote options (Zak Barbuto)
+
+ * Fix case of values per doc issue (crandmck)
+
+ * Update translated strings Q3 2017 (Allen Boone)
+
+ * Revert "Validate on updateAll" (Sakib Hasan)
+
+ * Add tests of HTTP normalization on app level (Jürg Lehni)
+
+ * travis: drop Node.js 7.x, add 8.x (Miroslav Bajtoš)
+
+ * Validate on updateAll (ssh24)
+
+ * Update juggler version (loay)
+
+ * update messages.json (Diana Lau)
+
+ * small fix for the title (Michael Alaev)
+
+ * Changed http to https (Michael Alaev)
+
+ * Update Travis registry (loay)
+
+ * Add unit test for empty password (loay)
+
+ * Add CODEOWNER file (Diana Lau)
+
+
 2017-07-12, Version 3.9.0
 =========================
 
