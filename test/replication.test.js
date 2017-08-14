@@ -249,7 +249,7 @@ describe('Replication / Change APIs', function() {
       var sourceCalls = mockSourceModelRectify();
 
       // overwrite rectifyOnDelete
-      SourceModel.getIdsFromWhere = function(where, cb) {
+      SourceModel.getIdsFromWhere = function(where, ctx, cb) {
         var ids = where.name === 'Jane' ? ['abc', 'def'] : null;
         cb(null, ids);
       };
@@ -265,6 +265,21 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
         expect(sourceCalls).to.eql(['rectifyChanges']);
         done();
+      });
+    });
+
+    it('rectifyOnDelete for destroyAll when overwritten should handle error case', function(done) {
+
+      // overwrite rectifyOnDelete
+      SourceModel.getIdsFromWhere = function(where, ctx, cb) {
+
+        cb('An Error Occurred', null);
+      };
+      SourceModel.once('error', function() {
+        done();
+      });
+      SourceModel.destroyAll({name: 'Jane'}, function(err, results) {
+        expect(err).to.equal('An Error Occurred');
       });
     });
 
@@ -312,7 +327,7 @@ describe('Replication / Change APIs', function() {
       var newData = {'name': 'Janie'};
 
       // overwrite rectifyOnSave
-      SourceModel.getIdsFromWhere = function(where, cb) {
+      SourceModel.getIdsFromWhere = function(where, ctx, cb) {
         var ids = where.name === 'Jane' ? ['abc', 'def'] : null;
         cb(null, ids);
       };
@@ -328,6 +343,21 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
         expect(sourceCalls).to.eql(['rectifyChanges']);
         done();
+      });
+    });
+
+    it('rectifyOnSave for updateAll when overwritten should handle error case', function(done) {
+
+      // overwrite rectifyOnSave
+      SourceModel.getIdsFromWhere = function(where, ctx, cb) {
+
+        cb('An Error Occurred', null);
+      };
+      SourceModel.once('error', function() {
+        done();
+      });
+      SourceModel.updateAll({name: 'Jane'}, function(err, results) {
+        expect(err).to.equal('An Error Occurred');
       });
     });
 
