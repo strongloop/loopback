@@ -249,7 +249,7 @@ describe('Replication / Change APIs', function() {
       var sourceCalls = mockSourceModelRectify();
 
       // overwrite rectifyOnSave
-      SourceModel.getIdsFromWhereByModelId = function(where, cb) {
+      SourceModel.getIdsFromWhere = function(where, cb) {
         var ids = where.name === 'Jane' ? ['abc', 'def'] : null;
         cb(null, ids);
       };
@@ -312,7 +312,7 @@ describe('Replication / Change APIs', function() {
       var newData = {'name': 'Janie'};
 
       // overwrite rectifyOnSave
-      SourceModel.getIdsFromWhereByModelId = function(where, cb) {
+      SourceModel.getIdsFromWhere = function(where, cb) {
         var ids = where.name === 'Jane' ? ['abc', 'def'] : null;
         cb(null, ids);
       };
