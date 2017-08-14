@@ -65,5 +65,9 @@
   "profile": {
     "dataSource": "db",
     "public": true
+  },
+  "customerforceidfalse": {
+    "dataSource": "db",
+    "public": true
   }
 }

@@ -194,6 +194,21 @@ describe('remoting - integration', function() {
     ];
     expect(methods).to.include.members(expectedMethods);
   });
+
+  describe('createOnlyInstance', function() {
+    it('sets createOnlyInstance to true if id is generated and forceId is not set to false',
+      function() {
+        var storeClass = findClass('store');
+        var createMethod = getCreateMethod(storeClass.methods);
+        assert(createMethod[0].accepts[0].createOnlyInstance === true);
+      });
+
+    it('sets createOnlyInstance to false if forceId is set to false in the model', function() {
+      var customerClass = findClass('customerforceidfalse');
+      var createMethod = getCreateMethod(customerClass.methods);
+      assert(createMethod[0].accepts[0].createOnlyInstance === false);
+    });
+  });
 });
 
 describe('With model.settings.replaceOnPUT false', function() {
@@ -313,6 +328,12 @@ function getFormattedMethodsExcludingRelations(methods) {
   })
   .reduce(function(p, c) {
     return p.concat(c);
+  });
+}
+
+function getCreateMethod(methods) {
+  return methods.filter(function(m) {
+    return (m.name === 'create');
   });
 }
 
