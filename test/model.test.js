@@ -1032,4 +1032,18 @@ describe.onServer('Remote Methods', function() {
         });
     }
   });
+
+  describe('Create Model with remote methods from JSON description', function() {
+    it('does not add isStatic properties to the method settings', function() {
+      const app = loopback();
+      const Foo = app.registry.createModel({
+        name: 'Foo',
+        methods: {
+          staticMethod: {},
+        },
+      });
+      app.model(Foo);
+      expect(app.models.Foo.settings.methods.staticMethod).to.eql({});
+    });
+  });
 });
