@@ -832,9 +832,38 @@ describe('loopback', function() {
       expect(publicMethods).to.be.empty();
     });
 
-    it('hides methods for related models using globs', function() {
-      var TestModel = app.registry.createModel(uniqueModelName);
-      var RelatedModel = app.registry.createModel(uniqueModelName);
+    it('hides methods for related models using globs (model configured first)', function() {
+      const TestModel = app.registry.createModel('TestModel');
+      const RelatedModel = app.registry.createModel('RelatedModel');
+      app.dataSource('test', {connector: 'memory'});
+      app.model(TestModel, {
+        dataSource: 'test',
+        relations: {
+          related: {
+            type: 'hasOne',
+            model: RelatedModel,
+          },
+        },
+        options: {
+          remoting: {
+            sharedMethods: {
+              '*__related': false,
+            },
+          },
+        },
+      });
+      app.model(RelatedModel, {dataSource: 'test'});
+
+      const publicMethods = getSharedMethods(TestModel);
+
+      expect(publicMethods).to.not.include.members([
+        'prototype.__create__related',
+      ]);
+    });
+
+    it('hides methods for related models using globs (related model configured first)', function() {
+      const TestModel = app.registry.createModel('TestModel');
+      const RelatedModel = app.registry.createModel('RelatedModel');
       app.dataSource('test', {connector: 'memory'});
       app.model(RelatedModel, {dataSource: 'test'});
       app.model(TestModel, {
@@ -854,7 +883,7 @@ describe('loopback', function() {
         },
       });
 
-      var publicMethods = getSharedMethods(TestModel);
+      const publicMethods = getSharedMethods(TestModel);
 
       expect(publicMethods).to.not.include.members([
         'prototype.__create__related',
