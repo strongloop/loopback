@@ -11,7 +11,15 @@ Immediate support:
 
 <!--
 If feature: A description of the feature
-If bug: Steps to reproduce + link to sample repo
+If bug: Steps to reproduce
+-->
+
+# Link to reproduction sandbox
+
+<!--
+Link to an app sandbox for reproduction
+
+Note: Failure to provide a sandbox application for reproduction purposes will result in the issue being closed.
 -->
 
 # Expected result
