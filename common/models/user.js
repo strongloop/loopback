@@ -16,6 +16,8 @@ var path = require('path');
 var qs = require('querystring');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
+// bcrypt's max length is 72 bytes;
+// See https://github.com/kelektiv/node.bcrypt.js/blob/45f498ef6dc6e8234e58e07834ce06a50ff16352/src/node_blf.h#L59
 var MAX_PASSWORD_LENGTH = 72;
 var bcrypt;
 try {
@@ -993,18 +995,22 @@ module.exports = function(User) {
 
   User.validatePassword = function(plain) {
     var err;
-    if (plain && typeof plain === 'string' && plain.length <= MAX_PASSWORD_LENGTH) {
-      return true;
-    }
-    if (plain.length > MAX_PASSWORD_LENGTH) {
-      err = new Error(g.f('Password too long: %s', plain));
-      err.code = 'PASSWORD_TOO_LONG';
-    } else {
-      err =  new Error(g.f('Invalid password: %s', plain));
+    if (!plain || typeof plain !== 'string') {
+      err = new Error(g.f('Invalid password.'));
       err.code = 'INVALID_PASSWORD';
+      err.statusCode = 422;
+      throw err;
     }
-    err.statusCode = 422;
-    throw err;
+
+    // Bcrypt only supports up to 72 bytes; the rest is silently dropped.
+    var len = Buffer.byteLength(plain, 'utf8');
+    if (len > MAX_PASSWORD_LENGTH) {
+      err = new Error(g.f('The password entered was too long. Max length is %d (entered %d)',
+        MAX_PASSWORD_LENGTH, len));
+      err.code = 'PASSWORD_TOO_LONG';
+      err.statusCode = 422;
+      throw err;
+    }
   };
 
   User._invalidateAccessTokensOfUsers = function(userIds, options, cb) {

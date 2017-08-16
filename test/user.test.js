@@ -430,7 +430,7 @@ describe('User', function() {
         var u = new User({username: 'foo', password: pass73Char});
         assert(false, 'Error should have been thrown');
       } catch (e) {
-        expect(e).to.match(/Password too long/);
+        expect(e).to.match(/password entered was too long/);
         done();
       }
     });
@@ -462,7 +462,7 @@ describe('User', function() {
         if (err) return done(err);
         User.resetPassword({email: 'b@c.com', password: pass73Char}, function(err) {
           assert(err);
-          expect(err).to.match(/Password too long/);
+          expect(err).to.match(/password entered was too long/);
           done();
         });
       });
@@ -474,7 +474,7 @@ describe('User', function() {
         .then(
           success => { throw new Error('changePassword should have failed'); },
           err => {
-            expect(err.message).to.match(/Password too long/);
+            expect(err.message).to.match(/password entered was too long/);
 
             // workaround for chai problem
             //   object tested must be an array, an object, or a string,
@@ -493,7 +493,7 @@ describe('User', function() {
         .then(
           success => { throw new Error('setPassword should have failed'); },
           err => {
-            expect(err.message).to.match(/Password too long/);
+            expect(err.message).to.match(/password entered was too long/);
 
             // workaround for chai problem
             //   object tested must be an array, an object, or a string,
