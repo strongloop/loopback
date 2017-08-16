@@ -1,3 +1,11 @@
+2017-08-16, Version 3.10.1
+==========================
+
+ * fix(validatePassword): reword error message (Samuel Reed)
+
+ * Do not add isStatic properties to method settings (Jürg Lehni)
+
+
 2017-08-14, Version 3.10.0
 ==========================
 
