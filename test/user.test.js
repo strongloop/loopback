@@ -417,6 +417,39 @@ describe('User', function() {
       });
     });
 
+    it('rejects updating with empty password using replaceAttributes', function(done) {
+      User.create({email: 'b@example.com', password: pass72Char}, function(err, userCreated) {
+        if (err) return done(err);
+        userCreated.replaceAttributes({'password': ''}, function(err, userUpdated) {
+          expect(err.code).to.equal('INVALID_PASSWORD');
+          expect(err.statusCode).to.equal(422);
+          done();
+        });
+      });
+    });
+
+    it('rejects updating with empty password using updateOrCreate', function(done) {
+      User.create({email: 'b@example.com', password: pass72Char}, function(err, userCreated) {
+        if (err) return done(err);
+        User.updateOrCreate({id: userCreated.id, 'password': ''}, function(err, userUpdated) {
+          expect(err.code).to.equal('INVALID_PASSWORD');
+          expect(err.statusCode).to.equal(422);
+          done();
+        });
+      });
+    });
+
+    it('rejects updating with empty password using updateAll', function(done) {
+      User.create({email: 'b@example.com', password: pass72Char}, function(err, userCreated) {
+        if (err) return done(err);
+        User.updateAll({where: {id: userCreated.id}}, {'password': ''}, function(err, userUpdated) {
+          expect(err.code).to.equal('INVALID_PASSWORD');
+          expect(err.statusCode).to.equal(422);
+          done();
+        });
+      });
+    });
+
     it('rejects passwords longer than 72 characters', function(done) {
       User.create({email: 'b@c.com', password: pass73Char}, function(err) {
         expect(err.code).to.equal('PASSWORD_TOO_LONG');
