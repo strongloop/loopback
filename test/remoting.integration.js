@@ -200,13 +200,13 @@ describe('remoting - integration', function() {
       function() {
         var storeClass = findClass('store');
         var createMethod = getCreateMethod(storeClass.methods);
-        assert(createMethod[0].accepts[0].createOnlyInstance === true);
+        assert(createMethod.accepts[0].createOnlyInstance === true);
       });
 
     it('sets createOnlyInstance to false if forceId is set to false in the model', function() {
       var customerClass = findClass('customerforceidfalse');
       var createMethod = getCreateMethod(customerClass.methods);
-      assert(createMethod[0].accepts[0].createOnlyInstance === false);
+      assert(createMethod.accepts[0].createOnlyInstance === false);
     });
   });
 });
@@ -332,7 +332,7 @@ function getFormattedMethodsExcludingRelations(methods) {
 }
 
 function getCreateMethod(methods) {
-  return methods.filter(function(m) {
+  return methods.find(function(m) {
     return (m.name === 'create');
   });
 }
