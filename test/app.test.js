@@ -18,6 +18,8 @@ var expect = require('./helpers/expect');
 var it = require('./util/it');
 var request = require('supertest');
 
+var Promise = require('bluebird');
+
 describe('app', function() {
   var app;
   beforeEach(function() {
@@ -885,10 +887,11 @@ describe('app', function() {
   });
 
   describe.onServer('enableAuth', function() {
-    it('should set app.isAuthEnabled to true', function() {
+    it('sets app.isAuthEnabled to true', function() {
       expect(app.isAuthEnabled).to.not.equal(true);
-      app.enableAuth();
-      expect(app.isAuthEnabled).to.equal(true);
+      return app.enableAuth().then(() => {
+        expect(app.isAuthEnabled).to.equal(true);
+      });
     });
 
     it('auto-configures required models to provided dataSource', function() {
@@ -897,14 +900,14 @@ describe('app', function() {
       require('../lib/builtin-models')(app.registry);
       var db = app.dataSource('db', {connector: 'memory'});
 
-      app.enableAuth({dataSource: 'db'});
+      return app.enableAuth({dataSource: 'db'}).then(() => {
+        expect(Object.keys(app.models)).to.include.members(AUTH_MODELS);
 
-      expect(Object.keys(app.models)).to.include.members(AUTH_MODELS);
-
-      AUTH_MODELS.forEach(function(m) {
-        var Model = app.models[m];
-        expect(Model.dataSource, m + '.dataSource').to.equal(db);
-        expect(Model.shared, m + '.shared').to.equal(m === 'User');
+        AUTH_MODELS.forEach(function(m) {
+          var Model = app.models[m];
+          expect(Model.dataSource, m + '.dataSource').to.equal(db);
+          expect(Model.shared, m + '.shared').to.equal(m === 'User');
+        });
       });
     });
 
@@ -918,9 +921,71 @@ describe('app', function() {
       const AccessToken = app.registry.getModel('AccessToken');
       AccessToken.settings.relations.user.model = 'Customer';
 
-      app.enableAuth({dataSource: 'db'});
+      return app.enableAuth({dataSource: 'db'}).then(() => {
+        expect(Object.keys(app.models)).to.not.include('User');
+      });
+    });
 
-      expect(Object.keys(app.models)).to.not.include('User');
+    describe('auth models config health check', function() {
+      var app, warnings;
+      beforeEach(function() {
+        app = loopback({localRegistry: true, loadBuiltinModels: true});
+        app.dataSource('db', {connector: 'memory'});
+
+        warnings = [];
+        function warnFn(code, args) {
+          warnings.push(Object.assign(args || {}, {code}));
+        }
+        app._warnOnBadAuthModelRelations = warnFn;
+      });
+
+      it('sets app.hasMultipleUserModelsConfig to false if the app ' +
+        'has a single User model correctly configured', function() {
+        return app.enableAuth({dataSource: 'db'}).then(() => {
+          expect(app.hasMultipleUserModelsConfig).to.be.false();
+        });
+      });
+
+      it('sets app.hasMultipleUserModelsConfig to true if the app ' +
+        'has multiple User models correctly configured', function() {
+        var Merchant = createModel(app, 'Merchant', {base: 'User'});
+        var Customer = createModel(app, 'Customer', {base: 'User'});
+        var Token = createModel(app, 'Token', {base: 'AccessToken'});
+
+        // Update AccessToken and Users to bind them through polymorphic relations
+        Token.belongsTo('user', {idName: 'id', polymorphic: {idType: 'string',
+          foreignKey: 'userId', discriminator: 'principalType'}});
+        Merchant.hasMany('accessTokens', {model: Token, polymorphic: {foreignKey: 'userId',
+          discriminator: 'principalType'}});
+        Customer.hasMany('accessTokens', {model: Token, polymorphic: {foreignKey: 'userId',
+          discriminator: 'principalType'}});
+        return app.enableAuth({dataSource: 'db'}).then(() => {
+          expect(app.hasMultipleUserModelsConfig).to.be.true();
+        });
+      });
+
+      it('warns if a custom user model is referenced in the ' +
+        'AccessToken "user" relation, but is not available', function() {
+        // Set AccessToken's belongsTo relation "user" to use a custom user model
+        // This model is deliberately not available
+        const AccessToken = app.registry.getModel('AccessToken');
+        AccessToken.settings.relations.user.model = 'Customer';
+
+        return app.enableAuth({dataSource: 'db'}).then(() => {
+          expect(warnings).to.eql([{
+            code: 'CUSTOM_USER_MODEL_NOT_AVAILABLE',
+            modelFrom: 'AccessToken',
+            modelTo: 'Customer',
+          }]);
+        });
+      });
+
+      // helpers
+      function createModel(app, name, options) {
+        var model = app.registry.createModel(Object.assign({name: name}, options));
+        app.model(model, {dataSource: 'db'});
+        return model;
+      }
     });
   });
 
