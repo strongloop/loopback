@@ -1,4 +1,10 @@
-2017-08-23, Version 3.11.0
+2017-08-23, Version 3.11.1
+==========================
+
+ * Handle missing getUpdateOnlyProperties fn (Kevin Delisle)
+
+
+2017-08-22, Version 3.11.0
 ==========================
 
  * Support createOnlyInstance in model (#3548) (Rashmi Hunt)
