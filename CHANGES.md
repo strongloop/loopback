@@ -1,3 +1,15 @@
+2017-08-23, Version 3.11.0
+==========================
+
+ * Support createOnlyInstance in model (#3548) (Rashmi Hunt)
+
+ * Add stalebot configuration (Kevin Delisle)
+
+ * Catch errors on invalidate update (loay)
+
+ * Update Issue and PR Templates (#3568) (Sakib Hasan)
+
+
 2017-08-16, Version 3.10.1
 ==========================
 
