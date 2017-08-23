@@ -1,0 +1,11 @@
+{
+  "name": "customerforceidfalse",
+  "base": "PersistedModel",
+  "forceId": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
