@@ -51,7 +51,7 @@
     "loopback-connector-remote": "^3.0.0",
     "loopback-datasource-juggler": "^3.9.3",
     "loopback-phase": "^3.0.0",
-    "nodemailer": "^2.5.0",
+    "nodemailer": "^4.0.1",
     "nodemailer-stub-transport": "^1.0.0",
     "serve-favicon": "^2.2.0",
     "stable": "^0.1.5",
