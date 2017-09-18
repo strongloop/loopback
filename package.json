@@ -1,5 +1,5 @@
 {
-  "name": "loopback",
+  "name": "loopback-right-checkpermission",
   "version": "3.11.1",
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
@@ -101,7 +101,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/strongloop/loopback"
+    "url": "https://github.com/supermafete/loopback-right-checkpermission"
   },
   "browser": {
     "express": "./lib/browser-express.js",
