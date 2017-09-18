@@ -210,7 +210,7 @@ module.exports = function(ACL) {
    * @param {AccessRequest} req The access request
    * @returns {AccessRequest} result The resolved access request
    */
-  ACL.resolvePermission = function resolvePermission(acls, req) {
+  ACL.resolvePermission = function resolvePermission(acls, req, principalType, principalId) {
     if (!(req instanceof AccessRequest)) {
       req.registry = this.registry;
       req = new AccessRequest(req);
@@ -232,6 +232,16 @@ module.exports = function(ACL) {
       if (!req.isWildcard()) {
         // We should stop from the first match for non-wildcard
         permission = candidate.permission;
+
+        // Not really. We must find the first permission that matches our request
+        var new_candidate = acls.find((acl) => {
+          return ((acl.principalType === principalType) && (acl.principalId === principalId));
+        });
+        if (new_candidate) {
+          candidate = new_candidate;
+        }
+
+        permission = candidate.permission;
         break;
       } else {
         if (req.exactlyMatches(candidate)) {
@@ -244,6 +254,7 @@ module.exports = function(ACL) {
         if (candidateOrder > permissionOrder) {
           permission = candidate.permission;
         }
+        break;
       }
     }
 
@@ -348,7 +359,7 @@ module.exports = function(ACL) {
     var acls = this.getStaticACLs(model, property);
 
     // resolved is an instance of AccessRequest
-    var resolved = this.resolvePermission(acls, req);
+    var resolved = this.resolvePermission(acls, req, principalType, principalId);
 
     if (resolved && resolved.permission === ACL.DENY) {
       debug('Permission denied by statically resolved permission');
@@ -368,7 +379,7 @@ module.exports = function(ACL) {
         }
         acls = acls.concat(dynACLs);
         // resolved is an instance of AccessRequest
-        resolved = self.resolvePermission(acls, req);
+        resolved = self.resolvePermission(acls, req, principalType, principalId);
         return callback(null, resolved);
       });
     return callback.promise;
