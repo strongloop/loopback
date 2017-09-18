@@ -528,7 +528,7 @@ module.exports = function(ACL) {
         if (err) return callback(err, null);
 
         // resolved is an instance of AccessRequest
-        var resolved = self.resolvePermission(effectiveACLs, req, principalType, principalId);
+        var resolved = self.resolvePermission(effectiveACLs, req);
         debug('---Resolved---');
         resolved.debug();
 
