@@ -222,6 +222,8 @@ module.exports = function(Role) {
    * @promise
    */
   Role.isOwner = function isOwner(modelClass, modelId, userId, principalType, options, callback) {
+    var _this = this;
+
     if (!callback && typeof options === 'function') {
       callback = options;
       options = {};
@@ -238,8 +240,25 @@ module.exports = function(Role) {
     debug('isOwner(): %s %s userId: %s principalType: %s',
       modelClass && modelClass.modelName, modelId, userId, principalType);
 
-    // Return false if userId is missing
+    // Resolve isOwner false if userId is missing
     if (!userId) {
+      process.nextTick(function() {
+        callback(null, false);
+      });
+      return callback.promise;
+    }
+
+    // At this stage, principalType is valid in one of 2 following condition:
+    // 1. the app has a single user model and principalType is 'USER'
+    // 2. the app has multiple user models and principalType is not 'USER'
+    // multiple user models
+    var isMultipleUsers = _isMultipleUsers();
+    var isPrincipalTypeValid =
+      (!isMultipleUsers && principalType === Principal.USER) ||
+      (isMultipleUsers && principalType !== Principal.USER);
+
+    // Resolve isOwner false if principalType is invalid
+    if (!isPrincipalTypeValid) {
       process.nextTick(function() {
         callback(null, false);
       });
@@ -265,10 +284,25 @@ module.exports = function(Role) {
       }
       debug('Model found: %j', inst);
 
-      // Historically, for principalType USER, we were resolving isOwner()
-      // as true if the model has "userId" or "owner" property matching
-      // id of the current user (principalId), even though there was no
-      // belongsTo relation set up.
+      var ownerRelations = modelClass.settings.ownerRelations;
+      if (!ownerRelations) {
+        return legacyOwnershipCheck(inst);
+      } else {
+        return checkOwnership(inst);
+      }
+    });
+    return callback.promise;
+
+    // NOTE Historically, for principalType USER, we were resolving isOwner()
+    // as true if the model has "userId" or "owner" property matching
+    // id of the current user (principalId), even though there was no
+    // belongsTo relation set up.
+    // Additionaly, the original implementation did not support the
+    // possibility for a model to have multiple related users: when
+    // testing belongsTo relations, the first related user failing the
+    // ownership check induced the whole isOwner() to resolve as false.
+    // This behaviour will be pruned at next LoopBack major release.
+    function legacyOwnershipCheck(inst) {
       var ownerId = inst.userId || inst.owner;
       if (principalType === Principal.USER && ownerId && 'function' !== typeof ownerId) {
         return callback(null, matches(ownerId, userId));
@@ -282,9 +316,16 @@ module.exports = function(Role) {
         if (!belongsToUser) {
           continue;
         }
+
         // checking related user
-        var userModelName = rel.modelTo.modelName;
-        if (principalType === Principal.USER || principalType === userModelName) {
+        var relatedUser = rel.modelTo;
+        var userModelName = relatedUser.modelName;
+        var isMultipleUsers = _isMultipleUsers(relatedUser);
+        // a relation can be considered for isOwner resolution if:
+        // 1. the app has a single user model and principalType is 'USER'
+        // 2. the app has multiple user models and principalType is the related user model name
+        if ((!isMultipleUsers && principalType === Principal.USER) ||
+            (isMultipleUsers && principalType === userModelName)) {
           debug('Checking relation %s to %s: %j', r, userModelName, rel);
           inst[r](processRelatedUser);
           return;
@@ -295,15 +336,72 @@ module.exports = function(Role) {
       callback(null, false);
 
       function processRelatedUser(err, user) {
-        if (!err && user) {
-          debug('User found: %j', user.id);
-          callback(null, matches(user.id, userId));
-        } else {
-          callback(err, false);
+        if (err || !user) return callback(err, false);
+
+        debug('User found: %j', user.id);
+        callback(null, matches(user.id, userId));
+      }
+    }
+
+    function checkOwnership(inst) {
+      var ownerRelations = inst.constructor.settings.ownerRelations;
+      // collecting related users
+      var relWithUsers = [];
+      for (var r in modelClass.relations) {
+        var rel = modelClass.relations[r];
+        // relation should be belongsTo and target a User based class
+        if (rel.type !== 'belongsTo' || !isUserClass(rel.modelTo)) {
+          continue;
+        }
+
+        // checking related user
+        var relatedUser = rel.modelTo;
+        var userModelName = relatedUser.modelName;
+        var isMultipleUsers = _isMultipleUsers(relatedUser);
+        // a relation can be considered for isOwner resolution if:
+        // 1. the app has a single user model and principalType is 'USER'
+        // 2. the app has multiple user models and principalType is the related user model name
+        // In addition, if an array of relations if provided with the ownerRelations option,
+        // then the given relation name is further checked against this array
+        if ((!isMultipleUsers && principalType === Principal.USER) ||
+            (isMultipleUsers && principalType === userModelName)) {
+          debug('Checking relation %s to %s: %j', r, userModelName, rel);
+          if (ownerRelations === true) {
+            relWithUsers.push(r);
+          } else if (Array.isArray(ownerRelations) && ownerRelations.indexOf(r) !== -1) {
+            relWithUsers.push(r);
+          }
         }
       }
-    });
-    return callback.promise;
+      if (relWithUsers.length === 0) {
+        debug('No matching belongsTo relation found for model %j and user: %j principalType: %j',
+          modelId, userId, principalType);
+        return callback(null, false);
+      }
+
+      // check related users: someSeries is used to avoid spamming the db
+      async.someSeries(relWithUsers, processRelation, callback);
+
+      function processRelation(r, cb) {
+        inst[r](function processRelatedUser(err, user) {
+          if (err || !user) return cb(err, false);
+
+          debug('User found: %j (through %j)', user.id, r);
+          cb(null, matches(user.id, userId));
+        });
+      }
+    }
+
+    // A helper function to check if the app user config is multiple users or
+    // single user. It can be used with or without a reference user model.
+    // In case no user model is provided, we use the registry to get any of the
+    // user model by type. The relation with AccessToken is used to check
+    // if polymorphism is used, and thus if multiple users.
+    function _isMultipleUsers(userModel) {
+      var oneOfUserModels = userModel || _this.registry.getModelByType('User');
+      var accessTokensRel = oneOfUserModels.relations.accessTokens;
+      return !!(accessTokensRel && accessTokensRel.polymorphic);
+    }
   };
 
   Role.registerResolver(Role.AUTHENTICATED, function(role, context, callback) {

@@ -8,6 +8,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var loopback = require('../index');
 var async = require('async');
+var extend = require('util')._extend;
 var expect = require('./helpers/expect');
 var Promise = require('bluebird');
 
@@ -363,7 +364,8 @@ describe('role model', function() {
     });
   });
 
-  it('should support owner role resolver', function(done) {
+  // this test should be split to address one resolver at a time
+  it('supports built-in role resolvers', function(done) {
     Role.registerResolver('returnPromise', function(role, context) {
       return new Promise(function(resolve) {
         process.nextTick(function() {
@@ -489,48 +491,249 @@ describe('role model', function() {
     });
   });
 
-  it('resolves OWNER via "userId" property with no relation', function() {
-    var Album = app.registry.createModel('Album', {
-      name: String,
-      userId: Number,
-    });
-    app.model(Album, {dataSource: 'db'});
+  describe('$owner role resolver', function() {
+    var sender, receiver;
+    var users = [
+      {username: 'sender', email: 'sender@example.com', password: 'pass'},
+      {username: 'receiver', email: 'receiver@example.com', password: 'pass'},
+    ];
 
-    var user;
-    return User.create({email: 'test@example.com', password: 'pass'})
+    describe('ownerRelations not set (legacy behaviour)', () => {
+      it('resolves the owner via property "userId"', function() {
+        var user;
+        var Album = app.registry.createModel('Album', {
+          name: String,
+          userId: Number,
+        });
+        app.model(Album, {dataSource: 'db'});
+
+        return User.create({email: 'test@example.com', password: 'pass'})
+        .then(u => {
+          user = u;
+          return Album.create({name: 'Album 1', userId: user.id});
+        })
+        .then(album => {
+          return Role.isInRole(Role.OWNER, {
+            principalType: ACL.USER,
+            principalId: user.id,
+            model: Album,
+            id: album.id,
+          });
+        })
+        .then(isInRole => expect(isInRole).to.be.true());
+      });
+
+      it('resolves the owner via property "owner"', function() {
+        var user;
+        var Album = app.registry.createModel('Album', {
+          name: String,
+          owner: Number,
+        });
+        app.model(Album, {dataSource: 'db'});
+
+        return User.create({email: 'test@example.com', password: 'pass'})
+        .then(u => {
+          user = u;
+          return Album.create({name: 'Album 1', owner: user.id});
+        })
+        .then(album => {
+          return Role.isInRole(Role.OWNER, {
+            principalType: ACL.USER,
+            principalId: user.id,
+            model: Album,
+            id: album.id,
+          });
+        })
+        .then(isInRole => expect(isInRole).to.be.true());
+      });
+
+      it('resolves the owner via a belongsTo relation', function() {
+        // passing no options will result calling
+        // the legacy $owner role resolver behavior
+        var Message = givenModelWithSenderReceiverRelations('ModelWithNoOptions');
+
+        return givenUsers()
+        .then(() => {
+          var messages = [
+            {content: 'firstMessage', senderId: sender.id},
+            {content: 'secondMessage', receiverId: receiver.id},
+            {content: 'thirdMessage'},
+          ];
+          return Promise.map(messages, msg => {
+            return Message.create(msg);
+          });
+        })
+        .then(messages => {
+          return Promise.all([
+            isOwnerForMessage(sender, messages[0]),
+            isOwnerForMessage(receiver, messages[1]),
+            isOwnerForMessage(receiver, messages[2]),
+          ]);
+        })
+        .then(result => {
+          expect(result).to.eql([
+            {user: 'sender', msg: 'firstMessage', isOwner: true},
+            {user: 'receiver', msg: 'secondMessage', isOwner: false},
+            {user: 'receiver', msg: 'thirdMessage', isOwner: false},
+          ]);
+        });
+      });
+    });
+
+    it('resolves as false without belongsTo relation', function() {
+      var user;
+      var Album = app.registry.createModel(
+        'Album',
+        {
+          name: String,
+          userId: Number,
+          owner: Number,
+        },
+        // passing {ownerRelations: true} will enable the new $owner role resolver
+        // and hence resolve false when no belongsTo relation is defined
+        {ownerRelations: true}
+      );
+      app.model(Album, {dataSource: 'db'});
+
+      return User.create({email: 'test@example.com', password: 'pass'})
       .then(u => {
         user = u;
-        return Album.create({name: 'Album 1', userId: user.id});
+        return Album.create({name: 'Album 1', userId: user.id, owner: user.id});
       })
       .then(album => {
         return Role.isInRole(Role.OWNER, {
-          principalType: ACL.USER, principalId: user.id,
-          model: Album, id: album.id,
+          principalType: ACL.USER,
+          principalId: user.id,
+          model: Album,
+          id: album.id,
         });
       })
-      .then(isInRole => expect(isInRole).to.be.true());
-  });
-
-  it('resolves OWNER via "owner" property with no relation', function() {
-    var Album = app.registry.createModel('Album', {
-      name: String,
-      owner: Number,
+      .then(isInRole => expect(isInRole).to.be.false());
     });
-    app.model(Album, {dataSource: 'db'});
 
-    var user;
-    return User.create({email: 'test@example.com', password: 'pass'})
-      .then(u => {
-        user = u;
-        return Album.create({name: 'Album 1', owner: user.id});
-      })
-      .then(album => {
-        return Role.isInRole(Role.OWNER, {
-          principalType: ACL.USER, principalId: user.id,
-          model: Album, id: album.id,
+    it('resolves the owner using the corrent belongsTo relation', function() {
+      // passing {ownerRelations: true} will enable the new $owner role resolver
+      // with any belongsTo relation allowing to resolve truthy
+      var Message = givenModelWithSenderReceiverRelations(
+        'ModelWithAllRelations',
+        {ownerRelations: true}
+      );
+
+      return givenUsers()
+      .then(() => {
+        var messages = [
+          {content: 'firstMessage', senderId: sender.id},
+          {content: 'secondMessage', receiverId: receiver.id},
+          {content: 'thirdMessage'},
+        ];
+        return Promise.map(messages, msg => {
+          return Message.create(msg);
         });
       })
-      .then(isInRole => expect(isInRole).to.be.true());
+      .then(messages => {
+        return Promise.all([
+          isOwnerForMessage(sender, messages[0]),
+          isOwnerForMessage(receiver, messages[1]),
+          isOwnerForMessage(receiver, messages[2]),
+        ]);
+      })
+      .then(result => {
+        expect(result).to.eql([
+          {user: 'sender', msg: 'firstMessage', isOwner: true},
+          {user: 'receiver', msg: 'secondMessage', isOwner: true},
+          {user: 'receiver', msg: 'thirdMessage', isOwner: false},
+        ]);
+      });
+    });
+
+    it('allows fine-grained control of which relations grant ownership',
+    function() {
+      // passing {ownerRelations: true} will enable the new $owner role resolver
+      // with a specified list of belongsTo relations allowing to resolve truthy
+      var Message = givenModelWithSenderReceiverRelations(
+        'ModelWithCoercedRelations',
+        {ownerRelations: ['receiver']}
+      );
+
+      return givenUsers()
+      .then(() => {
+        var messages = [
+          {content: 'firstMessage', senderId: sender.id},
+          {content: 'secondMessage', receiverId: receiver.id},
+          {content: 'thirdMessage'},
+        ];
+        return Promise.map(messages, msg => {
+          return Message.create(msg);
+        });
+      })
+      .then(messages => {
+        return Promise.all([
+          isOwnerForMessage(sender, messages[0]),
+          isOwnerForMessage(receiver, messages[1]),
+          isOwnerForMessage(receiver, messages[2]),
+        ]);
+      })
+      .then(result => {
+        expect(result).to.eql([
+          {user: 'sender', msg: 'firstMessage', isOwner: false},
+          {user: 'receiver', msg: 'secondMessage', isOwner: true},
+          {user: 'receiver', msg: 'thirdMessage', isOwner: false},
+        ]);
+      });
+    });
+
+    // helpers
+    function givenUsers() {
+      return Promise.map(users, user => {
+        return User.create(user);
+      })
+      .then(users => {
+        sender = users[0];
+        receiver = users[1];
+      });
+    }
+
+    function isOwnerForMessage(user, msg) {
+      var accessContext = {
+        principalType: ACL.USER,
+        principalId: user.id,
+        model: msg.constructor,
+        id: msg.id,
+      };
+      return Role.isInRole(Role.OWNER, accessContext)
+        .then(isOwner => {
+          return {
+            user: user.username,
+            msg: msg.content,
+            isOwner,
+          };
+        });
+    }
+
+    function givenModelWithSenderReceiverRelations(name, options) {
+      var baseOptions = {
+        relations: {
+          sender: {
+            type: 'belongsTo',
+            model: 'User',
+            foreignKey: 'senderId',
+          },
+          receiver: {
+            type: 'belongsTo',
+            model: 'User',
+            foreignKey: 'receiverId',
+          },
+        },
+      };
+      options = extend(baseOptions, options);
+      var Model = app.registry.createModel(
+        name,
+        {content: String},
+        options
+      );
+      app.model(Model, {dataSource: 'db'});
+      return Model;
+    }
   });
 
   it('passes accessToken to modelClass.findById when resolving OWNER', () => {
