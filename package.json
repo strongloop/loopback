@@ -1,6 +1,6 @@
 {
-  "name": "loopback-right-checkpermission",
-  "version": "3.11.2",
+  "name": "loopback",
+  "version": "3.12.0",
   "description": "LoopBack: Open Source Framework for Node.js",
   "homepage": "http://loopback.io",
   "keywords": [

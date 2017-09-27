@@ -1,3 +1,11 @@
+2017-09-25, Version 3.12.0
+==========================
+
+ * Fix relation race condition in model glob (Zak Barbuto)
+
+ * CODEOWNERS: add lehni (Miroslav Bajtoš)
+
+
 2017-08-23, Version 3.11.1
 ==========================
 
