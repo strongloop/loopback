@@ -1475,7 +1475,7 @@ describe('relations - integration', function() {
       );
       app.model(Chapter, {dataSource: 'db'});
 
-      Book.hasMany(Page);
+      Book.hasMany(Page, {options: {nestRemoting: true}});
       Book.hasMany(Chapter);
       Page.hasMany(Note);
       Chapter.hasMany(Note);
@@ -1488,7 +1488,8 @@ describe('relations - integration', function() {
 
       Page.remoteMethod('__throw__errors', {isStatic: false, http: {path: '/throws', verb: 'get'}});
 
-      Book.nestRemoting('pages');
+      // Now `pages` has nestRemoting set to true and no need to call nestRemoting()
+      // Book.nestRemoting('pages');
       Book.nestRemoting('chapters');
       Image.nestRemoting('book');
 
