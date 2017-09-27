@@ -1,3 +1,13 @@
+2017-09-27, Version 3.13.0
+==========================
+
+ * Fix OWNER role to handle multiple relations (pierreclr)
+
+ * Fix acl.resolvePermission for wildcard req (Farid Neshat)
+
+ * CODEOWNERS: add zbarbuto (Miroslav Bajtoš)
+
+
 2017-09-25, Version 3.12.0
 ==========================
 
