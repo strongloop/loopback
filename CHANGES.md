@@ -1,3 +1,9 @@
+2017-09-28, Version 3.14.0
+==========================
+
+ * Allow declarative nestRemoting for relations (Raymond Feng)
+
+
 2017-09-27, Version 3.13.0
 ==========================
 
