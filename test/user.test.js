@@ -73,23 +73,18 @@ describe('User', function() {
     });
 
     BasicUser = app.registry.createModel({
-      name: 'BasicUser',
+      name: 'Basic',
       base: 'User',
       http: {path: 'test-basic'},
-      // forceId is set to false for the purpose of updating the same affected user within the
-      // `Email Update` test cases.
       forceId: false,
-      // Speed up the password hashing algorithm for tests
       saltWorkFactor: 4,
     });
+
     AdminUser = app.registry.createModel({
-      name: 'AdminUser',
+      name: 'AdminU',
       base: 'User',
       http: {path: 'test-basic'},
-      // forceId is set to false for the purpose of updating the same affected user within the
-      // `Email Update` test cases.
       forceId: false,
-      // Speed up the password hashing algorithm for tests
       saltWorkFactor: 4,
     });
 
@@ -101,8 +96,6 @@ describe('User', function() {
     app.model(AccessToken, {dataSource: 'db'});
 
     User.email = Email;
-    BasicUser.email=Email;
-    AdminUser.email=Email;
 
     // Update the AccessToken relation to use the subclass of User
     AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
@@ -119,6 +112,8 @@ describe('User', function() {
 
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
+    BasicUser.setMaxListeners(0);
+    AdminUser.setMaxListeners(0);
 
     app.enableAuth({dataSource: 'db'});
     app.use(loopback.token({model: AccessToken}));
@@ -2464,7 +2459,6 @@ describe('User', function() {
         async.series([
           function(next) {
             BasicUser.create({ name: 'BU', email: 'u@example.com', password: 'foobar'}, function(err, user) {
-              console.log(user);
               if (err) return done(err);
               next();
             });
@@ -2472,34 +2466,30 @@ describe('User', function() {
           function(next) {
             AdminUser.create({name: 'AU', email: 'a@example.com', password: 'foobar'}, function(err, user) {
               AdminUserReset = user;
-                console.log(user);
               if (err) return done(err);
               next();
             });
           },
           function(next) {
-            User.login({email:'u@example.com', password: 'foobar'}, function(err, accessToken1) {
+            BasicUser.login({email:'u@example.com', password: 'foobar'}, function(err, accessToken1) {
               accessToken2 = accessToken1;
               if (err) return next(err);
-                console.log(accessToken1);
-              assert(accessToken1.userId);
+              assert(accessToken1.id);
               next();
             });
           },
           function(next) {
-            return triggerPasswordReset(AdminUserReset.email)
-              .then(info => {
-                // Make a REST request to change the password
-                return request(app)
-                  .patch(`/test-basic/1`)
-                  .set('Authorization', accessToken2.id)
-                  .send({password: 'new-pass'})
-                  .expect(401);
-              })
-              .then(() => {
-                // Call login to verify the password was changed
-                const credentials = {email: AdminUserReset.email, password: 'new-pass'};
-                return User.login(credentials);
+            request(app)
+              .post('/test-basic/reset-password')
+              .set('Authorization', accessToken2.id)
+              .expect('Content-Type', /json/)
+              .expect(401)
+              .send({email: AdminUserReset.email, newPassword: 'new-pass'})
+              .end(function(err, res) {
+                var errorResponse = res.body.error;
+                assert.equal(errorResponse.statusCode, 401);
+                if (err) return done(err);
+                next();
               });
           },
         ], done);
