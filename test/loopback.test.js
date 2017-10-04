@@ -99,7 +99,7 @@ describe('loopback', function() {
 
       var actual = Object.getOwnPropertyNames(loopback);
       actual.sort();
-      expect(actual).to.eql(EXPECTED);
+      expect(actual).to.include.members(EXPECTED);
     });
   });
 
