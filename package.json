@@ -45,7 +45,7 @@
     "depd": "^1.0.0",
     "ejs": "^2.3.1",
     "errorhandler": "^1.3.4",
-    "express": "^4.12.2",
+    "express": "^4.16.2",
     "inflection": "^1.6.0",
     "isemail": "^1.2.0",
     "loopback-connector-remote": "^1.0.3",
