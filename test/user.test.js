@@ -14,7 +14,7 @@ var extend = require('util')._extend;
 const Promise = require('bluebird');
 const waitForEvent = require('./helpers/wait-for-event');
 
-var User, AccessToken;
+var User, AccessToken, BasicUser, AdminUser;
 
 describe('User', function() {
   this.timeout(10000);
@@ -71,7 +71,26 @@ describe('User', function() {
       // Speed up the password hashing algorithm for tests
       saltWorkFactor: 4,
     });
+
+    BasicUser = app.registry.createModel({
+      name: 'Basic',
+      base: 'User',
+      http: {path: 'test-basic'},
+      forceId: false,
+      saltWorkFactor: 4,
+    });
+
+    AdminUser = app.registry.createModel({
+      name: 'AdminU',
+      base: 'User',
+      http: {path: 'test-basic'},
+      forceId: false,
+      saltWorkFactor: 4,
+    });
+
     app.model(User, {dataSource: 'db'});
+    app.model(BasicUser, {dataSource: 'db'});
+    app.model(AdminUser, {dataSource: 'db'});
 
     AccessToken = app.registry.getModel('AccessToken');
     app.model(AccessToken, {dataSource: 'db'});
@@ -80,7 +99,12 @@ describe('User', function() {
 
     // Update the AccessToken relation to use the subclass of User
     AccessToken.belongsTo(User, {as: 'user', foreignKey: 'userId'});
+    AccessToken.belongsTo(BasicUser, {as: 'user', foreignKey: 'userId'});
+    AccessToken.belongsTo(AdminUser, {as: 'user', foreignKey: 'userId'});
+
     User.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
+    BasicUser.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
+    AdminUser.hasMany(AccessToken, {as: 'accessTokens', foreignKey: 'userId'});
 
     // Speed up the password hashing algorithm
     // for tests using the built-in User model
@@ -88,6 +112,8 @@ describe('User', function() {
 
     // allow many User.afterRemote's to be called
     User.setMaxListeners(0);
+    BasicUser.setMaxListeners(0);
+    AdminUser.setMaxListeners(0);
 
     app.enableAuth({dataSource: 'db'});
     app.use(loopback.token({model: AccessToken}));
@@ -2426,6 +2452,47 @@ describe('User', function() {
             .get(`/test-users/${info.user.id}/test`)
             .set('Authorization', info.accessToken.id)
             .expect(200));
+      });
+
+      it('should reject password reset role/user relations', function(done) {
+        var accessToken2, AdminUserReset;
+        async.series([
+          function(next) {
+            BasicUser.create({ name: 'BU', email: 'u@example.com', password: 'foobar'}, function(err, user) {
+              if (err) return done(err);
+              next();
+            });
+          },
+          function(next) {
+            AdminUser.create({name: 'AU', email: 'a@example.com', password: 'foobar'}, function(err, user) {
+              AdminUserReset = user;
+              if (err) return done(err);
+              next();
+            });
+          },
+          function(next) {
+            BasicUser.login({email:'u@example.com', password: 'foobar'}, function(err, accessToken1) {
+              accessToken2 = accessToken1;
+              if (err) return next(err);
+              assert(accessToken1.id);
+              next();
+            });
+          },
+          function(next) {
+            request(app)
+              .post('/test-basic/reset-password')
+              .set('Authorization', accessToken2.id)
+              .expect('Content-Type', /json/)
+              .expect(401)
+              .send({email: AdminUserReset.email, newPassword: 'new-pass'})
+              .end(function(err, res) {
+                var errorResponse = res.body.error;
+                assert.equal(errorResponse.statusCode, 401);
+                if (err) return done(err);
+                next();
+              });
+          },
+        ], done);
       });
 
       describe('User.resetPassword(options, cb) requiring realm', function() {
