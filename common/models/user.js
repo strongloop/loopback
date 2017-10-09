@@ -603,11 +603,11 @@ module.exports = function(User) {
    */
 
   User.getVerifyOptions = function() {
-    const verifyOptions = {
+    const defaultOptions = {
       type: 'email',
       from: 'noreply@example.com',
     };
-    return this.settings.verifyOptions || verifyOptions;
+    return Object.assign({}, this.settings.verifyOptions || defaultOptions);
   };
 
   /**
@@ -699,10 +699,14 @@ module.exports = function(User) {
     var user = this;
     var userModel = this.constructor;
     var registry = userModel.registry;
-
+    verifyOptions = Object.assign({}, verifyOptions);
     // final assertion is performed once all options are assigned
     assert(typeof verifyOptions === 'object',
       'verifyOptions object param required when calling user.verify()');
+
+    // Shallow-clone the options object so that we don't override
+    // the global default options object
+    verifyOptions = Object.assign({}, verifyOptions);
 
     // Set a default template generation function if none provided
     verifyOptions.templateFn = verifyOptions.templateFn || createVerificationEmailBody;

@@ -1606,6 +1606,34 @@ describe('User', function() {
           done();
         });
 
+        it('returns same verifyOptions after verify user model', () => {
+          const defaultOptions = {
+            type: 'email',
+            from: 'test@example.com',
+          };
+          var verifyOptions = Object.assign({}, defaultOptions);
+          const user = new User({
+            email: 'example@example.com',
+            password: 'pass',
+            verificationToken: 'example-token',
+          });
+          return user
+            .verify(verifyOptions)
+            .then(res => expect(verifyOptions).to.eql(defaultOptions));
+        });
+
+        it('getVerifyOptions() always returns the same', () => {
+          const defaultOptions = {
+            type: 'email',
+            from: 'test@example.com',
+          };
+          User.settings.verifyOptions = Object.assign({}, defaultOptions);
+          var verifyOptions = User.getVerifyOptions();
+          verifyOptions.from = 'newTest@example.com';
+          verifyOptions.test = 'test';
+          expect(User.getVerifyOptions()).to.eql(defaultOptions);
+        });
+
         it('can be extended by user', function(done) {
           User.getVerifyOptions = function() {
             const base = User.base.getVerifyOptions();
