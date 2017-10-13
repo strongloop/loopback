@@ -1,3 +1,17 @@
+2017-10-13, Version 3.15.0
+==========================
+
+ * update strong-globalize to 3.1.0 (shimks)
+
+ * Fix handling of user verification options (Miroslav Bajtoš)
+
+ * Handle missing getUpdateOnlyProperties fn (Jürg Lehni)
+
+ * test: fix too strict test assertion (Miroslav Bajtoš)
+
+ * Fix typo (Siegfried Ehret)
+
+
 2017-09-28, Version 3.14.0
 ==========================
 
