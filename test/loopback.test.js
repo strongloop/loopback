@@ -117,7 +117,7 @@ describe('loopback', function() {
 
       var actual = Object.getOwnPropertyNames(loopback);
       actual.sort();
-      expect(actual).to.eql(EXPECTED);
+      expect(actual).to.include.members(EXPECTED);
     });
   });
 
@@ -530,6 +530,11 @@ describe('loopback', function() {
     it('inherits properties from express', function() {
       var express = require('express');
       for (var i in express) {
+        // Express added back body-parsing middleware in v4.16.0, see
+        // https://github.com/expressjs/express/issues/2211
+        // However, we are keeping them deprecated in 2.x,
+        // because it's in LTS  mode
+        if (i === 'json' || i === 'urlencoded') continue;
         expect(loopback).to.have.property(i, express[i]);
       }
     });
