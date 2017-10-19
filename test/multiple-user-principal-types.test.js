@@ -695,7 +695,6 @@ describe('Multiple users with custom principalType', function() {
     });
 
     it('fails when the access token belongs to a different user mode', () => {
-      debugger;
       logServerErrorsOtherThan(403, app);
       return supertest(app)
         .post('/AnotherUsers/change-password')
