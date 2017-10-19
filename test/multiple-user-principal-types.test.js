@@ -12,6 +12,10 @@ var extend = require('util')._extend;
 var AccessContext = ctx.AccessContext;
 var Principal = ctx.Principal;
 var Promise = require('bluebird');
+const waitForEvent = require('./helpers/wait-for-event');
+const supertest = require('supertest');
+const loggers = require('./helpers/error-loggers');
+const logServerErrorsOtherThan = loggers.logServerErrorsOtherThan;
 
 describe('Multiple users with custom principalType', function() {
   this.timeout(10000);
@@ -55,6 +59,7 @@ describe('Multiple users with custom principalType', function() {
 
     app.enableAuth({dataSource: 'db'});
     app.use(loopback.token({model: AccessToken}));
+    app.use(loopback.rest());
 
     // create one user per user model to use them throughout the tests
     return Promise.all([
@@ -623,6 +628,48 @@ describe('Multiple users with custom principalType', function() {
           });
       });
     });
+  });
+
+  describe('setPassword', () => {
+    let resetToken;
+    beforeEach(givenResetPasswordTokenForOneUser);
+
+    it('sets password when the access token belongs to the user', () => {
+      return supertest(app)
+        .post('/OneUsers/reset-password')
+        .set('Authorization', resetToken.id)
+        .send({newPassword: 'new-pass'})
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .post('/OneUsers/login')
+            .send({email: commonCredentials.email, password: 'new-pass'})
+            .expect(200);
+        });
+    });
+
+    it('fails when the access token belongs to a different user mode', () => {
+      logServerErrorsOtherThan(403, app);
+      return supertest(app)
+        .post('/AnotherUsers/reset-password')
+        .set('Authorization', resetToken.id)
+        .send({newPassword: 'new-pass'})
+        .expect(403)
+        .then(() => {
+          return supertest(app)
+            .post('/AnotherUsers/login')
+            .send(commonCredentials)
+            .expect(200);
+        });
+    });
+
+    function givenResetPasswordTokenForOneUser() {
+      return Promise.all([
+        OneUser.resetPassword({email: commonCredentials.email}),
+        waitForEvent(OneUser, 'resetPasswordRequest'),
+      ])
+      .spread((reset, info) => resetToken = info.accessToken);
+    }
   });
 
   // helpers
