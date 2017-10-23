@@ -1,3 +1,15 @@
+2017-10-23, Version 2.39.0
+==========================
+
+ * Drop support for Node.js versions 0.10 and 0.12 (Miroslav Bajtoš)
+
+ * test: fix too strict test assertion (Miroslav Bajtoš)
+
+ * Add unit test for empty password (loay)
+
+ * Update translated strings Q2 2017 (Allen Boone)
+
+
 2017-04-17, Version 2.38.3
 ==========================
 
