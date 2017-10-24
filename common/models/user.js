@@ -1192,9 +1192,7 @@ module.exports = function(User) {
       {
         description: 'Reset user\'s password via a password-reset token.',
         accepts: [
-          {arg: 'id', type: 'any',
-            http: ctx => ctx.req.accessToken && ctx.req.accessToken.userId,
-          },
+          {arg: 'id', type: 'any', http: getUserIdFromRequestContext},
           {arg: 'newPassword', type: 'string', required: true, http: {source: 'form'}},
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
         ],
@@ -1202,6 +1200,23 @@ module.exports = function(User) {
         http: {verb: 'POST', path: '/reset-password'},
       }
     );
+
+    function getUserIdFromRequestContext(ctx) {
+      const token = ctx.req.accessToken;
+      if (!token) return;
+
+      const hasPrincipalType = 'principalType' in token;
+      if (hasPrincipalType && token.principalType !== UserModel.modelName) {
+        // We have multiple user models related to the same access token model
+        // and the token used to authorize reset-password request was created
+        // for a different user model.
+        const err = new Error(g.f('Access Denied'));
+        err.statusCode = 403;
+        throw err;
+      }
+
+      return token.userId;
+    }
 
     UserModel.afterRemote('confirm', function(ctx, inst, next) {
       if (ctx.args.redirect !== undefined) {

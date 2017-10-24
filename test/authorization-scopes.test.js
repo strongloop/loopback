@@ -3,6 +3,10 @@
 const loopback = require('../');
 const supertest = require('supertest');
 const strongErrorHandler = require('strong-error-handler');
+const loggers = require('./helpers/error-loggers');
+
+const logAllServerErrors = loggers.logAllServerErrors;
+const logServerErrorsOtherThan = loggers.logServerErrorsOtherThan;
 
 describe('Authorization scopes', () => {
   const CUSTOM_SCOPE = 'read:custom';
@@ -15,28 +19,28 @@ describe('Authorization scopes', () => {
   beforeEach(givenScopedToken);
 
   it('denies regular token to invoke custom-scoped method', () => {
-    logServerErrorsOtherThan(401);
+    logServerErrorsOtherThan(401, app);
     return request.get('/users/scoped')
       .set('Authorization', regularToken.id)
       .expect(401);
   });
 
   it('allows regular tokens to invoke default-scoped method', () => {
-    logAllServerErrors();
+    logAllServerErrors(app);
     return request.get('/users/' + testUser.id)
       .set('Authorization', regularToken.id)
       .expect(200);
   });
 
   it('allows scoped token to invoke custom-scoped method', () => {
-    logAllServerErrors();
+    logAllServerErrors(app);
     return request.get('/users/scoped')
       .set('Authorization', scopedToken.id)
       .expect(204);
   });
 
   it('denies scoped token to invoke default-scoped method', () => {
-    logServerErrorsOtherThan(401);
+    logServerErrorsOtherThan(401, app);
     return request.get('/users/' + testUser.id)
       .set('Authorization', scopedToken.id)
       .expect(401);
@@ -45,7 +49,7 @@ describe('Authorization scopes', () => {
   describe('token granted both default and custom scope', () => {
     beforeEach('given token with default and custom scope',
       () => givenScopedToken(['DEFAULT', CUSTOM_SCOPE]));
-    beforeEach(logAllServerErrors);
+    beforeEach(() => logAllServerErrors(app));
 
     it('allows invocation of default-scoped method', () => {
       return request.get('/users/' + testUser.id)
@@ -115,20 +119,5 @@ describe('Authorization scopes', () => {
     const scopes = arguments[0] || [CUSTOM_SCOPE];
     return testUser.accessTokens.create({ttl: 60, scopes})
       .then(t => scopedToken = t);
-  }
-
-  function logAllServerErrors() {
-    logServerErrorsOtherThan(-1);
-  }
-
-  function logServerErrorsOtherThan(statusCode) {
-    app.use((err, req, res, next) => {
-      if ((err.statusCode || 500) !== statusCode) {
-        console.log('Unhandled error for request %s %s: %s',
-          req.method, req.url, err.stack || err);
-      }
-      res.statusCode = err.statusCode || 500;
-      res.json(err);
-    });
   }
 });
