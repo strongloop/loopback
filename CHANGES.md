@@ -1,3 +1,13 @@
+2017-10-24, Version 3.16.0
+==========================
+
+ * Fix "POST /reset-password" for multi-user setup (Miroslav Bajtoš)
+
+ * test: extract helpers for logging HTTP errors (Miroslav Bajtoš)
+
+ * CODEOWNERS: move @lehni to Alumni section (Miroslav Bajtoš)
+
+
 2017-10-13, Version 3.15.0
 ==========================
 
