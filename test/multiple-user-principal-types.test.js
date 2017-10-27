@@ -28,6 +28,7 @@ describe('Multiple users with custom principalType', function() {
     // create a local app object that does not share state with other tests
     app = loopback({localRegistry: true, loadBuiltinModels: true});
     app.set('_verifyAuthModelRelations', false);
+    app.set('remoting', {errorHandler: {debug: true, log: false}});
     app.dataSource('db', {connector: 'memory'});
 
     var userModelOptions = {
@@ -669,6 +670,51 @@ describe('Multiple users with custom principalType', function() {
         waitForEvent(OneUser, 'resetPasswordRequest'),
       ])
       .spread((reset, info) => resetToken = info.accessToken);
+    }
+  });
+
+  describe('changePassword', () => {
+    let token;
+    beforeEach(givenTokenForOneUser);
+
+    it('changes password when the access token belongs to the user', () => {
+      return supertest(app)
+        .post('/OneUsers/change-password')
+        .set('Authorization', token.id)
+        .send({
+          oldPassword: commonCredentials.password,
+          newPassword: 'new-pass',
+        })
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .post('/OneUsers/login')
+            .send({email: commonCredentials.email, password: 'new-pass'})
+            .expect(200);
+        });
+    });
+
+    it('fails when the access token belongs to a different user mode', () => {
+      debugger;
+      logServerErrorsOtherThan(403, app);
+      return supertest(app)
+        .post('/AnotherUsers/change-password')
+        .set('Authorization', token.id)
+        .send({
+          oldPassword: commonCredentials.password,
+          newPassword: 'new-pass',
+        })
+        .expect(403)
+        .then(() => {
+          return supertest(app)
+            .post('/AnotherUsers/login')
+            .send(commonCredentials)
+            .expect(200);
+        });
+    });
+
+    function givenTokenForOneUser() {
+      return OneUser.login(commonCredentials).then(t => token = t);
     }
   });
 
