@@ -133,8 +133,8 @@ describe('remoting - integration', function() {
 
     it('should have correct signatures for hasMany methods',
       function() {
-        var physicianClass = findClass('store');
-        var methods = getFormattedPrototypeMethods(physicianClass.methods);
+        var storeClass = findClass('store');
+        var methods = getFormattedPrototypeMethods(storeClass.methods);
 
         var expectedMethods = [
           'prototype.__findById__widgets(fk:any):widget ' +
@@ -208,6 +208,15 @@ describe('remoting - integration', function() {
       var createMethod = getCreateMethod(customerClass.methods);
       assert(createMethod.accepts[0].createOnlyInstance === false);
     });
+
+    it('sets createOnlyInstance based on target model for scoped or related methods',
+      function() {
+        var userClass = findClass('user');
+        var createMethod = userClass.methods.find(function(m) {
+          return (m.name === 'prototype.__create__accessTokens');
+        });
+        assert(createMethod.accepts[0].createOnlyInstance === false);
+      });
   });
 });
 
