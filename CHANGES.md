@@ -1,3 +1,9 @@
+2017-10-28, Version 3.16.1
+==========================
+
+ * Fix createOnlyInstance for related methods (Raymond Feng)
+
+
 2017-10-24, Version 3.16.0
 ==========================
 
