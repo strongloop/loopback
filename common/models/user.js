@@ -1173,9 +1173,7 @@ module.exports = function(User) {
       {
         description: 'Change a user\'s password.',
         accepts: [
-          {arg: 'id', type: 'any',
-            http: ctx => ctx.req.accessToken && ctx.req.accessToken.userId,
-          },
+          {arg: 'id', type: 'any', http: getUserIdFromRequestContext},
           {arg: 'oldPassword', type: 'string', required: true, http: {source: 'form'}},
           {arg: 'newPassword', type: 'string', required: true, http: {source: 'form'}},
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
