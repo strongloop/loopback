@@ -1,4 +1,10 @@
-2017-10-28, Version 3.16.1
+2017-10-30, Version 3.16.2
+==========================
+
+ * Fix "POST /change-password" for multi-user setup (Miroslav Bajtoš)
+
+
+2017-10-27, Version 3.16.1
 ==========================
 
  * Fix createOnlyInstance for related methods (Raymond Feng)
