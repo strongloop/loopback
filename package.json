@@ -50,6 +50,7 @@
     "isemail": "^2.2.1",
     "loopback-connector-remote": "^3.0.0",
     "loopback-datasource-juggler": "^3.9.3",
+    "loopback-filters": "^1.0.0",
     "loopback-phase": "^3.0.0",
     "nodemailer": "^2.5.0",
     "nodemailer-stub-transport": "^1.0.0",
