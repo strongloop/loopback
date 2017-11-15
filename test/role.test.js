@@ -364,6 +364,55 @@ describe('role model', function() {
     });
   });
 
+  it('should be properly authenticated with 0 userId', function(done) {
+    var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar', id: 0};
+    User.create(userData, function(err, user) {
+      if (err) return done(err);
+      Role.create({name: 'userRole'}, function(err, role) {
+        if (err) return done(err);
+        role.principals.create({principalType: RoleMapping.USER, principalId: user.id},
+        function(err, p) {
+          if (err) return done(err);
+          async.series([
+            function(next) {
+              Role.isInRole(
+                'userRole',
+                {principalType: RoleMapping.USER, principalId: user.id},
+                function(err, inRole) {
+                  if (err) return next(err);
+                  assert(!!inRole);
+                  next();
+                });
+            },
+            function(next) {
+              Role.isInRole(
+                'userRole',
+                {principalType: RoleMapping.APP, principalId: user.id},
+                function(err, inRole) {
+                  if (err) return next(err);
+                  assert(!inRole);
+                  next();
+                });
+            },
+            function(next) {
+              Role.getRoles(
+                {principalType: RoleMapping.USER, principalId: user.id},
+                function(err, roles) {
+                  if (err) return next(err);
+                  expect(roles).to.eql([
+                    Role.AUTHENTICATED,
+                    Role.EVERYONE,
+                    role.id,
+                  ]);
+                  next();
+                });
+            },
+          ], done);
+        });
+      });
+    });
+  });
+
   // this test should be split to address one resolver at a time
   it('supports built-in role resolvers', function(done) {
     Role.registerResolver('returnPromise', function(role, context) {
