@@ -25,4 +25,5 @@ loopback.Remote = require('loopback-connector-remote');
  */
 
 loopback.GeoPoint = require('loopback-datasource-juggler/lib/geo').GeoPoint;
+loopback.DateString = require('loopback-datasource-juggler/lib/date-string');
 loopback.ValidationError = loopback.Model.ValidationError;
