@@ -1,3 +1,11 @@
+2017-11-29, Version 3.17.0
+==========================
+
+ * Added missing DateString type in loopback index (CSLTech)
+
+ * chore:update license (Diana Lau)
+
+
 2017-10-30, Version 3.16.2
 ==========================
 
