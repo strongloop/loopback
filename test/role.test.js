@@ -364,9 +364,18 @@ describe('role model', function() {
     });
   });
 
-  it('should be properly authenticated with 0 userId', function(done) {
+  it.only('should be properly authenticated with 0 userId', function(done) {
     var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar', id: 0};
-    User.create(userData, function(err, user) {
+    var TestUser = app.registry.createModel({
+      name: 'TestUser',
+      base: 'User',
+      // forceId is set to false so we can create a user with a known ID,
+      // in this case 0 - which used to fail the falsy checks.
+      forceId: false,
+    });
+    app.model(TestUser, {dataSource: 'db'});
+
+    TestUser.create(userData, function(err, user) {
       if (err) return done(err);
       Role.create({name: 'userRole'}, function(err, role) {
         if (err) return done(err);
