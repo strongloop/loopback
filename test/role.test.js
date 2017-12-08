@@ -364,7 +364,7 @@ describe('role model', function() {
     });
   });
 
-  it.only('should be properly authenticated with 0 userId', function(done) {
+  it('should be properly authenticated with 0 userId', function(done) {
     var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar', id: 0};
     var TestUser = app.registry.createModel({
       name: 'TestUser',
