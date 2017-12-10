@@ -101,7 +101,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/strongloop/loopback"
+    "url": "https://github.com/supermafete/loopback-right-checkpermission"
   },
   "browser": {
     "express": "./lib/browser-express.js",
