@@ -313,6 +313,6 @@ describe('users - integration', function() {
       User.resetPassword({email: email}),
       waitForEvent(app.models.User, 'resetPasswordRequest'),
     ])
-    .spread((reset, info) => info);
+      .spread((reset, info) => info);
   }
 });

@@ -216,7 +216,7 @@ describe('User', function() {
 
     it('Requires a unique username', function(done) {
       User.create({email: 'a@b.com', username: 'abc', password: 'foobar'}, function() {
-        User.create({email: 'b@b.com', username: 'abc',  password: 'batbaz'}, function(err) {
+        User.create({email: 'b@b.com', username: 'abc', password: 'batbaz'}, function(err) {
           assert(err, 'should error because the username is not unique!');
 
           done();
@@ -270,7 +270,7 @@ describe('User', function() {
           });
         },
         function(next) {
-          User.findById(usersId, function(err, userFound)  {
+          User.findById(usersId, function(err, userFound) {
             if (err) return next(err);
             expect(userFound).to.equal(null);
             AccessToken.find({where: {userId: usersId}}, function(err, tokens) {
@@ -322,7 +322,7 @@ describe('User', function() {
           });
         },
         function(next) {
-          User.find({where: {name: 'myname'}}, function(err, userFound)  {
+          User.find({where: {name: 'myname'}}, function(err, userFound) {
             if (err) return next(err);
             expect(userFound.length).to.equal(0);
             AccessToken.find({where: {userId: {inq: userIds}}}, function(err, tokens) {
@@ -471,7 +471,7 @@ describe('User', function() {
     it('accepts passwords that are exactly 72 characters long', function(done) {
       User.create({email: 'b@c.com', password: pass72Char}, function(err, user) {
         if (err) return done(err);
-        User.findById(user.pk, function(err, userFound)  {
+        User.findById(user.pk, function(err, userFound) {
           if (err) return done(err);
           assert(userFound);
           done();
@@ -867,21 +867,21 @@ describe('User', function() {
     });
 
     it('allows login with password too long but created in old LB version',
-    function(done) {
-      var bcrypt = require('bcryptjs');
-      var longPassword = new Array(80).join('a');
-      var oldHash = bcrypt.hashSync(longPassword, bcrypt.genSaltSync(1));
+      function(done) {
+        var bcrypt = require('bcryptjs');
+        var longPassword = new Array(80).join('a');
+        var oldHash = bcrypt.hashSync(longPassword, bcrypt.genSaltSync(1));
 
-      User.create({email: 'b@c.com', password: oldHash}, function(err) {
-        if (err) return done(err);
-        User.login({email: 'b@c.com', password: longPassword}, function(err, accessToken) {
+        User.create({email: 'b@c.com', password: oldHash}, function(err) {
           if (err) return done(err);
-          assert(accessToken.id);
-          // we are logged in, the test passed
-          done();
+          User.login({email: 'b@c.com', password: longPassword}, function(err, accessToken) {
+            if (err) return done(err);
+            assert(accessToken.id);
+            // we are logged in, the test passed
+            done();
+          });
         });
       });
-    });
   });
 
   function assertGoodToken(accessToken, user) {
@@ -919,21 +919,21 @@ describe('User', function() {
     });
 
     it('requires valid and complete credentials for email verification - promise variant',
-    function(done) {
-      User.login({email: validCredentialsEmail})
-        .then(function(accessToken) {
-          done();
-        })
-      .catch(function(err) {
-        // strongloop/loopback#931
-        // error message should be "login failed" and not "login failed as the email has not been verified"
-        assert(err && !/verified/.test(err.message),
-          'expecting "login failed" error message, received: "' + err.message + '"');
-        assert.equal(err.code, 'LOGIN_FAILED');
-        assert.equal(err.details, undefined);
-        done();
+      function(done) {
+        User.login({email: validCredentialsEmail})
+          .then(function(accessToken) {
+            done();
+          })
+          .catch(function(err) {
+            // strongloop/loopback#931
+            // error message should be "login failed" and not "login failed as the email has not been verified"
+            assert(err && !/verified/.test(err.message),
+              'expecting "login failed" error message, received: "' + err.message + '"');
+            assert.equal(err.code, 'LOGIN_FAILED');
+            assert.equal(err.details, undefined);
+            done();
+          });
       });
-    });
 
     it('does not login a user with unverified email but provides userId', function() {
       return User.login(validCredentials).then(
@@ -1234,21 +1234,21 @@ describe('User', function() {
     });
 
     it('Logout a user by providing the current accessToken id (using node) - promise variant',
-    function(done) {
-      login(logout);
+      function(done) {
+        login(logout);
 
-      function login(fn) {
-        User.login(validCredentials, fn);
-      }
+        function login(fn) {
+          User.login(validCredentials, fn);
+        }
 
-      function logout(err, accessToken) {
-        User.logout(accessToken.id)
-          .then(function() {
-            verify(accessToken.id, done);
-          })
-          .catch(done(err));
-      }
-    });
+        function logout(err, accessToken) {
+          User.logout(accessToken.id)
+            .then(function() {
+              verify(accessToken.id, done);
+            })
+            .catch(done(err));
+        }
+      });
 
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
@@ -2056,23 +2056,23 @@ describe('User', function() {
       });
 
       it('verifies that verifyOptions.templateFn receives verifyOptions.verificationToken',
-      function() {
-        let actualVerificationToken;
+        function() {
+          let actualVerificationToken;
 
-        Object.assign(verifyOptions, {
-          redirect: '#/some-path?a=1&b=2',
-          templateFn: (verifyOptions, cb) => {
-            actualVerificationToken = verifyOptions.verificationToken;
-            cb(null, 'dummy body');
-          },
-        });
-
-        return user.verify(verifyOptions)
-          .then(() => actualVerificationToken)
-          .then(token => {
-            expect(token).to.exist();
+          Object.assign(verifyOptions, {
+            redirect: '#/some-path?a=1&b=2',
+            templateFn: (verifyOptions, cb) => {
+              actualVerificationToken = verifyOptions.verificationToken;
+              cb(null, 'dummy body');
+            },
           });
-      });
+
+          return user.verify(verifyOptions)
+            .then(() => actualVerificationToken)
+            .then(token => {
+              expect(token).to.exist();
+            });
+        });
 
       it('forwards the "options" argument to user.save() ' +
         'when adding verification token', function() {
@@ -2722,10 +2722,10 @@ describe('User', function() {
                 function(err, accessToken2) {
                   if (err) return next(err);
                   User.login({email: 'user3@example.com', password: 'u3pass'},
-                  function(err, accessToken3) {
-                    if (err) return next(err);
-                    next();
-                  });
+                    function(err, accessToken3) {
+                      if (err) return next(err);
+                      next();
+                    });
                 });
             });
         },
@@ -2760,12 +2760,12 @@ describe('User', function() {
       async.series([
         function createSpecialUser(next) {
           User.create(
-              {email: 'special@example.com', password: 'pass1', name: 'Special'},
-              function(err, specialInstance) {
-                if (err) return next(err);
-                userSpecial = specialInstance;
-                next();
-              });
+            {email: 'special@example.com', password: 'pass1', name: 'Special'},
+            function(err, specialInstance) {
+              if (err) return next(err);
+              userSpecial = specialInstance;
+              next();
+            });
         },
         function loginSpecialUser(next) {
           User.login({email: 'special@example.com', password: 'pass1'}, function(err, ats) {
@@ -2775,11 +2775,11 @@ describe('User', function() {
         },
         function updateSpecialUser(next) {
           User.updateAll(
-                {name: 'Special'},
-                {email: 'superspecial@example.com'}, function(err, info) {
-                  if (err) return next(err);
-                  next();
-                });
+            {name: 'Special'},
+            {email: 'superspecial@example.com'}, function(err, info) {
+              if (err) return next(err);
+              next();
+            });
         },
         function verifyTokensOfSpecialUser(next) {
           AccessToken.find({where: {userId: userSpecial.pk}}, function(err, tokens1) {
@@ -2942,48 +2942,48 @@ describe('User', function() {
     beforeEach(createOriginalUser);
 
     it('sets verification to false after email update if verification is required',
-    function(done) {
-      User.settings.emailVerificationRequired = true;
-      async.series([
-        function updateUser(next) {
-          userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
-            if (err) return next(err);
-            assert.equal(info.email, NEW_EMAIL);
-            next();
-          });
-        },
-        function findUser(next) {
-          User.findById(userInstance.pk, function(err, info) {
-            if (err) return next(err);
-            assert.equal(info.email, NEW_EMAIL);
-            assert.equal(info.emailVerified, false);
-            next();
-          });
-        },
-      ], done);
-    });
+      function(done) {
+        User.settings.emailVerificationRequired = true;
+        async.series([
+          function updateUser(next) {
+            userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
+              if (err) return next(err);
+              assert.equal(info.email, NEW_EMAIL);
+              next();
+            });
+          },
+          function findUser(next) {
+            User.findById(userInstance.pk, function(err, info) {
+              if (err) return next(err);
+              assert.equal(info.email, NEW_EMAIL);
+              assert.equal(info.emailVerified, false);
+              next();
+            });
+          },
+        ], done);
+      });
 
     it('leaves verification as is after email update if verification is not required',
-    function(done) {
-      User.settings.emailVerificationRequired = false;
-      async.series([
-        function updateUser(next) {
-          userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
-            if (err) return next(err);
-            assert.equal(info.email, NEW_EMAIL);
-            next();
-          });
-        },
-        function findUser(next) {
-          User.findById(userInstance.pk, function(err, info) {
-            if (err) return next(err);
-            assert.equal(info.email, NEW_EMAIL);
-            assert.equal(info.emailVerified, true);
-            next();
-          });
-        },
-      ], done);
-    });
+      function(done) {
+        User.settings.emailVerificationRequired = false;
+        async.series([
+          function updateUser(next) {
+            userInstance.updateAttribute('email', NEW_EMAIL, function(err, info) {
+              if (err) return next(err);
+              assert.equal(info.email, NEW_EMAIL);
+              next();
+            });
+          },
+          function findUser(next) {
+            User.findById(userInstance.pk, function(err, info) {
+              if (err) return next(err);
+              assert.equal(info.email, NEW_EMAIL);
+              assert.equal(info.emailVerified, true);
+              next();
+            });
+          },
+        ], done);
+      });
 
     it('should not set verification to false after something other than email is updated',
       function(done) {
@@ -3023,39 +3023,39 @@ describe('User', function() {
 
   describe('password reset with/without email verification', function() {
     it('allows resetPassword by email if email verification is required and done',
-    function(done) {
-      User.settings.emailVerificationRequired = true;
-      var email = validCredentialsEmailVerified.email;
+      function(done) {
+        User.settings.emailVerificationRequired = true;
+        var email = validCredentialsEmailVerified.email;
 
-      User.resetPassword({email: email}, function(err, info) {
-        if (err) return done(err);
-        done();
+        User.resetPassword({email: email}, function(err, info) {
+          if (err) return done(err);
+          done();
+        });
       });
-    });
 
     it('disallows resetPassword by email if email verification is required and not done',
-    function(done) {
-      User.settings.emailVerificationRequired = true;
-      var email = validCredentialsEmail;
+      function(done) {
+        User.settings.emailVerificationRequired = true;
+        var email = validCredentialsEmail;
 
-      User.resetPassword({email: email}, function(err) {
-        assert(err);
-        assert.equal(err.code, 'RESET_FAILED_EMAIL_NOT_VERIFIED');
-        assert.equal(err.statusCode, 401);
-        done();
+        User.resetPassword({email: email}, function(err) {
+          assert(err);
+          assert.equal(err.code, 'RESET_FAILED_EMAIL_NOT_VERIFIED');
+          assert.equal(err.statusCode, 401);
+          done();
+        });
       });
-    });
 
     it('allows resetPassword by email if email verification is not required',
-    function(done) {
-      User.settings.emailVerificationRequired = false;
-      var email = validCredentialsEmail;
+      function(done) {
+        User.settings.emailVerificationRequired = false;
+        var email = validCredentialsEmail;
 
-      User.resetPassword({email: email}, function(err) {
-        if (err) return done(err);
-        done();
+        User.resetPassword({email: email}, function(err) {
+          if (err) return done(err);
+          done();
+        });
       });
-    });
   });
 
   describe('ctor', function() {
@@ -3085,6 +3085,6 @@ describe('User', function() {
       User.resetPassword({email: email}),
       waitForEvent(User, 'resetPasswordRequest'),
     ])
-    .spread((reset, info) => info);
+      .spread((reset, info) => info);
   }
 });

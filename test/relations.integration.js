@@ -63,15 +63,15 @@ describe('relations - integration', function() {
 
           test.team = team;
           app.models.Reader.create({name: 'Reader 1'},
-          function(err, reader) {
-            if (err) return done(err);
+            function(err, reader) {
+              if (err) return done(err);
 
-            test.reader = reader;
-            reader.pictures.create({name: 'Picture 1'});
-            reader.pictures.create({name: 'Picture 2'});
-            reader.team(test.team);
-            reader.save(done);
-          });
+              test.reader = reader;
+              reader.pictures.create({name: 'Picture 1'});
+              reader.pictures.create({name: 'Picture 2'});
+              reader.team(test.team);
+              reader.save(done);
+            });
         }
       );
     });
@@ -157,9 +157,9 @@ describe('relations - integration', function() {
         beforeEach(function() {
           debug('GET /api/stores/:id/widgets response: %s' +
               '\nheaders: %j\nbody string: %s',
-            this.res.statusCode,
-            this.res.headers,
-            this.res.text);
+          this.res.statusCode,
+          this.res.headers,
+          this.res.text);
           this.widgets = this.res.body;
           this.widget = this.res.body && this.res.body[0];
         });
@@ -661,8 +661,8 @@ describe('relations - integration', function() {
       this.app.remotes()._typeRegistry._options.warnWhenOverridingType = false;
 
       var product = app.registry.createModel(
-         'product',
-         {id: 'string', name: 'string'}
+        'product',
+        {id: 'string', name: 'string'}
       );
       var category = app.registry.createModel(
         'category',
@@ -996,7 +996,7 @@ describe('relations - integration', function() {
         });
     });
 
-    it('returns the embedded models', function(done) {
+    it('includes the created embedded model', function(done) {
       var url = '/api/todo-lists/' + this.todoList.id + '/items';
 
       this.get(url)
@@ -1096,7 +1096,7 @@ describe('relations - integration', function() {
 
       var ingredient = app.registry.createModel(
         'ingredient',
-       {name: 'string'}
+        {name: 'string'}
       );
       app.model(ingredient, {dataSource: 'db'});
 
@@ -1311,7 +1311,7 @@ describe('relations - integration', function() {
         });
     });
 
-    it('returns the referenced models - verify', function(done) {
+    it('returns the referenced models without the deleted one', function(done) {
       var url = '/api/recipes/' + this.recipe.id + '/ingredients';
       var test = this;
 
@@ -1370,7 +1370,7 @@ describe('relations - integration', function() {
         });
     });
 
-    it('returns the referenced models - verify', function(done) {
+    it('returns the referenced models without the unlinked one', function(done) {
       var url = '/api/recipes/' + this.recipe.id + '/ingredients';
       var test = this;
 
@@ -1517,17 +1517,17 @@ describe('relations - integration', function() {
 
           test.book = book;
           book.pages.create({name: 'Page 1'},
-          function(err, page) {
-            if (err) return done(err);
+            function(err, page) {
+              if (err) return done(err);
 
-            test.page = page;
-            page.notes.create({text: 'Page Note 1'},
-            function(err, note) {
-              test.note = note;
+              test.page = page;
+              page.notes.create({text: 'Page Note 1'},
+                function(err, note) {
+                  test.note = note;
 
-              done();
+                  done();
+                });
             });
-          });
         });
     });
 

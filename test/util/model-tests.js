@@ -96,7 +96,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
         var foo = new User({domain: 'www'});
         var bar = new User({domain: 'billing'});
         var bat = new User({domain: 'admin'});
-        assert(foo.isValid() ===  false);
+        assert(foo.isValid() === false);
         assert(bar.isValid() === false);
         assert(bat.isValid() === false);
         assert(foo.errors.domain, 'model should have a domain error');
@@ -139,13 +139,13 @@ module.exports = function defineModelTestsWithDataSource(options) {
 
     describe('Model.create([data], [callback])', function() {
       it('Create an instance of Model with given data and save to the attached data source',
-      function(done) {
-        User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
-          assert(user instanceof User);
+        function(done) {
+          User.create({first: 'Joe', last: 'Bob'}, function(err, user) {
+            assert(user instanceof User);
 
-          done();
+            done();
+          });
         });
-      });
     });
 
     describe('model.save([options], [callback])', function() {

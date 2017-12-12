@@ -78,13 +78,13 @@ describe('Checkpoint', function() {
     });
 
     it('Checkpoint.current() for non existing checkpoint should initialize checkpoint',
-    function(done) {
-      Checkpoint.current(function(err, seq) {
-        expect(seq).to.equal(1);
+      function(done) {
+        Checkpoint.current(function(err, seq) {
+          expect(seq).to.equal(1);
 
-        done(err);
+          done(err);
+        });
       });
-    });
 
     it('bumpLastSeq() works when singleton instance does not exists yet', function(done) {
       Checkpoint.bumpLastSeq(function(err, cp) {

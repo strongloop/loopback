@@ -539,10 +539,10 @@ module.exports = function(Role) {
         if (principalType && principalId) {
           roleMappingModel.findOne({where: {roleId: roleId,
             principalType: principalType, principalId: principalId}},
-            function(err, result) {
-              debug('Role mapping found: %j', result);
-              done(!err && result); // The only arg is the result
-            });
+          function(err, result) {
+            debug('Role mapping found: %j', result);
+            done(!err && result); // The only arg is the result
+          });
         } else {
           process.nextTick(function() {
             done(false);

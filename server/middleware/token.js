@@ -30,7 +30,7 @@ function rewriteUserLiteral(req, currentUserLiteral, next) {
     // Replace /me/ with /current-user-id/
     var urlBeforeRewrite = req.url;
     req.url = req.url.replace(literalRegExp,
-        '/' + req.accessToken.userId + '$1');
+      '/' + req.accessToken.userId + '$1');
 
     if (req.url !== urlBeforeRewrite) {
       debug('req.url has been rewritten from %s to %s', urlBeforeRewrite,

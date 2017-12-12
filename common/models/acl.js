@@ -332,8 +332,8 @@ module.exports = function(ACL) {
    * @param {AccessRequest} result The resolved access request.
    */
   ACL.checkPermission = function checkPermission(principalType, principalId,
-                                                 model, property, accessType,
-                                                 callback) {
+    model, property, accessType,
+    callback) {
     if (!callback) callback = utils.createPromiseCallback();
     if (principalId !== null && principalId !== undefined && (typeof principalId !== 'string')) {
       principalId = principalId.toString();
@@ -363,15 +363,15 @@ module.exports = function(ACL) {
     var self = this;
     this.find({where: {principalType: principalType, principalId: principalId,
       model: model, property: propertyQuery, accessType: accessTypeQuery}},
-      function(err, dynACLs) {
-        if (err) {
-          return callback(err);
-        }
-        acls = acls.concat(dynACLs);
-        // resolved is an instance of AccessRequest
-        resolved = self.resolvePermission(acls, req);
-        return callback(null, resolved);
-      });
+    function(err, dynACLs) {
+      if (err) {
+        return callback(err);
+      }
+      acls = acls.concat(dynACLs);
+      // resolved is an instance of AccessRequest
+      resolved = self.resolvePermission(acls, req);
+      return callback(null, resolved);
+    });
     return callback.promise;
   };
 

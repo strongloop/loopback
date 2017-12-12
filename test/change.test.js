@@ -157,12 +157,12 @@ describe('Change', function() {
       beforeEach(function(done) {
         var test = this;
         Change.findOrCreateChange(this.modelName, this.modelId)
-        .then(function(result) {
-          test.result = result;
+          .then(function(result) {
+            test.result = result;
 
-          done();
-        })
-        .catch(done);
+            done();
+          })
+          .catch(done);
       });
 
       it('should create an entry', function(done) {
@@ -352,12 +352,12 @@ describe('Change', function() {
       });
 
       change.currentRevision()
-      .then(function(rev) {
-        assert.equal(rev, test.revisionForModel);
+        .then(function(rev) {
+          assert.equal(rev, test.revisionForModel);
 
-        done();
-      })
-      .catch(done);
+          done();
+        })
+        .catch(done);
     });
   });
 

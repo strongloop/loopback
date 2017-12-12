@@ -139,39 +139,39 @@ describe('loopback.token(options)', function() {
   });
 
   it('does not search default keys when searchDefaultTokenKeys is false',
-  function(done) {
-    var tokenId = this.token.id;
-    var app = createTestApp(
-      this.token,
-      {token: {searchDefaultTokenKeys: false}},
-      done);
-    var agent = request.agent(app);
+    function(done) {
+      var tokenId = this.token.id;
+      var app = createTestApp(
+        this.token,
+        {token: {searchDefaultTokenKeys: false}},
+        done);
+      var agent = request.agent(app);
 
-    // Set the token cookie
-    agent.get('/token').expect(200).end(function(err, res) {
-      if (err) return done(err);
+      // Set the token cookie
+      agent.get('/token').expect(200).end(function(err, res) {
+        if (err) return done(err);
 
-      // Make a request that sets the token in all places searched by default
-      agent.get('/check-access?access_token=' + tokenId)
-        .set('X-Access-Token', tokenId)
-        .set('authorization', tokenId)
+        // Make a request that sets the token in all places searched by default
+        agent.get('/check-access?access_token=' + tokenId)
+          .set('X-Access-Token', tokenId)
+          .set('authorization', tokenId)
         // Expect 401 because there is no (non-default) place configured where
         // the middleware should load the token from
-        .expect(401)
-        .end(done);
+          .expect(401)
+          .end(done);
+      });
     });
-  });
 
   it('populates req.token from an authorization header with bearer token with base64',
-  function(done) {
-    var token = this.token.id;
-    token = 'Bearer ' + new Buffer(token).toString('base64');
-    createTestAppAndRequest(this.token, done)
-      .get('/')
-      .set('authorization', token)
-      .expect(200)
-      .end(done);
-  });
+    function(done) {
+      var token = this.token.id;
+      token = 'Bearer ' + new Buffer(token).toString('base64');
+      createTestAppAndRequest(this.token, done)
+        .get('/')
+        .set('authorization', token)
+        .expect(200)
+        .end(done);
+    });
 
   it('populates req.token from an authorization header with bearer token', function(done) {
     var token = this.token.id;
@@ -346,29 +346,29 @@ describe('loopback.token(options)', function() {
 
   describe('loading multiple instances of token middleware', function() {
     it('skips when req.token is already present and no further options are set',
-    function(done) {
-      var tokenStub = {id: 'stub id'};
-      app.use(function(req, res, next) {
-        req.accessToken = tokenStub;
+      function(done) {
+        var tokenStub = {id: 'stub id'};
+        app.use(function(req, res, next) {
+          req.accessToken = tokenStub;
 
-        next();
-      });
-      app.use(loopback.token({model: Token}));
-      app.get('/', function(req, res, next) {
-        res.send(req.accessToken);
-      });
-
-      request(app).get('/')
-        .set('Authorization', this.token.id)
-        .expect(200)
-        .end(function(err, res) {
-          if (err) return done(err);
-
-          expect(res.body).to.eql(tokenStub);
-
-          done();
+          next();
         });
-    });
+        app.use(loopback.token({model: Token}));
+        app.get('/', function(req, res, next) {
+          res.send(req.accessToken);
+        });
+
+        request(app).get('/')
+          .set('Authorization', this.token.id)
+          .expect(200)
+          .end(function(err, res) {
+            if (err) return done(err);
+
+            expect(res.body).to.eql(tokenStub);
+
+            done();
+          });
+      });
 
     it('does not overwrite valid existing token (has "id" property) ' +
       ' when overwriteExistingToken is falsy',
@@ -509,21 +509,21 @@ describe('AccessToken', function() {
     });
 
     it('allows eternal tokens when enabled by User.allowEternalTokens',
-    function(done) {
-      var Token = givenLocalTokenModel();
+      function(done) {
+        var Token = givenLocalTokenModel();
 
-      // Overwrite User settings - enable eternal tokens
-      Token.app.models.User.settings.allowEternalTokens = true;
+        // Overwrite User settings - enable eternal tokens
+        Token.app.models.User.settings.allowEternalTokens = true;
 
-      Token.create({userId: '123', ttl: -1}, function(err, token) {
-        if (err) return done(err);
-        token.validate(function(err, isValid) {
+        Token.create({userId: '123', ttl: -1}, function(err, token) {
           if (err) return done(err);
-          expect(isValid, 'isValid').to.equal(true);
-          done();
+          token.validate(function(err, isValid) {
+            if (err) return done(err);
+            expect(isValid, 'isValid').to.equal(true);
+            done();
+          });
         });
       });
-    });
   });
 
   describe('.findForRequest()', function() {
@@ -649,7 +649,7 @@ describe('app.enableAuth()', function() {
       });
   });
 
-  it('prevent remote call with app setting status on denied ACL', function(done) {
+  it('denies remote call with app setting status 403', function(done) {
     createTestAppAndRequest(this.token, {app: {aclErrorStatus: 403}}, done)
       .del('/tests/123')
       .expect(403)
@@ -667,7 +667,7 @@ describe('app.enableAuth()', function() {
       });
   });
 
-  it('prevent remote call with app setting status on denied ACL', function(done) {
+  it('denies remote call with app setting status 404', function(done) {
     createTestAppAndRequest(this.token, {model: {aclErrorStatus: 404}}, done)
       .del('/tests/123')
       .expect(404)
