@@ -1439,6 +1439,8 @@ describe('relations - integration', function() {
   });
 
   describe('nested relations', function() {
+    let accessOptions;
+
     before(function defineModels() {
       var Book = app.registry.createModel(
         'Book',
@@ -1486,7 +1488,8 @@ describe('relations - integration', function() {
         throw new Error('This should not crash the app');
       };
 
-      Page.remoteMethod('__throw__errors', {isStatic: false, http: {path: '/throws', verb: 'get'}});
+      Page.remoteMethod('__throw__errors', {isStatic: false, http: {path: '/throws', verb: 'get'},
+        accepts: [{arg: 'options', type: 'object', http: 'optionsFromRequest'}]});
 
       // Now `pages` has nestRemoting set to true and no need to call nestRemoting()
       // Book.nestRemoting('pages');
@@ -1507,6 +1510,15 @@ describe('relations - integration', function() {
 
         next();
       });
+
+      Page.observe('access', function(ctx, next) {
+        accessOptions = ctx.options;
+        next();
+      });
+    });
+
+    beforeEach(function resetAccessOptions() {
+      accessOptions = 'access hook not triggered';
     });
 
     before(function createBook(done) {
@@ -1619,6 +1631,7 @@ describe('relations - integration', function() {
     it('enables nested relationship routes - belongsTo findById', function(done) {
       var test = this;
       this.get('/api/images/' + test.image.id + '/book/pages/' + test.page.id)
+        .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
 
@@ -1655,6 +1668,14 @@ describe('relations - integration', function() {
           expect(res.body.text).to.equal('Page Note 1');
 
           done();
+        });
+    });
+
+    it('passes options to nested relationship routes', function() {
+      return this.get(`/api/books/${this.book.id}/pages/${this.page.id}/notes/${this.note.id}`)
+        .expect(200)
+        .then(res => {
+          expect(accessOptions).to.have.property('accessToken');
         });
     });
 
