@@ -1,3 +1,17 @@
+2017-12-12, Version 3.17.1
+==========================
+
+ * Update nestRemoting to pass optionsFromContext (bmatson)
+
+ * fix(test): rem exclusive test (Samuel Reed)
+
+ * fix(test): working test with 0 userId (Samuel Reed)
+
+ * fix(AccessContext): Tighten userid/appid checks (Samuel Reed)
+
+ * fix(id): replace with != null (Samuel Reed)
+
+
 2017-11-29, Version 3.17.0
 ==========================
 
