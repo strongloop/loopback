@@ -170,66 +170,66 @@ describe('Replication / Change APIs', function() {
     });
 
     it('rectifyOnDelete for Delete should call rectifyChange instead of rectifyAllChanges',
-    function(done) {
-      var calls = mockTargetModelRectify();
-      async.waterfall([
-        function(callback) {
-          SourceModel.destroyAll({name: 'John'}, callback);
-        },
-        function(data, callback) {
-          SourceModel.replicate(TargetModel, callback);
+      function(done) {
+        var calls = mockTargetModelRectify();
+        async.waterfall([
+          function(callback) {
+            SourceModel.destroyAll({name: 'John'}, callback);
+          },
+          function(data, callback) {
+            SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        },
-      ], function(err, results) {
-        if (err) return done(err);
+          },
+        ], function(err, results) {
+          if (err) return done(err);
 
-        expect(calls).to.eql(['rectifyChange']);
+          expect(calls).to.eql(['rectifyChange']);
 
-        done();
+          done();
+        });
       });
-    });
 
     it('rectifyOnSave for Update should call rectifyChange instead of rectifyAllChanges',
-    function(done) {
-      var calls = mockTargetModelRectify();
-      var newData = {'name': 'Janie'};
-      async.waterfall([
-        function(callback) {
-          SourceModel.update({name: 'Jane'}, newData, callback);
-        },
-        function(data, callback) {
-          SourceModel.replicate(TargetModel, callback);
+      function(done) {
+        var calls = mockTargetModelRectify();
+        var newData = {'name': 'Janie'};
+        async.waterfall([
+          function(callback) {
+            SourceModel.update({name: 'Jane'}, newData, callback);
+          },
+          function(data, callback) {
+            SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        },
-      ], function(err, result) {
-        if (err) return done(err);
+          },
+        ], function(err, result) {
+          if (err) return done(err);
 
-        expect(calls).to.eql(['rectifyChange']);
+          expect(calls).to.eql(['rectifyChange']);
 
-        done();
+          done();
+        });
       });
-    });
 
     it('rectifyOnSave for Create should call rectifyChange instead of rectifyAllChanges',
-    function(done) {
-      var calls = mockTargetModelRectify();
-      var newData = [{name: 'Janie', surname: 'Doe'}];
-      async.waterfall([
-        function(callback) {
-          SourceModel.create(newData, callback);
-        },
-        function(data, callback) {
-          SourceModel.replicate(TargetModel, callback);
+      function(done) {
+        var calls = mockTargetModelRectify();
+        var newData = [{name: 'Janie', surname: 'Doe'}];
+        async.waterfall([
+          function(callback) {
+            SourceModel.create(newData, callback);
+          },
+          function(data, callback) {
+            SourceModel.replicate(TargetModel, callback);
           // replicate should call `rectifyOnSave` and then `rectifyChange` not `rectifyAllChanges` through `after save` operation
-        },
-      ], function(err, result) {
-        if (err) return done(err);
+          },
+        ], function(err, result) {
+          if (err) return done(err);
 
-        expect(calls).to.eql(['rectifyChange']);
+          expect(calls).to.eql(['rectifyChange']);
 
-        done();
+          done();
+        });
       });
-    });
 
     function mockSourceModelRectify() {
       var calls = [];
@@ -305,12 +305,12 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
 
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
-        options, function(err, conflicts) {
-          if (err) return done(err);
+          options, function(err, conflicts) {
+            if (err) return done(err);
 
-          assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
-            test.TargetModel, done);
-        });
+            assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
+              test.TargetModel, done);
+          });
       });
     });
 
@@ -322,7 +322,7 @@ describe('Replication / Change APIs', function() {
         if (err) return done(err);
 
         test.SourceModel.replicate(test.startingCheckpoint, test.TargetModel,
-        options)
+          options)
           .then(function(conflicts) {
             assertTargetModelEqualsSourceModel(conflicts, test.SourceModel,
               test.TargetModel, done);
@@ -1280,7 +1280,7 @@ describe('Replication / Change APIs', function() {
       var ClientA, Server, ClientB;
 
       beforeEach(function() {
-        ClientA  = SourceModel;
+        ClientA = SourceModel;
         Server = TargetModel;
         ClientB = AnotherModel;
 
@@ -1625,13 +1625,13 @@ describe('Replication / Change APIs', function() {
           updates[0].change = data;
           OptionsSourceModel.bulkUpdate(updates, options, callback);
         }],
-        function(err, result) {
-          if (err) return done(err);
+      function(err, result) {
+        if (err) return done(err);
 
-          expect(syncPropertyExists).to.eql(true);
+        expect(syncPropertyExists).to.eql(true);
 
-          done();
-        }
+        done();
+      }
       );
     });
   });
@@ -1875,7 +1875,7 @@ describe('Replication / Change APIs', function() {
   }
 
   function assertTargetModelEqualsSourceModel(conflicts, sourceModel,
-                                              targetModel, done) {
+    targetModel, done) {
     var sourceData, targetData;
 
     assert(conflicts.length === 0);

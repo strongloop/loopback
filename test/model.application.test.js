@@ -15,7 +15,7 @@ describe('Application', function() {
     Application.attachTo(loopback.memory());
   });
 
-  it('honors `application.register` - promise variant', function(done) {
+  it('honors `application.register` - callback variant', function(done) {
     Application.register('rfeng', 'MyTestApp',
       {description: 'My test application'}, function(err, result) {
         var app = result;
@@ -89,31 +89,31 @@ describe('Application', function() {
           serverApiKey: 'serverKey',
         },
       }},
-      function(err, result) {
-        var app = result;
-        assert.deepEqual(app.pushSettings.toObject(), {
-          apns: {
-            production: false,
-            certData: 'cert',
-            keyData: 'key',
-            pushOptions: {
-              gateway: 'gateway.sandbox.push.apple.com',
-              port: 2195,
-            },
-            feedbackOptions: {
-              gateway: 'feedback.sandbox.push.apple.com',
-              port: 2196,
-              interval: 300,
-              batchFeedback: true,
-            },
+    function(err, result) {
+      var app = result;
+      assert.deepEqual(app.pushSettings.toObject(), {
+        apns: {
+          production: false,
+          certData: 'cert',
+          keyData: 'key',
+          pushOptions: {
+            gateway: 'gateway.sandbox.push.apple.com',
+            port: 2195,
           },
-          gcm: {
-            serverApiKey: 'serverKey',
+          feedbackOptions: {
+            gateway: 'feedback.sandbox.push.apple.com',
+            port: 2196,
+            interval: 300,
+            batchFeedback: true,
           },
-        });
-
-        done(err, result);
+        },
+        gcm: {
+          serverApiKey: 'serverKey',
+        },
       });
+
+      done(err, result);
+    });
   });
 
   beforeEach(function(done) {
@@ -164,32 +164,32 @@ describe('Application', function() {
 
   it('Reset keys - promise variant', function(done) {
     Application.resetKeys(registeredApp.id)
-    .then(function(result) {
-      var app = result;
-      assert.equal(app.owner, 'rfeng');
-      assert.equal(app.name, 'MyApp2');
-      assert.equal(app.description, 'My second mobile application');
-      assert(app.clientKey);
-      assert(app.javaScriptKey);
-      assert(app.restApiKey);
-      assert(app.windowsKey);
-      assert(app.masterKey);
+      .then(function(result) {
+        var app = result;
+        assert.equal(app.owner, 'rfeng');
+        assert.equal(app.name, 'MyApp2');
+        assert.equal(app.description, 'My second mobile application');
+        assert(app.clientKey);
+        assert(app.javaScriptKey);
+        assert(app.restApiKey);
+        assert(app.windowsKey);
+        assert(app.masterKey);
 
-      assert(app.clientKey !== registeredApp.clientKey);
-      assert(app.javaScriptKey !== registeredApp.javaScriptKey);
-      assert(app.restApiKey !== registeredApp.restApiKey);
-      assert(app.windowsKey !== registeredApp.windowsKey);
-      assert(app.masterKey !== registeredApp.masterKey);
+        assert(app.clientKey !== registeredApp.clientKey);
+        assert(app.javaScriptKey !== registeredApp.javaScriptKey);
+        assert(app.restApiKey !== registeredApp.restApiKey);
+        assert(app.windowsKey !== registeredApp.windowsKey);
+        assert(app.masterKey !== registeredApp.masterKey);
 
-      assert(app.created);
-      assert(app.modified);
-      registeredApp = app;
+        assert(app.created);
+        assert(app.modified);
+        registeredApp = app;
 
-      done();
-    })
-    .catch(function(err) {
-      done(err);
-    });
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('Reset keys without create a new instance', function(done) {
@@ -205,17 +205,17 @@ describe('Application', function() {
 
   it('Reset keys without create a new instance - promise variant', function(done) {
     Application.resetKeys(registeredApp.id)
-    .then(function(result) {
-      var app = result;
-      assert(app.id);
-      assert(app.id === registeredApp.id);
-      registeredApp = app;
+      .then(function(result) {
+        var app = result;
+        assert(app.id);
+        assert(app.id === registeredApp.id);
+        registeredApp = app;
 
-      done();
-    })
-    .catch(function(err) {
-      done(err);
-    });
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+      });
   });
 
   it('Authenticate with application id & clientKey', function(done) {
@@ -231,15 +231,15 @@ describe('Application', function() {
   it('Authenticate with application id & clientKey - promise variant',
     function(done) {
       Application.authenticate(registeredApp.id, registeredApp.clientKey)
-      .then(function(result) {
-        assert.equal(result.application.id, registeredApp.id);
-        assert.equal(result.keyType, 'clientKey');
+        .then(function(result) {
+          assert.equal(result.application.id, registeredApp.id);
+          assert.equal(result.keyType, 'clientKey');
 
-        done();
-      })
-      .catch(function(err) {
-        done(err);
-      });
+          done();
+        })
+        .catch(function(err) {
+          done(err);
+        });
     });
 
   it('Authenticate with application id & javaScriptKey', function(done) {
@@ -293,15 +293,15 @@ describe('Application', function() {
 
   it('Fail to authenticate with application id - promise variant', function(done) {
     Application.authenticate(registeredApp.id, 'invalid-key')
-    .then(function(result) {
-      assert(!result);
+      .then(function(result) {
+        assert(!result);
 
-      done();
-    })
-    .catch(function(err) {
-      done(err);
-      throw new Error('Error should NOT be thrown');
-    });
+        done();
+      })
+      .catch(function(err) {
+        done(err);
+        throw new Error('Error should NOT be thrown');
+      });
   });
 });
 

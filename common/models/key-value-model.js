@@ -223,7 +223,7 @@ module.exports = function(KeyValueModel) {
 function throwNotAttached(modelName, methodName) {
   throw new Error(g.f(
     'Cannot call %s.%s(). ' +
-      'The %s method has not been setup. '  +
+      'The %s method has not been setup. ' +
       'The {{KeyValueModel}} has not been correctly attached ' +
       'to a {{DataSource}}!',
     modelName, methodName, methodName));

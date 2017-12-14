@@ -239,12 +239,12 @@ describe('loopback.rest', function() {
 
     describe('with specific definitions in model-config.json', function() {
       it('should not be exposed when the definition value is false',
-          function(done) {
-            var app = require(getFixturePath('model-config-defined-false'));
-            request(app)
-          .get('/todos')
-          .expect(404, done);
-          });
+        function(done) {
+          var app = require(getFixturePath('model-config-defined-false'));
+          request(app)
+            .get('/todos')
+            .expect(404, done);
+        });
 
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('model-config-defined-true'));
@@ -256,12 +256,12 @@ describe('loopback.rest', function() {
 
     describe('with default definitions in model-config.json', function() {
       it('should not be exposed when the definition value is false',
-          function(done) {
-            var app = require(getFixturePath('model-config-default-false'));
-            request(app)
-          .get('/todos')
-          .expect(404, done);
-          });
+        function(done) {
+          var app = require(getFixturePath('model-config-default-false'));
+          request(app)
+            .get('/todos')
+            .expect(404, done);
+        });
 
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('model-config-default-true'));
@@ -286,30 +286,30 @@ describe('loopback.rest', function() {
 
     describe('with specific definitions in config.json', function() {
       it('should not be exposed when the definition value is false',
-          function(done) {
-            var app = require(getFixturePath('config-defined-false'));
-            request(app)
-          .get('/todos')
-          .expect(404, done);
-          });
+        function(done) {
+          var app = require(getFixturePath('config-defined-false'));
+          request(app)
+            .get('/todos')
+            .expect(404, done);
+        });
 
       it('should be exposed when the definition value is true',
-          function(done) {
-            var app = require(getFixturePath('config-defined-true'));
-            request(app)
-          .get('/todos')
-          .expect(200, done);
-          });
+        function(done) {
+          var app = require(getFixturePath('config-defined-true'));
+          request(app)
+            .get('/todos')
+            .expect(200, done);
+        });
     });
 
     describe('with default definitions in config.json', function() {
       it('should not be exposed when the definition value is false',
-          function(done) {
-            var app = require(getFixturePath('config-default-false'));
-            request(app)
-          .get('/todos')
-          .expect(404, done);
-          });
+        function(done) {
+          var app = require(getFixturePath('config-default-false'));
+          request(app)
+            .get('/todos')
+            .expect(404, done);
+        });
 
       it('should be exposed when the definition value is true', function(done) {
         var app = require(getFixturePath('config-default-true'));
@@ -337,21 +337,21 @@ describe('loopback.rest', function() {
     // a side effect since tests share the same loopback instance. As a
     // consequence, this causes the tests in user.integration to fail.
     describe.skip('with definitions in both config.json and model-config.json',
-        function() {
-          it('should prioritize the settings in model-config.json', function(done) {
-            var app = require(getFixturePath('both-configs-set'));
-            request(app)
-          .del('/todos')
-          .expect(404, done);
-          });
-
-          it('should fall back to config.json settings if setting is not found in' +
-          'model-config.json', function(done) {
-            var app = require(getFixturePath('both-configs-set'));
-            request(app)
-          .get('/todos')
-          .expect(404, done);
-          });
+      function() {
+        it('should prioritize the settings in model-config.json', function(done) {
+          var app = require(getFixturePath('both-configs-set'));
+          request(app)
+            .del('/todos')
+            .expect(404, done);
         });
+
+        it('should fall back to config.json settings if setting is not found in' +
+          'model-config.json', function(done) {
+          var app = require(getFixturePath('both-configs-set'));
+          request(app)
+            .get('/todos')
+            .expect(404, done);
+        });
+      });
   });
 });

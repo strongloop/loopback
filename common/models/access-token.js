@@ -111,8 +111,8 @@ module.exports = function(AccessToken) {
       // replacement for deprecated req.param()
       id = req.params && req.params[param] !== undefined ? req.params[param] :
         req.body && req.body[param] !== undefined ? req.body[param] :
-        req.query && req.query[param] !== undefined ? req.query[param] :
-        undefined;
+          req.query && req.query[param] !== undefined ? req.query[param] :
+            undefined;
 
       if (typeof id === 'string') {
         return id;
@@ -227,7 +227,7 @@ module.exports = function(AccessToken) {
   AccessToken.prototype.validate = function(cb) {
     try {
       assert(
-          this.created && typeof this.created.getTime === 'function',
+        this.created && typeof this.created.getTime === 'function',
         'token.created must be a valid Date'
       );
       assert(this.ttl !== 0, 'token.ttl must be not be 0');

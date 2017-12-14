@@ -207,7 +207,7 @@ describe('User.password', () => {
       User.resetPassword({email: credentials.email}),
       waitForEvent(User, 'resetPasswordRequest'),
     ])
-    .spread((reset, info) => resetToken = info.accessToken);
+      .spread((reset, info) => resetToken = info.accessToken);
   }
 
   function changeName(token) {

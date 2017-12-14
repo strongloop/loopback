@@ -523,7 +523,7 @@ describe('app', function() {
       });
     });
 
-    it('scopes middleware to a list of scopes', function(done) {
+    it('scopes middleware from config to a list of scopes', function(done) {
       var steps = [];
       app.middlewareFromConfig(
         function factory() {
