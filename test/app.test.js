@@ -787,7 +787,7 @@ describe('app', function() {
     it('looks up the connector in `app.connectors`', function() {
       app.connector('custom', loopback.Memory);
       app.dataSource('custom', {connector: 'custom'});
-      expect(app.dataSources.custom.name).to.equal(loopback.Memory.name);
+      expect(app.dataSources.custom.name).to.equal('custom');
     });
 
     it('adds data source name to error messages', function() {
