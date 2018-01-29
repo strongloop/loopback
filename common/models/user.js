@@ -1061,7 +1061,7 @@ module.exports = function(User) {
     this.settings.ttl = this.settings.ttl || DEFAULT_TTL;
 
     UserModel.setter.email = function(value) {
-      if (!UserModel.settings.caseSensitiveEmail) {
+      if (!UserModel.settings.caseSensitiveEmail && typeof value === 'string') {
         this.$email = value.toLowerCase();
       } else {
         this.$email = value;
