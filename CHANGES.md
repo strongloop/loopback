@@ -1,3 +1,17 @@
+2018-01-29, Version 3.18.0
+==========================
+
+ * fix: preserve datasource name (Kevin Scroggins)
+
+ * Update Copyright Years (Justin Ross)
+
+ * Support options.filter in createChangeStream (Edward Choh)
+
+ * fixup! add top-level dep on eslint-plugin-mocha (Miroslav Bajtoš)
+
+ * Update eslint and eslint-config to latest (Miroslav Bajtoš)
+
+
 2017-12-12, Version 3.17.1
 ==========================
 
