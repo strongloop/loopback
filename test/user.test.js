@@ -1280,7 +1280,7 @@ describe('User', function() {
     it('fails when accessToken is not provided', function(done) {
       User.logout(undefined, function(err) {
         expect(err).to.have.property('message');
-        expect(err).to.have.property('status', 401);
+        expect(err).to.have.property('statusCode', 401);
         done();
       });
     });
@@ -1288,7 +1288,7 @@ describe('User', function() {
     it('fails when accessToken is not found', function(done) {
       User.logout('expired-access-token', function(err) {
         expect(err).to.have.property('message');
-        expect(err).to.have.property('status', 401);
+        expect(err).to.have.property('statusCode', 401);
         done();
       });
     });
