@@ -1,3 +1,9 @@
+2018-01-31, Version 3.18.1
+==========================
+
+ * update: juggler to version including security fix. (Taranveer Virk)
+
+
 2018-01-29, Version 3.18.0
 ==========================
 
