@@ -1,3 +1,13 @@
+2018-01-31, Version 2.39.1
+==========================
+
+ * update juggler dep (Taranveer Virk)
+
+ * fix(id): replace with != null (Samuel Reed)
+
+ * fix(AccessContext): Tighten userid/appid checks (Samuel Reed)
+
+
 2017-10-23, Version 2.39.0
 ==========================
 
