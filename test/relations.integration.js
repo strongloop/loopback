@@ -1480,6 +1480,7 @@ describe('relations - integration', function() {
       Book.hasMany(Page, {options: {nestRemoting: true}});
       Book.hasMany(Chapter);
       Page.hasMany(Note);
+      Page.belongsTo(Book, {options: {nestRemoting: true}});
       Chapter.hasMany(Note);
       Image.belongsTo(Book);
 
