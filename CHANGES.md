@@ -1,3 +1,11 @@
+2018-02-08, Version 3.18.2
+==========================
+
+ * model: fix infinite loop on nestRemoting (Kevin Delisle)
+
+ * Use statusCode prop for user errors (Zak Barbuto)
+
+
 2018-01-31, Version 3.18.1
 ==========================
 
