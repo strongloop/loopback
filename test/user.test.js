@@ -1407,7 +1407,7 @@ describe('User', function() {
     });
 
     it('changes the password - instance method', () => {
-      validCredentialsUser.changePassword(currentPassword, 'new password')
+      return validCredentialsUser.changePassword(currentPassword, 'new password')
         .then(() => {
           expect(arguments.length, 'changePassword promise resolution')
             .to.equal(0);
