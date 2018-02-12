@@ -1,3 +1,11 @@
+2018-02-12, Version 2.39.2
+==========================
+
+ * Babelify juggler for Karma tests (Miroslav Bajtoš)
+
+ * Fix Karma config to babelify node_modules too (Miroslav Bajtoš)
+
+
 2018-01-31, Version 2.39.1
 ==========================
 
