@@ -43,10 +43,10 @@ Application.create(data, function(err, data) {
 });
 
 Application.register('rfeng', 'MyApp', {description: g.f('My first mobile application')},
-function(err, result) {
-  console.log(result.toObject());
-
-  result.resetKeys(function(err, result) {
+  function(err, result) {
     console.log(result.toObject());
+
+    result.resetKeys(function(err, result) {
+      console.log(result.toObject());
+    });
   });
-});

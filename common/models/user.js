@@ -749,9 +749,9 @@ module.exports = function(User) {
       displayPort +
       urlPath +
       '?' + qs.stringify({
-          uid: '' + verifyOptions.user[pkName],
-          redirect: verifyOptions.redirect,
-        });
+        uid: '' + verifyOptions.user[pkName],
+        redirect: verifyOptions.redirect,
+      });
 
     verifyOptions.to = verifyOptions.to || user.email;
     verifyOptions.subject = verifyOptions.subject || g.f('Thanks for Registering');
