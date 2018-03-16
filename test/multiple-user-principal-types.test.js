@@ -22,7 +22,7 @@ describe('Multiple users with custom principalType', function() {
 
   var commonCredentials = {email: 'foo@bar.com', password: 'bar'};
   var app, OneUser, AnotherUser, AccessToken, Role,
-    userFromOneModel, userFromAnotherModel, userRole, userOneBaseContext;
+    userFromOneModel, userFromAnotherModel, accessTokenForUserFromOneModel, accessTokenForUserFromAnotherModel, userRole, userOneBaseContext;
 
   beforeEach(function setupAppAndModels() {
     // create a local app object that does not share state with other tests
@@ -213,6 +213,50 @@ describe('Multiple users with custom principalType', function() {
     });
 
     describe('getUser()', function() {
+      it("Check correct principalType for users belonging to different user models", function() {
+        Promise.all([
+          OneUser.login(commonCredentials),
+          AnotherUser.login(commonCredentials)
+          ]).spread(function(t1, t2) {
+            
+            accessTokenForUserFromOneModel = t1;
+            accessTokenForUserFromAnotherModel = t2;
+
+
+            const accessContextForUserFromOneModel = new AccessContext({registry: OneUser.registry, accessToken: accessTokenForUserFromOneModel});
+            const accessContextForUserFromAnotherModel = new AccessContext({registry: AnotherUser.registry, accessToken: accessTokenForUserFromAnotherModel});
+
+            var user1 = accessContextForUserFromOneModel.getUser();
+            expect(user1).to.eql({
+              id: userFromOneModel.id,
+              principalType: OneUser.modelName,
+            });
+
+            var user2 = accessContextForUserFromAnotherModel.getUser();
+            expect(user2).to.eql({
+              id: userFromAnotherModel.id,
+              principalType: AnotherUser.modelName,
+            });
+          
+          })
+
+        
+        return Promise.try(function() {
+            addToAccessContext([
+              {type: Principal.ROLE},
+              {type: Principal.APP},
+              {type: Principal.SCOPE},
+              {type: OneUser.modelName, id: userFromOneModel.id},
+            ]);
+            var user = accessContext.getUser();
+            expect(user).to.eql({
+              id: userFromOneModel.id,
+              principalType: OneUser.modelName,
+            });
+          });
+
+      })
+
       it('returns user although principals contain non USER principals',
         function() {
           return Promise.try(function() {

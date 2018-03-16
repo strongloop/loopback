@@ -273,6 +273,10 @@ module.exports = function(Role) {
         process.nextTick(function() {
           callback(null, matches(modelId, userId));
         });
+      }else {
+        process.nextTick(function() {
+          callback(null, false);
+        });
       }
       return callback.promise;
     }
