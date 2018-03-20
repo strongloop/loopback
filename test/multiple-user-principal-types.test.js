@@ -5,7 +5,6 @@
 
 'use strict';
 var expect = require('./helpers/expect');
-var request = require('supertest');
 var loopback = require('../');
 var ctx = require('../lib/access-context');
 var extend = require('util')._extend;
@@ -28,7 +27,7 @@ describe('Multiple users with custom principalType', function() {
     // create a local app object that does not share state with other tests
     app = loopback({localRegistry: true, loadBuiltinModels: true});
     app.set('_verifyAuthModelRelations', false);
-    app.set('remoting', {errorHandler: {debug: true, log: false}});
+    app.set('remoting', {errorHandler: false});
     app.dataSource('db', {connector: 'memory'});
 
     var userModelOptions = {
@@ -270,7 +269,7 @@ describe('Multiple users with custom principalType', function() {
     }
   });
 
-  describe('role model', function() {
+  describe('Role model', function() {
     this.timeout(10000);
 
     var RoleMapping, ACL, user;
@@ -714,6 +713,57 @@ describe('Multiple users with custom principalType', function() {
 
     function givenTokenForOneUser() {
       return OneUser.login(commonCredentials).then(t => token = t);
+    }
+  });
+
+  describe('authorization', () => {
+    beforeEach(givenProductModelAllowingOnlyUserRoleAccess);
+
+    it('allows users belonging to authorized role', () => {
+      logServerErrorsOtherThan(200, app);
+      debugger;
+      return userFromOneModel.createAccessToken()
+        .then(token => {
+          return supertest(app)
+            .get('/Products')
+            .set('Authorization', token.id)
+            .expect(200, []);
+        });
+    });
+
+    it('rejects other users', () => {
+      logServerErrorsOtherThan(401, app);
+      return userFromAnotherModel.createAccessToken()
+        .then(token => {
+          return supertest(app)
+            .get('/Products')
+            .set('Authorization', token.id)
+            .expect(401);
+        });
+    });
+
+    function givenProductModelAllowingOnlyUserRoleAccess() {
+      const Product = app.registry.createModel({
+        name: 'Product',
+        acls: [
+          {
+            'principalType': 'ROLE',
+            'principalId': '$everyone',
+            'permission': 'DENY',
+          },
+          {
+            'principalType': 'ROLE',
+            'principalId': userRole.name,
+            'permission': 'ALLOW',
+          },
+        ],
+      });
+      app.model(Product, {dataSource: 'db'});
+
+      return userRole.principals.create({
+        principalType: OneUser.modelName,
+        principalId: userFromOneModel.id,
+      });
     }
   });
 
