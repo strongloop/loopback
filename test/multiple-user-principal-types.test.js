@@ -721,7 +721,6 @@ describe('Multiple users with custom principalType', function() {
 
     it('allows users belonging to authorized role', () => {
       logServerErrorsOtherThan(200, app);
-      debugger;
       return userFromOneModel.createAccessToken()
         .then(token => {
           return supertest(app)
