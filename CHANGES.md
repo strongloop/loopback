@@ -1,3 +1,17 @@
+2018-03-22, Version 3.18.3
+==========================
+
+ * Remove forgotten debugger statement (Miroslav Bajtoš)
+
+ * Fix role check in apps with multiple user models (Miroslav Bajtoš)
+
+ * Fix formatting issues reported by recent eslint (Miroslav Bajtoš)
+
+ * CODEOWNERS: add nitro404 (Miroslav Bajtoš)
+
+ * test: add missing "return" in a promise-style test (Miroslav Bajtoš)
+
+
 2018-02-08, Version 3.18.2
 ==========================
 
