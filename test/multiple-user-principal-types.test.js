@@ -212,6 +212,48 @@ describe('Multiple users with custom principalType', function() {
     });
 
     describe('getUser()', function() {
+      it('returns correct principalType', () => {
+        return Promise.all([
+          OneUser.login(commonCredentials),
+          AnotherUser.login(commonCredentials),
+        ]).spread((userOneToken, userTwoToken) => {
+          let context = new AccessContext({
+            registry: OneUser.registry,
+            accessToken: userOneToken,
+          });
+
+          expect(context.getUser()).to.eql({
+            id: userFromOneModel.id,
+            principalType: OneUser.modelName,
+          });
+
+          context = new AccessContext({
+            registry: AnotherUser.registry,
+            accessToken: userTwoToken,
+          });
+
+          expect(context.getUser()).to.eql({
+            id: userFromAnotherModel.id,
+            principalType: AnotherUser.modelName,
+          });
+        });
+      });
+
+      it('another getUser test', () => {
+        addToAccessContext([
+          {type: Principal.ROLE},
+          {type: Principal.APP},
+          {type: Principal.SCOPE},
+          {type: OneUser.modelName, id: userFromOneModel.id},
+        ]);
+
+        const user = accessContext.getUser();
+        expect(user).to.eql({
+          id: userFromOneModel.id,
+          principalType: OneUser.modelName,
+        });
+      });
+
       it('returns user although principals contain non USER principals',
         function() {
           return Promise.try(function() {
