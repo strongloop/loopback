@@ -17,11 +17,12 @@ var describe = require('./util/describe');
 var expect = require('./helpers/expect');
 var it = require('./util/it');
 var request = require('supertest');
+const sinon = require('sinon');
 
 describe('app', function() {
   var app;
   beforeEach(function() {
-    app = loopback();
+    app = loopback({localRegistry: true, loadBuiltinModels: true});
   });
 
   describe.onServer('.middleware(phase, handler)', function() {
@@ -761,6 +762,66 @@ describe('app', function() {
       app.model(TestModel, {dataSource: 'db'});
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
+  });
+
+  describe('app.deleteModelByName()', () => {
+    let TestModel;
+    beforeEach(setupTestModel);
+
+    it('removes the model from app registries', () => {
+      expect(Object.keys(app.models))
+        .to.contain('test-model')
+        .and.contain('TestModel')
+        .and.contain('testModel');
+      expect(app.models().map(m => m.modelName))
+        .to.contain('test-model');
+
+      app.deleteModelByName('test-model');
+
+      expect(Object.keys(app.models))
+        .to.not.contain('test-model')
+        .and.not.contain('TestModel')
+        .and.not.contain('testModel');
+      expect(app.models().map(m => m.modelName))
+        .to.not.contain('test-model');
+    });
+
+    it('removes the model from juggler registries', () => {
+      expect(Object.keys(app.registry.modelBuilder.models))
+        .to.contain('test-model');
+
+      app.deleteModelByName('test-model');
+
+      expect(Object.keys(app.registry.modelBuilder.models))
+        .to.not.contain('test-model');
+    });
+
+    it('removes the model from remoting registries', () => {
+      expect(Object.keys(app.remotes()._classes))
+        .to.contain('test-model');
+
+      app.deleteModelByName('test-model');
+
+      expect(Object.keys(app.remotes()._classes))
+        .to.not.contain('test-model');
+    });
+
+    it('emits "modelDeleted" event', () => {
+      const spy = sinon.spy();
+      app.on('modelDeleted', spy);
+
+      app.deleteModelByName('test-model');
+
+      sinon.assert.calledWith(spy, TestModel);
+    });
+
+    function setupTestModel() {
+      TestModel = app.registry.createModel({
+        name: 'test-model',
+        base: 'Model',
+      });
+      app.model(TestModel, {dataSource: null});
+    }
   });
 
   describe('app.models', function() {
