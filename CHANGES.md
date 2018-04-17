@@ -1,3 +1,9 @@
+2018-04-17, Version 3.19.0
+==========================
+
+ * feat: remove all references to a Model (Miroslav Bajtoš)
+
+
 2018-03-22, Version 3.18.3
 ==========================
 
