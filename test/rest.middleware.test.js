@@ -200,6 +200,18 @@ describe('loopback.rest', function() {
     }, done);
   });
 
+  it('rebuilds REST endpoints after a model was deleted', () => {
+    app.model(MyModel);
+    app.use(loopback.rest());
+
+    return request(app).get('/mymodels').expect(200)
+      .then(() => {
+        app.deleteModelByName('MyModel');
+
+        return request(app).get('/mymodels').expect(404);
+      });
+  });
+
   function givenUserModelWithAuth() {
     var AccessToken = app.registry.getModel('AccessToken');
     app.model(AccessToken, {dataSource: 'db'});
