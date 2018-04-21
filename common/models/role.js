@@ -273,8 +273,8 @@ module.exports = function(Role) {
         process.nextTick(function() {
           callback(null, matches(modelId, userId));
         });
+        return callback.promise;
       }
-      return callback.promise;
     }
 
     modelClass.findById(modelId, options, function(err, inst) {
