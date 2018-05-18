@@ -27,7 +27,7 @@ describe('Multiple users with custom principalType', function() {
     // create a local app object that does not share state with other tests
     app = loopback({localRegistry: true, loadBuiltinModels: true});
     app.set('_verifyAuthModelRelations', false);
-    app.set('remoting', {errorHandler: false});
+    app.set('remoting', {rest: {handleErrors: false}});
     app.dataSource('db', {connector: 'memory'});
 
     var userModelOptions = {

@@ -242,6 +242,7 @@ module.exports = function(Role) {
 
     // Resolve isOwner false if userId is missing
     if (!userId) {
+      debug('isOwner(): no user id was set, returning false');
       process.nextTick(function() {
         callback(null, false);
       });
@@ -256,6 +257,9 @@ module.exports = function(Role) {
     var isPrincipalTypeValid =
       (!isMultipleUsers && principalType === Principal.USER) ||
       (isMultipleUsers && principalType !== Principal.USER);
+
+    debug('isOwner(): isMultipleUsers?', isMultipleUsers,
+      'isPrincipalTypeValid?', isPrincipalTypeValid);
 
     // Resolve isOwner false if principalType is invalid
     if (!isPrincipalTypeValid) {
@@ -273,8 +277,9 @@ module.exports = function(Role) {
         process.nextTick(function() {
           callback(null, matches(modelId, userId));
         });
+        return callback.promise;
       }
-      return callback.promise;
+      // otherwise continue with the regular owner resolution
     }
 
     modelClass.findById(modelId, options, function(err, inst) {
