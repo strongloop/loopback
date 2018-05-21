@@ -1,3 +1,9 @@
+2018-05-21, Version 3.19.1
+==========================
+
+ * Fix isOwner() bug in multiple-principal setup (Miroslav Bajtoš)
+
+
 2018-04-17, Version 3.19.0
 ==========================
 
