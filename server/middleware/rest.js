@@ -23,13 +23,18 @@ module.exports = rest;
  *
  * For example:
  * ```js
- * app.use(loopback.rest());
+ * app.use(loopback.rest({
+ *   currentUserLiteral: 'me'
+ * }));
  * ```
  * For more information, see [Exposing models over a REST API](http://loopback.io/doc/en/lb2/Exposing-models-over-REST.html).
- * @header loopback.rest()
+ * @header loopback.rest([options])
+ * @property {String} [currentUserLiteral] String literal for the current user.
  */
 
-function rest() {
+function rest(options) {
+  options = options || {};
+  var currentUserLiteral = options.currentUserLiteral;
   var handlers; // Cached handlers
 
   return function restApiHandler(req, res, next) {
@@ -50,7 +55,7 @@ function rest() {
 
       if (app.isAuthEnabled) {
         var AccessToken = registry.getModelByType('AccessToken');
-        handlers.push(loopback.token({model: AccessToken, app: app}));
+        handlers.push(loopback.token({currentUserLiteral, model: AccessToken, app}));
       }
 
       handlers.push(function(req, res, next) {
