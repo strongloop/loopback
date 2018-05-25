@@ -29,7 +29,7 @@ module.exports = rest;
  * ```
  * For more information, see [Exposing models over a REST API](http://loopback.io/doc/en/lb2/Exposing-models-over-REST.html).
  * @header loopback.rest([options])
- * @property {String} [currentUserLiteral] String literal for the current user.
+ * @property {String} [currentUserLiteral] literal for the current user.
  */
 
 function rest(options) {
@@ -55,7 +55,11 @@ function rest(options) {
 
       if (app.isAuthEnabled) {
         var AccessToken = registry.getModelByType('AccessToken');
-        handlers.push(loopback.token({currentUserLiteral: currentUserLiteral, model: AccessToken, app: app}));
+        handlers.push(loopback.token({
+          currentUserLiteral: currentUserLiteral,
+          model: AccessToken,
+          app: app
+        }));
       }
 
       handlers.push(function(req, res, next) {
