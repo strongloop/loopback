@@ -32,7 +32,7 @@ module.exports = rest;
  * @property {String} [currentUserLiteral] String literal for the current user.
  */
 
-function rest() {
+function rest(options) {
   options = options || {};
   var currentUserLiteral = options.currentUserLiteral;
   var handlers; // Cached handlers
