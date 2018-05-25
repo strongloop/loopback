@@ -55,7 +55,7 @@ function rest(options) {
 
       if (app.isAuthEnabled) {
         var AccessToken = registry.getModelByType('AccessToken');
-        handlers.push(loopback.token({currentUserLiteral: currentUserLiteral, model: AccessToken, app: app}));
+        handlers.push(loopback.token({currentUserLiteral, model: AccessToken, app}));
       }
 
       handlers.push(function(req, res, next) {
