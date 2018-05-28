@@ -736,22 +736,32 @@ module.exports = function(User) {
       (verifyOptions.protocol === 'https' && verifyOptions.port == '443')
     ) ? '' : ':' + verifyOptions.port;
 
-    var urlPath = joinUrlPath(
-      verifyOptions.restApiRoot,
-      userModel.http.path,
-      userModel.sharedClass.findMethodByName('confirm').http.path
-    );
+    if (!verifyOptions.verifyHref) {
+      const confirmMethod = userModel.sharedClass.findMethodByName('confirm');
+      if (!confirmMethod) {
+        throw new Error(
+          'Cannot build user verification URL, ' +
+            'the default confirm method is not public. ' +
+            'Please provide the URL in verifyOptions.verifyHref.');
+      }
 
-    verifyOptions.verifyHref = verifyOptions.verifyHref ||
-      verifyOptions.protocol +
-      '://' +
-      verifyOptions.host +
-      displayPort +
-      urlPath +
-      '?' + qs.stringify({
-        uid: '' + verifyOptions.user[pkName],
-        redirect: verifyOptions.redirect,
-      });
+      const urlPath = joinUrlPath(
+        verifyOptions.restApiRoot,
+        userModel.http.path,
+        confirmMethod.http.path
+      );
+
+      verifyOptions.verifyHref =
+        verifyOptions.protocol +
+        '://' +
+        verifyOptions.host +
+        displayPort +
+        urlPath +
+        '?' + qs.stringify({
+          uid: '' + verifyOptions.user[pkName],
+          redirect: verifyOptions.redirect,
+        });
+    }
 
     verifyOptions.to = verifyOptions.to || user.email;
     verifyOptions.subject = verifyOptions.subject || g.f('Thanks for Registering');
@@ -779,7 +789,10 @@ module.exports = function(User) {
 
     // TODO - support more verification types
     function sendEmail(user) {
-      verifyOptions.verifyHref += '&token=' + user.verificationToken;
+      verifyOptions.verifyHref +=
+        verifyOptions.verifyHref.indexOf('?') === -1 ? '?' : '&';
+      verifyOptions.verifyHref += 'token=' + user.verificationToken;
+
       verifyOptions.verificationToken = user.verificationToken;
       verifyOptions.text = verifyOptions.text || g.f('Please verify your email by opening ' +
         'this link in a web browser:\n\t%s', verifyOptions.verifyHref);
