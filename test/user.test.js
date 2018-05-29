@@ -138,16 +138,29 @@ describe('User', function() {
       });
     });
 
-    it('Email is required', function(done) {
-      User.create({password: '123'}, function(err) {
-        assert(err);
-        assert.equal(err.name, 'ValidationError');
-        assert.equal(err.statusCode, 422);
-        assert.equal(err.details.context, User.modelName);
-        assert.deepEqual(err.details.codes.email, ['presence']);
+    it('fails when the required email is missing (case-sensitivity on)', () => {
+      User.create({password: '123'})
+        .then(
+          success => { throw new Error('create should have failed'); },
+          err => {
+            expect(err.name).to.equal('ValidationError');
+            expect(err.statusCode).to.equal(422);
+            expect(err.details.context).to.equal(User.modelName);
+            expect(err.details.codes.email).to.deep.equal(['presence']);
+          });
+    });
 
-        done();
-      });
+    it('fails when the required email is missing (case-sensitivity off)', () => {
+      User.settings.caseSensitiveEmail = false;
+      User.create({email: undefined, password: '123'})
+        .then(
+          success => { throw new Error('create should have failed'); },
+          err => {
+            expect(err.name).to.equal('ValidationError');
+            expect(err.statusCode).to.equal(422);
+            expect(err.details.context).to.equal(User.modelName);
+            expect(err.details.codes.email).to.deep.equal(['presence']);
+          });
     });
 
     // will change in future versions where password will be optional by default
