@@ -1,3 +1,9 @@
+2018-05-29, Version 3.19.2
+==========================
+
+ * Add check for undefined user email in setter (Kevin Scroggins)
+
+
 2018-05-21, Version 3.19.1
 ==========================
 
