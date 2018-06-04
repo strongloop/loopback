@@ -20,4 +20,4 @@ markComment: >
 closeComment: >
   This issue has been closed due to continued inactivity. Thank you for your understanding.
   If you believe this to be in error, please contact one of the code owners,
-  listed in the `CODEOWNERS` file at the top-level of this repository.
+  listed in the [`CODEOWNERS`](https://github.com/strongloop/loopback/blob/master/CODEOWNERS) file at the top-level of this repository.
