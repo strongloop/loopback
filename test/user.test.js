@@ -2155,6 +2155,27 @@ describe('User', function() {
           });
       });
 
+      it('handles the case when remote method "confirm" is disabled', () => {
+        let actualVerifyHref;
+        const VERIFY_HREF = 'http://example.com/a-verify-url';
+
+        Object.assign(verifyOptions, {
+          verifyHref: VERIFY_HREF,
+          templateFn: (options, cb) => {
+            actualVerifyHref = options.verifyHref;
+            cb(null, 'dummy body');
+          },
+        });
+
+        User.disableRemoteMethodByName('confirm');
+
+        return user.verify(verifyOptions)
+          .then(() => {
+            expect(actualVerifyHref.substring(0, VERIFY_HREF.length + 1))
+              .to.equal(`${VERIFY_HREF}?`);
+          });
+      });
+
       function givenUser() {
         return User.create({email: 'test@example.com', password: 'pass'})
           .then(u => user = u);
