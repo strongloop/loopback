@@ -1,3 +1,13 @@
+2018-06-04, Version 3.19.3
+==========================
+
+ * Provide link to CODEOWNERS (Aditya Agarwal)
+
+ * fix bug in User.verify when confirm is disabled (wolrajhti)
+
+ * Enable Node.js 10.x on Travis CI (Miroslav Bajtoš)
+
+
 2018-05-29, Version 3.19.2
 ==========================
 
