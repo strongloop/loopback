@@ -34,7 +34,7 @@
     "test": "nyc grunt mocha-and-karma"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6"
   },
   "dependencies": {
     "async": "^2.0.1",
