@@ -1,3 +1,13 @@
+2018-06-12, Version 3.20.0
+==========================
+
+ * Update strong-globalize to 4.x (Miroslav Bajtoš)
+
+ * Update nodemailer to v4.x (Dimitris)
+
+ * Drop support for Node.js 4.x (Miroslav Bajtoš)
+
+
 2018-06-04, Version 3.19.3
 ==========================
 
