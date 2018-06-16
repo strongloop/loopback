@@ -299,6 +299,23 @@ describe('User', function() {
       });
     });
 
+    it('skips token invalidation when the relation is not configured', () => {
+      const app = loopback({localRegistry: true, loadBuiltinModels: true});
+      app.dataSource('db', {connector: 'memory'});
+
+      const PrivateUser = app.registry.createModel({
+        name: 'PrivateUser',
+        base: 'User',
+        // Speed up the password hashing algorithm for tests
+        saltWorkFactor: 4,
+      });
+      app.model(PrivateUser, {dataSource: 'db'});
+
+      return PrivateUser.create({email: 'private@example.com', password: 'pass'})
+        .then(u => PrivateUser.deleteById(u.id));
+      // the test passed when the operation did not crash
+    });
+
     it('invalidates the user\'s accessToken when the user is deleted all', function(done) {
       var userIds = [];
       var users;
