@@ -806,6 +806,23 @@ describe('app', function() {
         .to.not.contain('test-model');
     });
 
+    it('removes the model from remoting hooks', () => {
+      expect(Object.keys(app.remotes().listenerTree.before))
+        .to.contain('test-model');
+      expect(Object.keys(app.remotes().listenerTree.after))
+        .to.contain('test-model');
+      expect(Object.keys(app.remotes().listenerTree.afterError))
+        .to.contain('test-model');
+      app.deleteModelByName('test-model');
+
+      expect(Object.keys(app.remotes().listenerTree.before))
+        .to.not.contain('test-model');
+      expect(Object.keys(app.remotes().listenerTree.after))
+        .to.not.contain('test-model');
+      expect(Object.keys(app.remotes().listenerTree.afterError))
+        .to.not.contain('test-model');
+    });
+
     it('emits "modelDeleted" event', () => {
       const spy = sinon.spy();
       app.on('modelDeleted', spy);
@@ -820,6 +837,9 @@ describe('app', function() {
         name: 'test-model',
         base: 'Model',
       });
+      TestModel.beforeRemote('find', (ctx, next) => { next(); });
+      TestModel.afterRemote('find', (ctx, next) => { next(); });
+      TestModel.afterRemoteError('find', (ctx, next) => { next(); });
       app.model(TestModel, {dataSource: null});
     }
   });
