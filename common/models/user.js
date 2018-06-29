@@ -346,6 +346,9 @@ module.exports = function(User) {
   };
 
   User.observe('before delete', function(ctx, next) {
+    // Do nothing when the access control was disabled for this user model.
+    if (!ctx.Model.relations.accessTokens) return next();
+
     var AccessToken = ctx.Model.relations.accessTokens.modelTo;
     var pkName = ctx.Model.definition.idName() || 'id';
     ctx.Model.find({where: ctx.where, fields: [pkName]}, function(err, list) {
