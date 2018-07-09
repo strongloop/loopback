@@ -1,3 +1,17 @@
+2018-07-09, Version 3.21.0
+==========================
+
+ * Make verifyUserRelations() more robust (mcitdev)
+
+ * Fix crash in verifyUserRelations (ryanxwelch)
+
+ * Fix crash in User model's "before delete" hook (mcitdev)
+
+ * [WebFM] cs/pl/ru translation (candytangnb)
+
+ * Update strong-error-handler (shimks)
+
+
 2018-06-12, Version 3.20.0
 ==========================
 
