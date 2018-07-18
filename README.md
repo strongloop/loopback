@@ -2,7 +2,7 @@
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/strongloop/loopback?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Module LTS Adopted'](https://img.shields.io/badge/Module%20LTS-Adopted-brightgreen.svg?style=flat)](http://github.com/CloudNativeJS/ModuleLTS)
-[![IBM Support](https://img.shields.io/badge/Support-IBM%20Frameworks-brightgreen.svg?style=flat)](http://ibm.biz/node-support)
+[![IBM Support](https://img.shields.io/badge/IBM%20Support-Frameworks-brightgreen.svg?style=flat)](http://ibm.biz/node-support)
 
 LoopBack is a highly-extensible, open-source Node.js framework that enables you to:
 
@@ -29,6 +29,14 @@ For more details, see [https://loopback.io/](https://loopback.io/).
 Current|Long Term Support
 :-:|:-:
 3.x|2.x
+
+## Module Long Term Support Policy
+
+This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudNativeJS/ModuleLTS) policy, with the following End Of Life (EOL) dates:
+
+| Module Version   | Release Date | Minimum EOL | EOL With     | Status  |
+|------------------|--------------|-------------|--------------|---------|
+| 3.x.x	         | Sept 2016    | Dec 2019    |              | Current |
 
 Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
 
@@ -98,13 +106,5 @@ Contributions to the LoopBack project are welcome! See [Contributing to LoopBack
 ## Reporting issues
 
 One of the easiest ways to contribute to LoopBack is to report an issue. See [Reporting issues](https://loopback.io/doc/en/contrib/Reporting-issues.html) for more information.
-
-## Module Long Term Support Policy
-
-This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudNativeJS/ModuleLTS) policy, with the following End Of Life (EOL) dates:
-
-| Module Version   | Release Date | Minimum EOL | EOL With     | Status  |
-|------------------|--------------|-------------|--------------|---------|
-| V3.x.x	         | Sept 2016    | Dec 2019    |              | Current |
 
 [![Analytics](https://sl-beacon.appspot.com/UA-37775386-1/github/loopback/readme?pixel)](https://github.com/strongloop/loopback)
