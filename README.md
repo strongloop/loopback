@@ -24,11 +24,6 @@ LoopBack tools include:
 
 For more details, see [https://loopback.io/](https://loopback.io/).
 
-## Supported versions
-
-Current|Long Term Support
-:-:|:-:
-3.x|2.x
 
 ## Module Long Term Support Policy
 
@@ -37,6 +32,8 @@ This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudN
 | Module Version   | Release Date | Minimum EOL | EOL With     | Status  |
 |------------------|--------------|-------------|--------------|---------|
 | 3.x.x	         | Sept 2016    | Dec 2019    |              | Current |
+| 2.x.x	         | July 2014    | Apr 2018*   | Node.js 4.x  | LTS     |
+(*) Whilst LoopBack 2.x should be EOL, it will remain in LTS until Loopback 4.x is released, when it enters 6 months of critical fix only
 
 Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
 
