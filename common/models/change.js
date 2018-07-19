@@ -799,16 +799,23 @@ module.exports = function(Change) {
   Conflict.prototype.type = function(cb) {
     var conflict = this;
     this.changes(function(err, sourceChange, targetChange) {
-      if (err) return cb(err);
-      var sourceChangeType = sourceChange.type();
-      var targetChangeType = targetChange.type();
-      if (sourceChangeType === Change.UPDATE && targetChangeType === Change.UPDATE) {
-        return cb(null, Change.UPDATE);
+      
+      if (err) return cb(err)
+
+      if (sourceChange && targetChange) {
+        var sourceChangeType = sourceChange.type()
+        var targetChangeType = targetChange.type()
+        if (sourceChangeType === 'update' && targetChangeType === 'update') {
+          return cb(null, 'update')
+        }
+        if (sourceChangeType === 'delete' || targetChangeType === 'delete') {
+          return cb(null, 'delete')
+        }
       }
-      if (sourceChangeType === Change.DELETE || targetChangeType === Change.DELETE) {
-        return cb(null, Change.DELETE);
-      }
-      return cb(null, Change.UNKNOWN);
+
+      return cb(null, 'unknown')
+     
+     
     });
   };
 };
