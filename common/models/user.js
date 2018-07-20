@@ -369,18 +369,20 @@ module.exports = function(User) {
    * @promise
    */
 
-  User.prototype.hasPassword = function(plain, fn) {
-    fn = fn || utils.createPromiseCallback();
-    if (this.password && plain) {
-      bcrypt.compare(plain, this.password, function(err, isMatch) {
-        if (err) return fn(err);
-        fn(null, isMatch);
-      });
-    } else {
-      fn(null, false);
-    }
-    return fn.promise;
-  };
+   User.prototype.hasPassword = function(plain, fn) {
+      fn = fn || utils.createPromiseCallback();
+      var password = this.password || this.default.password;
+      if (password && plain) {
+        bcrypt.compare(plain, password, function(err, isMatch) {
+          if (err) return fn(err);
+          fn(null, isMatch);
+        });
+      } else {
+        fn(null, false);
+      }
+      return fn.promise;
+    };
+
 
   /**
    * Change this user's password.
