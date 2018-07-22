@@ -478,8 +478,15 @@ module.exports = function(ACL) {
     var effectiveACLs = [];
     var staticACLs = self.getStaticACLs(model.modelName, property);
 
-    this.find({where: {model: model.modelName, property: propertyQuery,
-      accessType: accessTypeQuery}}, function(err, acls) {
+    const query = {
+      where: {
+        model: {inq: [model.modelName, ACL.ALL]},
+        property: propertyQuery,
+        accessType: accessTypeQuery,
+      },
+    };
+
+    this.find(query, function(err, acls) {
       if (err) return callback(err);
       var inRoleTasks = [];
 
