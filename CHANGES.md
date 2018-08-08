@@ -1,3 +1,21 @@
+2018-08-08, Version 3.22.0
+==========================
+
+ * fix: accessToken create default acl (virkt25)
+
+ * add: ppc64 and s390x to not run UI tests (Thomas Leah)
+
+ * chore: update deps + fix linting + .npmrc (virkt25)
+
+ * Update Loopback 2.x EOL dates (Chris Bailey)
+
+ * Fix formatting (Chris Bailey)
+
+ * Update support badge and move LTS section (Chris Bailey)
+
+ * Add badges and information for LTS and support (Chris Bailey)
+
+
 2018-07-09, Version 3.21.0
 ==========================
 
