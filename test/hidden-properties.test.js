@@ -11,7 +11,8 @@ var request = require('supertest');
 describe('hidden properties', function() {
   beforeEach(function(done) {
     var app = this.app = loopback();
-    var Product = this.Product = loopback.PersistedModel.extend('product',
+    var Product = this.Product = loopback.PersistedModel.extend(
+      'product',
       {},
       {hidden: ['secret']}
     );

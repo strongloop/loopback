@@ -215,7 +215,8 @@ describe('OptionsFromRemotingContext', function() {
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true});
+        {forceId: false, replaceOnPUT: true}
+      );
 
       app.model(Category, {dataSource: 'db'});
       // This is a shortcut for creating CategoryProduct "through" model
@@ -287,7 +288,8 @@ describe('OptionsFromRemotingContext', function() {
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true});
+        {forceId: false, replaceOnPUT: true}
+      );
 
       app.model(Category, {dataSource: 'db'});
       Category.hasOne(Product);
@@ -331,7 +333,8 @@ describe('OptionsFromRemotingContext', function() {
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true});
+        {forceId: false, replaceOnPUT: true}
+      );
 
       app.model(Category, {dataSource: 'db'});
       Category.belongsTo(Product);
@@ -361,7 +364,8 @@ describe('OptionsFromRemotingContext', function() {
     Product = app.registry.createModel(
       'Product',
       {name: String},
-      {forceId: false, replaceOnPUT: true});
+      {forceId: false, replaceOnPUT: true}
+    );
 
     Product.createOptionsFromRemotingContext = function(ctx) {
       return {injectedFrom: 'Product'};

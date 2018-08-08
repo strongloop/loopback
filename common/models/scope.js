@@ -47,7 +47,8 @@ module.exports = function(Scope) {
         if (callback) callback(err);
       } else {
         aclModel.checkPermission(
-          aclModel.SCOPE, scope.id, model, property, accessType, callback);
+          aclModel.SCOPE, scope.id, model, property, accessType, callback
+        );
       }
     });
   };

@@ -92,7 +92,8 @@ describe('role model', function() {
                 });
               },
             ], done);
-          });
+          }
+        );
       });
     });
   });
@@ -223,7 +224,8 @@ describe('role model', function() {
                     // but the matchin role object instead
                     assert(!!inRole);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.isInRole(
@@ -233,7 +235,8 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!inRole);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.isInRole(
@@ -243,7 +246,8 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!inRole);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.getRoles(
@@ -256,7 +260,8 @@ describe('role model', function() {
                       role.id,
                     ]);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.getRoles(
@@ -270,7 +275,8 @@ describe('role model', function() {
                       role.name,
                     ]);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.getRoles(
@@ -282,7 +288,8 @@ describe('role model', function() {
                       Role.EVERYONE,
                     ]);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.getRoles(
@@ -294,7 +301,8 @@ describe('role model', function() {
                       Role.EVERYONE,
                     ]);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.getRoles(
@@ -306,7 +314,8 @@ describe('role model', function() {
                       Role.EVERYONE,
                     ]);
                     next();
-                  });
+                  }
+                );
               },
             ], done);
           });
@@ -391,7 +400,8 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!!inRole);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.isInRole(
@@ -401,7 +411,8 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!inRole);
                     next();
-                  });
+                  }
+                );
               },
               function(next) {
                 Role.getRoles(
@@ -414,7 +425,8 @@ describe('role model', function() {
                       role.id,
                     ]);
                     next();
-                  });
+                  }
+                );
               },
             ], done);
           });
@@ -457,7 +469,8 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Role.isInRole(
@@ -467,7 +480,8 @@ describe('role model', function() {
               if (err) next(err);
               assert(yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Role.isInRole(
@@ -477,7 +491,8 @@ describe('role model', function() {
               if (err) next(err);
               assert(!yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Role.isInRole(
@@ -487,7 +502,8 @@ describe('role model', function() {
               if (err) return next(err);
               assert(!yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Role.isInRole(
@@ -497,7 +513,8 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Role.isInRole(
@@ -507,7 +524,8 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Role.isInRole(
@@ -517,7 +535,8 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            });
+            }
+          );
         },
         function(next) {
           Album.create({name: 'Album 1', userId: user.id}, function(err, album1) {
@@ -1073,7 +1092,8 @@ describe('role model', function() {
                   function(err, p) {
                     if (err) return callback(err);
                     callback(p);
-                  });
+                  }
+                );
               },
               function(callback) {
                 roles[1].principals.create(
@@ -1081,7 +1101,8 @@ describe('role model', function() {
                   function(err, p) {
                     if (err) return callback(err);
                     callback(p);
-                  });
+                  }
+                );
               }],
             function(err, principles) {
               next(null, models, roles, principles);

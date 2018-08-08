@@ -223,7 +223,8 @@ describe('app', function() {
           expect(steps).to.eql(['/scope', '/scope/item']);
 
           done();
-        });
+        }
+      );
     });
 
     it('scopes middleware to a regex path', function(done) {
@@ -238,7 +239,8 @@ describe('app', function() {
           expect(steps).to.eql(['/a', '/b']);
 
           done();
-        });
+        }
+      );
     });
 
     it('scopes middleware to a list of scopes', function(done) {
@@ -253,7 +255,8 @@ describe('app', function() {
           expect(steps).to.eql(['/a', '/b', '/scope']);
 
           done();
-        });
+        }
+      );
     });
 
     it('sets req.url to a sub-path', function(done) {
@@ -537,7 +540,8 @@ describe('app', function() {
         {
           phase: 'initial',
           paths: ['/scope', /^\/(a|b)/],
-        });
+        }
+      );
 
       async.eachSeries(
         ['/', '/a', '/b', '/c', '/scope', '/other'],
@@ -548,7 +552,8 @@ describe('app', function() {
           expect(steps).to.eql(['/a', '/b', '/scope']);
 
           done();
-        });
+        }
+      );
     });
   });
 
@@ -918,17 +923,15 @@ describe('app', function() {
       });
     });
 
-    it('forwards to http.Server.listen when the single arg is not a function',
-      function(done) {
-        var app = loopback();
-        app.set('port', 1);
-        app.listen(0).on('listening', function() {
-          expect(app.get('port'), 'port') .to.not.equal(0).and.not.equal(1);
+    it('forwards to http.Server.listen when the single arg is not a function', function(done) {
+      var app = loopback();
+      app.set('port', 1);
+      app.listen(0).on('listening', function() {
+        expect(app.get('port'), 'port') .to.not.equal(0).and.not.equal(1);
 
-          done();
-        });
-      }
-    );
+        done();
+      });
+    });
 
     it('uses app config when no parameter is supplied', function(done) {
       var app = loopback();

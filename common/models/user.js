@@ -744,8 +744,9 @@ module.exports = function(User) {
       if (!confirmMethod) {
         throw new Error(
           'Cannot build user verification URL, ' +
-            'the default confirm method is not public. ' +
-            'Please provide the URL in verifyOptions.verifyHref.');
+          'the default confirm method is not public. ' +
+          'Please provide the URL in verifyOptions.verifyHref.'
+        );
       }
 
       const urlPath = joinUrlPath(
@@ -1315,7 +1316,8 @@ module.exports = function(User) {
         // This is a programmer's error, use the default status code 500
         return next(new Error(
           'Invalid use of "options.setPassword". Only "password" can be ' +
-          'changed when using this option.'));
+          'changed when using this option.'
+        ));
       }
 
       return next();
@@ -1327,7 +1329,8 @@ module.exports = function(User) {
 
     const err = new Error(
       'Changing user password via patch/replace API is not allowed. ' +
-      'Use changePassword() or setPassword() instead.');
+      'Use changePassword() or setPassword() instead.'
+    );
     err.statusCode = 401;
     err.code = 'PASSWORD_CHANGE_NOT_ALLOWED';
     next(err);
