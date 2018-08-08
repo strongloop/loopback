@@ -1,3 +1,9 @@
+2018-08-08, Version 2.40.0
+==========================
+
+ * fix: accessToken create default acl (virkt25)
+
+
 2018-02-12, Version 2.39.2
 ==========================
 
