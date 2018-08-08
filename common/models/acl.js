@@ -600,11 +600,13 @@ module.exports = function(ACL) {
         break;
       case ACL.USER:
         this.userModel.findOne(
-          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb);
+          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb
+        );
         break;
       case ACL.APP:
         this.applicationModel.findOne(
-          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb);
+          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb
+        );
         break;
       default:
         // try resolving a user model with a name matching the principalType
@@ -612,7 +614,8 @@ module.exports = function(ACL) {
         if (userModel) {
           userModel.findOne(
             {where: {or: [{username: id}, {email: id}, {id: id}]}},
-            cb);
+            cb
+          );
         } else {
           process.nextTick(function() {
             var err = new Error(g.f('Invalid principal type: %s', type));

@@ -72,8 +72,7 @@ describe('relations - integration', function() {
               reader.team(test.team);
               reader.save(done);
             });
-        }
-      );
+        });
     });
 
     after(function(done) {
@@ -784,7 +783,8 @@ describe('relations - integration', function() {
 
   describe('embedsOne', function() {
     before(function defineGroupAndPosterModels() {
-      var group = app.registry.createModel('group',
+      var group = app.registry.createModel(
+        'group',
         {name: 'string'},
         {plural: 'groups'}
       );

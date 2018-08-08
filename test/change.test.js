@@ -222,7 +222,8 @@ describe('Change', function() {
           change = ch;
 
           done(err);
-        });
+        }
+      );
     });
 
     it('should create a new change with the correct revision', function(done) {

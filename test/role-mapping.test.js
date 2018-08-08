@@ -55,7 +55,8 @@ describe('role-mapping model', function() {
           expect(user.id).to.equal(oneUser.id);
           done();
         });
-      });
+      }
+    );
   });
 
   it('supports .user() returning a promise', function() {
@@ -78,7 +79,8 @@ describe('role-mapping model', function() {
           expect(app.id).to.equal(anApp.id);
           done();
         });
-      });
+      }
+    );
   });
 
   it('supports .application() returning a promise', function() {
@@ -101,7 +103,8 @@ describe('role-mapping model', function() {
           expect(role.id).to.equal(aRole.id);
           done();
         });
-      });
+      }
+    );
   });
 
   it('supports .childRole() returning a promise', function() {

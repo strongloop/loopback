@@ -40,7 +40,8 @@ function rewriteUserLiteral(req, currentUserLiteral, next) {
     debug(
       'URL %s matches current-user literal %s,' +
         ' but no (valid) access token was provided.',
-      req.url, currentUserLiteral);
+      req.url, currentUserLiteral
+    );
 
     var e = new Error(g.f('Authorization Required'));
     e.status = e.statusCode = 401;

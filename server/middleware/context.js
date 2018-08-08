@@ -10,5 +10,6 @@ module.exports = function() {
   throw new Error(g.f(
     '%s middleware was removed in version 3.0. See %s for more details.',
     'loopback#context',
-    'http://loopback.io/doc/en/lb2/Using-current-context.html'));
+    'http://loopback.io/doc/en/lb2/Using-current-context.html'
+  ));
 };

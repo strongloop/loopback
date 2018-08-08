@@ -502,7 +502,8 @@ module.exports = function(Change) {
       async.each(
         changes,
         function(c, next) { c.rectify(next); },
-        cb);
+        cb
+      );
     });
   };
 
@@ -691,8 +692,10 @@ module.exports = function(Change) {
         conflict.SourceModel.updateLastChange(
           conflict.modelId,
           {prev: targetChange.rev},
-          cb);
-      });
+          cb
+        );
+      }
+    );
   };
 
   /**
@@ -724,7 +727,8 @@ module.exports = function(Change) {
       }
       var inst = new conflict.SourceModel(
         target.toObject(),
-        {persisted: true});
+        {persisted: true}
+      );
       inst.save(done);
     });
 

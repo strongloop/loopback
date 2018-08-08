@@ -88,7 +88,8 @@ describe('User.password', () => {
         },
         function onError(err) {
           expect(err.message).to.match(/Invalid use.*options.setPassword/);
-        });
+        }
+      );
     });
 
     function givenAppWithRejectionEnabled() {
@@ -237,6 +238,7 @@ describe('User.password', () => {
   function patchNameAndPasswordDirectly() {
     return testUser.patchAttributes(
       {password: 'new-pass', name: 'New Name'},
-      {setPassword: true});
+      {setPassword: true}
+    );
   }
 });

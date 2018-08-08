@@ -285,7 +285,8 @@ describe('Multiple users with custom principalType', function() {
     describe('role.users()', function() {
       it('returns users when using custom user principalType', function() {
         return userRole.principals.create(
-          {principalType: OneUser.modelName, principalId: userFromOneModel.id})
+          {principalType: OneUser.modelName, principalId: userFromOneModel.id}
+        )
           .then(function() {
             return userRole.users({where: {principalType: OneUser.modelName}});
           })
@@ -297,7 +298,8 @@ describe('Multiple users with custom principalType', function() {
 
       it('returns empty array when using invalid principalType', function() {
         return userRole.principals.create(
-          {principalType: 'invalidModelName', principalId: userFromOneModel.id})
+          {principalType: 'invalidModelName', principalId: userFromOneModel.id}
+        )
           .then(function() {
             return userRole.users({where: {principalType: 'invalidModelName'}});
           })
@@ -310,24 +312,22 @@ describe('Multiple users with custom principalType', function() {
     describe('principal.user()', function() {
       it('returns the correct user instance', function() {
         return userRole.principals.create(
-          {principalType: OneUser.modelName, principalId: userFromOneModel.id})
-          .then(function(principal) {
-            return principal.user();
-          })
-          .then(function(user) {
-            expect(user).to.have.property('id', userFromOneModel.id);
-          });
+          {principalType: OneUser.modelName, principalId: userFromOneModel.id}
+        ).then(function(principal) {
+          return principal.user();
+        }).then(function(user) {
+          expect(user).to.have.property('id', userFromOneModel.id);
+        });
       });
 
       it('returns null when created with invalid principalType', function() {
         return userRole.principals.create(
-          {principalType: 'invalidModelName', principalId: userFromOneModel.id})
-          .then(function(principal) {
-            return principal.user();
-          })
-          .then(function(user) {
-            expect(user).to.not.exist();
-          });
+          {principalType: 'invalidModelName', principalId: userFromOneModel.id}
+        ).then(function(principal) {
+          return principal.user();
+        }).then(function(user) {
+          expect(user).to.not.exist();
+        });
       });
     });
 
@@ -346,14 +346,14 @@ describe('Multiple users with custom principalType', function() {
 
       it('supports getRoles()', function() {
         return Role.getRoles(
-          userOneBaseContext)
-          .then(function(roles) {
-            expect(roles).to.eql([
-              Role.AUTHENTICATED,
-              Role.EVERYONE,
-              userRole.id,
-            ]);
-          });
+          userOneBaseContext
+        ).then(function(roles) {
+          expect(roles).to.eql([
+            Role.AUTHENTICATED,
+            Role.EVERYONE,
+            userRole.id,
+          ]);
+        });
       });
     });
 

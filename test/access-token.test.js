@@ -144,7 +144,8 @@ describe('loopback.token(options)', function() {
       var app = createTestApp(
         this.token,
         {token: {searchDefaultTokenKeys: false}},
-        done);
+        done
+      );
       var agent = request.agent(app);
 
       // Set the token cookie
@@ -604,7 +605,8 @@ describe('AccessToken', function() {
           param: function(name) { return this._params[name]; },
           header: function(name) { return this.headers[name]; },
         },
-        opts);
+        opts
+      );
     }
   });
 });
