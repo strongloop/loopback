@@ -225,7 +225,7 @@ describe('relations - integration', function() {
       });
     });
 
-    describe('PUT /api/store/:id/widgets/:fk', function() {
+    describe('PATCH /api/store/:id/widgets/:fk', function() {
       beforeEach(function(done) {
         var self = this;
         this.store.widgets.create({
@@ -238,7 +238,7 @@ describe('relations - integration', function() {
       });
       it('does not add default properties to request body', function(done) {
         var self = this;
-        self.request.put(self.url)
+        self.request.patch(self.url)
           .send({active: true})
           .end(function(err) {
             if (err) return done(err);

@@ -135,14 +135,17 @@ describe('remoting - integration', function() {
       function() {
         var storeClass = findClass('store');
         var methods = getFormattedPrototypeMethods(storeClass.methods);
-
         var expectedMethods = [
           'prototype.__findById__widgets(fk:any):widget ' +
               'GET /stores/:id/widgets/:fk',
           'prototype.__destroyById__widgets(fk:any) ' +
               'DELETE /stores/:id/widgets/:fk',
-          'prototype.__updateById__widgets(fk:any,data:object:widget):widget ' +
+          'prototype.__replaceById__widgets(fk:any,data:object:widget):widget ' +
+              'POST /stores/:id/widgets/:fk/replace',
+          'prototype.__replaceById__widgets(fk:any,data:object:widget):widget ' +
               'PUT /stores/:id/widgets/:fk',
+          'prototype.__updateById__widgets(fk:any,data:object:widget):widget ' +
+              'PATCH /stores/:id/widgets/:fk',
           'prototype.__get__widgets(filter:object):widget ' +
               'GET /stores/:id/widgets',
           'prototype.__create__widgets(data:object:widget):widget ' +
@@ -165,8 +168,12 @@ describe('remoting - integration', function() {
           'GET /physicians/:id/patients/:fk',
           'prototype.__destroyById__patients(fk:any) ' +
           'DELETE /physicians/:id/patients/:fk',
-          'prototype.__updateById__patients(fk:any,data:object:patient):patient ' +
+          'prototype.__replaceById__patients(fk:any,data:object:patient):patient ' +
+          'POST /physicians/:id/patients/:fk/replace',
+          'prototype.__replaceById__patients(fk:any,data:object:patient):patient ' +
           'PUT /physicians/:id/patients/:fk',
+          'prototype.__updateById__patients(fk:any,data:object:patient):patient ' +
+          'PATCH /physicians/:id/patients/:fk',
           'prototype.__link__patients(fk:any,data:object:appointment):appointment ' +
           'PUT /physicians/:id/patients/rel/:fk',
           'prototype.__unlink__patients(fk:any) ' +
@@ -231,7 +238,6 @@ describe('With model.settings.replaceOnPUT false', function() {
     function() {
       var storeClass = findClass('storeWithReplaceOnPUTfalse');
       var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
-
       var expectedMethods = [
         'create(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating',
         'patchOrCreate(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PUT /stores-updating',
@@ -252,8 +258,36 @@ describe('With model.settings.replaceOnPUT false', function() {
         'createChangeStream(options:object):ReadableStream POST /stores-updating/change-stream',
         'createChangeStream(options:object):ReadableStream GET /stores-updating/change-stream',
       ];
-
       expect(methods).to.eql(expectedMethods);
+    });
+
+  it('should have correct signatures for hasMany methods',
+    function() {
+      var storeClass = findClass('storeWithReplaceOnPUTfalse');
+      var methods = getFormattedPrototypeMethods(storeClass.methods);
+
+      var expectedMethods = [
+        'prototype.__findById__widgets(fk:any):widget ' +
+            'GET /stores-updating/:id/widgets/:fk',
+        'prototype.__destroyById__widgets(fk:any) ' +
+            'DELETE /stores-updating/:id/widgets/:fk',
+        'prototype.__replaceById__widgets(fk:any,data:object:widget):widget ' +
+            'POST /stores-updating/:id/widgets/:fk/replace',
+        'prototype.__updateById__widgets(fk:any,data:object:widget):widget ' +
+            'PATCH /stores-updating/:id/widgets/:fk',
+        'prototype.__updateById__widgets(fk:any,data:object:widget):widget ' +
+            'PUT /stores-updating/:id/widgets/:fk',
+        'prototype.__get__widgets(filter:object):widget ' +
+            'GET /stores-updating/:id/widgets',
+        'prototype.__create__widgets(data:object:widget):widget ' +
+            'POST /stores-updating/:id/widgets',
+        'prototype.__delete__widgets() ' +
+            'DELETE /stores-updating/:id/widgets',
+        'prototype.__count__widgets(where:object):number ' +
+            'GET /stores-updating/:id/widgets/count',
+      ];
+
+      expect(methods).to.include.members(expectedMethods);
     });
 });
 
@@ -276,6 +310,34 @@ describe('With model.settings.replaceOnPUT true', function() {
         'replaceById(id:any,data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue POST /stores-replacing/:id/replace',
         'replaceById(id:any,data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PUT /stores-replacing/:id',
         'prototype.patchAttributes(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PATCH /stores-replacing/:id',
+      ];
+
+      expect(methods).to.include.members(expectedMethods);
+    });
+
+  it('should have correct signatures for hasMany methods',
+    function() {
+      var storeClass = findClass('storeWithReplaceOnPUTtrue');
+      var methods = getFormattedPrototypeMethods(storeClass.methods);
+      var expectedMethods = [
+        'prototype.__findById__widgets(fk:any):widget ' +
+            'GET /stores-replacing/:id/widgets/:fk',
+        'prototype.__destroyById__widgets(fk:any) ' +
+            'DELETE /stores-replacing/:id/widgets/:fk',
+        'prototype.__replaceById__widgets(fk:any,data:object:widget):widget ' +
+            'POST /stores-replacing/:id/widgets/:fk/replace',
+        'prototype.__replaceById__widgets(fk:any,data:object:widget):widget ' +
+            'PUT /stores-replacing/:id/widgets/:fk',
+        'prototype.__updateById__widgets(fk:any,data:object:widget):widget ' +
+            'PATCH /stores-replacing/:id/widgets/:fk',
+        'prototype.__get__widgets(filter:object):widget ' +
+            'GET /stores-replacing/:id/widgets',
+        'prototype.__create__widgets(data:object:widget):widget ' +
+            'POST /stores-replacing/:id/widgets',
+        'prototype.__delete__widgets() ' +
+            'DELETE /stores-replacing/:id/widgets',
+        'prototype.__count__widgets(where:object):number ' +
+            'GET /stores-replacing/:id/widgets/count',
       ];
 
       expect(methods).to.include.members(expectedMethods);
