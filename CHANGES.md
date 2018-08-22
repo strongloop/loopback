@@ -1,3 +1,13 @@
+2018-08-22, Version 3.22.1
+==========================
+
+ * [WebFM] ja/ko/zh_CN/zh_TW translation (candytangnb)
+
+ * remove unnecessary format call (Diana Lau)
+
+ * Make desc when export-api-def translatable (Diana Lau)
+
+
 2018-08-08, Version 3.22.0
 ==========================
 
