@@ -7,7 +7,7 @@
   "0e21aad369dd09e1965c11949303cefd": "Les métadonnées remoting pour {0}.{1} {{\"isStatic\"}} ne correspondent pas au style basé sur le nom de la nouvelle méthode.",
   "10e01c895dc0b2fecc385f9f462f1ca6": "une liste de couleurs est disponible sur {{http://localhost:3000/colors}}",
   "1b2a6076dccbe91a56f1672eb3b8598c": "Le corps de réponse contient les propriétés de {{AccessToken}} créées lors de la connexion.\nEn fonction de la valeur du paramètre `include`, le corps peut contenir des propriétés supplémentaires :\n\n  - `user` - `U+007BUserU+007D` - Données de l'utilisateur connecté. {{(`include=user`)}}\n\n",
-  "1d7833c3ca2f05fdad8fad7537531c40": "\t SUJET :{0}",
+  "1d7833c3ca2f05fdad8fad7537531c40": "\t OBJET :{0}",
   "1e85f822b547a75d7d385048030e4ecb": "Création de : {0}",
   "22fe62fa8d595b72c62208beddaa2a56": "Mettez à jour un élément lié par id pour {0}.",
   "275f22ab95671f095640ca99194b7635": "\t DE :{0}",
