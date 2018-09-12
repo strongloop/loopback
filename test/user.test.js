@@ -2989,7 +2989,7 @@ describe('User', function() {
         expect(actualIds).to.eql(expectedIds);
         done();
       });
-    };
+    }
 
     function assertNoAccessTokens(done) {
       AccessToken.find({where: {userId: user.pk}}, function(err, tokens) {

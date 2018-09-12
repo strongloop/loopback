@@ -642,7 +642,7 @@ describe('authorized roles propagation in RemotingContext', function() {
       });
     });
     return Promise.all(acls);
-  };
+  }
 
   function makeAuthorizedHttpRequestOnMyTestModel() {
     return request.get('/MyTestModels')
