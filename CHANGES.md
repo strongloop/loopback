@@ -1,3 +1,11 @@
+2018-09-12, Version 3.22.3
+==========================
+
+ * chore: use grunt to install optional  phantomjs (virkt25)
+
+ * [WebFM] fr translation (candytangnb)
+
+
 2018-08-29, Version 3.22.2
 ==========================
 
