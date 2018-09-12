@@ -778,9 +778,9 @@ describe('Multiple users with custom principalType', function() {
     return new Promise(function(resolve, reject) {
       emitter.once(name, resolve);
     });
-  };
+  }
 
   function getIds(array) {
     return array.map(function(it) { return it.id; });
-  };
+  }
 });
