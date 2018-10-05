@@ -2755,6 +2755,17 @@ describe('User', function() {
       ], done);
     });
 
+    it('keeps sessions sessions when preserveAccessTokens is passed in options', function(done) {
+      user.updateAttributes(
+        {email: 'invalidateAccessTokens@example.com'},
+        {preserveAccessTokens: true},
+        function(err, userInstance) {
+          if (err) return done(err);
+          assertPreservedTokens(done);
+        }
+      );
+    });
+
     it('preserves other users\' sessions if their email is  untouched', function(done) {
       var user1, user2, user3;
       async.series([

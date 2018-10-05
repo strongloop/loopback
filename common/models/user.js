@@ -1385,6 +1385,8 @@ module.exports = function(User) {
 
     if (!newEmail && !newPassword) return next();
 
+    if (ctx.options.preserveAccessTokens) return next();
+
     var userIdsToExpire = ctx.hookState.originalUserData.filter(function(u) {
       return (newEmail && u.email !== newEmail) ||
         (newPassword && u.password !== newPassword);
