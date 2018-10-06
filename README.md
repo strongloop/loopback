@@ -73,6 +73,20 @@ StrongLoop provides a number of example applications that illustrate various key
 
 See [loopback-example](https://github.com/strongloop/loopback-example) for details.
 
+## Module Long Term Support Policy
+
+LoopBack 2.x is now in maintenance LTS.
+
+This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudNativeJS/ModuleLTS) policy, with the following End Of Life (EOL) dates:
+
+| Version    | Status          | Published | EOL                  |
+| ---------- | --------------- | --------- | -------------------- |
+| LoopBack 4 | Current         | Oct 2018  | Apr 2021 _(minimum)_ |
+| Loopback 3 | Active LTS      | Dec 2016  | Dec 2019             |
+| Loopback 2 | Maintenance LTS | Jul 2014  | Apr 2019             |
+
+Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
+
 ## Resources
 
   * [Documentation](http://docs.strongloop.com/display/LB/LoopBack).
