@@ -1,3 +1,17 @@
+2018-10-09, Version 3.23.0
+==========================
+
+ * Clear handler cache when a method is added/removed (Mohammed Essehemy)
+
+ * Add `options.preserveAccessTokens` (lchaglla)
+
+ * Update LB3 to be active LTS (Diana Lau)
+
+ * Fix ACL tests to wait until all assertions finish (Moshe Malka)
+
+ * chore: update to latest linting rules (virkt25)
+
+
 2018-09-12, Version 3.22.3
 ==========================
 
