@@ -719,17 +719,6 @@ describe('app', function() {
       expect(remoteMethodAddedClass).to.eql(Book.sharedClass);
     });
 
-    it.onServer('updates REST API when a new model is added', function(done) {
-      app.use(loopback.rest());
-      request(app).get('/colors').expect(404, function(err, res) {
-        if (err) return done(err);
-        var Color = PersistedModel.extend('color', {name: String});
-        app.model(Color);
-        Color.attachTo(db);
-        request(app).get('/colors').expect(200, done);
-      });
-    });
-
     it('accepts null dataSource', function(done) {
       app.model(MyTestModel, {dataSource: null});
       expect(MyTestModel.dataSource).to.eql(null);

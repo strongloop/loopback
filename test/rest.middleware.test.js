@@ -200,6 +200,16 @@ describe('loopback.rest', function() {
     }, done);
   });
 
+  it('rebuilds REST endpoints after a model was added', () => {
+    app.use(loopback.rest());
+
+    return request(app).get('/mymodels').expect(404).then(() => {
+      app.model(MyModel);
+
+      return request(app).get('/mymodels').expect(200);
+    });
+  });
+
   it('rebuilds REST endpoints after a model was deleted', () => {
     app.model(MyModel);
     app.use(loopback.rest());
@@ -209,6 +219,44 @@ describe('loopback.rest', function() {
         app.deleteModelByName('MyModel');
 
         return request(app).get('/mymodels').expect(404);
+      });
+  });
+
+  it('rebuilds REST endpoints after a remoteMethod was added', () => {
+    app.model(MyModel);
+    app.use(loopback.rest());
+
+    return request(app).get('/mymodels/customMethod').expect(404)
+      .then(() => {
+        MyModel.customMethod = function(req, cb) {
+          cb(null, true);
+        };
+        MyModel.remoteMethod('customMethod', {
+          http: {verb: 'get'},
+          accepts: [{type: 'object', http: {source: 'req'}}],
+          returns: [{type: 'boolean', name: 'success'}],
+        });
+
+        return request(app).get('/mymodels/customMethod').expect(200);
+      });
+  });
+
+  it('rebuilds REST endpoints after a remoteMethod was disabled', () => {
+    app.model(MyModel);
+    app.use(loopback.rest());
+    MyModel.customMethod = function(req, cb) {
+      cb(null, true);
+    };
+    MyModel.remoteMethod('customMethod', {
+      http: {verb: 'get'},
+      accepts: [{type: 'object', http: {source: 'req'}}],
+      returns: [{type: 'boolean', name: 'success'}],
+    });
+    return request(app).get('/mymodels/customMethod').expect(200)
+      .then(() => {
+        MyModel.disableRemoteMethodByName('customMethod');
+
+        return request(app).get('/mymodels/customMethod').expect(404);
       });
   });
 
