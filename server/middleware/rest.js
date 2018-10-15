@@ -73,8 +73,21 @@ function rest() {
     if (handlers.length === 1) {
       return handlers[0](req, res, next);
     }
-    async.eachSeries(handlers, function(handler, done) {
-      handler(req, res, done);
-    }, next);
+
+    executeHandlers(handlers, req, res, next);
   };
+}
+
+// A trimmed-down version of async.series that preserves current CLS context
+function executeHandlers(handlers, req, res, cb) {
+  var ix = -1;
+  next();
+
+  function next(err) {
+    if (err || ++ix >= handlers.length) {
+      cb(err);
+    } else {
+      handlers[ix](req, res, next);
+    }
+  }
 }
