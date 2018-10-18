@@ -4,6 +4,17 @@
 [![Module LTS Adopted'](https://img.shields.io/badge/Module%20LTS-Adopted-brightgreen.svg?style=flat)](http://github.com/CloudNativeJS/ModuleLTS)
 [![IBM Support](https://img.shields.io/badge/IBM%20Support-Frameworks-brightgreen.svg?style=flat)](http://ibm.biz/node-support)
 
+**This module is in Active LTS mode, new features are no longer accepted.**
+<br/>(See [Module Long Term Support Policy](#module-long-term-support-policy)
+below.)
+
+LoopBack 3 users looking for new features are encouraged to upgrade
+to LoopBack 4. Refer to
+[loopback-next#1849](https://github.com/strongloop/loopback-next/issues/1849)
+for more information on how to upgrade.
+
+## Overview
+
 LoopBack is a highly-extensible, open-source Node.js framework that enables you to:
 
   * Create dynamic end-to-end REST APIs with little or no coding.
