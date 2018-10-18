@@ -1,3 +1,9 @@
+2018-10-18, Version 3.23.1
+==========================
+
+ * README: highlight Active LTS at the top (Miroslav Bajtoš)
+
+
 2018-10-09, Version 3.23.0
 ==========================
 
