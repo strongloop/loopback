@@ -626,6 +626,9 @@ describe('authorized roles propagation in RemotingContext', function() {
     app.enableAuth({dataSource: 'db'});
     models = app.models;
 
+    // Speed up the password hashing algorithm for tests
+    models.User.settings.saltWorkFactor = 4;
+
     // creating a custom model
     const MyTestModel = app.registry.createModel('MyTestModel');
     app.model(MyTestModel, {dataSource: 'db'});
