@@ -1,3 +1,9 @@
+2018-10-25, Version 3.23.2
+==========================
+
+ * Fix ACL check to support model wildcard (Moshe Malka)
+
+
 2018-10-18, Version 3.23.1
 ==========================
 
