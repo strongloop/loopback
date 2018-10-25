@@ -15,16 +15,13 @@ var supertest = require('supertest');
 var Role = loopback.Role;
 var RoleMapping = loopback.RoleMapping;
 var User = loopback.User;
-var testModel;
 var async = require('async');
 
 // Speed up the password hashing algorithm for tests
 User.settings.saltWorkFactor = 4;
 
 var ds = null;
-before(function() {
-  ds = loopback.createDataSource({connector: loopback.Memory});
-});
+var testModel;
 
 describe('ACL model', function() {
   it('provides DEFAULT_SCOPE constant', () => {
@@ -33,16 +30,7 @@ describe('ACL model', function() {
 });
 
 describe('security scopes', function() {
-  beforeEach(function() {
-    var ds = this.ds = loopback.createDataSource({connector: loopback.Memory});
-    testModel = loopback.PersistedModel.extend('testModel');
-    ACL.attachTo(ds);
-    Role.attachTo(ds);
-    RoleMapping.attachTo(ds);
-    User.attachTo(ds);
-    Scope.attachTo(ds);
-    testModel.attachTo(ds);
-  });
+  beforeEach(setupTestModels);
 
   it('should allow access to models for the given scope by wildcard', function(done) {
     Scope.create({name: 'userScope', description: 'access user information'},
@@ -98,6 +86,8 @@ describe('security scopes', function() {
 });
 
 describe('security ACLs', function() {
+  beforeEach(setupTestModels);
+
   it('supports checkPermission() returning a promise', function() {
     return ACL.create({
       principalType: ACL.USER,
@@ -113,6 +103,44 @@ describe('security ACLs', function() {
       .then(function(access) {
         assert(access.permission === ACL.ALLOW);
       });
+  });
+
+  it('supports ACL rules with a wildcard for models', function() {
+    const A_USER_ID = 'a-test-user';
+
+    // By default, access is allowed to all users
+    return assertPermission(ACL.ALLOW, 'initial state')
+      // An ACL rule applying to all models denies access to everybody
+      .then(() => ACL.create({
+        model: '*',
+        property: '*',
+        accessType: '*',
+        principalType: 'ROLE',
+        principalId: '$everyone',
+        permission: 'DENY',
+      }))
+      .then(() => assertPermission(ACL.DENY, 'all denied'))
+      // A rule for a specific model overrides the rule matching all models
+      .then(() => ACL.create({
+        model: testModel.modelName,
+        property: '*',
+        accessType: '*',
+        principalType: ACL.USER,
+        principalId: A_USER_ID,
+        permission: ACL.ALLOW,
+      }))
+      .then(() => assertPermission(ACL.ALLOW, 'only a single model allowed'));
+
+    function assertPermission(expectedPermission, msg) {
+      return ACL.checkAccessForContext({
+        principals: [{type: ACL.USER, id: A_USER_ID}],
+        model: testModel.modelName,
+        accessType: ACL.ALL,
+      }).then(accessContext => {
+        const actual = accessContext.isAllowed() ? ACL.ALLOW : ACL.DENY;
+        expect(actual, msg).to.equal(expectedPermission);
+      });
+    }
   });
 
   it('supports checkAccessForContext() returning a promise', function() {
@@ -399,7 +427,6 @@ describe('security ACLs', function() {
   });
 
   it('should check access against LDL, ACL, and Role', function(done) {
-    // var log = console.log;
     var log = function() {};
 
     // Create
@@ -645,3 +672,14 @@ describe('authorized roles propagation in RemotingContext', function() {
       .expect(200);
   }
 });
+
+function setupTestModels() {
+  ds = this.ds = loopback.createDataSource({connector: loopback.Memory});
+  testModel = loopback.PersistedModel.extend('testModel');
+  ACL.attachTo(ds);
+  Role.attachTo(ds);
+  RoleMapping.attachTo(ds);
+  User.attachTo(ds);
+  Scope.attachTo(ds);
+  testModel.attachTo(ds);
+}
