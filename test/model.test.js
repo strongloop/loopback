@@ -924,16 +924,50 @@ describe.onServer('Remote Methods', function() {
   });
 
   describe('Model.createOptionsFromRemotingContext', function() {
-    var app, TestModel, accessToken, userId, actualOptions;
+    var app, TestModel, accessToken, actualOptions;
 
     before(setupAppAndRequest);
     before(createUserAndAccessToken);
+
+    beforeEach(function() {
+      TestModel.definition.settings = {};
+    });
 
     it('sets empty options.accessToken for anonymous requests', function(done) {
       request(app).get('/TestModels/saveOptions')
         .expect(204, function(err) {
           if (err) return done(err);
           expect(actualOptions).to.include({accessToken: null});
+          done();
+        });
+    });
+
+    it('sets options for juggler', function(done) {
+      request(app).get('/TestModels/saveOptions')
+        .expect(204, function(err) {
+          if (err) return done(err);
+          expect(actualOptions).to.include({
+            prohibitHiddenPropertiesInQuery: true,
+            maxDepthOfQuery: 12,
+            maxDepthOfData: 32,
+          });
+          done();
+        });
+    });
+
+    it('honors model settings to create options for juggler', function(done) {
+      TestModel.definition.settings = {
+        prohibitHiddenPropertiesInQuery: false,
+        maxDepthOfData: 64,
+      };
+      request(app).get('/TestModels/saveOptions')
+        .expect(204, function(err) {
+          if (err) return done(err);
+          expect(actualOptions).to.include({
+            prohibitHiddenPropertiesInQuery: false,
+            maxDepthOfQuery: 12,
+            maxDepthOfData: 64,
+          });
           done();
         });
     });
@@ -1028,7 +1062,6 @@ describe.onServer('Remote Methods', function() {
           return User.login(CREDENTIALS);
         }).then(function(token) {
           accessToken = token;
-          userId = token.userId;
         });
     }
   });
