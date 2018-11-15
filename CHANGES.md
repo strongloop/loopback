@@ -1,3 +1,11 @@
+2018-11-15, Version 3.24.0
+==========================
+
+ * Set juggler options for remote calls (Raymond Feng)
+
+ * Speed up ACL tests by reducing saltWorkFactor (Miroslav Bajtoš)
+
+
 2018-10-25, Version 3.23.2
 ==========================
 
