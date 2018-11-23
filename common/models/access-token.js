@@ -125,6 +125,11 @@ module.exports = function(AccessToken) {
       if (typeof id === 'string') {
         // Add support for oAuth 2.0 bearer token
         // http://tools.ietf.org/html/rfc6750
+
+        // To prevent Error: Model::findById requires the id argument
+        // with loopback-datasource-juggler 2.56.0+
+        if (id === '') continue;
+
         if (id.indexOf('Bearer ') === 0) {
           id = id.substring(7);
           if (options.bearerTokenBase64Encoded) {

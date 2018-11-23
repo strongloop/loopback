@@ -311,6 +311,16 @@ describe('loopback.token(options)', function() {
         .end(done);
     });
 
+  it('generates a 401 on a current user literal route with empty authToken',
+    function(done) {
+      var app = createTestApp(null, done);
+      request(app)
+        .get('/users/me')
+        .set('authorization', '')
+        .expect(401)
+        .end(done);
+    });
+
   it('generates a 401 on a current user literal route with invalid authToken',
     function(done) {
       var app = createTestApp(this.token, done);
