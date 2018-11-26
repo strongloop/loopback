@@ -1501,7 +1501,7 @@ describe('User', function() {
             from: 'noreply@myapp.org',
             redirect: '/',
             protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
+            host: 'lb.io', // use a short hostname to avoid a line break
             generateVerificationToken: function(user, cb) {
               assert(user);
               assert.equal(user.email, 'bar@bat.com');
