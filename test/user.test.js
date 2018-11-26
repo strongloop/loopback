@@ -1520,7 +1520,7 @@ describe('User', function() {
             assert(result.token);
             assert.equal(result.token, 'token-123456');
             var msg = result.email.response.toString('utf-8');
-            assert(~msg.indexOf('token-123456'));
+            expect(msg).to.contain('token-123456');
 
             done();
           });
