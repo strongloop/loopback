@@ -1,3 +1,11 @@
+2018-11-26, Version 2.41.1
+==========================
+
+ * Fix: treat empty access token string as undefined (andrey-abramow)
+
+ * Fix context propagation broken by async@2.x (Miroslav Bajtoš)
+
+
 2018-10-09, Version 2.41.0
 ==========================
 
