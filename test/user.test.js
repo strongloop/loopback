@@ -1501,7 +1501,7 @@ describe('User', function() {
             from: 'noreply@myapp.org',
             redirect: '/',
             protocol: ctx.req.protocol,
-            host: ctx.req.get('host'),
+            host: 'lb.io', // use a short hostname to avoid a line break
             generateVerificationToken: function(user, cb) {
               assert(user);
               assert.equal(user.email, 'bar@bat.com');
@@ -1520,7 +1520,7 @@ describe('User', function() {
             assert(result.token);
             assert.equal(result.token, 'token-123456');
             var msg = result.email.response.toString('utf-8');
-            assert(~msg.indexOf('token-123456'));
+            expect(msg).to.contain('token-123456');
 
             done();
           });
