@@ -1,3 +1,11 @@
+2019-01-08, Version 3.24.1
+==========================
+
+ * Update underscore.string to 3.3.5 (Francois)
+
+ * Fix: treat empty access token string as undefined (andrey-abramow)
+
+
 2018-11-15, Version 3.24.0
 ==========================
 
