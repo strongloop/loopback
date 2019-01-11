@@ -69,6 +69,44 @@ describe('users - integration', function() {
         });
     });
 
+    it('returns error when replacing user that does not exist', function() {
+      var self = this;
+      var credentials = {email: 'temp@example.com', password: 'pass'};
+      var User = app.models.User;
+      var user;
+
+      // verify that logoutSessionsOnSensitiveChanges is enabled,
+      // otherwise this test always passes
+      expect(app.get('logoutSessionsOnSensitiveChanges')).to.equal(true);
+
+      var hookEnabled = true;
+      User.beforeRemote('replaceOrCreate', function(ctx, unused, next) {
+        // don't affect subsequent tests!
+        if (!hookEnabled) return;
+        hookEnabled = false;
+
+        // Delete the user *AFTER* the PUT request was authorized
+        // but *BEFORE* replaceOrCreate is invoked
+        User.deleteById(user.id, next);
+      });
+
+      return User.create(credentials)
+        .then(function(u) {
+          user = u;
+          return User.login(credentials);
+        })
+        .then(function(token) {
+          return self.post('/api/users/replaceOrCreate')
+            .set('Authorization', token.id)
+            .send({
+              id: user.id,
+              email: 'x@x.com',
+              password: 'x',
+            })
+            .expect(200);
+        });
+    });
+
     it('should create post for a given user', function(done) {
       var url = '/api/users/' + userId + '/posts?access_token=' + accessToken;
       this.post(url)
