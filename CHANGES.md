@@ -1,3 +1,9 @@
+2019-01-11, Version 3.24.2
+==========================
+
+ * Fix crash when modifying an unknown user (Matheus Horstmann)
+
+
 2019-01-08, Version 3.24.1
 ==========================
 
