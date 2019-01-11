@@ -1,3 +1,13 @@
+2019-01-11, Version 2.41.2
+==========================
+
+ * Fix crash when modifying an unknown user (Matheus Horstmann)
+
+ * test: fix User test for custom token generator (Miroslav Bajtoš)
+
+ * test: improve assertion error messages (Miroslav Bajtoš)
+
+
 2018-11-26, Version 2.41.1
 ==========================
 
