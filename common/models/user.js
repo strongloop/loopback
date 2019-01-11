@@ -1358,7 +1358,14 @@ module.exports = function(User) {
       });
       var emailChanged;
       if (ctx.instance) {
-        emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
+        // Check if map does not return an empty array
+        // Fix server crashes when try to PUT a non existent id
+        if (ctx.hookState.originalUserData.length > 0) {
+          emailChanged = ctx.instance.email !== ctx.hookState.originalUserData[0].email;
+        } else {
+          emailChanged = true;
+        }
+
         if (emailChanged && ctx.Model.settings.emailVerificationRequired) {
           ctx.instance.emailVerified = false;
         }
