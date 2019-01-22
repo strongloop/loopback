@@ -235,6 +235,27 @@ module.exports = function defineModelTestsWithDataSource(options) {
       });
     });
 
+    describe('Model.exists(id, [callback])', function() {
+      it('returns true when the model with the given id exists', function(done) {
+        User.create({first: 'max'}, function(err, user) {
+          if (err) return done(err);
+          User.exists(user.id, function(err, exist) {
+            if (err) return done(err);
+            assert.equal(exist, true);
+            done();
+          });
+        });
+      });
+
+      it('returns false when there is no model with the given id', function(done) {
+        User.exists('user-id-does-not-exist', function(err, exist) {
+          if (err) return done(err);
+          assert.equal(exist, false);
+          done();
+        });
+      });
+    });
+
     describe('Model.findById(id, callback)', function() {
       it('Find an instance by id', function(done) {
         User.create({first: 'michael', last: 'jordan', id: 23}, function() {
