@@ -1,3 +1,9 @@
+2019-02-05, Version 3.25.0
+==========================
+
+ * Support middleware injected by AppDynamics. (Mike Li)
+
+
 2019-01-11, Version 3.24.2
 ==========================
 
