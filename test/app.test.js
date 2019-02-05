@@ -124,6 +124,28 @@ describe('app', function() {
         });
       });
 
+    it('allows handlers to be wrapped as __appdynamicsProxyInfo__ on express stack',
+      function(done) {
+        var myHandler = namedHandler('my-handler');
+        var wrappedHandler = function(req, res, next) {
+          myHandler(req, res, next);
+        };
+        wrappedHandler['__appdynamicsProxyInfo__'] = {
+          orig: myHandler,
+        };
+        app.middleware('routes:before', wrappedHandler);
+        var found = app._findLayerByHandler(myHandler);
+        expect(found).to.be.an('object');
+        expect(found).have.property('phase', 'routes:before');
+        executeMiddlewareHandlers(app, function(err) {
+          if (err) return done(err);
+
+          expect(steps).to.eql(['my-handler']);
+
+          done();
+        });
+      });
+
     it('allows handlers to be wrapped as a property on express stack',
       function(done) {
         var myHandler = namedHandler('my-handler');
