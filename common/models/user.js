@@ -1089,7 +1089,7 @@ module.exports = function(User) {
       if (typeof plain !== 'string') {
         return;
       }
-      if (plain.indexOf('$2a$') === 0 && plain.length === 60) {
+      if ((plain.indexOf('$2a$') === 0 || plain.indexOf('$2b$') === 0) && plain.length === 60) {
         // The password is already hashed. It can be the case
         // when the instance is loaded from DB
         this.$password = plain;
