@@ -992,13 +992,13 @@ module.exports = function(User) {
         if (err) {
           return cb(err);
         }
-        cb();
         UserModel.emit('resetPasswordRequest', {
           email: options.email,
           accessToken: accessToken,
           user: user,
           options: options,
         });
+        cb();
       }
     });
 
