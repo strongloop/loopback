@@ -1,3 +1,15 @@
+2019-03-15, Version 3.25.1
+==========================
+
+ * Back-ticks added to highlight example JSON (Quentin Presley)
+
+ * Add same change to description for findOne (Quentin Presley)
+
+ * Update the description for persisted-models (Quentin Presley)
+
+ * handle $2b$ in hashed password check (Sylvain Dumont)
+
+
 2019-02-05, Version 3.25.0
 ==========================
 
