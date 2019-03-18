@@ -45,7 +45,7 @@ This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudN
 | Version    | Status          | Published | EOL                  |
 | ---------- | --------------- | --------- | -------------------- |
 | LoopBack 4 | Current         | Oct 2018  | Apr 2021 _(minimum)_ |
-| Loopback 3 | Active LTS      | Dec 2016  | Dec 2019             |
+| Loopback 3 | Active LTS      | Dec 2016  | Dec 2020             |
 | Loopback 2 | Maintenance LTS | Jul 2014  | Apr 2019             |
 
 Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
