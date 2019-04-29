@@ -2,6 +2,8 @@
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/strongloop/loopback?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+**LoopBack 2.x has reached end of life in April 2019.  It is no longer supported.**
+
 LoopBack is a highly-extensible, open-source Node.js framework that enables you to:
 
   * Create dynamic end-to-end REST APIs with little or no coding.
@@ -75,15 +77,15 @@ See [loopback-example](https://github.com/strongloop/loopback-example) for detai
 
 ## Module Long Term Support Policy
 
-LoopBack 2.x is now in maintenance LTS.
+LoopBack 2.x has reached end of life in April 2019.  It is no longer supported.
 
 This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudNativeJS/ModuleLTS) policy, with the following End Of Life (EOL) dates:
 
 | Version    | Status          | Published | EOL                  |
 | ---------- | --------------- | --------- | -------------------- |
 | LoopBack 4 | Current         | Oct 2018  | Apr 2021 _(minimum)_ |
-| Loopback 3 | Active LTS      | Dec 2016  | Dec 2019             |
-| Loopback 2 | Maintenance LTS | Jul 2014  | Apr 2019             |
+| LoopBack 3 | Maintenance LTS      | Dec 2016  | Dec 2020             |
+| LoopBack 2 | End-of-Life | Jul 2014  | Apr 2019             |
 
 Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
 
