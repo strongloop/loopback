@@ -95,7 +95,7 @@
     "loopback-boot": "^2.7.0",
     "loopback-context": "^1.0.0",
     "mocha": "^5.2.0",
-    "nyc": "^10.1.2",
+    "nyc": "^14.1.1",
     "sinon": "^6.1.4",
     "sinon-chai": "^3.2.0",
     "strong-error-handler": "^3.0.0",
