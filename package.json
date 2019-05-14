@@ -34,7 +34,7 @@
     "test": "nyc grunt mocha-and-karma"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "dependencies": {
     "async": "^2.0.1",
@@ -80,22 +80,22 @@
     "grunt-contrib-uglify": "^3.4.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^21.0.0",
-    "grunt-karma": "^2.0.0",
+    "grunt-karma": "^3.0.2",
     "grunt-mocha-test": "^0.13.3",
     "grunt-run": "^0.8.1",
-    "karma": "^1.1.2",
-    "karma-browserify": "^5.1.1",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma": "^4.1.0",
+    "karma-browserify": "^6.0.0",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-es6-shim": "^1.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-html2js-preprocessor": "^1.0.0",
-    "karma-junit-reporter": "~1.0.0",
+    "karma-junit-reporter": "^1.2.0",
     "karma-mocha": "^1.1.1",
     "karma-script-launcher": "^1.0.0",
     "loopback-boot": "^2.7.0",
     "loopback-context": "^1.0.0",
     "mocha": "^5.2.0",
-    "nyc": "^10.1.2",
+    "nyc": "^14.1.1",
     "sinon": "^6.1.4",
     "sinon-chai": "^3.2.0",
     "strong-error-handler": "^3.0.0",
