@@ -122,5 +122,12 @@
   },
   "copyright.owner": "IBM Corp.",
   "license": "MIT",
-  "author": "IBM Corp."
+  "author": "IBM Corp.",
+  "ci": {
+    "downstreamIgnoreList": [
+      "bluemix-service-broker",
+      "gateway-director-bluemix",
+      "plan-manager"
+    ]
+  }
 }
