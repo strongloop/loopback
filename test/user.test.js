@@ -652,6 +652,37 @@ describe('User', function() {
       });
     });
 
+    it('should not allow queries in email field', function(done) {
+      User.login({email: {'neq': 'x'}, password: 'x'}, function(err, accessToken) {
+        assert(err);
+        assert.equal(err.code, 'INVALID_EMAIL');
+        assert(!accessToken);
+
+        done();
+      });
+    });
+
+    it('should not allow queries in username field', function(done) {
+      User.login({username: {'neq': 'x'}, password: 'x'}, function(err, accessToken) {
+        assert(err);
+        assert.equal(err.code, 'INVALID_USERNAME');
+        assert(!accessToken);
+
+        done();
+      });
+    });
+
+    it('should not allow queries in realm field', function(done) {
+      User.settings.realmRequired = true;
+      User.login({username: 'x', password: 'x', realm: {'neq': 'x'}}, function(err, accessToken) {
+        assert(err);
+        assert.equal(err.code, 'INVALID_REALM');
+        assert(!accessToken);
+
+        done();
+      });
+    });
+
     it('Login a user by providing credentials with TTL', function(done) {
       User.login(validCredentialsWithTTL, function(err, accessToken) {
         assertGoodToken(accessToken, validCredentialsUser);
