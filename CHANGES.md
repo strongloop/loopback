@@ -1,3 +1,29 @@
+2019-05-31, Version 3.26.0
+==========================
+
+ * fix: disallow queries in username and email fields (Hage Yaapa)
+
+ * Ignore failing downstream dependencies (Miroslav Bajtoš)
+
+ * Upgrade nyc to version 14 (Miroslav Bajtoš)
+
+ * Update Karma dependencies to latest versions (Miroslav Bajtoš)
+
+ * Drop Node.js 6.x from the supported versions (Miroslav Bajtoš)
+
+ * Fix Model.exists() to work with remote connector (Maxim Sharai)
+
+ * chore: update copyrights years (Agnes Lin)
+
+ * Update LTS status (Diana Lau)
+
+ * Enable Node.js 12.x on Travis CI (Miroslav Bajtoš)
+
+ * chore: update copyright year (Diana Lau)
+
+ * chore: update LB3 EOL date (Diana Lau)
+
+
 2019-03-15, Version 3.25.1
 ==========================
 
