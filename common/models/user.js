@@ -208,18 +208,39 @@ module.exports = function(User) {
     var query = self.normalizeCredentials(credentials, realmRequired,
       realmDelimiter);
 
-    if (realmRequired && !query.realm) {
-      var err1 = new Error(g.f('{{realm}} is required'));
-      err1.statusCode = 400;
-      err1.code = 'REALM_REQUIRED';
-      fn(err1);
-      return fn.promise;
+    if (realmRequired) {
+      if (!query.realm) {
+        var err1 = new Error(g.f('{{realm}} is required'));
+        err1.statusCode = 400;
+        err1.code = 'REALM_REQUIRED';
+        fn(err1);
+        return fn.promise;
+      } else if (typeof query.realm !== 'string') {
+        var err5 = new Error(g.f('Invalid realm'));
+        err5.statusCode = 400;
+        err5.code = 'INVALID_REALM';
+        fn(err5);
+        return fn.promise;
+      }
     }
     if (!query.email && !query.username) {
       var err2 = new Error(g.f('{{username}} or {{email}} is required'));
       err2.statusCode = 400;
       err2.code = 'USERNAME_EMAIL_REQUIRED';
       fn(err2);
+      return fn.promise;
+    }
+    if (query.username && typeof query.username !== 'string') {
+      var err3 = new Error(g.f('Invalid username'));
+      err3.statusCode = 400;
+      err3.code = 'INVALID_USERNAME';
+      fn(err3);
+      return fn.promise;
+    } else if (query.email && typeof query.email !== 'string') {
+      var err4 = new Error(g.f('Invalid email'));
+      err4.statusCode = 400;
+      err4.code = 'INVALID_EMAIL';
+      fn(err4);
       return fn.promise;
     }
 
