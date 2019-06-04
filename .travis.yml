@@ -12,7 +12,7 @@ cache:
   directories:
     - travis_phantomjs
 before_install:
-  - npm config set registry http://ci.strongloop.com:4873/
+  # - npm config set registry http://ci.strongloop.com:4873/
   # Upgrade PhantomJS to v2.1.1.
   - "export PHANTOMJS_VERSION=2.1.1"
   - "export PATH=$PWD/travis_phantomjs/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin:$PATH"
