@@ -1053,7 +1053,7 @@ describe('app', function() {
 
     it('adds a camelized alias', function() {
       app.connector('FOO-BAR', loopback.Memory);
-      expect(app.connectors.FOOBAR).to.equal(loopback.Memory);
+      expect(app.connectors.FooBar).to.equal(loopback.Memory);
     });
   });
 

@@ -48,6 +48,7 @@
     "express": "^4.14.0",
     "inflection": "^1.6.0",
     "isemail": "^2.2.1",
+    "lodash": "^4.17.11",
     "loopback-connector-remote": "^3.0.0",
     "loopback-datasource-juggler": "^3.28.0",
     "loopback-filters": "^1.0.0",
@@ -59,8 +60,7 @@
     "stable": "^0.1.5",
     "strong-globalize": "^4.1.1",
     "strong-remoting": "^3.11.0",
-    "uid2": "0.0.3",
-    "underscore.string": "^3.3.5"
+    "uid2": "0.0.3"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.22.0",
@@ -74,7 +74,7 @@
     "eslint-config-loopback": "^12.0.0",
     "eslint-plugin-mocha": "^5.1.0",
     "express-session": "^1.14.0",
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.4",
     "grunt-browserify": "^5.0.0",
     "grunt-cli": "^1.2.0",
     "grunt-contrib-uglify": "^3.4.0",
@@ -89,7 +89,7 @@
     "karma-es6-shim": "^1.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-html2js-preprocessor": "^1.0.0",
-    "karma-junit-reporter": "^1.2.0",
+    "karma-junit-reporter": "^2.0.0",
     "karma-mocha": "^1.1.1",
     "karma-script-launcher": "^1.0.0",
     "loopback-boot": "^2.7.0",
