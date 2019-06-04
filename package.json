@@ -1,6 +1,6 @@
 {
   "name": "loopback",
-  "version": "2.41.2",
+  "version": "2.42.0",
   "publishConfig": {
     "tag": "lts"
   },

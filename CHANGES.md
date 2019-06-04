@@ -1,3 +1,11 @@
+2019-06-04, Version 2.42.0
+==========================
+
+ * fix: disallow queries in username and email fields (Hage Yaapa)
+
+ * update README for 2.x EOL (Diana Lau)
+
+
 2019-01-11, Version 2.41.2
 ==========================
 
