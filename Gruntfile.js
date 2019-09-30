@@ -104,7 +104,7 @@ module.exports = function(grunt) {
     karma: {
       'unit-once': {
         configFile: 'test/karma.conf.js',
-        browsers: ['ChromeHeadless'],
+        browsers: ['ChromeDocker'],
         singleRun: true,
         reporters: ['dots', 'junit'],
 

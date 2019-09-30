@@ -3,12 +3,31 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
+
+const isDocker = require('is-docker');
+
 // Karma configuration
 // http://karma-runner.github.io/0.12/config/configuration-file.html
 
-'use strict';
 module.exports = function(config) {
+  // see https://github.com/docker/for-linux/issues/496
+  const disableChromeSandbox = isDocker() && !process.env.TRAVIS;
+  if (disableChromeSandbox) {
+    console.log('!! Disabling Chrome sandbox to support un-privileged Docker !!');
+  }
+
   config.set({
+    customLaunchers: {
+      ChromeDocker: {
+        base: 'ChromeHeadless',
+        // We must disable the Chrome sandbox when running Chrome inside Docker
+        // (Chrome's sandbox needs more permissions than Docker allows by default)
+        // See https://github.com/docker/for-linux/issues/496
+        flags: disableChromeSandbox ? ['--no-sandbox'] : [],
+      },
+    },
+
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
