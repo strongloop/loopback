@@ -64,7 +64,6 @@ module.exports = function(config) {
       'karma-browserify',
       'karma-es6-shim',
       'karma-mocha',
-      'karma-phantomjs-launcher',
       'karma-chrome-launcher',
       'karma-junit-reporter',
     ],
@@ -104,27 +103,18 @@ module.exports = function(config) {
         'superagent',
         'supertest',
       ],
-      transform: [
-        ['babelify', {
-          presets: [
-            ['es2015', {
-              // Disable transform-es2015-modules-commonjs which adds
-              // "use strict" to all files, even those that don't work
-              // in strict mode
-              // (e.g. chai, loopback-datasource-juggler, etc.)
-              modules: false,
-            }],
-          ],
-          // By default, browserify does not transform node_modules
-          // As a result, our dependencies like strong-remoting and juggler
-          // are kept in original ES6 form that does not work in PhantomJS
-          global: true,
-          // Prevent SyntaxError in strong-task-emitter:
-          //   strong-task-emitter/lib/task.js (83:4):
-          //   arguments is a reserved word in strict mode
-          ignore: /node_modules\/(strong-task-emitter)\//,
-        }],
-      ],
+      packageFilter: function(pkg, dir) {
+        // async@3 (used e.g. by loopback-connector) is specifying custom
+        // browserify config, in particular it wants to apply transformation
+        // `babelify`. We don't have `babelify` installed because we are
+        // testing using latest Chrome and thus don't need any transpilation.
+        // Let's remove the browserify config from the package and force
+        // browserify to use our config instead.
+        if (pkg.name === 'async') {
+          delete pkg.browserify;
+        }
+        return pkg;
+      },
       debug: true,
       // noParse: ['jquery'],
       watch: true,

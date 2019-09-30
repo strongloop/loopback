@@ -31,11 +31,6 @@ module.exports = function(grunt) {
         },
       },
     },
-    run: {
-      optionalInstall: {
-        exec: 'npm install --no-save --silent karma-phantomjs-launcher phantomjs-prebuilt',
-      },
-    },
     eslint: {
       gruntfile: {
         src: 'Gruntfile.js',
@@ -109,7 +104,7 @@ module.exports = function(grunt) {
     karma: {
       'unit-once': {
         configFile: 'test/karma.conf.js',
-        browsers: ['PhantomJS'],
+        browsers: ['ChromeHeadless'],
         singleRun: true,
         reporters: ['dots', 'junit'],
 
@@ -216,7 +211,6 @@ module.exports = function(grunt) {
   });
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-run');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-eslint');
@@ -242,14 +236,12 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', ['browserify']);
 
-  grunt.registerTask('phantomTests', ['run', 'karma:unit-once']);
-
   grunt.registerTask('test', [
     'eslint',
     process.env.JENKINS_HOME ? 'mochaTest:unit-xml' : 'mochaTest:unit',
     process.env.JENKINS_HOME && (/^win/.test(process.platform) ||
       /^s390x/.test(process.arch) || /^ppc64/.test(process.arch)) ?
-      'skip-karma' : 'phantomTests',
+      'skip-karma' : 'karma:unit-once',
   ]);
 
   // alias for sl-ci-run and `npm test`

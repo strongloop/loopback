@@ -63,9 +63,7 @@
     "underscore.string": "^3.3.5"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.22.0",
-    "babelify": "^7.3.0",
-    "browserify": "^13.1.0",
+    "browserify": "^16.5.0",
     "chai": "^3.5.0",
     "cookie-parser": "^1.3.4",
     "coveralls": "^3.0.2",
@@ -82,7 +80,6 @@
     "grunt-eslint": "^21.0.0",
     "grunt-karma": "^3.0.2",
     "grunt-mocha-test": "^0.13.3",
-    "grunt-run": "^0.8.1",
     "karma": "^4.1.0",
     "karma-browserify": "^6.0.0",
     "karma-chrome-launcher": "^2.2.0",
