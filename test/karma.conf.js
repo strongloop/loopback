@@ -6,6 +6,7 @@
 'use strict';
 
 const isDocker = require('is-docker');
+const which = require('which');
 
 // Karma configuration
 // http://karma-runner.github.io/0.12/config/configuration-file.html
@@ -17,10 +18,15 @@ module.exports = function(config) {
     console.log('!! Disabling Chrome sandbox to support un-privileged Docker !!');
   }
 
+  const hasChromium =
+    which.sync('chromium-browser', {nothrow: true}) ||
+    which.sync('chromium', {nothrow: true});
+
   config.set({
     customLaunchers: {
       ChromeDocker: {
-        base: 'ChromeHeadless',
+        // cis-jenkins build server does not provide Chrome, only Chromium
+        base: hasChromium ? 'ChromiumHeadless' : 'ChromeHeadless',
         // We must disable the Chrome sandbox when running Chrome inside Docker
         // (Chrome's sandbox needs more permissions than Docker allows by default)
         // See https://github.com/docker/for-linux/issues/496
