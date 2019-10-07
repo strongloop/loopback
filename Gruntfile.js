@@ -3,8 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-/* global module:false */
 'use strict';
+
 module.exports = function(grunt) {
   // Do not report warnings from unit-tests exercising deprecated paths
   process.env.NO_DEPRECATION = 'loopback';
