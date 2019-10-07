@@ -161,8 +161,8 @@ describe.onServer('Remote Methods', function() {
         .end(function(err, res) {
           if (err) return done(err);
           expect(res.body.length).to.eql(2);
-          expect(res.body).to.have.deep.property('[0].first', 'John');
-          expect(res.body).to.have.deep.property('[1].first', 'Jane');
+          expect(res.body).to.have.nested.property('[0].first', 'John');
+          expect(res.body).to.have.nested.property('[1].first', 'Jane');
           done();
         });
     });
@@ -201,8 +201,8 @@ describe.onServer('Remote Methods', function() {
           .end(function(err, result) {
             if (err) return done(err);
             expect(result.body.length).to.eql(2);
-            expect(result.body).to.have.deep.property('[0].title', 'One story');
-            expect(result.body).to.have.deep.property('[1].title', 'Two story');
+            expect(result.body).to.have.nested.property('[0].title', 'One story');
+            expect(result.body).to.have.nested.property('[1].title', 'Two story');
             done();
           });
       });

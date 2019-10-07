@@ -153,7 +153,7 @@ describe('role model', function() {
       Role.create({name: 'userRole'}, function(err, role) {
         expect(err).to.exist();
         expect(err).to.have.property('name', 'ValidationError');
-        expect(err).to.have.deep.property('details.codes.name');
+        expect(err).to.have.nested.property('details.codes.name');
         expect(err.details.codes.name).to.contain('uniqueness');
         expect(err).to.have.property('statusCode', 422);
 

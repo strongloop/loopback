@@ -1686,8 +1686,8 @@ describe('relations - integration', function() {
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(res.headers['x-before']).to.empty();
-          expect(res.headers['x-after']).to.empty();
+          expect(res.headers['x-before']).to.be.undefined();
+          expect(res.headers['x-after']).to.be.undefined();
 
           done();
         });

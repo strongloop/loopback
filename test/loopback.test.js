@@ -561,7 +561,9 @@ describe('loopback', function() {
       expect(methodNames).to.include('prototype.instanceMethod');
     });
 
-    it('throws an error when "isStatic:true" and method name starts with "prototype."', function() {
+    // Skip this test in browsers because strong-globalize is not removing
+    // `{{` and `}}` control characters from the string.
+    it.onServer('throws when "isStatic:true" and method name starts with "prototype."', function() {
       var TestModel = loopback.createModel(uniqueModelName);
       expect(function() {
         loopback.configureModel(TestModel, {
@@ -573,8 +575,8 @@ describe('loopback', function() {
             },
           },
         });
-      }).to.throw(Error, new Error('Remoting metadata for' + TestModel.modelName +
-      ' "isStatic" does not match new method name-based style.'));
+      }).to.throw(Error, 'Remoting metadata for ' + TestModel.modelName +
+      '.prototype.instanceMethod "isStatic" does not match new method name-based style.');
     });
 
     it('use "isStatic:true" if method name does not start with "prototype."', function() {
