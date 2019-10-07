@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var g = require('../../lib/globalize');
+const g = require('../../lib/globalize');
 
 /**
  * Data model for key-value databases.
@@ -233,10 +233,10 @@ function throwNotAttached(modelName, methodName) {
 function convertNullToNotFoundError(ctx, cb) {
   if (ctx.result !== null) return cb();
 
-  var modelName = ctx.method.sharedClass.name;
-  var id = ctx.getArgByName('id');
-  var msg = g.f('Unknown "%s" {{key}} "%s".', modelName, id);
-  var error = new Error(msg);
+  const modelName = ctx.method.sharedClass.name;
+  const id = ctx.getArgByName('id');
+  const msg = g.f('Unknown "%s" {{key}} "%s".', modelName, id);
+  const error = new Error(msg);
   error.statusCode = error.status = 404;
   error.code = 'KEY_NOT_FOUND';
   cb(error);

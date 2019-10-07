@@ -5,7 +5,7 @@
 
 'use strict';
 
-var env = process.env;
+const env = process.env;
 
 // delete any user-provided language settings
 delete env.LC_ALL;

@@ -4,9 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var boot = require('loopback-boot');
-var loopback = require('../../../../../index');
+const boot = require('loopback-boot');
+const loopback = require('../../../../../index');
 
-var app = module.exports = loopback();
+const app = module.exports = loopback();
 boot(app, __dirname);
 app.use(loopback.rest());

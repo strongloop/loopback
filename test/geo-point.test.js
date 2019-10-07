@@ -4,16 +4,16 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var loopback = require('../');
-var GeoPoint = loopback.GeoPoint;
+const assert = require('assert');
+const loopback = require('../');
+const GeoPoint = loopback.GeoPoint;
 
 describe('GeoPoint', function() {
   describe('geoPoint.distanceTo(geoPoint, options)', function() {
     it('Get the distance to another `GeoPoint`', function() {
-      var here = new GeoPoint({lat: 10, lng: 10});
-      var there = new GeoPoint({lat: 5, lng: 5});
-      var distance = here.distanceTo(there, {type: 'meters'});
+      const here = new GeoPoint({lat: 10, lng: 10});
+      const there = new GeoPoint({lat: 5, lng: 5});
+      const distance = here.distanceTo(there, {type: 'meters'});
 
       assert.equal(Math.floor(distance), 782777);
     });
@@ -21,9 +21,9 @@ describe('GeoPoint', function() {
 
   describe('GeoPoint.distanceBetween(a, b, options)', function() {
     it('Get the distance between two points', function() {
-      var here = new GeoPoint({lat: 10, lng: 10});
-      var there = new GeoPoint({lat: 5, lng: 5});
-      var distance = GeoPoint.distanceBetween(here, there, {type: 'feet'});
+      const here = new GeoPoint({lat: 10, lng: 10});
+      const there = new GeoPoint({lat: 5, lng: 5});
+      const distance = GeoPoint.distanceBetween(here, there, {type: 'feet'});
 
       assert.equal(Math.floor(distance), 2568169);
     });
@@ -31,32 +31,32 @@ describe('GeoPoint', function() {
 
   describe('GeoPoint()', function() {
     it('Create from string', function() {
-      var point = new GeoPoint('1.234,5.678');
+      const point = new GeoPoint('1.234,5.678');
       assert.equal(point.lat, 1.234);
       assert.equal(point.lng, 5.678);
-      var point2 = new GeoPoint('1.222,         5.333');
+      const point2 = new GeoPoint('1.222,         5.333');
       assert.equal(point2.lat, 1.222);
       assert.equal(point2.lng, 5.333);
-      var point3 = new GeoPoint('1.333, 5.111');
+      const point3 = new GeoPoint('1.333, 5.111');
       assert.equal(point3.lat, 1.333);
       assert.equal(point3.lng, 5.111);
     });
     it('Serialize as string', function() {
-      var str = '1.234,5.678';
-      var point = new GeoPoint(str);
+      const str = '1.234,5.678';
+      const point = new GeoPoint(str);
       assert.equal(point.toString(), str);
     });
     it('Create from array', function() {
-      var point = new GeoPoint([5.555, 6.777]);
+      const point = new GeoPoint([5.555, 6.777]);
       assert.equal(point.lat, 5.555);
       assert.equal(point.lng, 6.777);
     });
     it('Create as Model property', function() {
-      var Model = loopback.createModel('geo-model', {
+      const Model = loopback.createModel('geo-model', {
         geo: {type: 'GeoPoint'},
       });
 
-      var m = new Model({
+      const m = new Model({
         geo: '1.222,3.444',
       });
 

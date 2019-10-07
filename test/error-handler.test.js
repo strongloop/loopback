@@ -4,11 +4,11 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../');
-var app;
-var assert = require('assert');
-var request = require('supertest');
-var expect = require('./helpers/expect');
+const loopback = require('../');
+let app;
+const assert = require('assert');
+const request = require('supertest');
+const expect = require('./helpers/expect');
 
 describe('loopback.errorHandler(options)', function() {
   it('should throw a descriptive error', function() {

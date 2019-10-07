@@ -4,13 +4,13 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../');
-var lt = require('./helpers/loopback-testing-helper');
-var path = require('path');
-var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
-var app = require(path.join(SIMPLE_APP, 'server/server.js'));
-var assert = require('assert');
-var expect = require('./helpers/expect');
+const loopback = require('../');
+const lt = require('./helpers/loopback-testing-helper');
+const path = require('path');
+const SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
+const app = require(path.join(SIMPLE_APP, 'server/server.js'));
+const assert = require('assert');
+const expect = require('./helpers/expect');
 
 describe('remoting - integration', function() {
   lt.beforeEach.withApp(app);
@@ -22,21 +22,21 @@ describe('remoting - integration', function() {
 
   describe('app.remotes.options', function() {
     it('should load remoting options', function() {
-      var remotes = app.remotes();
+      const remotes = app.remotes();
       assert.deepEqual(remotes.options, {'json': {'limit': '1kb', 'strict': false},
         'urlencoded': {'limit': '8kb', 'extended': true},
         'errorHandler': {'debug': true, log: false}});
     });
 
     it('rest handler', function() {
-      var handler = app.handler('rest');
+      const handler = app.handler('rest');
       assert(handler);
     });
 
     it('should accept request that has entity below 1kb', function(done) {
       // Build an object that is smaller than 1kb
-      var name = '';
-      for (var i = 0; i < 256; i++) {
+      let name = '';
+      for (let i = 0; i < 256; i++) {
         name += '11';
       }
       this.http = this.post('/api/stores');
@@ -55,8 +55,8 @@ describe('remoting - integration', function() {
 
     it('should reject request that has entity beyond 1kb', function(done) {
       // Build an object that is larger than 1kb
-      var name = '';
-      for (var i = 0; i < 2048; i++) {
+      let name = '';
+      for (let i = 0; i < 2048; i++) {
         name += '11111111111';
       }
       this.http = this.post('/api/stores');
@@ -79,10 +79,10 @@ describe('remoting - integration', function() {
     it('has expected remote methods with default model.settings.replaceOnPUT' +
       'set to true (3.x)',
     function() {
-      var storeClass = findClass('store');
-      var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+      const storeClass = findClass('store');
+      const methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
-      var expectedMethods = [
+      const expectedMethods = [
         'create(data:object:store):store POST /stores',
         'patchOrCreate(data:object:store):store PATCH /stores',
         'replaceOrCreate(data:object:store):store PUT /stores',
@@ -106,10 +106,10 @@ describe('remoting - integration', function() {
     });
 
     it('has expected remote methods for scopes', function() {
-      var storeClass = findClass('store');
-      var methods = getFormattedScopeMethods(storeClass.methods);
+      const storeClass = findClass('store');
+      const methods = getFormattedScopeMethods(storeClass.methods);
 
-      var expectedMethods = [
+      const expectedMethods = [
         '__get__superStores(filter:object):store GET /stores/superStores',
         '__create__superStores(data:object:store):store POST /stores/superStores',
         '__delete__superStores() DELETE /stores/superStores',
@@ -121,10 +121,10 @@ describe('remoting - integration', function() {
 
     it('should have correct signatures for belongsTo methods',
       function() {
-        var widgetClass = findClass('widget');
-        var methods = getFormattedPrototypeMethods(widgetClass.methods);
+        const widgetClass = findClass('widget');
+        const methods = getFormattedPrototypeMethods(widgetClass.methods);
 
-        var expectedMethods = [
+        const expectedMethods = [
           'prototype.__get__store(refresh:boolean):store ' +
             'GET /widgets/:id/store',
         ];
@@ -133,10 +133,10 @@ describe('remoting - integration', function() {
 
     it('should have correct signatures for hasMany methods',
       function() {
-        var storeClass = findClass('store');
-        var methods = getFormattedPrototypeMethods(storeClass.methods);
+        const storeClass = findClass('store');
+        const methods = getFormattedPrototypeMethods(storeClass.methods);
 
-        var expectedMethods = [
+        const expectedMethods = [
           'prototype.__findById__widgets(fk:any):widget ' +
               'GET /stores/:id/widgets/:fk',
           'prototype.__destroyById__widgets(fk:any) ' +
@@ -157,10 +157,10 @@ describe('remoting - integration', function() {
 
     it('should have correct signatures for hasMany-through methods',
       function() { // jscs:disable validateIndentation
-        var physicianClass = findClass('physician');
-        var methods = getFormattedPrototypeMethods(physicianClass.methods);
+        const physicianClass = findClass('physician');
+        const methods = getFormattedPrototypeMethods(physicianClass.methods);
 
-        var expectedMethods = [
+        const expectedMethods = [
           'prototype.__findById__patients(fk:any):patient ' +
           'GET /physicians/:id/patients/:fk',
           'prototype.__destroyById__patients(fk:any) ' +
@@ -187,9 +187,9 @@ describe('remoting - integration', function() {
   });
 
   it('has upsertWithWhere remote method', function() {
-    var storeClass = findClass('store');
-    var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
-    var expectedMethods = [
+    const storeClass = findClass('store');
+    const methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+    const expectedMethods = [
       'upsertWithWhere(where:object,data:object:store):store POST /stores/upsertWithWhere',
     ];
     expect(methods).to.include.members(expectedMethods);
@@ -198,21 +198,21 @@ describe('remoting - integration', function() {
   describe('createOnlyInstance', function() {
     it('sets createOnlyInstance to true if id is generated and forceId is not set to false',
       function() {
-        var storeClass = findClass('store');
-        var createMethod = getCreateMethod(storeClass.methods);
+        const storeClass = findClass('store');
+        const createMethod = getCreateMethod(storeClass.methods);
         assert(createMethod.accepts[0].createOnlyInstance === true);
       });
 
     it('sets createOnlyInstance to false if forceId is set to false in the model', function() {
-      var customerClass = findClass('customerforceidfalse');
-      var createMethod = getCreateMethod(customerClass.methods);
+      const customerClass = findClass('customerforceidfalse');
+      const createMethod = getCreateMethod(customerClass.methods);
       assert(createMethod.accepts[0].createOnlyInstance === false);
     });
 
     it('sets createOnlyInstance based on target model for scoped or related methods',
       function() {
-        var userClass = findClass('user');
-        var createMethod = userClass.methods.find(function(m) {
+        const userClass = findClass('user');
+        const createMethod = userClass.methods.find(function(m) {
           return (m.name === 'prototype.__create__accessTokens');
         });
         assert(createMethod.accepts[0].createOnlyInstance === false);
@@ -229,10 +229,10 @@ describe('With model.settings.replaceOnPUT false', function() {
 
   it('should have expected remote methods',
     function() {
-      var storeClass = findClass('storeWithReplaceOnPUTfalse');
-      var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+      const storeClass = findClass('storeWithReplaceOnPUTfalse');
+      const methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
-      var expectedMethods = [
+      const expectedMethods = [
         'create(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating',
         'patchOrCreate(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PUT /stores-updating',
         'patchOrCreate(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PATCH /stores-updating',
@@ -266,10 +266,10 @@ describe('With model.settings.replaceOnPUT true', function() {
 
   it('should have expected remote methods',
     function() {
-      var storeClass = findClass('storeWithReplaceOnPUTtrue');
-      var methods = getFormattedMethodsExcludingRelations(storeClass.methods);
+      const storeClass = findClass('storeWithReplaceOnPUTtrue');
+      const methods = getFormattedMethodsExcludingRelations(storeClass.methods);
 
-      var expectedMethods = [
+      const expectedMethods = [
         'patchOrCreate(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PATCH /stores-replacing',
         'replaceOrCreate(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue POST /stores-replacing/replaceOrCreate',
         'replaceOrCreate(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PUT /stores-replacing',
@@ -283,11 +283,11 @@ describe('With model.settings.replaceOnPUT true', function() {
 });
 
 function formatReturns(m) {
-  var returns = m.returns;
+  const returns = m.returns;
   if (!returns || returns.length === 0) {
     return '';
   }
-  var type = returns[0].type;
+  let type = returns[0].type;
 
   // handle anonymous type definitions, e.g
   // { arg: 'info', type: { count: 'number' } }
@@ -298,9 +298,9 @@ function formatReturns(m) {
 }
 
 function formatMethod(m) {
-  var arr = [];
-  var endpoints = m.getEndpoints();
-  for (var i = 0; i < endpoints.length; i++) {
+  const arr = [];
+  const endpoints = m.getEndpoints();
+  for (let i = 0; i < endpoints.length; i++) {
     arr.push([
       m.name,
       '(',

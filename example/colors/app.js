@@ -4,18 +4,18 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var g = require('../../lib/globalize');
-var loopback = require('../../');
-var app = loopback();
+const g = require('../../lib/globalize');
+const loopback = require('../../');
+const app = loopback();
 
 app.use(loopback.rest());
 
-var schema = {
+const schema = {
   name: String,
 };
 
 app.dataSource('db', {connector: 'memory'});
-var Color = app.registry.createModel('color', schema);
+const Color = app.registry.createModel('color', schema);
 app.model(Color, {dataSource: 'db'});
 
 Color.create({name: 'red'});

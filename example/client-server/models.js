@@ -4,9 +4,9 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../');
+const loopback = require('../../');
 
-var CartItem = exports.CartItem = loopback.PersistedModel.extend('CartItem', {
+const CartItem = exports.CartItem = loopback.PersistedModel.extend('CartItem', {
   tax: {type: Number, default: 0.1},
   price: Number,
   item: String,
@@ -17,7 +17,7 @@ var CartItem = exports.CartItem = loopback.PersistedModel.extend('CartItem', {
 CartItem.sum = function(cartId, callback) {
   this.find({where: {cartId: cartId}}, function(err, items) {
     if (err) return callback(err);
-    var total = items
+    const total = items
       .map(function(item) {
         return item.total();
       })
@@ -33,8 +33,7 @@ CartItem.remoteMethod('sum',
   {
     accepts: {arg: 'cartId', type: 'number'},
     returns: {arg: 'total', type: 'number'},
-  }
-);
+  });
 
 CartItem.prototype.total = function() {
   return this.price * this.qty * (1 + this.tax);

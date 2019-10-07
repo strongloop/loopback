@@ -4,36 +4,36 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var async = require('async');
-var path = require('path');
+const assert = require('assert');
+const async = require('async');
+const path = require('path');
 
-var http = require('http');
-var express = require('express');
-var loopback = require('../');
-var PersistedModel = loopback.PersistedModel;
+const http = require('http');
+const express = require('express');
+const loopback = require('../');
+const PersistedModel = loopback.PersistedModel;
 
-var describe = require('./util/describe');
-var expect = require('./helpers/expect');
-var it = require('./util/it');
-var request = require('supertest');
+const describe = require('./util/describe');
+const expect = require('./helpers/expect');
+const it = require('./util/it');
+const request = require('supertest');
 const sinon = require('sinon');
 
 describe('app', function() {
-  var app;
+  let app;
   beforeEach(function() {
     app = loopback({localRegistry: true, loadBuiltinModels: true});
   });
 
   describe.onServer('.middleware(phase, handler)', function() {
-    var steps;
+    let steps;
 
     beforeEach(function setup() {
       steps = [];
     });
 
     it('runs middleware in phases', function(done) {
-      var PHASES = [
+      const PHASES = [
         'initial', 'session', 'auth', 'parse',
         'routes', 'files', 'final',
       ];
@@ -88,10 +88,10 @@ describe('app', function() {
         return namedHandler(name);
       }
 
-      var myHandler;
+      let myHandler;
       app.middleware('routes:before',
         myHandler = handlerThatAddsHandler('my-handler'));
-      var found = app._findLayerByHandler(myHandler);
+      const found = app._findLayerByHandler(myHandler);
       expect(found).to.be.an('object');
       expect(myHandler).to.equal(found.handle);
       expect(found).have.property('phase', 'routes:before');
@@ -106,13 +106,13 @@ describe('app', function() {
 
     it('allows handlers to be wrapped as __NR_handler on express stack',
       function(done) {
-        var myHandler = namedHandler('my-handler');
-        var wrappedHandler = function(req, res, next) {
+        const myHandler = namedHandler('my-handler');
+        const wrappedHandler = function(req, res, next) {
           myHandler(req, res, next);
         };
         wrappedHandler['__NR_handler'] = myHandler;
         app.middleware('routes:before', wrappedHandler);
-        var found = app._findLayerByHandler(myHandler);
+        const found = app._findLayerByHandler(myHandler);
         expect(found).to.be.an('object');
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
@@ -126,15 +126,15 @@ describe('app', function() {
 
     it('allows handlers to be wrapped as __appdynamicsProxyInfo__ on express stack',
       function(done) {
-        var myHandler = namedHandler('my-handler');
-        var wrappedHandler = function(req, res, next) {
+        const myHandler = namedHandler('my-handler');
+        const wrappedHandler = function(req, res, next) {
           myHandler(req, res, next);
         };
         wrappedHandler['__appdynamicsProxyInfo__'] = {
           orig: myHandler,
         };
         app.middleware('routes:before', wrappedHandler);
-        var found = app._findLayerByHandler(myHandler);
+        const found = app._findLayerByHandler(myHandler);
         expect(found).to.be.an('object');
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
@@ -148,13 +148,13 @@ describe('app', function() {
 
     it('allows handlers to be wrapped as a property on express stack',
       function(done) {
-        var myHandler = namedHandler('my-handler');
-        var wrappedHandler = function(req, res, next) {
+        const myHandler = namedHandler('my-handler');
+        const wrappedHandler = function(req, res, next) {
           myHandler(req, res, next);
         };
         wrappedHandler['__handler'] = myHandler;
         app.middleware('routes:before', wrappedHandler);
-        var found = app._findLayerByHandler(myHandler);
+        const found = app._findLayerByHandler(myHandler);
         expect(found).to.be.an('object');
         expect(found).have.property('phase', 'routes:before');
         executeMiddlewareHandlers(app, function(err) {
@@ -167,7 +167,7 @@ describe('app', function() {
       });
 
     it('injects error from previous phases into the router', function(done) {
-      var expectedError = new Error('expected error');
+      const expectedError = new Error('expected error');
 
       app.middleware('initial', function(req, res, next) {
         steps.push('initial');
@@ -193,7 +193,7 @@ describe('app', function() {
     });
 
     it('passes unhandled error to callback', function(done) {
-      var expectedError = new Error('expected error');
+      const expectedError = new Error('expected error');
 
       app.middleware('initial', function(req, res, next) {
         next(expectedError);
@@ -207,8 +207,8 @@ describe('app', function() {
     });
 
     it('passes errors to error handlers in the same phase', function(done) {
-      var expectedError = new Error('this should be handled by middleware');
-      var handledError;
+      const expectedError = new Error('this should be handled by middleware');
+      let handledError;
 
       app.middleware('initial', function(req, res, next) {
         // continue in the next tick, this verifies that the next
@@ -298,7 +298,7 @@ describe('app', function() {
     });
 
     it('exposes express helpers on req and res objects', function(done) {
-      var req, res;
+      let req, res;
 
       app.middleware('initial', function(rq, rs, next) {
         req = rq;
@@ -336,7 +336,7 @@ describe('app', function() {
     });
 
     it('sets req.baseUrl and req.originalUrl', function(done) {
-      var reqProps;
+      let reqProps;
       app.middleware('initial', function(req, res, next) {
         reqProps = {baseUrl: req.baseUrl, originalUrl: req.originalUrl};
 
@@ -374,7 +374,7 @@ describe('app', function() {
 
       // we need at least 9 elements to expose non-stability
       // of the built-in sort function
-      var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       numbers.forEach(function(n) {
         app.middleware('routes', namedHandler(n));
       });
@@ -389,8 +389,8 @@ describe('app', function() {
     });
 
     it('correctly mounts express apps', function(done) {
-      var data, mountWasEmitted;
-      var subapp = express();
+      let data, mountWasEmitted;
+      const subapp = express();
       subapp.use(function(req, res, next) {
         data = {
           mountpath: req.app.mountpath,
@@ -417,10 +417,10 @@ describe('app', function() {
     });
 
     it('restores req & res on return from mounted express app', function(done) {
-      var expected = {};
-      var actual = {};
+      const expected = {};
+      const actual = {};
 
-      var subapp = express();
+      const subapp = express();
       subapp.use(function verifyTestAssumptions(req, res, next) {
         expect(req.__proto__).to.not.equal(expected.req);
         expect(res.__proto__).to.not.equal(expected.res);
@@ -468,8 +468,8 @@ describe('app', function() {
     }
 
     function getObjectAndPrototypeKeys(obj) {
-      var result = [];
-      for (var k in obj) {
+      const result = [];
+      for (const k in obj) {
         result.push(k);
       }
       result.sort();
@@ -479,11 +479,11 @@ describe('app', function() {
 
   describe.onServer('.middlewareFromConfig', function() {
     it('provides API for loading middleware from JSON config', function(done) {
-      var steps = [];
-      var expectedConfig = {key: 'value'};
+      const steps = [];
+      const expectedConfig = {key: 'value'};
 
-      var handlerFactory = function() {
-        var args = Array.prototype.slice.apply(arguments);
+      const handlerFactory = function() {
+        const args = Array.prototype.slice.apply(arguments);
         return function(req, res, next) {
           steps.push(args);
 
@@ -550,7 +550,7 @@ describe('app', function() {
     });
 
     it('scopes middleware from config to a list of scopes', function(done) {
-      var steps = [];
+      const steps = [];
       app.middlewareFromConfig(
         function factory() {
           return function(req, res, next) {
@@ -580,7 +580,7 @@ describe('app', function() {
   });
 
   describe.onServer('.defineMiddlewarePhases(nameOrArray)', function() {
-    var app;
+    let app;
     beforeEach(function() {
       app = loopback();
     });
@@ -626,7 +626,7 @@ describe('app', function() {
     });
 
     function verifyMiddlewarePhases(names, done) {
-      var steps = [];
+      const steps = [];
       names.forEach(function(it) {
         app.middleware(it, function(req, res, next) {
           steps.push(it);
@@ -646,7 +646,7 @@ describe('app', function() {
   });
 
   describe('app.model(Model)', function() {
-    var app, db, MyTestModel;
+    let app, db, MyTestModel;
     beforeEach(function() {
       app = loopback();
       app.set('remoting', {errorHandler: {debug: true, log: false}});
@@ -655,7 +655,7 @@ describe('app', function() {
     });
 
     it('Expose a `Model` to remote clients', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      const Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
 
@@ -663,22 +663,22 @@ describe('app', function() {
     });
 
     it('uses singular name as app.remoteObjects() key', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      const Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({color: Color});
     });
 
     it('uses singular name as shared class name', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      const Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
-      var classes = app.remotes().classes().map(function(c) { return c.name; });
+      const classes = app.remotes().classes().map(function(c) { return c.name; });
       expect(classes).to.contain('color');
     });
 
     it('registers existing models to app.models', function() {
-      var Color = db.createModel('color', {name: String});
+      const Color = db.createModel('color', {name: String});
       app.model(Color);
       expect(Color.app).to.be.equal(app);
       expect(Color.shared).to.equal(true);
@@ -687,9 +687,9 @@ describe('app', function() {
     });
 
     it('emits a `modelRemoted` event', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      const Color = PersistedModel.extend('color', {name: String});
       Color.shared = true;
-      var remotedClass;
+      let remotedClass;
       app.on('modelRemoted', function(sharedClass) {
         remotedClass = sharedClass;
       });
@@ -699,9 +699,9 @@ describe('app', function() {
     });
 
     it('emits a `remoteMethodDisabled` event', function() {
-      var Color = PersistedModel.extend('color', {name: String});
+      const Color = PersistedModel.extend('color', {name: String});
       Color.shared = true;
-      var remoteMethodDisabledClass, disabledRemoteMethod;
+      let remoteMethodDisabledClass, disabledRemoteMethod;
       app.on('remoteMethodDisabled', function(sharedClass, methodName) {
         remoteMethodDisabledClass = sharedClass;
         disabledRemoteMethod = methodName;
@@ -716,14 +716,14 @@ describe('app', function() {
 
     it('emits a `remoteMethodAdded` event', function() {
       app.dataSource('db', {connector: 'memory'});
-      var Book = app.registry.createModel(
+      const Book = app.registry.createModel(
         'Book',
         {name: 'string'},
         {plural: 'books'}
       );
       app.model(Book, {dataSource: 'db'});
 
-      var Page = app.registry.createModel(
+      const Page = app.registry.createModel(
         'Page',
         {name: 'string'},
         {plural: 'pages'}
@@ -732,7 +732,7 @@ describe('app', function() {
 
       Book.hasMany(Page);
 
-      var remoteMethodAddedClass;
+      let remoteMethodAddedClass;
       app.on('remoteMethodAdded', function(sharedClass) {
         remoteMethodAddedClass = sharedClass;
       });
@@ -759,14 +759,14 @@ describe('app', function() {
     });
 
     it('throws error if model typeof string is passed', function() {
-      var fn = function() { app.model('MyTestModel'); };
+      const fn = function() { app.model('MyTestModel'); };
       expect(fn).to.throw(/app(\.model|\.registry)/);
     });
   });
 
   describe('app.model(ModelCtor, config)', function() {
     it('attaches the model to a datasource', function() {
-      var previousModel = loopback.registry.findModel('TestModel');
+      const previousModel = loopback.registry.findModel('TestModel');
       app.dataSource('db', {connector: 'memory'});
 
       if (previousModel) {
@@ -774,7 +774,7 @@ describe('app', function() {
       }
 
       assert(!previousModel || !previousModel.dataSource);
-      var TestModel = app.registry.createModel('TestModel');
+      const TestModel = app.registry.createModel('TestModel');
       app.model(TestModel, {dataSource: 'db'});
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
@@ -843,10 +843,10 @@ describe('app', function() {
   describe('app.models', function() {
     it('is unique per app instance', function() {
       app.dataSource('db', {connector: 'memory'});
-      var Color = app.registry.createModel('Color');
+      const Color = app.registry.createModel('Color');
       app.model(Color, {dataSource: 'db'});
       expect(app.models.Color).to.equal(Color);
-      var anotherApp = loopback();
+      const anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);
     });
   });
@@ -855,7 +855,7 @@ describe('app', function() {
     it('is unique per app instance', function() {
       app.dataSource('ds', {connector: 'memory'});
       expect(app.datasources.ds).to.not.equal(undefined);
-      var anotherApp = loopback();
+      const anotherApp = loopback();
       expect(anotherApp.datasources.ds).to.equal(undefined);
     });
   });
@@ -886,11 +886,11 @@ describe('app', function() {
 
   describe.onServer('listen()', function() {
     it('starts http server', function(done) {
-      var app = loopback();
+      const app = loopback();
       app.set('port', 0);
       app.get('/', function(req, res) { res.status(200).send('OK'); });
 
-      var server = app.listen();
+      const server = app.listen();
 
       expect(server).to.be.an.instanceOf(require('http').Server);
 
@@ -900,7 +900,7 @@ describe('app', function() {
     });
 
     it('updates port on `listening` event', function(done) {
-      var app = loopback();
+      const app = loopback();
       app.set('port', 0);
 
       app.listen(function() {
@@ -911,12 +911,12 @@ describe('app', function() {
     });
 
     it('updates `url` on `listening` event', function(done) {
-      var app = loopback();
+      const app = loopback();
       app.set('port', 0);
       app.set('host', undefined);
 
       app.listen(function() {
-        var expectedUrl = 'http://localhost:' + app.get('port') + '/';
+        const expectedUrl = 'http://localhost:' + app.get('port') + '/';
         expect(app.get('url'), 'url').to.equal(expectedUrl);
 
         done();
@@ -924,7 +924,7 @@ describe('app', function() {
     });
 
     it('forwards to http.Server.listen on more than one arg', function(done) {
-      var app = loopback();
+      const app = loopback();
       app.set('port', 1);
       app.listen(0, '127.0.0.1', function() {
         expect(app.get('port'), 'port').to.not.equal(0).and.not.equal(1);
@@ -935,7 +935,7 @@ describe('app', function() {
     });
 
     it('forwards to http.Server.listen when the single arg is not a function', function(done) {
-      var app = loopback();
+      const app = loopback();
       app.set('port', 1);
       app.listen(0).on('listening', function() {
         expect(app.get('port'), 'port') .to.not.equal(0).and.not.equal(1);
@@ -945,7 +945,7 @@ describe('app', function() {
     });
 
     it('uses app config when no parameter is supplied', function(done) {
-      var app = loopback();
+      const app = loopback();
       // Http listens on all interfaces by default
       // Custom host serves as an indicator whether
       // the value was used by app.listen
@@ -967,26 +967,26 @@ describe('app', function() {
     });
 
     it('auto-configures required models to provided dataSource', function() {
-      var AUTH_MODELS = ['User', 'ACL', 'AccessToken', 'Role', 'RoleMapping'];
-      var app = loopback({localRegistry: true, loadBuiltinModels: true});
+      const AUTH_MODELS = ['User', 'ACL', 'AccessToken', 'Role', 'RoleMapping'];
+      const app = loopback({localRegistry: true, loadBuiltinModels: true});
       require('../lib/builtin-models')(app.registry);
-      var db = app.dataSource('db', {connector: 'memory'});
+      const db = app.dataSource('db', {connector: 'memory'});
 
       app.enableAuth({dataSource: 'db'});
 
       expect(Object.keys(app.models)).to.include.members(AUTH_MODELS);
 
       AUTH_MODELS.forEach(function(m) {
-        var Model = app.models[m];
+        const Model = app.models[m];
         expect(Model.dataSource, m + '.dataSource').to.equal(db);
         expect(Model.shared, m + '.shared').to.equal(m === 'User');
       });
     });
 
     it('detects already configured subclass of a required model', function() {
-      var app = loopback({localRegistry: true, loadBuiltinModels: true});
-      var db = app.dataSource('db', {connector: 'memory'});
-      var Customer = app.registry.createModel('Customer', {}, {base: 'User'});
+      const app = loopback({localRegistry: true, loadBuiltinModels: true});
+      const db = app.dataSource('db', {connector: 'memory'});
+      const Customer = app.registry.createModel('Customer', {}, {base: 'User'});
       app.model(Customer, {dataSource: 'db'});
 
       // Fix AccessToken's "belongsTo user" relation to use our new Customer model
@@ -1001,7 +1001,7 @@ describe('app', function() {
 
   describe.onServer('app.get(\'/\', loopback.status())', function() {
     it('should return the status of the application', function(done) {
-      var app = loopback();
+      const app = loopback();
       app.get('/', loopback.status());
       request(app)
         .get('/')
@@ -1013,7 +1013,7 @@ describe('app', function() {
           expect(res.body).to.have.property('started');
           expect(res.body.uptime, 'uptime').to.be.gte(0);
 
-          var elapsed = Date.now() - Number(new Date(res.body.started));
+          const elapsed = Date.now() - Number(new Date(res.body.started));
 
           // elapsed should be a small positive number...
           expect(elapsed, 'elapsed').to.be.within(0, 300);
@@ -1026,7 +1026,7 @@ describe('app', function() {
   describe('app.connectors', function() {
     it('is unique per app instance', function() {
       app.connectors.foo = 'bar';
-      var anotherApp = loopback();
+      const anotherApp = loopback();
       expect(anotherApp.connectors.foo).to.equal(undefined);
     });
 
@@ -1069,8 +1069,8 @@ describe('app', function() {
     });
 
     it('is unique per app instance', function() {
-      var app1 = loopback();
-      var app2 = loopback();
+      const app1 = loopback();
+      const app2 = loopback();
 
       expect(app1.settings).to.not.equal(app2.settings);
 
@@ -1080,18 +1080,18 @@ describe('app', function() {
   });
 
   it('exposes loopback as a property', function() {
-    var app = loopback();
+    const app = loopback();
     expect(app.loopback).to.equal(loopback);
   });
 
   function setupUserModels(app, options, done) {
     app.dataSource('db', {connector: 'memory'});
-    var UserAccount = app.registry.createModel(
+    const UserAccount = app.registry.createModel(
       'UserAccount',
       {name: 'string'},
       options
     );
-    var UserRole = app.registry.createModel(
+    const UserRole = app.registry.createModel(
       'UserRole',
       {name: 'string'}
     );
@@ -1108,7 +1108,7 @@ describe('app', function() {
   }
 
   describe('Model-level normalizeHttpPath option', function() {
-    var app;
+    let app;
     beforeEach(function() {
       app = loopback();
     });
@@ -1144,7 +1144,7 @@ describe('app', function() {
     });
   });
   describe('app-level normalizeHttpPath option', function() {
-    var app;
+    let app;
     beforeEach(function() {
       app = loopback();
     });
@@ -1179,7 +1179,7 @@ describe('app', function() {
   });
 
   describe('Model-level and app-level normalizeHttpPath options', function() {
-    var app;
+    let app;
     beforeEach(function() {
       app = loopback();
     });
@@ -1203,8 +1203,8 @@ describe('app', function() {
 });
 
 function executeMiddlewareHandlers(app, urlPath, callback) {
-  var handlerError = undefined;
-  var server = http.createServer(function(req, res) {
+  let handlerError = undefined;
+  const server = http.createServer(function(req, res) {
     app.handle(req, res, function(err) {
       if (err) {
         handlerError = err;

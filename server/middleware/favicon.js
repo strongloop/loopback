@@ -4,8 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var favicon = require('serve-favicon');
-var path = require('path');
+const favicon = require('serve-favicon');
+const path = require('path');
 
 /**
  * Serve the LoopBack favicon.

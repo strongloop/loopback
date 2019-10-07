@@ -4,21 +4,21 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var loopback = require('../');
-var request = require('supertest');
+const assert = require('assert');
+const loopback = require('../');
+const request = require('supertest');
 
 describe('hidden properties', function() {
   beforeEach(function(done) {
-    var app = this.app = loopback();
-    var Product = this.Product = loopback.PersistedModel.extend(
+    const app = this.app = loopback();
+    const Product = this.Product = loopback.PersistedModel.extend(
       'product',
       {},
       {hidden: ['secret']}
     );
     Product.attachTo(loopback.memory());
 
-    var Category = this.Category = loopback.PersistedModel.extend('category');
+    const Category = this.Category = loopback.PersistedModel.extend('category');
     Category.attachTo(loopback.memory());
     Category.hasMany(Product);
 
@@ -37,7 +37,7 @@ describe('hidden properties', function() {
   });
 
   afterEach(function(done) {
-    var Product = this.Product;
+    const Product = this.Product;
     this.Category.destroyAll(function() {
       Product.destroyAll(done);
     });
@@ -51,7 +51,7 @@ describe('hidden properties', function() {
       .end(function(err, res) {
         if (err) return done(err);
 
-        var product = res.body[0];
+        const product = res.body[0];
         assert.equal(product.secret, undefined);
 
         done();
@@ -59,7 +59,7 @@ describe('hidden properties', function() {
   });
 
   it('should hide a property of nested models', function(done) {
-    var app = this.app;
+    const app = this.app;
     request(app)
       .get('/categories?filter[include]=products')
       .expect('Content-Type', /json/)
@@ -67,8 +67,8 @@ describe('hidden properties', function() {
       .end(function(err, res) {
         if (err) return done(err);
 
-        var category = res.body[0];
-        var product = category.products[0];
+        const category = res.body[0];
+        const product = category.products[0];
         assert.equal(product.secret, undefined);
 
         done();

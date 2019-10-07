@@ -4,35 +4,35 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var async = require('async');
-var describe = require('./describe');
-var loopback = require('../../');
-var ACL = loopback.ACL;
-var Change = loopback.Change;
-var PersistedModel = loopback.PersistedModel;
-var RemoteObjects = require('strong-remoting');
-var TaskEmitter = require('strong-task-emitter');
+const assert = require('assert');
+const async = require('async');
+const describe = require('./describe');
+const loopback = require('../../');
+const ACL = loopback.ACL;
+const Change = loopback.Change;
+const PersistedModel = loopback.PersistedModel;
+const RemoteObjects = require('strong-remoting');
+const TaskEmitter = require('strong-task-emitter');
 
 module.exports = function defineModelTestsWithDataSource(options) {
   describe('Model Tests', function() {
-    var User, dataSource;
+    let User, dataSource;
 
     if (options.beforeEach) {
       beforeEach(options.beforeEach);
     }
 
     beforeEach(function() {
-      var test = this;
+      const test = this;
 
       // setup a model / datasource
       dataSource = this.dataSource || loopback.createDataSource(options.dataSource);
 
-      var extend = PersistedModel.extend;
+      const extend = PersistedModel.extend;
 
       // create model hook
       PersistedModel.extend = function() {
-        var extendedModel = extend.apply(PersistedModel, arguments);
+        const extendedModel = extend.apply(PersistedModel, arguments);
 
         if (options.onDefine) {
           options.onDefine.call(test, extendedModel);
@@ -65,7 +65,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
     describe('Model.validatesPresenceOf(properties...)', function() {
       it('Require a model to include a property to be considered valid', function() {
         User.validatesPresenceOf('first', 'last', 'age');
-        var joe = new User({first: 'joe'});
+        const joe = new User({first: 'joe'});
         assert(joe.isValid() === false, 'model should not validate');
         assert(joe.errors.last, 'should have a missing last error');
         assert(joe.errors.age, 'should have a missing age error');
@@ -75,7 +75,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
     describe('Model.validatesLengthOf(property, options)', function() {
       it('Require a property length to be within a specified range', function() {
         User.validatesLengthOf('password', {min: 5, message: {min: 'Password is too short'}});
-        var joe = new User({password: '1234'});
+        const joe = new User({password: '1234'});
         assert(joe.isValid() === false, 'model should not be valid');
         assert(joe.errors.password, 'should have password error');
       });
@@ -84,7 +84,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
     describe('Model.validatesInclusionOf(property, options)', function() {
       it('Require a value for `property` to be in the specified array', function() {
         User.validatesInclusionOf('gender', {in: ['male', 'female']});
-        var foo = new User({gender: 'bar'});
+        const foo = new User({gender: 'bar'});
         assert(foo.isValid() === false, 'model should not be valid');
         assert(foo.errors.gender, 'should have gender error');
       });
@@ -93,9 +93,9 @@ module.exports = function defineModelTestsWithDataSource(options) {
     describe('Model.validatesExclusionOf(property, options)', function() {
       it('Require a value for `property` to not exist in the specified array', function() {
         User.validatesExclusionOf('domain', {in: ['www', 'billing', 'admin']});
-        var foo = new User({domain: 'www'});
-        var bar = new User({domain: 'billing'});
-        var bat = new User({domain: 'admin'});
+        const foo = new User({domain: 'www'});
+        const bar = new User({domain: 'billing'});
+        const bat = new User({domain: 'admin'});
         assert(foo.isValid() === false);
         assert(bar.isValid() === false);
         assert(bat.isValid() === false);
@@ -108,9 +108,9 @@ module.exports = function defineModelTestsWithDataSource(options) {
     describe('Model.validatesNumericalityOf(property, options)', function() {
       it('Require a value for `property` to be a specific type of `Number`', function() {
         User.validatesNumericalityOf('age', {int: true});
-        var joe = new User({age: 10.2});
+        const joe = new User({age: 10.2});
         assert(joe.isValid() === false);
-        var bob = new User({age: 0});
+        const bob = new User({age: 0});
         assert(bob.isValid() === true);
         assert(joe.errors.age, 'model should have an age error');
       });
@@ -119,15 +119,15 @@ module.exports = function defineModelTestsWithDataSource(options) {
     describe('myModel.isValid()', function() {
       it('Validate the model instance', function() {
         User.validatesNumericalityOf('age', {int: true});
-        var user = new User({first: 'joe', age: 'flarg'});
-        var valid = user.isValid();
+        const user = new User({first: 'joe', age: 'flarg'});
+        const valid = user.isValid();
         assert(valid === false);
         assert(user.errors.age, 'model should have age error');
       });
 
       it('Asynchronously validate the model', function(done) {
         User.validatesNumericalityOf('age', {int: true});
-        var user = new User({first: 'joe', age: 'flarg'});
+        const user = new User({first: 'joe', age: 'flarg'});
         user.isValid(function(valid) {
           assert(valid === false);
           assert(user.errors.age, 'model should have age error');
@@ -150,7 +150,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
 
     describe('model.save([options], [callback])', function() {
       it('Save an instance of a Model to the attached data source', function(done) {
-        var joe = new User({first: 'Joe', last: 'Bob'});
+        const joe = new User({first: 'Joe', last: 'Bob'});
         joe.save(function(err, user) {
           assert(user.id);
           assert(!err);

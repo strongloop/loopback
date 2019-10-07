@@ -4,16 +4,16 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var path = require('path');
-var loopback = require('../../');
-var models = require('../fixtures/e2e/models');
-var TestModel = models.TestModel;
-var assert = require('assert');
+const path = require('path');
+const loopback = require('../../');
+const models = require('../fixtures/e2e/models');
+const TestModel = models.TestModel;
+const assert = require('assert');
 
 describe('RemoteConnector', function() {
   before(function() {
     // setup the remote connector
-    var ds = loopback.createDataSource({
+    const ds = loopback.createDataSource({
       url: 'http://127.0.0.1:3000/api',
       connector: loopback.Remote,
     });
@@ -33,7 +33,7 @@ describe('RemoteConnector', function() {
   });
 
   it('should be able to call save', function(done) {
-    var m = new TestModel({
+    const m = new TestModel({
       foo: 'bar',
     });
     m.save(function(err, data) {

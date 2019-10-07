@@ -4,16 +4,16 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var expect = require('./helpers/expect');
-var loopback = require('../');
+const assert = require('assert');
+const expect = require('./helpers/expect');
+const loopback = require('../');
 
 describe('Registry', function() {
   describe('createModel', function() {
     it('should throw error upon extending non-exist base model', function() {
-      var app = loopback();
-      var props = {};
-      var opts = {base: 'nonexistent'};
+      const app = loopback();
+      const props = {};
+      const opts = {base: 'nonexistent'};
       expect(function() { app.registry.createModel('aModel', props, opts); })
         .to.throw(/model\s`aModel`(.*)unknown\smodel\s`nonexistent`/);
     });
@@ -21,26 +21,26 @@ describe('Registry', function() {
 
   describe('one per app', function() {
     it('should allow two apps to reuse the same model name', function(done) {
-      var appFoo = loopback();
-      var appBar = loopback();
-      var modelName = 'MyModel';
-      var subModelName = 'Sub' + modelName;
-      var settings = {base: 'PersistedModel'};
+      const appFoo = loopback();
+      const appBar = loopback();
+      const modelName = 'MyModel';
+      const subModelName = 'Sub' + modelName;
+      const settings = {base: 'PersistedModel'};
       appFoo.set('perAppRegistries', true);
       appBar.set('perAppRegistries', true);
-      var dsFoo = appFoo.dataSource('dsFoo', {connector: 'memory'});
-      var dsBar = appFoo.dataSource('dsBar', {connector: 'memory'});
+      const dsFoo = appFoo.dataSource('dsFoo', {connector: 'memory'});
+      const dsBar = appFoo.dataSource('dsBar', {connector: 'memory'});
 
-      var FooModel = appFoo.registry.createModel(modelName, {}, settings);
+      const FooModel = appFoo.registry.createModel(modelName, {}, settings);
       appFoo.model(FooModel, {dataSource: dsFoo});
 
-      var FooSubModel = appFoo.registry.createModel(subModelName, {}, settings);
+      const FooSubModel = appFoo.registry.createModel(subModelName, {}, settings);
       appFoo.model(FooSubModel, {dataSource: dsFoo});
 
-      var BarModel = appBar.registry.createModel(modelName, {}, settings);
+      const BarModel = appBar.registry.createModel(modelName, {}, settings);
       appBar.model(BarModel, {dataSource: dsBar});
 
-      var BarSubModel = appBar.registry.createModel(subModelName, {}, settings);
+      const BarSubModel = appBar.registry.createModel(subModelName, {}, settings);
       appBar.model(BarSubModel, {dataSource: dsBar});
 
       FooModel.hasMany(FooSubModel);

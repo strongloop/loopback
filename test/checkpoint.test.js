@@ -4,16 +4,16 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var async = require('async');
-var loopback = require('../');
-var expect = require('./helpers/expect');
+const async = require('async');
+const loopback = require('../');
+const expect = require('./helpers/expect');
 
-var Checkpoint = loopback.Checkpoint.extend('TestCheckpoint');
+const Checkpoint = loopback.Checkpoint.extend('TestCheckpoint');
 
 describe('Checkpoint', function() {
   describe('bumpLastSeq() and current()', function() {
     beforeEach(function() {
-      var memory = loopback.createDataSource({
+      const memory = loopback.createDataSource({
         connector: loopback.Memory,
       });
       Checkpoint.attachTo(memory);

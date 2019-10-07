@@ -8,7 +8,7 @@
  */
 
 'use strict';
-var assert = require('assert');
+const assert = require('assert');
 
 /**
  * Checkpoint list entry.
@@ -35,15 +35,15 @@ module.exports = function(Checkpoint) {
    * @param {Number} checkpoint The current checkpoint seq
    */
   Checkpoint.current = function(cb) {
-    var Checkpoint = this;
+    const Checkpoint = this;
     Checkpoint._getSingleton(function(err, cp) {
       cb(err, cp.seq);
     });
   };
 
   Checkpoint._getSingleton = function(cb) {
-    var query = {limit: 1}; // match all instances, return only one
-    var initialData = {seq: 1};
+    const query = {limit: 1}; // match all instances, return only one
+    const initialData = {seq: 1};
     this.findOrCreate(query, initialData, cb);
   };
 
@@ -54,10 +54,10 @@ module.exports = function(Checkpoint) {
    * @param {Object} checkpoint The current checkpoint
    */
   Checkpoint.bumpLastSeq = function(cb) {
-    var Checkpoint = this;
+    const Checkpoint = this;
     Checkpoint._getSingleton(function(err, cp) {
       if (err) return cb(err);
-      var originalSeq = cp.seq;
+      const originalSeq = cp.seq;
       cp.seq++;
       // Update the checkpoint but only if it was not changed under our hands
       Checkpoint.updateAll({id: cp.id, seq: originalSeq}, {seq: cp.seq}, function(err, info) {

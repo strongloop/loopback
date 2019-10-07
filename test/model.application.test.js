@@ -4,12 +4,12 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require(('../'));
-var assert = require('assert');
-var Application = loopback.Application;
+const loopback = require(('../'));
+const assert = require('assert');
+const Application = loopback.Application;
 
 describe('Application', function() {
-  var registeredApp = null;
+  let registeredApp = null;
 
   before(function attachToMemory() {
     Application.attachTo(loopback.memory());
@@ -18,7 +18,7 @@ describe('Application', function() {
   it('honors `application.register` - callback variant', function(done) {
     Application.register('rfeng', 'MyTestApp',
       {description: 'My test application'}, function(err, result) {
-        var app = result;
+        const app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyTestApp');
         assert.equal(app.description, 'My test application');
@@ -31,7 +31,7 @@ describe('Application', function() {
     Application.register('rfeng', 'MyTestApp',
       {description: 'My test application'})
       .then(function(result) {
-        var app = result;
+        const app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyTestApp');
         assert.equal(app.description, 'My test application');
@@ -47,7 +47,7 @@ describe('Application', function() {
     Application.create({owner: 'rfeng',
       name: 'MyApp1',
       description: 'My first mobile application'}, function(err, result) {
-      var app = result;
+      const app = result;
       assert.equal(app.owner, 'rfeng');
       assert.equal(app.name, 'MyApp1');
       assert.equal(app.description, 'My first mobile application');
@@ -90,7 +90,7 @@ describe('Application', function() {
         },
       }},
     function(err, result) {
-      var app = result;
+      const app = result;
       assert.deepEqual(app.pushSettings.toObject(), {
         apns: {
           production: false,
@@ -119,7 +119,7 @@ describe('Application', function() {
   beforeEach(function(done) {
     Application.register('rfeng', 'MyApp2',
       {description: 'My second mobile application'}, function(err, result) {
-        var app = result;
+        const app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp2');
         assert.equal(app.description, 'My second mobile application');
@@ -138,7 +138,7 @@ describe('Application', function() {
 
   it('Reset keys', function(done) {
     Application.resetKeys(registeredApp.id, function(err, result) {
-      var app = result;
+      const app = result;
       assert.equal(app.owner, 'rfeng');
       assert.equal(app.name, 'MyApp2');
       assert.equal(app.description, 'My second mobile application');
@@ -165,7 +165,7 @@ describe('Application', function() {
   it('Reset keys - promise variant', function(done) {
     Application.resetKeys(registeredApp.id)
       .then(function(result) {
-        var app = result;
+        const app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp2');
         assert.equal(app.description, 'My second mobile application');
@@ -194,7 +194,7 @@ describe('Application', function() {
 
   it('Reset keys without create a new instance', function(done) {
     Application.resetKeys(registeredApp.id, function(err, result) {
-      var app = result;
+      const app = result;
       assert(app.id);
       assert(app.id === registeredApp.id);
       registeredApp = app;
@@ -206,7 +206,7 @@ describe('Application', function() {
   it('Reset keys without create a new instance - promise variant', function(done) {
     Application.resetKeys(registeredApp.id)
       .then(function(result) {
-        var app = result;
+        const app = result;
         assert(app.id);
         assert(app.id === registeredApp.id);
         registeredApp = app;
@@ -307,12 +307,12 @@ describe('Application', function() {
 
 describe('Application subclass', function() {
   it('should use subclass model name', function(done) {
-    var MyApp = Application.extend('MyApp');
-    var ds = loopback.createDataSource({connector: loopback.Memory});
+    const MyApp = Application.extend('MyApp');
+    const ds = loopback.createDataSource({connector: loopback.Memory});
     MyApp.attachTo(ds);
     MyApp.register('rfeng', 'MyApp123',
       {description: 'My 123 mobile application'}, function(err, result) {
-        var app = result;
+        const app = result;
         assert.equal(app.owner, 'rfeng');
         assert.equal(app.name, 'MyApp123');
         assert.equal(app.description, 'My 123 mobile application');

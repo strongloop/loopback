@@ -4,13 +4,13 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var expect = require('./helpers/expect');
-var loopback = require('../');
-var ctx = require('../lib/access-context');
-var extend = require('util')._extend;
-var AccessContext = ctx.AccessContext;
-var Principal = ctx.Principal;
-var Promise = require('bluebird');
+const expect = require('./helpers/expect');
+const loopback = require('../');
+const ctx = require('../lib/access-context');
+const extend = require('util')._extend;
+const AccessContext = ctx.AccessContext;
+const Principal = ctx.Principal;
+const Promise = require('bluebird');
 const waitForEvent = require('./helpers/wait-for-event');
 const supertest = require('supertest');
 const loggers = require('./helpers/error-loggers');
@@ -19,8 +19,8 @@ const logServerErrorsOtherThan = loggers.logServerErrorsOtherThan;
 describe('Multiple users with custom principalType', function() {
   this.timeout(10000);
 
-  var commonCredentials = {email: 'foo@bar.com', password: 'bar'};
-  var app, OneUser, AnotherUser, AccessToken, Role,
+  const commonCredentials = {email: 'foo@bar.com', password: 'bar'};
+  let app, OneUser, AnotherUser, AccessToken, Role,
     userFromOneModel, userFromAnotherModel, userRole, userOneBaseContext;
 
   beforeEach(function setupAppAndModels() {
@@ -30,7 +30,7 @@ describe('Multiple users with custom principalType', function() {
     app.set('remoting', {rest: {handleErrors: false}});
     app.dataSource('db', {connector: 'memory'});
 
-    var userModelOptions = {
+    const userModelOptions = {
       base: 'User',
       // forceId is set to false for the purpose of updating the same affected user within the
       // `Email Update` test cases.
@@ -118,7 +118,7 @@ describe('Multiple users with custom principalType', function() {
   describe('User.logout', function() {
     it('logs out a user from user model 1 without logging out user from model 2',
       function() {
-        var tokenOfOneUser;
+        let tokenOfOneUser;
         return Promise.all([
           OneUser.login(commonCredentials),
           AnotherUser.login(commonCredentials),
@@ -131,7 +131,7 @@ describe('Multiple users with custom principalType', function() {
             return AccessToken.find({});
           })
           .then(function(allTokens) {
-            var data = allTokens.map(function(token) {
+            const data = allTokens.map(function(token) {
               return {userId: token.userId, principalType: token.principalType};
             });
             expect(data).to.eql([
@@ -144,7 +144,7 @@ describe('Multiple users with custom principalType', function() {
 
   describe('Password Reset', function() {
     describe('User.resetPassword(options)', function() {
-      var options = {
+      const options = {
         email: 'foo@bar.com',
         redirect: 'http://foobar.com/reset-password',
       };
@@ -172,7 +172,7 @@ describe('Multiple users with custom principalType', function() {
   });
 
   describe('AccessToken (session) invalidation when changing email', function() {
-    var anotherUserFromOneModel;
+    let anotherUserFromOneModel;
 
     it('impact only the related user', function() {
       return OneUser.create({email: 'original@example.com', password: 'bar'})
@@ -192,7 +192,7 @@ describe('Multiple users with custom principalType', function() {
           return AccessToken.find({'order': 'principalType ASC'});
         })
         .then(function(allTokens) {
-          var data = allTokens.map(function(token) {
+          const data = allTokens.map(function(token) {
             return {userId: token.userId, principalType: token.principalType};
           });
           expect(data).to.eql([
@@ -205,7 +205,7 @@ describe('Multiple users with custom principalType', function() {
   });
 
   describe('AccessContext', function() {
-    var ThirdUser, userFromThirdModel, accessContext;
+    let ThirdUser, userFromThirdModel, accessContext;
 
     beforeEach(function() {
       accessContext = new AccessContext({registry: OneUser.registry});
@@ -221,7 +221,7 @@ describe('Multiple users with custom principalType', function() {
               {type: Principal.SCOPE},
               {type: OneUser.modelName, id: userFromOneModel.id},
             ]);
-            var user = accessContext.getUser();
+            const user = accessContext.getUser();
             expect(user).to.eql({
               id: userFromOneModel.id,
               principalType: OneUser.modelName,
@@ -237,7 +237,7 @@ describe('Multiple users with custom principalType', function() {
               {type: 'invalidModelName'},
               {type: OneUser.modelName, id: userFromOneModel.id},
             ]);
-            var user = accessContext.getUser();
+            const user = accessContext.getUser();
             expect(user).to.eql({
               id: userFromOneModel.id,
               principalType: OneUser.modelName,
@@ -251,7 +251,7 @@ describe('Multiple users with custom principalType', function() {
           return ThirdUser.create(commonCredentials)
             .then(function(userFromThirdModel) {
               accessContext.addPrincipal(ThirdUser.modelName, userFromThirdModel.id);
-              var user = accessContext.getUser();
+              const user = accessContext.getUser();
               expect(user).to.eql({
                 id: userFromThirdModel.id,
                 principalType: ThirdUser.modelName,
@@ -272,7 +272,7 @@ describe('Multiple users with custom principalType', function() {
   describe('Role model', function() {
     this.timeout(10000);
 
-    var RoleMapping, ACL, user;
+    let RoleMapping, ACL, user;
 
     beforeEach(function() {
       ACL = app.registry.getModel('ACL');
@@ -374,7 +374,7 @@ describe('Multiple users with custom principalType', function() {
 
       describe('$owner', function() {
         it('supports legacy behavior with relations', function() {
-          var Album = app.registry.createModel('Album', {
+          const Album = app.registry.createModel('Album', {
             name: String,
             userId: Number,
           }, {
@@ -390,7 +390,7 @@ describe('Multiple users with custom principalType', function() {
 
           return Album.create({name: 'album', userId: userFromOneModel.id})
             .then(function(album) {
-              var validContext = {
+              const validContext = {
                 principalType: OneUser.modelName,
                 principalId: userFromOneModel.id,
                 model: Album,
@@ -406,7 +406,7 @@ describe('Multiple users with custom principalType', function() {
         // With multiple users config, we cannot resolve a user based just on
         // his id, as many users from different models could have the same id.
         it('legacy behavior resolves false without belongsTo relation', function() {
-          var Album = app.registry.createModel('Album', {
+          const Album = app.registry.createModel('Album', {
             name: String,
             userId: Number,
             owner: Number,
@@ -419,7 +419,7 @@ describe('Multiple users with custom principalType', function() {
             owner: userFromOneModel.id,
           })
             .then(function(album) {
-              var authContext = {
+              const authContext = {
                 principalType: OneUser.modelName,
                 principalId: userFromOneModel.id,
                 model: Album,
@@ -433,7 +433,7 @@ describe('Multiple users with custom principalType', function() {
         });
 
         it('legacy behavior resolves false if owner has incorrect principalType', function() {
-          var Album = app.registry.createModel('Album', {
+          const Album = app.registry.createModel('Album', {
             name: String,
             userId: Number,
           }, {
@@ -449,12 +449,12 @@ describe('Multiple users with custom principalType', function() {
 
           return Album.create({name: 'album', userId: userFromOneModel.id})
             .then(function(album) {
-              var invalidPrincipalTypes = [
+              const invalidPrincipalTypes = [
                 'invalidContextName',
                 'USER',
                 AnotherUser.modelName,
               ];
-              var invalidContexts = invalidPrincipalTypes.map(principalType => {
+              const invalidContexts = invalidPrincipalTypes.map(principalType => {
                 return {
                   principalType,
                   principalId: userFromOneModel.id,
@@ -485,12 +485,12 @@ describe('Multiple users with custom principalType', function() {
           function() {
           // passing {ownerRelations: true} will enable the new $owner role resolver
           // with any belongsTo relation allowing to resolve truthy
-            var Message = createModelWithOptions(
+            const Message = createModelWithOptions(
               'ModelWithAllRelations',
               {ownerRelations: true}
             );
 
-            var messages = [
+            const messages = [
               {content: 'firstMessage', customerId: userFromOneModel.id},
               {
                 content: 'secondMessage',
@@ -552,7 +552,7 @@ describe('Multiple users with custom principalType', function() {
 
       // helpers
       function isOwnerForMessage(user, msg) {
-        var accessContext = {
+        const accessContext = {
           principalType: user.constructor.modelName,
           principalId: user.id,
           model: msg.constructor,
@@ -569,7 +569,7 @@ describe('Multiple users with custom principalType', function() {
       }
 
       function createModelWithOptions(name, options) {
-        var baseOptions = {
+        const baseOptions = {
           relations: {
             sender: {
               type: 'belongsTo',
@@ -584,7 +584,7 @@ describe('Multiple users with custom principalType', function() {
           },
         };
         options = extend(baseOptions, options);
-        var Model = app.registry.createModel(
+        const Model = app.registry.createModel(
           name,
           {content: String, senderType: String},
           options
@@ -768,7 +768,7 @@ describe('Multiple users with custom principalType', function() {
 
   // helpers
   function createUserModel(app, name, options) {
-    var model = app.registry.createModel(Object.assign({name: name}, options));
+    const model = app.registry.createModel(Object.assign({name: name}, options));
     app.model(model, {dataSource: 'db'});
     model.setMaxListeners(0); // allow many User.afterRemote's to be called
     return model;

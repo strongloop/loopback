@@ -4,14 +4,14 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var loopback = require('../');
+const assert = require('assert');
+const loopback = require('../');
 
 describe('Memory Connector', function() {
   it('Create a model using the memory connector', function(done) {
     // use the built in memory function
     // to create a memory data source
-    var memory = loopback.memory();
+    let memory = loopback.memory();
 
     // or create it using the standard
     // data source creation api
@@ -21,12 +21,12 @@ describe('Memory Connector', function() {
 
     // create a model using the
     // memory data source
-    var properties = {
+    const properties = {
       name: String,
       price: Number,
     };
 
-    var Product = memory.createModel('product', properties);
+    const Product = memory.createModel('product', properties);
 
     Product.create([
       {name: 'apple', price: 0.79},

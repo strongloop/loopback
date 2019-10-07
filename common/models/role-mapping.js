@@ -4,8 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../lib/loopback');
-var utils = require('../../lib/utils');
+const loopback = require('../../lib/loopback');
+const utils = require('../../lib/utils');
 
 /**
  * The `RoleMapping` model extends from the built in `loopback.Model` type.
@@ -26,7 +26,7 @@ module.exports = function(RoleMapping) {
 
   RoleMapping.resolveRelatedModels = function() {
     if (!this.userModel) {
-      var reg = this.registry;
+      const reg = this.registry;
       this.roleModel = reg.getModelByType('Role');
       this.userModel = reg.getModelByType('User');
       this.applicationModel = reg.getModelByType('Application');
@@ -44,7 +44,7 @@ module.exports = function(RoleMapping) {
     this.constructor.resolveRelatedModels();
 
     if (this.principalType === RoleMapping.APPLICATION) {
-      var applicationModel = this.constructor.applicationModel;
+      const applicationModel = this.constructor.applicationModel;
       applicationModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {
@@ -63,7 +63,7 @@ module.exports = function(RoleMapping) {
   RoleMapping.prototype.user = function(callback) {
     callback = callback || utils.createPromiseCallback();
     this.constructor.resolveRelatedModels();
-    var userModel;
+    let userModel;
 
     if (this.principalType === RoleMapping.USER) {
       userModel = this.constructor.userModel;
@@ -94,7 +94,7 @@ module.exports = function(RoleMapping) {
     this.constructor.resolveRelatedModels();
 
     if (this.principalType === RoleMapping.ROLE) {
-      var roleModel = this.constructor.roleModel;
+      const roleModel = this.constructor.roleModel;
       roleModel.findById(this.principalId, callback);
     } else {
       process.nextTick(function() {

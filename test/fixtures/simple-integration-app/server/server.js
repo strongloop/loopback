@@ -4,13 +4,13 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../../../index');
-var boot = require('loopback-boot');
-var app = module.exports = loopback({localRegistry: true});
-var errorHandler = require('strong-error-handler');
+const loopback = require('../../../../index');
+const boot = require('loopback-boot');
+const app = module.exports = loopback({localRegistry: true});
+const errorHandler = require('strong-error-handler');
 
 boot(app, __dirname);
-var apiPath = '/api';
+const apiPath = '/api';
 app.use(apiPath, loopback.rest());
 app.use(loopback.urlNotFound());
 app.use(errorHandler());

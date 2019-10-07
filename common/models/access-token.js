@@ -8,11 +8,11 @@
  */
 
 'use strict';
-var g = require('../../lib/globalize');
-var loopback = require('../../lib/loopback');
-var assert = require('assert');
-var uid = require('uid2');
-var DEFAULT_TOKEN_LEN = 64;
+const g = require('../../lib/globalize');
+const loopback = require('../../lib/loopback');
+const assert = require('assert');
+const uid = require('uid2');
+const DEFAULT_TOKEN_LEN = 64;
 
 /**
  * Token based authentication and access control.
@@ -93,11 +93,11 @@ module.exports = function(AccessToken) {
    */
   AccessToken.getIdForRequest = function(req, options) {
     options = options || {};
-    var params = options.params || [];
-    var headers = options.headers || [];
-    var cookies = options.cookies || [];
-    var i = 0;
-    var length, id;
+    let params = options.params || [];
+    let headers = options.headers || [];
+    let cookies = options.cookies || [];
+    let i = 0;
+    let length, id;
 
     // https://github.com/strongloop/loopback/issues/1326
     if (options.searchDefaultTokenKeys !== false) {
@@ -107,7 +107,7 @@ module.exports = function(AccessToken) {
     }
 
     for (length = params.length; i < length; i++) {
-      var param = params[i];
+      const param = params[i];
       // replacement for deprecated req.param()
       id = req.params && req.params[param] !== undefined ? req.params[param] :
         req.body && req.body[param] !== undefined ? req.body[param] :
@@ -134,7 +134,7 @@ module.exports = function(AccessToken) {
           id = id.substring(7);
           if (options.bearerTokenBase64Encoded) {
             // Decode from base64
-            var buf = new Buffer(id, 'base64');
+            const buf = new Buffer(id, 'base64');
             id = buf.toString('utf8');
           }
         } else if (/^Basic /i.test(id)) {
@@ -147,7 +147,7 @@ module.exports = function(AccessToken) {
           //   "a2b2c3:"   (curl http://a2b2c3@localhost:3000/)
           //   "token:a2b2c3" (curl http://token:a2b2c3@localhost:3000/)
           //   ":a2b2c3"
-          var parts = /^([^:]*):(.*)$/.exec(id);
+          const parts = /^([^:]*):(.*)$/.exec(id);
           if (parts) {
             id = parts[2].length > parts[1].length ? parts[2] : parts[1];
           }
@@ -186,7 +186,7 @@ module.exports = function(AccessToken) {
           } else if (isValid) {
             cb(null, token);
           } else {
-            var e = new Error(g.f('Invalid Access Token'));
+            const e = new Error(g.f('Invalid Access Token'));
             e.status = e.statusCode = 401;
             e.code = 'INVALID_TOKEN';
             cb(e);
@@ -213,7 +213,7 @@ module.exports = function(AccessToken) {
       options = {};
     }
 
-    var id = this.getIdForRequest(req, options);
+    const id = this.getIdForRequest(req, options);
 
     if (id) {
       this.resolve(id, cb);
@@ -239,9 +239,9 @@ module.exports = function(AccessToken) {
       assert(this.ttl, 'token.ttl must exist');
       assert(this.ttl >= -1, 'token.ttl must be >= -1');
 
-      var AccessToken = this.constructor;
-      var userRelation = AccessToken.relations.user; // may not be set up
-      var User = userRelation && userRelation.modelTo;
+      const AccessToken = this.constructor;
+      const userRelation = AccessToken.relations.user; // may not be set up
+      let User = userRelation && userRelation.modelTo;
 
       // redefine user model if accessToken's principalType is available
       if (this.principalType) {
@@ -253,13 +253,13 @@ module.exports = function(AccessToken) {
         }
       }
 
-      var now = Date.now();
-      var created = this.created.getTime();
-      var elapsedSeconds = (now - created) / 1000;
-      var secondsToLive = this.ttl;
-      var eternalTokensAllowed = !!(User && User.settings.allowEternalTokens);
-      var isEternalToken = secondsToLive === -1;
-      var isValid = isEternalToken ?
+      const now = Date.now();
+      const created = this.created.getTime();
+      const elapsedSeconds = (now - created) / 1000;
+      const secondsToLive = this.ttl;
+      const eternalTokensAllowed = !!(User && User.settings.allowEternalTokens);
+      const isEternalToken = secondsToLive === -1;
+      const isValid = isEternalToken ?
         eternalTokensAllowed :
         elapsedSeconds < secondsToLive;
 

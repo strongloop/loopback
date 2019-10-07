@@ -4,15 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var expect = require('./helpers/expect');
-var loopback = require('../');
-var Promise = require('bluebird');
+const expect = require('./helpers/expect');
+const loopback = require('../');
+const Promise = require('bluebird');
 
 describe('role-mapping model', function() {
   this.timeout(10000);
 
-  var app, oneUser, anApp, aRole;
-  var models = {};
+  let app, oneUser, anApp, aRole;
+  const models = {};
 
   beforeEach(function() {
     app = loopback({localRegistry: true, loadBuiltinModels: true});
@@ -39,7 +39,7 @@ describe('role-mapping model', function() {
 
     // helper
     function setupModel(modelName) {
-      var model = app.registry.getModel(modelName);
+      const model = app.registry.getModel(modelName);
       app.model(model, {dataSource: 'db'});
       models[modelName] = model;
     }

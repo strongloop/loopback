@@ -4,35 +4,35 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../');
-var MyEmail;
-var assert = require('assert');
-var MailConnector = require('../lib/connectors/mail');
+const loopback = require('../');
+let MyEmail;
+const assert = require('assert');
+const MailConnector = require('../lib/connectors/mail');
 
 describe('Email connector', function() {
   it('should set up SMTP', function() {
-    var connector = new MailConnector({transports: [
+    const connector = new MailConnector({transports: [
       {type: 'smtp', service: 'gmail'},
     ]});
     assert(connector.transportForName('smtp'));
   });
 
   it('should set up DIRECT', function() {
-    var connector = new MailConnector({transports: [
+    const connector = new MailConnector({transports: [
       {type: 'direct', name: 'localhost'},
     ]});
     assert(connector.transportForName('direct'));
   });
 
   it('should set up STUB', function() {
-    var connector = new MailConnector({transports: [
+    const connector = new MailConnector({transports: [
       {type: 'stub', service: 'gmail'},
     ]});
     assert(connector.transportForName('stub'));
   });
 
   it('should set up a single transport for SMTP', function() {
-    var connector = new MailConnector({transport:
+    const connector = new MailConnector({transport:
       {type: 'smtp', service: 'gmail'},
     });
 
@@ -40,7 +40,7 @@ describe('Email connector', function() {
   });
 
   it('should set up a aliased transport for SMTP', function() {
-    var connector = new MailConnector({transport:
+    const connector = new MailConnector({transport:
       {type: 'smtp', service: 'ses-us-east-1', alias: 'ses-smtp'},
     });
 
@@ -51,7 +51,7 @@ describe('Email connector', function() {
 describe('Email and SMTP', function() {
   beforeEach(function() {
     MyEmail = loopback.Email.extend('my-email');
-    var ds = loopback.createDataSource('email', {
+    const ds = loopback.createDataSource('email', {
       connector: loopback.Mail,
       transports: [{type: 'STUB'}],
     });
@@ -65,7 +65,7 @@ describe('Email and SMTP', function() {
 
   describe('MyEmail', function() {
     it('MyEmail.send(options, callback)', function(done) {
-      var options = {
+      const options = {
         to: 'to@to.com',
         from: 'from@from.com',
         subject: 'subject',
@@ -84,7 +84,7 @@ describe('Email and SMTP', function() {
     });
 
     it('myEmail.send(callback)', function(done) {
-      var message = new MyEmail({
+      const message = new MyEmail({
         to: 'to@to.com',
         from: 'from@from.com',
         subject: 'subject',

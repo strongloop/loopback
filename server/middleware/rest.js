@@ -8,9 +8,9 @@
  */
 
 'use strict';
-var g = require('../../lib/globalize');
-var loopback = require('../../lib/loopback');
-var async = require('async');
+const g = require('../../lib/globalize');
+const loopback = require('../../lib/loopback');
+const async = require('async');
 
 /*!
  * Export the middleware.
@@ -30,17 +30,17 @@ module.exports = rest;
  */
 
 function rest() {
-  var handlers; // Cached handlers
+  let handlers; // Cached handlers
 
   return function restApiHandler(req, res, next) {
-    var app = req.app;
-    var registry = app.registry;
+    const app = req.app;
+    const registry = app.registry;
 
     if (!handlers) {
       handlers = [];
-      var remotingOptions = app.get('remoting') || {};
+      const remotingOptions = app.get('remoting') || {};
 
-      var contextOptions = remotingOptions.context;
+      const contextOptions = remotingOptions.context;
       if (contextOptions !== undefined && contextOptions !== false) {
         throw new Error(g.f(
           '%s was removed in version 3.0. See %s for more details.',
@@ -50,7 +50,7 @@ function rest() {
       }
 
       if (app.isAuthEnabled) {
-        var AccessToken = registry.getModelByType('AccessToken');
+        const AccessToken = registry.getModelByType('AccessToken');
         handlers.push(loopback.token({model: AccessToken, app: app}));
       }
 

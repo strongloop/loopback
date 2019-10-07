@@ -4,10 +4,10 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../');
-var server = module.exports = loopback();
-var CartItem = require('./models').CartItem;
-var memory = loopback.createDataSource({
+const loopback = require('../../');
+const server = module.exports = loopback();
+const CartItem = require('./models').CartItem;
+const memory = loopback.createDataSource({
   connector: loopback.Memory,
 });
 

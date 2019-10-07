@@ -4,12 +4,12 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../../../index');
-var app = module.exports = loopback({localRegistry: true});
-var models = require('./models');
-var TestModel = models.TestModel;
+const loopback = require('../../../../index');
+const app = module.exports = loopback({localRegistry: true});
+const models = require('./models');
+const TestModel = models.TestModel;
 
-var apiPath = '/api';
+const apiPath = '/api';
 app.use(apiPath, loopback.rest());
 
 TestModel.attachTo(loopback.memory());

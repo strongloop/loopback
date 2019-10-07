@@ -5,14 +5,14 @@
 
 'use strict';
 
-var utils = require('../lib/utils');
-var assert = require('assert');
+const utils = require('../lib/utils');
+const assert = require('assert');
 
 describe('Utils', function() {
   describe('uploadInChunks', function() {
     it('calls process function for each chunk', function(done) {
-      var largeArray = ['item1', 'item2', 'item3'];
-      var calls = [];
+      const largeArray = ['item1', 'item2', 'item3'];
+      const calls = [];
 
       utils.uploadInChunks(largeArray, 1, function processFunction(array, cb) {
         calls.push(array);
@@ -25,8 +25,8 @@ describe('Utils', function() {
     });
 
     it('calls process function only once when array is smaller than chunk size', function(done) {
-      var largeArray = ['item1', 'item2'];
-      var calls = [];
+      const largeArray = ['item1', 'item2'];
+      const calls = [];
 
       utils.uploadInChunks(largeArray, 3, function processFunction(array, cb) {
         calls.push(array);
@@ -39,7 +39,7 @@ describe('Utils', function() {
     });
 
     it('concats results from each call to the process function', function(done) {
-      var largeArray = ['item1', 'item2', 'item3', 'item4'];
+      const largeArray = ['item1', 'item2', 'item3', 'item4'];
 
       utils.uploadInChunks(largeArray, 2, function processFunction(array, cb) {
         cb(null, array);
@@ -52,7 +52,7 @@ describe('Utils', function() {
   });
 
   describe('downloadInChunks', function() {
-    var largeArray, calls, chunkSize, skip;
+    let largeArray, calls, chunkSize, skip;
 
     beforeEach(function() {
       largeArray = ['item1', 'item2', 'item3'];
@@ -63,9 +63,9 @@ describe('Utils', function() {
 
     function processFunction(filter, cb) {
       calls.push(Object.assign({}, filter));
-      var results = [];
+      const results = [];
 
-      for (var i = 0; i < chunkSize; i++) {
+      for (let i = 0; i < chunkSize; i++) {
         if (largeArray[skip + i]) {
           results.push(largeArray[skip + i]);
         }
@@ -76,7 +76,7 @@ describe('Utils', function() {
     }
 
     it('calls process function with the correct filter', function(done) {
-      var expectedFilters = [{skip: 0, limit: chunkSize}, {skip: chunkSize, limit: chunkSize}];
+      const expectedFilters = [{skip: 0, limit: chunkSize}, {skip: chunkSize, limit: chunkSize}];
       utils.downloadInChunks({}, chunkSize, processFunction, function finished(err) {
         if (err) return done(err);
         assert.deepEqual(calls, expectedFilters);
@@ -95,22 +95,22 @@ describe('Utils', function() {
 
   describe('concatResults', function() {
     it('concats regular arrays', function() {
-      var array1 = ['item1', 'item2'];
-      var array2 = ['item3', 'item4'];
+      const array1 = ['item1', 'item2'];
+      const array2 = ['item3', 'item4'];
 
-      var concatResults = utils.concatResults(array1, array2);
+      const concatResults = utils.concatResults(array1, array2);
       assert.deepEqual(concatResults, ['item1', 'item2', 'item3', 'item4']);
     });
 
     it('concats objects containing arrays', function() {
-      var object1 = {deltas: [{change: 'change 1'}], conflict: []};
-      var object2 = {deltas: [{change: 'change 2'}], conflict: [{conflict: 'conflict 1'}]};
-      var expectedResults = {
+      const object1 = {deltas: [{change: 'change 1'}], conflict: []};
+      const object2 = {deltas: [{change: 'change 2'}], conflict: [{conflict: 'conflict 1'}]};
+      const expectedResults = {
         deltas: [{change: 'change 1'}, {change: 'change 2'}],
         conflict: [{conflict: 'conflict 1'}],
       };
 
-      var concatResults = utils.concatResults(object1, object2);
+      const concatResults = utils.concatResults(object1, object2);
       assert.deepEqual(concatResults, expectedResults);
     });
   });

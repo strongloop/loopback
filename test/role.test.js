@@ -4,13 +4,13 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var sinon = require('sinon');
-var loopback = require('../index');
-var async = require('async');
-var extend = require('util')._extend;
-var expect = require('./helpers/expect');
-var Promise = require('bluebird');
+const assert = require('assert');
+const sinon = require('sinon');
+const loopback = require('../index');
+const async = require('async');
+const extend = require('util')._extend;
+const expect = require('./helpers/expect');
+const Promise = require('bluebird');
 
 function checkResult(err, result) {
   assert(!err);
@@ -19,7 +19,7 @@ function checkResult(err, result) {
 describe('role model', function() {
   this.timeout(10000);
 
-  var app, Role, RoleMapping, User, Application, ACL;
+  let app, Role, RoleMapping, User, Application, ACL;
 
   beforeEach(function() {
     // Use local app registry to ensure models are isolated to avoid
@@ -324,12 +324,12 @@ describe('role model', function() {
   });
 
   it('supports isInRole() returning a Promise', function(done) {
-    var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
+    const userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
     User.create(userData, function(err, user) {
       if (err) return done(err);
       Role.create({name: 'userRole'}, function(err, role) {
         if (err) return done(err);
-        var principalData = {
+        const principalData = {
           principalType: RoleMapping.USER,
           principalId: user.id,
         };
@@ -347,12 +347,12 @@ describe('role model', function() {
   });
 
   it('supports getRole() returning a Promise', function(done) {
-    var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
+    const userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
     User.create(userData, function(err, user) {
       if (err) return done(err);
       Role.create({name: 'userRole'}, function(err, role) {
         if (err) return done(err);
-        var principalData = {
+        const principalData = {
           principalType: RoleMapping.USER,
           principalId: user.id,
         };
@@ -374,8 +374,8 @@ describe('role model', function() {
   });
 
   it('should be properly authenticated with 0 userId', function(done) {
-    var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar', id: 0};
-    var TestUser = app.registry.createModel({
+    const userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar', id: 0};
+    const TestUser = app.registry.createModel({
       name: 'TestUser',
       base: 'User',
       // forceId is set to false so we can create a user with a known ID,
@@ -444,7 +444,7 @@ describe('role model', function() {
       });
     });
 
-    var Album = app.registry.createModel('Album', {
+    const Album = app.registry.createModel('Album', {
       name: String,
       userId: Number,
     }, {
@@ -541,7 +541,7 @@ describe('role model', function() {
         function(next) {
           Album.create({name: 'Album 1', userId: user.id}, function(err, album1) {
             if (err) return done(err);
-            var role = {
+            let role = {
               principalType: ACL.USER, principalId: user.id,
               model: Album, id: album1.id,
             };
@@ -569,16 +569,16 @@ describe('role model', function() {
   });
 
   describe('$owner role resolver', function() {
-    var sender, receiver;
-    var users = [
+    let sender, receiver;
+    const users = [
       {username: 'sender', email: 'sender@example.com', password: 'pass'},
       {username: 'receiver', email: 'receiver@example.com', password: 'pass'},
     ];
 
     describe('ownerRelations not set (legacy behaviour)', () => {
       it('resolves the owner via property "userId"', function() {
-        var user;
-        var Album = app.registry.createModel('Album', {
+        let user;
+        const Album = app.registry.createModel('Album', {
           name: String,
           userId: Number,
         });
@@ -601,8 +601,8 @@ describe('role model', function() {
       });
 
       it('resolves the owner via property "owner"', function() {
-        var user;
-        var Album = app.registry.createModel('Album', {
+        let user;
+        const Album = app.registry.createModel('Album', {
           name: String,
           owner: Number,
         });
@@ -627,11 +627,11 @@ describe('role model', function() {
       it('resolves the owner via a belongsTo relation', function() {
         // passing no options will result calling
         // the legacy $owner role resolver behavior
-        var Message = givenModelWithSenderReceiverRelations('ModelWithNoOptions');
+        const Message = givenModelWithSenderReceiverRelations('ModelWithNoOptions');
 
         return givenUsers()
           .then(() => {
-            var messages = [
+            const messages = [
               {content: 'firstMessage', senderId: sender.id},
               {content: 'secondMessage', receiverId: receiver.id},
               {content: 'thirdMessage'},
@@ -658,8 +658,8 @@ describe('role model', function() {
     });
 
     it('resolves as false without belongsTo relation', function() {
-      var user;
-      var Album = app.registry.createModel(
+      let user;
+      const Album = app.registry.createModel(
         'Album',
         {
           name: String,
@@ -691,14 +691,14 @@ describe('role model', function() {
     it('resolves the owner using the corrent belongsTo relation', function() {
       // passing {ownerRelations: true} will enable the new $owner role resolver
       // with any belongsTo relation allowing to resolve truthy
-      var Message = givenModelWithSenderReceiverRelations(
+      const Message = givenModelWithSenderReceiverRelations(
         'ModelWithAllRelations',
         {ownerRelations: true}
       );
 
       return givenUsers()
         .then(() => {
-          var messages = [
+          const messages = [
             {content: 'firstMessage', senderId: sender.id},
             {content: 'secondMessage', receiverId: receiver.id},
             {content: 'thirdMessage'},
@@ -727,14 +727,14 @@ describe('role model', function() {
       function() {
       // passing {ownerRelations: true} will enable the new $owner role resolver
       // with a specified list of belongsTo relations allowing to resolve truthy
-        var Message = givenModelWithSenderReceiverRelations(
+        const Message = givenModelWithSenderReceiverRelations(
           'ModelWithCoercedRelations',
           {ownerRelations: ['receiver']}
         );
 
         return givenUsers()
           .then(() => {
-            var messages = [
+            const messages = [
               {content: 'firstMessage', senderId: sender.id},
               {content: 'secondMessage', receiverId: receiver.id},
               {content: 'thirdMessage'},
@@ -771,7 +771,7 @@ describe('role model', function() {
     }
 
     function isOwnerForMessage(user, msg) {
-      var accessContext = {
+      const accessContext = {
         principalType: ACL.USER,
         principalId: user.id,
         model: msg.constructor,
@@ -788,7 +788,7 @@ describe('role model', function() {
     }
 
     function givenModelWithSenderReceiverRelations(name, options) {
-      var baseOptions = {
+      const baseOptions = {
         relations: {
           sender: {
             type: 'belongsTo',
@@ -803,7 +803,7 @@ describe('role model', function() {
         },
       };
       options = extend(baseOptions, options);
-      var Model = app.registry.createModel(
+      const Model = app.registry.createModel(
         name,
         {content: String},
         options
@@ -843,7 +843,7 @@ describe('role model', function() {
   });
 
   describe('isMappedToRole', function() {
-    var user, app, role;
+    let user, app, role;
 
     beforeEach(function(done) {
       User.create({
@@ -873,7 +873,7 @@ describe('role model', function() {
               if (err) return done(err);
 
               role = r;
-              var principals = [
+              const principals = [
                 {
                   principalType: ACL.USER,
                   principalId: user.id,
@@ -999,7 +999,7 @@ describe('role model', function() {
   });
 
   describe('listByPrincipalType', function() {
-    var sandbox;
+    let sandbox;
 
     beforeEach(function() {
       sandbox = sinon.sandbox.create();
@@ -1010,9 +1010,9 @@ describe('role model', function() {
     });
 
     it('should fetch all models assigned to the role', function(done) {
-      var principalTypesToModels = {};
-      var runs = 0;
-      var mappings;
+      const principalTypesToModels = {};
+      let runs = 0;
+      let mappings;
 
       principalTypesToModels[RoleMapping.USER] = User;
       principalTypesToModels[RoleMapping.APPLICATION] = Application;
@@ -1021,16 +1021,16 @@ describe('role model', function() {
       mappings = Object.keys(principalTypesToModels);
 
       mappings.forEach(function(principalType) {
-        var Model = principalTypesToModels[principalType];
+        const Model = principalTypesToModels[principalType];
         Model.create({name: 'test', email: 'x@y.com', password: 'foobar'}, function(err, model) {
           if (err) return done(err);
-          var uniqueRoleName = 'testRoleFor' + principalType;
+          const uniqueRoleName = 'testRoleFor' + principalType;
           Role.create({name: uniqueRoleName}, function(err, role) {
             if (err) return done(err);
             role.principals.create({principalType: principalType, principalId: model.id},
               function(err, p) {
                 if (err) return done(err);
-                var pluralName = Model.pluralModelName.toLowerCase();
+                const pluralName = Model.pluralModelName.toLowerCase();
                 role[pluralName](function(err, models) {
                   if (err) return done(err);
                   assert.equal(models.length, 1);
@@ -1046,8 +1046,8 @@ describe('role model', function() {
     });
 
     it('should fetch all models only assigned to the role', function(done) {
-      var principalTypesToModels = {};
-      var mappings;
+      const principalTypesToModels = {};
+      let mappings;
 
       principalTypesToModels[RoleMapping.USER] = User;
       principalTypesToModels[RoleMapping.APPLICATION] = Application;
@@ -1055,7 +1055,7 @@ describe('role model', function() {
       mappings = Object.keys(principalTypesToModels);
 
       async.each(mappings, function(principalType, eachCallback) {
-        var Model = principalTypesToModels[principalType];
+        const Model = principalTypesToModels[principalType];
 
         async.waterfall([
           // Create models
@@ -1072,8 +1072,8 @@ describe('role model', function() {
 
           // Create Roles
           function(models, next) {
-            var uniqueRoleName = 'testRoleFor' + principalType;
-            var otherUniqueRoleName = 'otherTestRoleFor' + principalType;
+            const uniqueRoleName = 'testRoleFor' + principalType;
+            const otherUniqueRoleName = 'otherTestRoleFor' + principalType;
             Role.create([
               {name: uniqueRoleName},
               {name: otherUniqueRoleName}],
@@ -1111,8 +1111,8 @@ describe('role model', function() {
 
           // Run tests against unique Role
           function(models, roles, principles, next) {
-            var pluralName = Model.pluralModelName.toLowerCase();
-            var uniqueRole = roles[0];
+            const pluralName = Model.pluralModelName.toLowerCase();
+            const uniqueRole = roles[0];
             uniqueRole[pluralName](function(err, models) {
               if (err) return done(err);
               assert.equal(models.length, 1);
@@ -1133,7 +1133,7 @@ describe('role model', function() {
           role.principals.create({principalType: RoleMapping.USER, principalId: user.id},
             function(err, p) {
               if (err) return done(err);
-              var query = {fields: ['id', 'name']};
+              const query = {fields: ['id', 'name']};
               sandbox.spy(User, 'find');
               role.users(query, function(err, users) {
                 if (err) return done(err);
@@ -1149,12 +1149,12 @@ describe('role model', function() {
     });
 
     it('supports Promise API', function(done) {
-      var userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
+      const userData = {name: 'Raymond', email: 'x@y.com', password: 'foobar'};
       User.create(userData, function(err, user) {
         if (err) return done(err);
         Role.create({name: 'userRole'}, function(err, role) {
           if (err) return done(err);
-          var principalData = {
+          const principalData = {
             principalType: RoleMapping.USER,
             principalId: user.id,
           };
@@ -1162,7 +1162,7 @@ describe('role model', function() {
             if (err) return done(err);
             role.users()
               .then(function(users) {
-                var userIds = users.map(function(u) { return u.id; });
+                const userIds = users.map(function(u) { return u.id; });
                 expect(userIds).to.eql([user.id]);
                 done();
               })
@@ -1175,19 +1175,19 @@ describe('role model', function() {
 
   describe('isOwner', function() {
     it('supports app-local model registry', function(done) {
-      var app = loopback({localRegistry: true, loadBuiltinModels: true});
+      const app = loopback({localRegistry: true, loadBuiltinModels: true});
       app.dataSource('db', {connector: 'memory'});
       // attach all auth-related models to 'db' datasource
       app.enableAuth({dataSource: 'db'});
 
-      var Role = app.models.Role;
-      var User = app.models.User;
+      const Role = app.models.Role;
+      const User = app.models.User;
 
       // Speed up the password hashing algorithm for tests
       User.settings.saltWorkFactor = 4;
 
-      var u = app.registry.findModel('User');
-      var credentials = {email: 'test@example.com', password: 'pass'};
+      const u = app.registry.findModel('User');
+      const credentials = {email: 'test@example.com', password: 'pass'};
       User.create(credentials, function(err, user) {
         if (err) return done(err);
 
@@ -1202,7 +1202,7 @@ describe('role model', function() {
     });
 
     it('supports Promise API', function(done) {
-      var credentials = {email: 'test@example.com', password: 'pass'};
+      const credentials = {email: 'test@example.com', password: 'pass'};
       User.create(credentials, function(err, user) {
         if (err) return done(err);
 
