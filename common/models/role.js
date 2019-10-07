@@ -133,11 +133,10 @@ module.exports = function(Role) {
       roleModel.roleMappingModel.find({
         where: {roleId: context.id, principalType: principalType},
       }, function(err, mappings) {
-        let ids;
         if (err) {
           return callback(err);
         }
-        ids = mappings.map(function(m) {
+        const ids = mappings.map(function(m) {
           return m.principalId;
         });
         query.where = query.where || {};

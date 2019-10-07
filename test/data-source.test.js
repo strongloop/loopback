@@ -121,7 +121,7 @@ describe('DataSource', function() {
   });
 });
 
-var assertValidDataSource = function(dataSource) {
+function assertValidDataSource(dataSource) {
   // has methods
   assert.isFunc(dataSource, 'createModel');
   assert.isFunc(dataSource, 'discoverModelDefinitions');
@@ -130,7 +130,7 @@ var assertValidDataSource = function(dataSource) {
   assert.isFunc(dataSource, 'disableRemote');
   assert.isFunc(dataSource, 'defineOperation');
   assert.isFunc(dataSource, 'operations');
-};
+}
 
 assert.isFunc = function(obj, name) {
   assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');

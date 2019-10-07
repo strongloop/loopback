@@ -1012,13 +1012,12 @@ describe('role model', function() {
     it('should fetch all models assigned to the role', function(done) {
       const principalTypesToModels = {};
       let runs = 0;
-      let mappings;
 
       principalTypesToModels[RoleMapping.USER] = User;
       principalTypesToModels[RoleMapping.APPLICATION] = Application;
       principalTypesToModels[RoleMapping.ROLE] = Role;
 
-      mappings = Object.keys(principalTypesToModels);
+      const mappings = Object.keys(principalTypesToModels);
 
       mappings.forEach(function(principalType) {
         const Model = principalTypesToModels[principalType];
@@ -1047,12 +1046,12 @@ describe('role model', function() {
 
     it('should fetch all models only assigned to the role', function(done) {
       const principalTypesToModels = {};
-      let mappings;
 
       principalTypesToModels[RoleMapping.USER] = User;
       principalTypesToModels[RoleMapping.APPLICATION] = Application;
       principalTypesToModels[RoleMapping.ROLE] = Role;
-      mappings = Object.keys(principalTypesToModels);
+
+      const mappings = Object.keys(principalTypesToModels);
 
       async.each(mappings, function(principalType, eachCallback) {
         const Model = principalTypesToModels[principalType];

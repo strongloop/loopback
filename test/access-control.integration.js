@@ -137,7 +137,7 @@ describe('access control - integration', function() {
       return '/api/users/' + this.randomUser.id;
     }
 
-    let userCounter;
+    var userCounter; // eslint-disable-line no-var
     function newUserData() {
       userCounter = userCounter ? ++userCounter : 1;
 

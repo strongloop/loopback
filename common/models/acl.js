@@ -617,7 +617,7 @@ module.exports = function(ACL) {
         break;
       default:
         // try resolving a user model with a name matching the principalType
-        var userModel = this.registry.findModel(type);
+        const userModel = this.registry.findModel(type);
         if (userModel) {
           userModel.findOne(
             {where: {or: [{username: id}, {email: id}, {id: id}]}},
