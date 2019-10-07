@@ -47,7 +47,7 @@
     "ejs": "^2.3.1",
     "express": "^4.14.0",
     "inflection": "^1.6.0",
-    "isemail": "^2.2.1",
+    "isemail": "^3.2.0",
     "loopback-connector-remote": "^3.0.0",
     "loopback-datasource-juggler": "^3.28.0",
     "loopback-filters": "^1.0.0",
