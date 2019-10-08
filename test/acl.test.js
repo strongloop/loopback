@@ -4,24 +4,24 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var expect = require('./helpers/expect');
-var loopback = require('../index');
-var Scope = loopback.Scope;
-var ACL = loopback.ACL;
-var request = require('supertest');
-var Promise = require('bluebird');
-var supertest = require('supertest');
-var Role = loopback.Role;
-var RoleMapping = loopback.RoleMapping;
-var User = loopback.User;
-var async = require('async');
+const assert = require('assert');
+const expect = require('./helpers/expect');
+const loopback = require('../index');
+const Scope = loopback.Scope;
+const ACL = loopback.ACL;
+const request = require('supertest');
+const Promise = require('bluebird');
+const supertest = require('supertest');
+const Role = loopback.Role;
+const RoleMapping = loopback.RoleMapping;
+const User = loopback.User;
+const async = require('async');
 
 // Speed up the password hashing algorithm for tests
 User.settings.saltWorkFactor = 4;
 
-var ds = null;
-var testModel;
+let ds = null;
+let testModel;
 
 describe('ACL model', function() {
   it('provides DEFAULT_SCOPE constant', () => {
@@ -144,7 +144,7 @@ describe('security ACLs', function() {
   });
 
   it('supports checkAccessForContext() returning a promise', function() {
-    var testModel = ds.createModel('testModel', {
+    const testModel = ds.createModel('testModel', {
       acls: [
         {principalType: ACL.USER, principalId: 'u001',
           accessType: ACL.ALL, permission: ACL.ALLOW},
@@ -162,7 +162,7 @@ describe('security ACLs', function() {
   });
 
   it('should order ACL entries based on the matching score', function() {
-    var acls = [
+    let acls = [
       {
         'model': 'account',
         'accessType': '*',
@@ -184,7 +184,7 @@ describe('security ACLs', function() {
         'principalType': 'ROLE',
         'principalId': '$everyone',
       }];
-    var req = {
+    const req = {
       model: 'account',
       property: 'find',
       accessType: 'WRITE',
@@ -192,7 +192,7 @@ describe('security ACLs', function() {
 
     acls = acls.map(function(a) { return new ACL(a); });
 
-    var perm = ACL.resolvePermission(acls, req);
+    const perm = ACL.resolvePermission(acls, req);
     // remove the registry from AccessRequest instance to ease asserting
     delete perm.registry;
     assert.deepEqual(perm, {model: 'account',
@@ -214,7 +214,7 @@ describe('security ACLs', function() {
   });
 
   it('should order ACL entries based on the matching score even with wildcard req', function() {
-    var acls = [
+    let acls = [
       {
         'model': 'account',
         'accessType': '*',
@@ -229,7 +229,7 @@ describe('security ACLs', function() {
         'principalType': 'ROLE',
         'principalId': '$owner',
       }];
-    var req = {
+    const req = {
       model: 'account',
       property: '*',
       accessType: 'WRITE',
@@ -237,7 +237,7 @@ describe('security ACLs', function() {
 
     acls = acls.map(function(a) { return new ACL(a); });
 
-    var perm = ACL.resolvePermission(acls, req);
+    const perm = ACL.resolvePermission(acls, req);
     // remove the registry from AccessRequest instance to ease asserting.
     // Check the above test case for more info.
     delete perm.registry;
@@ -311,7 +311,7 @@ describe('security ACLs', function() {
   });
 
   it('should honor defaultPermission from the model', function(done) {
-    var Customer = ds.createModel('Customer', {
+    const Customer = ds.createModel('Customer', {
       name: {
         type: String,
         acls: [
@@ -347,7 +347,7 @@ describe('security ACLs', function() {
   });
 
   it('should honor static ACLs from the model', function(done) {
-    var Customer = ds.createModel('Customer', {
+    const Customer = ds.createModel('Customer', {
       name: {
         type: String,
         acls: [
@@ -394,7 +394,7 @@ describe('security ACLs', function() {
   });
 
   it('should filter static ACLs by model/property', function() {
-    var Model1 = ds.createModel('Model1', {
+    const Model1 = ds.createModel('Model1', {
       name: {
         type: String,
         acls: [
@@ -415,7 +415,7 @@ describe('security ACLs', function() {
       ],
     });
 
-    var staticACLs = ACL.getStaticACLs('Model1', 'name');
+    let staticACLs = ACL.getStaticACLs('Model1', 'name');
     assert(staticACLs.length === 3);
 
     staticACLs = ACL.getStaticACLs('Model1', 'findOne');
@@ -427,16 +427,16 @@ describe('security ACLs', function() {
   });
 
   it('should check access against LDL, ACL, and Role', function(done) {
-    var log = function() {};
+    const log = function() {};
 
     // Create
     User.create({name: 'Raymond', email: 'x@y.com', password: 'foobar'}, function(err, user) {
       log('User: ', user.toObject());
 
-      var userId = user.id;
+      const userId = user.id;
 
       // Define a model with static ACLs
-      var Customer = ds.createModel('Customer', {
+      const Customer = ds.createModel('Customer', {
         name: {
           type: String,
           acls: [
@@ -514,10 +514,10 @@ describe('security ACLs', function() {
 
 describe('access check', function() {
   it('should occur before other remote hooks', function(done) {
-    var app = loopback();
-    var MyTestModel = app.registry.createModel('MyTestModel');
-    var checkAccessCalled = false;
-    var beforeHookCalled = false;
+    const app = loopback();
+    const MyTestModel = app.registry.createModel('MyTestModel');
+    let checkAccessCalled = false;
+    let beforeHookCalled = false;
 
     app.use(loopback.rest());
     app.set('remoting', {errorHandler: {debug: true, log: false}});
@@ -527,9 +527,9 @@ describe('access check', function() {
 
     // fake / spy on the checkAccess method
     MyTestModel.checkAccess = function() {
-      var cb = arguments[arguments.length - 1];
+      const cb = arguments[arguments.length - 1];
       checkAccessCalled = true;
-      var allowed = true;
+      const allowed = true;
       cb(null, allowed);
     };
 
@@ -554,8 +554,8 @@ describe('access check', function() {
 });
 
 describe('authorized roles propagation in RemotingContext', function() {
-  var app, request, accessToken;
-  var models = {};
+  let app, request, accessToken;
+  let models = {};
 
   beforeEach(setupAppAndRequest);
 
@@ -567,7 +567,7 @@ describe('authorized roles propagation in RemotingContext', function() {
     ])
       .then(makeAuthorizedHttpRequestOnMyTestModel)
       .then(function() {
-        var ctx = models.MyTestModel.lastRemotingContext;
+        const ctx = models.MyTestModel.lastRemotingContext;
         expect(ctx.args.options.authorizedRoles).to.eql(
           {
             $everyone: true,
@@ -586,7 +586,7 @@ describe('authorized roles propagation in RemotingContext', function() {
     ])
       .then(makeAuthorizedHttpRequestOnMyTestModel)
       .then(function() {
-        var ctx = models.MyTestModel.lastRemotingContext;
+        const ctx = models.MyTestModel.lastRemotingContext;
         expect(ctx.args.options.authorizedRoles).to.eql(
           {
             $everyone: true,
@@ -607,7 +607,7 @@ describe('authorized roles propagation in RemotingContext', function() {
     ])
       .then(makeAuthorizedHttpRequestOnMyTestModel)
       .then(function() {
-        var ctx = models.MyTestModel.lastRemotingContext;
+        const ctx = models.MyTestModel.lastRemotingContext;
         expect(ctx.args.options.authorizedRoles).to.eql(
         // '$everyone' is not expected as default permission is DENY
           {myRole: true}

@@ -4,11 +4,11 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var loopback = require('../');
+const assert = require('assert');
+const loopback = require('../');
 
 describe('DataSource', function() {
-  var memory;
+  let memory;
 
   beforeEach(function() {
     memory = loopback.createDataSource({
@@ -20,7 +20,7 @@ describe('DataSource', function() {
 
   describe('dataSource.createModel(name, properties, settings)', function() {
     it('Define a model and attach it to a `DataSource`', function() {
-      var Color = memory.createModel('color', {name: String});
+      const Color = memory.createModel('color', {name: String});
       assert.isFunc(Color, 'find');
       assert.isFunc(Color, 'findById');
       assert.isFunc(Color, 'findOne');
@@ -45,31 +45,31 @@ describe('DataSource', function() {
     });
 
     it('should honor settings.base', function() {
-      var Base = memory.createModel('base');
-      var Color = memory.createModel('color', {name: String}, {base: Base});
+      const Base = memory.createModel('base');
+      const Color = memory.createModel('color', {name: String}, {base: Base});
       assert(Color.prototype instanceof Base);
       assert.equal(Color.base, Base);
     });
 
     it('should use loopback.PersistedModel as the base for DBs', function() {
-      var Color = memory.createModel('color', {name: String});
+      const Color = memory.createModel('color', {name: String});
       assert(Color.prototype instanceof loopback.PersistedModel);
       assert.equal(Color.base, loopback.PersistedModel);
     });
 
     it('should use loopback.Model as the base for non DBs', function() {
       // Mock up a non-DB connector
-      var Connector = function() {
+      const Connector = function() {
       };
       Connector.prototype.getTypes = function() {
         return ['rest'];
       };
 
-      var ds = loopback.createDataSource({
+      const ds = loopback.createDataSource({
         connector: new Connector(),
       });
 
-      var Color = ds.createModel('color', {name: String});
+      const Color = ds.createModel('color', {name: String});
       assert(Color.prototype instanceof Color.registry.getModel('Model'));
       assert.equal(Color.base.modelName, 'PersistedModel');
     });
@@ -77,7 +77,7 @@ describe('DataSource', function() {
 
   describe.skip('PersistedModel Methods', function() {
     it('List the enabled and disabled methods', function() {
-      var TestModel = loopback.PersistedModel.extend('TestPersistedModel');
+      const TestModel = loopback.PersistedModel.extend('TestPersistedModel');
       TestModel.attachTo(loopback.memory());
 
       // assert the defaults
@@ -109,9 +109,9 @@ describe('DataSource', function() {
       existsAndShared('reload', false);
 
       function existsAndShared(Model, name, isRemoteEnabled, isProto) {
-        var scope = isProto ? Model.prototype : Model;
-        var fn = scope[name];
-        var actuallyEnabled = Model.getRemoteMethod(name);
+        const scope = isProto ? Model.prototype : Model;
+        const fn = scope[name];
+        const actuallyEnabled = Model.getRemoteMethod(name);
         assert(fn, name + ' should be defined!');
         assert(actuallyEnabled === isRemoteEnabled,
           name + ' ' + (isRemoteEnabled ? 'should' : 'should not') +
@@ -121,7 +121,7 @@ describe('DataSource', function() {
   });
 });
 
-var assertValidDataSource = function(dataSource) {
+function assertValidDataSource(dataSource) {
   // has methods
   assert.isFunc(dataSource, 'createModel');
   assert.isFunc(dataSource, 'discoverModelDefinitions');
@@ -130,7 +130,7 @@ var assertValidDataSource = function(dataSource) {
   assert.isFunc(dataSource, 'disableRemote');
   assert.isFunc(dataSource, 'defineOperation');
   assert.isFunc(dataSource, 'operations');
-};
+}
 
 assert.isFunc = function(obj, name) {
   assert(obj, 'cannot assert function ' + name + ' on object that doesnt exist');

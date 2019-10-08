@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var g = require('../../lib/globalize');
+const g = require('../../lib/globalize');
 
 /**
 * Email model.  Extends LoopBack base [Model](#model-new-model).

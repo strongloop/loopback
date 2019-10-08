@@ -30,20 +30,20 @@
  Map to oAuth 2.0 scopes
  */
 
-var g = require('../../lib/globalize');
-var loopback = require('../../lib/loopback');
-var utils = require('../../lib/utils');
-var async = require('async');
-var extend = require('util')._extend;
-var assert = require('assert');
-var debug = require('debug')('loopback:security:acl');
+const g = require('../../lib/globalize');
+const loopback = require('../../lib/loopback');
+const utils = require('../../lib/utils');
+const async = require('async');
+const extend = require('util')._extend;
+const assert = require('assert');
+const debug = require('debug')('loopback:security:acl');
 
-var ctx = require('../../lib/access-context');
-var AccessContext = ctx.AccessContext;
-var Principal = ctx.Principal;
-var AccessRequest = ctx.AccessRequest;
+const ctx = require('../../lib/access-context');
+const AccessContext = ctx.AccessContext;
+const Principal = ctx.Principal;
+const AccessRequest = ctx.AccessRequest;
 
-var Role = loopback.Role;
+const Role = loopback.Role;
 assert(Role, 'Role model must be defined before ACL model');
 
 /**
@@ -107,18 +107,18 @@ module.exports = function(ACL) {
    * @returns {Number}
    */
   ACL.getMatchingScore = function getMatchingScore(rule, req) {
-    var props = ['model', 'property', 'accessType'];
-    var score = 0;
+    const props = ['model', 'property', 'accessType'];
+    let score = 0;
 
-    for (var i = 0; i < props.length; i++) {
+    for (let i = 0; i < props.length; i++) {
       // Shift the score by 4 for each of the properties as the weight
       score = score * 4;
-      var ruleValue = rule[props[i]] || ACL.ALL;
-      var requestedValue = req[props[i]] || ACL.ALL;
-      var isMatchingMethodName = props[i] === 'property' &&
+      const ruleValue = rule[props[i]] || ACL.ALL;
+      const requestedValue = req[props[i]] || ACL.ALL;
+      const isMatchingMethodName = props[i] === 'property' &&
         req.methodNames.indexOf(ruleValue) !== -1;
 
-      var isMatchingAccessType = ruleValue === requestedValue;
+      let isMatchingAccessType = ruleValue === requestedValue;
       if (props[i] === 'accessType' && !isMatchingAccessType) {
         switch (ruleValue) {
           case ACL.EXECUTE:
@@ -219,11 +219,11 @@ module.exports = function(ACL) {
     acls = acls.sort(function(rule1, rule2) {
       return ACL.getMatchingScore(rule2, req) - ACL.getMatchingScore(rule1, req);
     });
-    var permission = ACL.DEFAULT;
-    var score = 0;
+    let permission = ACL.DEFAULT;
+    let score = 0;
 
-    for (var i = 0; i < acls.length; i++) {
-      var candidate = acls[i];
+    for (let i = 0; i < acls.length; i++) {
+      const candidate = acls[i];
       score = ACL.getMatchingScore(candidate, req);
       if (score < 0) {
         // the highest scored ACL did not match
@@ -239,8 +239,8 @@ module.exports = function(ACL) {
           break;
         }
         // For wildcard match, find the strongest permission
-        var candidateOrder = AccessContext.permissionOrder[candidate.permission];
-        var permissionOrder = AccessContext.permissionOrder[permission];
+        const candidateOrder = AccessContext.permissionOrder[candidate.permission];
+        const permissionOrder = AccessContext.permissionOrder[permission];
         if (candidateOrder > permissionOrder) {
           permission = candidate.permission;
           break;
@@ -255,7 +255,7 @@ module.exports = function(ACL) {
         debug('with score:', acl.score(req));
       });
     }
-    var res = new AccessRequest({
+    const res = new AccessRequest({
       model: req.model,
       property: req.property,
       accessType: req.accessType,
@@ -276,11 +276,11 @@ module.exports = function(ACL) {
    * @return {Object[]} An array of ACLs
    */
   ACL.getStaticACLs = function getStaticACLs(model, property) {
-    var modelClass = this.registry.findModel(model);
-    var staticACLs = [];
+    const modelClass = this.registry.findModel(model);
+    const staticACLs = [];
     if (modelClass && modelClass.settings.acls) {
       modelClass.settings.acls.forEach(function(acl) {
-        var prop = acl.property;
+        let prop = acl.property;
         // We support static ACL property with array of string values.
         if (Array.isArray(prop) && prop.indexOf(property) >= 0)
           prop = property;
@@ -296,7 +296,7 @@ module.exports = function(ACL) {
         }
       });
     }
-    var prop = modelClass && (
+    const prop = modelClass && (
       // regular property
       modelClass.definition.properties[property] ||
       // relation/scope
@@ -339,17 +339,17 @@ module.exports = function(ACL) {
       principalId = principalId.toString();
     }
     property = property || ACL.ALL;
-    var propertyQuery = (property === ACL.ALL) ? undefined : {inq: [property, ACL.ALL]};
+    const propertyQuery = (property === ACL.ALL) ? undefined : {inq: [property, ACL.ALL]};
     accessType = accessType || ACL.ALL;
-    var accessTypeQuery = (accessType === ACL.ALL) ? undefined :
+    const accessTypeQuery = (accessType === ACL.ALL) ? undefined :
       {inq: [accessType, ACL.ALL, ACL.EXECUTE]};
 
-    var req = new AccessRequest({model, property, accessType, registry: this.registry});
+    const req = new AccessRequest({model, property, accessType, registry: this.registry});
 
-    var acls = this.getStaticACLs(model, property);
+    let acls = this.getStaticACLs(model, property);
 
     // resolved is an instance of AccessRequest
-    var resolved = this.resolvePermission(acls, req);
+    let resolved = this.resolvePermission(acls, req);
 
     if (resolved && resolved.permission === ACL.DENY) {
       debug('Permission denied by statically resolved permission');
@@ -360,7 +360,7 @@ module.exports = function(ACL) {
       return callback.promise;
     }
 
-    var self = this;
+    const self = this;
     this.find({where: {principalType: principalType, principalId: principalId,
       model: model, property: propertyQuery, accessType: accessTypeQuery}},
     function(err, dynACLs) {
@@ -431,33 +431,33 @@ module.exports = function(ACL) {
    */
   ACL.checkAccessForContext = function(context, callback) {
     if (!callback) callback = utils.createPromiseCallback();
-    var self = this;
+    const self = this;
     self.resolveRelatedModels();
-    var roleModel = self.roleModel;
+    const roleModel = self.roleModel;
 
     if (!(context instanceof AccessContext)) {
       context.registry = this.registry;
       context = new AccessContext(context);
     }
 
-    var authorizedRoles = {};
-    var remotingContext = context.remotingContext;
-    var model = context.model;
-    var modelDefaultPermission = model && model.settings.defaultPermission;
-    var property = context.property;
-    var accessType = context.accessType;
-    var modelName = context.modelName;
+    let authorizedRoles = {};
+    const remotingContext = context.remotingContext;
+    const model = context.model;
+    const modelDefaultPermission = model && model.settings.defaultPermission;
+    const property = context.property;
+    const accessType = context.accessType;
+    const modelName = context.modelName;
 
-    var methodNames = context.methodNames;
-    var propertyQuery = (property === ACL.ALL) ? undefined : {inq: methodNames.concat([ACL.ALL])};
+    const methodNames = context.methodNames;
+    const propertyQuery = (property === ACL.ALL) ? undefined : {inq: methodNames.concat([ACL.ALL])};
 
-    var accessTypeQuery = (accessType === ACL.ALL) ?
+    const accessTypeQuery = (accessType === ACL.ALL) ?
       undefined :
       (accessType === ACL.REPLICATE) ?
         {inq: [ACL.REPLICATE, ACL.WRITE, ACL.ALL]} :
         {inq: [accessType, ACL.ALL]};
 
-    var req = new AccessRequest({
+    const req = new AccessRequest({
       model: modelName,
       property,
       accessType,
@@ -475,8 +475,8 @@ module.exports = function(ACL) {
       return callback.promise;
     }
 
-    var effectiveACLs = [];
-    var staticACLs = self.getStaticACLs(model.modelName, property);
+    const effectiveACLs = [];
+    const staticACLs = self.getStaticACLs(model.modelName, property);
 
     const query = {
       where: {
@@ -488,16 +488,16 @@ module.exports = function(ACL) {
 
     this.find(query, function(err, acls) {
       if (err) return callback(err);
-      var inRoleTasks = [];
+      const inRoleTasks = [];
 
       acls = acls.concat(staticACLs);
 
       acls.forEach(function(acl) {
         // Check exact matches
-        for (var i = 0; i < context.principals.length; i++) {
-          var p = context.principals[i];
-          var typeMatch = p.type === acl.principalType;
-          var idMatch = String(p.id) === String(acl.principalId);
+        for (let i = 0; i < context.principals.length; i++) {
+          const p = context.principals[i];
+          const typeMatch = p.type === acl.principalType;
+          const idMatch = String(p.id) === String(acl.principalId);
           if (typeMatch && idMatch) {
             effectiveACLs.push(acl);
             return;
@@ -525,7 +525,7 @@ module.exports = function(ACL) {
         if (err) return callback(err, null);
 
         // resolved is an instance of AccessRequest
-        var resolved = self.resolvePermission(effectiveACLs, req);
+        const resolved = self.resolvePermission(effectiveACLs, req);
         debug('---Resolved---');
         resolved.debug();
 
@@ -562,7 +562,7 @@ module.exports = function(ACL) {
   ACL.checkAccessForToken = function(token, model, modelId, method, callback) {
     assert(token, 'Access token is required');
     if (!callback) callback = utils.createPromiseCallback();
-    var context = new AccessContext({
+    const context = new AccessContext({
       registry: this.registry,
       accessToken: token,
       model: model,
@@ -580,7 +580,7 @@ module.exports = function(ACL) {
 
   ACL.resolveRelatedModels = function() {
     if (!this.roleModel) {
-      var reg = this.registry;
+      const reg = this.registry;
       this.roleModel = reg.getModelByType('Role');
       this.roleMappingModel = reg.getModelByType('RoleMapping');
       this.userModel = reg.getModelByType('User');
@@ -617,7 +617,7 @@ module.exports = function(ACL) {
         break;
       default:
         // try resolving a user model with a name matching the principalType
-        var userModel = this.registry.findModel(type);
+        const userModel = this.registry.findModel(type);
         if (userModel) {
           userModel.findOne(
             {where: {or: [{username: id}, {email: id}, {id: id}]}},
@@ -625,7 +625,7 @@ module.exports = function(ACL) {
           );
         } else {
           process.nextTick(function() {
-            var err = new Error(g.f('Invalid principal type: %s', type));
+            const err = new Error(g.f('Invalid principal type: %s', type));
             err.statusCode = 400;
             err.code = 'INVALID_PRINCIPAL_TYPE';
             cb(err);
@@ -646,7 +646,7 @@ module.exports = function(ACL) {
    */
   ACL.isMappedToRole = function(principalType, principalId, role, cb) {
     cb = cb || utils.createPromiseCallback();
-    var self = this;
+    const self = this;
     this.resolvePrincipal(principalType, principalId,
       function(err, principal) {
         if (err) return cb(err);

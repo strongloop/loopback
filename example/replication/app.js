@@ -4,19 +4,19 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../');
-var app = loopback();
-var db = app.dataSource('db', {connector: 'memory'});
-var Color = app.registry.createModel('color', {}, {trackChanges: true});
+const loopback = require('../../');
+const app = loopback();
+const db = app.dataSource('db', {connector: 'memory'});
+const Color = app.registry.createModel('color', {}, {trackChanges: true});
 app.model(Color, {dataSource: 'db'});
-var Color2 = app.registry.createModel('color2', {}, {trackChanges: true});
+const Color2 = app.registry.createModel('color2', {}, {trackChanges: true});
 app.model(Color2, {dataSource: 'db'});
-var target = Color2;
-var source = Color;
-var SPEED = process.env.SPEED || 100;
-var conflicts;
+const target = Color2;
+const source = Color;
+const SPEED = process.env.SPEED || 100;
+let conflicts;
 
-var steps = [
+const steps = [
 
   createSomeInitialSourceData,
 
@@ -137,7 +137,7 @@ function list(model, msg) {
 
 function run(steps) {
   setInterval(function() {
-    var step = steps.shift();
+    const step = steps.shift();
     if (step) {
       console.log(step.name);
       step();

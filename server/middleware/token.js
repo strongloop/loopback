@@ -8,10 +8,10 @@
  */
 
 'use strict';
-var g = require('../../lib/globalize');
-var loopback = require('../../lib/loopback');
-var assert = require('assert');
-var debug = require('debug')('loopback:middleware:token');
+const g = require('../../lib/globalize');
+const loopback = require('../../lib/loopback');
+const assert = require('assert');
+const debug = require('debug')('loopback:middleware:token');
 
 /*!
  * Export the middleware.
@@ -28,7 +28,7 @@ function rewriteUserLiteral(req, currentUserLiteral, next) {
 
   if (req.accessToken && req.accessToken.userId) {
     // Replace /me/ with /current-user-id/
-    var urlBeforeRewrite = req.url;
+    const urlBeforeRewrite = req.url;
     req.url = req.url.replace(literalRegExp,
       '/' + req.accessToken.userId + '$1');
 
@@ -43,7 +43,7 @@ function rewriteUserLiteral(req, currentUserLiteral, next) {
       req.url, currentUserLiteral
     );
 
-    var e = new Error(g.f('Authorization Required'));
+    const e = new Error(g.f('Authorization Required'));
     e.status = e.statusCode = 401;
     e.code = 'AUTHORIZATION_REQUIRED';
     return next(e);
@@ -97,9 +97,9 @@ function escapeRegExp(str) {
 
 function token(options) {
   options = options || {};
-  var TokenModel;
+  let TokenModel;
 
-  var currentUserLiteral = options.currentUserLiteral;
+  let currentUserLiteral = options.currentUserLiteral;
   if (currentUserLiteral && (typeof currentUserLiteral !== 'string')) {
     debug('Set currentUserLiteral to \'me\' as the value is not a string.');
     currentUserLiteral = 'me';
@@ -111,12 +111,12 @@ function token(options) {
   if (options.bearerTokenBase64Encoded === undefined) {
     options.bearerTokenBase64Encoded = true;
   }
-  var enableDoublecheck = !!options.enableDoublecheck;
-  var overwriteExistingToken = !!options.overwriteExistingToken;
+  const enableDoublecheck = !!options.enableDoublecheck;
+  const overwriteExistingToken = !!options.overwriteExistingToken;
 
   return function(req, res, next) {
-    var app = req.app;
-    var registry = app.registry;
+    const app = req.app;
+    const registry = app.registry;
     if (!TokenModel) {
       TokenModel = registry.getModel(options.model || 'AccessToken');
     }
@@ -141,7 +141,7 @@ function token(options) {
     TokenModel.findForRequest(req, options, function(err, token) {
       req.accessToken = token || null;
 
-      var ctx = req.loopbackContext;
+      const ctx = req.loopbackContext;
       if (ctx && ctx.active) ctx.set('accessToken', token);
 
       if (err) return next(err);

@@ -4,23 +4,23 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var utils = require('../../lib/utils');
+const assert = require('assert');
+const utils = require('../../lib/utils');
 
 /*!
  * Application management functions
  */
 
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 function generateKey(hmacKey, algorithm, encoding) {
   hmacKey = hmacKey || 'loopback';
   algorithm = algorithm || 'sha1';
   encoding = encoding || 'hex';
-  var hmac = crypto.createHmac(algorithm, hmacKey);
-  var buf = crypto.randomBytes(32);
+  const hmac = crypto.createHmac(algorithm, hmacKey);
+  const buf = crypto.randomBytes(32);
   hmac.update(buf);
-  var key = hmac.digest(encoding);
+  const key = hmac.digest(encoding);
   return key;
 }
 
@@ -83,7 +83,7 @@ module.exports = function(Application) {
       return next();
     }
 
-    var app = ctx.instance;
+    const app = ctx.instance;
     app.created = app.modified = new Date();
     if (!app.id) {
       app.id = generateKey('id', 'md5');
@@ -115,8 +115,8 @@ module.exports = function(Application) {
     }
     cb = cb || utils.createPromiseCallback();
 
-    var props = {owner: owner, name: name};
-    for (var p in options) {
+    const props = {owner: owner, name: name};
+    for (const p in options) {
       if (!(p in props)) {
         props[p] = options[p];
       }
@@ -182,9 +182,9 @@ module.exports = function(Application) {
         cb(err, null);
         return cb.promise;
       }
-      var result = null;
-      var keyNames = ['clientKey', 'javaScriptKey', 'restApiKey', 'windowsKey', 'masterKey'];
-      for (var i = 0; i < keyNames.length; i++) {
+      let result = null;
+      const keyNames = ['clientKey', 'javaScriptKey', 'restApiKey', 'windowsKey', 'masterKey'];
+      for (let i = 0; i < keyNames.length; i++) {
         if (app[keyNames[i]] === key) {
           result = {
             application: app,

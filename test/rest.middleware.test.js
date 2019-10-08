@@ -4,22 +4,22 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var expect = require('./helpers/expect');
-var loopback = require('../');
-var path = require('path');
-var request = require('supertest');
+const assert = require('assert');
+const expect = require('./helpers/expect');
+const loopback = require('../');
+const path = require('path');
+const request = require('supertest');
 
 describe('loopback.rest', function() {
   this.timeout(10000);
-  var app, MyModel;
+  let app, MyModel;
 
   beforeEach(function() {
     // override the global app object provided by test/support.js
     // and create a local one that does not share state with other tests
     app = loopback({localRegistry: true, loadBuiltinModels: true});
     app.set('remoting', {errorHandler: {debug: true, log: false}});
-    var db = app.dataSource('db', {connector: 'memory'});
+    const db = app.dataSource('db', {connector: 'memory'});
     MyModel = app.registry.createModel('MyModel');
     MyModel.attachTo(db);
   });
@@ -54,7 +54,7 @@ describe('loopback.rest', function() {
       .end(function(err, res) {
         if (err) return done(err);
 
-        var errorResponse = res.body.error;
+        const errorResponse = res.body.error;
         assert(errorResponse);
         assert.equal(errorResponse.code, 'MODEL_NOT_FOUND');
 
@@ -121,10 +121,10 @@ describe('loopback.rest', function() {
   });
 
   it('should honour `remoting.rest.supportedTypes`', function(done) {
-    var app = loopback({localRegistry: true});
+    const app = loopback({localRegistry: true});
 
     // NOTE it is crucial to set `remoting` before creating any models
-    var supportedTypes = ['json', 'application/javascript', 'text/javascript'];
+    const supportedTypes = ['json', 'application/javascript', 'text/javascript'];
     app.set('remoting', {rest: {supportedTypes: supportedTypes}});
 
     app.model(MyModel);
@@ -137,7 +137,7 @@ describe('loopback.rest', function() {
   });
 
   it('allows models to provide a custom HTTP path', function(done) {
-    var CustomModel = app.registry.createModel('CustomModel',
+    const CustomModel = app.registry.createModel('CustomModel',
       {name: String},
       {http: {'path': 'domain1/CustomModelPath'}});
 
@@ -148,7 +148,7 @@ describe('loopback.rest', function() {
   });
 
   it('should report 200 for url-encoded HTTP path', function(done) {
-    var CustomModel = app.registry.createModel('CustomModel',
+    const CustomModel = app.registry.createModel('CustomModel',
       {name: String},
       {http: {path: 'domain%20one/CustomModelPath'}});
 
@@ -174,7 +174,7 @@ describe('loopback.rest', function() {
   });
 
   it('does not include loopback.token when auth not enabled', function(done) {
-    var User = givenUserModelWithAuth();
+    const User = givenUserModelWithAuth();
     User.getToken = function(req, cb) {
       cb(null, req.accessToken ? req.accessToken.id : null);
     };
@@ -261,9 +261,9 @@ describe('loopback.rest', function() {
   });
 
   function givenUserModelWithAuth() {
-    var AccessToken = app.registry.getModel('AccessToken');
+    const AccessToken = app.registry.getModel('AccessToken');
     app.model(AccessToken, {dataSource: 'db'});
-    var User = app.registry.getModel('User');
+    const User = app.registry.getModel('User');
     // Speed up the password hashing algorithm for tests
     User.settings.saltWorkFactor = 4;
     app.model(User, {dataSource: 'db'});
@@ -281,8 +281,8 @@ describe('loopback.rest', function() {
   }
 
   function givenLoggedInUser(cb, done) {
-    var credentials = {email: 'user@example.com', password: 'pwd'};
-    var User = app.models.User;
+    const credentials = {email: 'user@example.com', password: 'pwd'};
+    const User = app.models.User;
     User.create(credentials,
       function(err, user) {
         if (err) return done(err);
@@ -300,14 +300,14 @@ describe('loopback.rest', function() {
     describe('with specific definitions in model-config.json', function() {
       it('should not be exposed when the definition value is false',
         function(done) {
-          var app = require(getFixturePath('model-config-defined-false'));
+          const app = require(getFixturePath('model-config-defined-false'));
           request(app)
             .get('/todos')
             .expect(404, done);
         });
 
       it('should be exposed when the definition value is true', function(done) {
-        var app = require(getFixturePath('model-config-defined-true'));
+        const app = require(getFixturePath('model-config-defined-true'));
         request(app)
           .get('/todos')
           .expect(200, done);
@@ -317,14 +317,14 @@ describe('loopback.rest', function() {
     describe('with default definitions in model-config.json', function() {
       it('should not be exposed when the definition value is false',
         function(done) {
-          var app = require(getFixturePath('model-config-default-false'));
+          const app = require(getFixturePath('model-config-default-false'));
           request(app)
             .get('/todos')
             .expect(404, done);
         });
 
       it('should be exposed when the definition value is true', function(done) {
-        var app = require(getFixturePath('model-config-default-true'));
+        const app = require(getFixturePath('model-config-default-true'));
         app.models.Todo.create([
           {content: 'a'},
           {content: 'b'},
@@ -347,7 +347,7 @@ describe('loopback.rest', function() {
     describe('with specific definitions in config.json', function() {
       it('should not be exposed when the definition value is false',
         function(done) {
-          var app = require(getFixturePath('config-defined-false'));
+          const app = require(getFixturePath('config-defined-false'));
           request(app)
             .get('/todos')
             .expect(404, done);
@@ -355,7 +355,7 @@ describe('loopback.rest', function() {
 
       it('should be exposed when the definition value is true',
         function(done) {
-          var app = require(getFixturePath('config-defined-true'));
+          const app = require(getFixturePath('config-defined-true'));
           request(app)
             .get('/todos')
             .expect(200, done);
@@ -365,14 +365,14 @@ describe('loopback.rest', function() {
     describe('with default definitions in config.json', function() {
       it('should not be exposed when the definition value is false',
         function(done) {
-          var app = require(getFixturePath('config-default-false'));
+          const app = require(getFixturePath('config-default-false'));
           request(app)
             .get('/todos')
             .expect(404, done);
         });
 
       it('should be exposed when the definition value is true', function(done) {
-        var app = require(getFixturePath('config-default-true'));
+        const app = require(getFixturePath('config-default-true'));
         app.models.Todo.create([
           {content: 'a'},
           {content: 'b'},
@@ -399,7 +399,7 @@ describe('loopback.rest', function() {
     describe.skip('with definitions in both config.json and model-config.json',
       function() {
         it('should prioritize the settings in model-config.json', function(done) {
-          var app = require(getFixturePath('both-configs-set'));
+          const app = require(getFixturePath('both-configs-set'));
           request(app)
             .del('/todos')
             .expect(404, done);
@@ -407,7 +407,7 @@ describe('loopback.rest', function() {
 
         it('should fall back to config.json settings if setting is not found in' +
           'model-config.json', function(done) {
-          var app = require(getFixturePath('both-configs-set'));
+          const app = require(getFixturePath('both-configs-set'));
           request(app)
             .get('/todos')
             .expect(404, done);

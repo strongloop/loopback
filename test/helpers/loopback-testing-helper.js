@@ -4,21 +4,21 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var _describe = {};
-var _it = {};
-var _beforeEach = {};
-var helpers = {
+const _describe = {};
+const _it = {};
+const _beforeEach = {};
+const helpers = {
   describe: _describe,
   it: _it,
   beforeEach: _beforeEach,
 };
 module.exports = helpers;
 
-var assert = require('assert');
-var request = require('supertest');
-var chai = require('chai');
-var expect = chai.expect;
-var sinon = require('sinon');
+const assert = require('assert');
+const request = require('supertest');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
 chai.use(require('sinon-chai'));
 
 _beforeEach.withApp = function(app) {
@@ -29,7 +29,7 @@ _beforeEach.withApp = function(app) {
 
   beforeEach(function(done) {
     this.app = app;
-    var _request = this.request = request(app);
+    const _request = this.request = request(app);
     this.post = _request.post;
     this.get = _request.get;
     this.put = _request.put;
@@ -45,14 +45,14 @@ _beforeEach.withApp = function(app) {
 };
 
 _beforeEach.withArgs = function() {
-  var args = Array.prototype.slice.call(arguments, 0);
+  const args = Array.prototype.slice.call(arguments, 0);
   beforeEach(function() {
     this.args = args;
   });
 };
 
 _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
-  var modelKey = modelName;
+  let modelKey = modelName;
 
   if (typeof attrs === 'function') {
     optionalHandler = attrs;
@@ -66,9 +66,9 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
   attrs = attrs || {};
 
   beforeEach(function(done) {
-    var test = this;
-    var app = this.app;
-    var model = app.models[modelName];
+    const test = this;
+    const app = this.app;
+    const model = app.models[modelName];
 
     app.set('remoting', {errorHandler: {debug: true, log: false}});
     assert(model, 'cannot get model of name ' + modelName + ' from app.models');
@@ -108,7 +108,7 @@ _beforeEach.givenUser = function(attrs, optionalHandler) {
 
 _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
   _beforeEach.givenUser(credentials, function(done) {
-    var test = this;
+    const test = this;
     this.user.constructor.login(credentials, function(err, token) {
       if (err) {
         done(err);
@@ -121,7 +121,7 @@ _beforeEach.givenLoggedInUser = function(credentials, optionalHandler) {
   });
 
   afterEach(function(done) {
-    var test = this;
+    const test = this;
     this.loggedInAccessToken.destroy(function(err) {
       if (err) return done(err);
 
@@ -146,7 +146,7 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
     data = null;
   }
 
-  var urlStr = url;
+  let urlStr = url;
   if (typeof url === 'function') {
     urlStr = '/<dynamic>';
   }
@@ -159,11 +159,11 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
       this.remotely = true;
       this.verb = verb.toUpperCase();
       this.url = this.url || url;
-      var methodForVerb = verb.toLowerCase();
+      let methodForVerb = verb.toLowerCase();
       if (methodForVerb === 'delete') methodForVerb = 'del';
 
       if (this.request === undefined) {
-        var msg = 'App is not specified. ' +
+        const msg = 'App is not specified. ' +
           'Please use lt.beforeEach.withApp to specify the app.';
         throw new Error(msg);
       }
@@ -175,13 +175,13 @@ _describe.whenCalledRemotely = function(verb, url, data, cb) {
         this.http.set('authorization', this.loggedInAccessToken.id);
       }
       if (data) {
-        var payload = data;
+        let payload = data;
         if (typeof data === 'function')
           payload = data.call(this);
         this.http.send(payload);
       }
       this.req = this.http.req;
-      var test = this;
+      const test = this;
       this.http.end(function(err) {
         test.req = test.http.req;
         test.res = test.http.response;
@@ -236,7 +236,7 @@ _it.shouldBeAllowed = function() {
 _it.shouldBeDenied = function() {
   it('should not be allowed', function() {
     assert(this.res);
-    var expectedStatus = this.aclErrorStatus ||
+    const expectedStatus = this.aclErrorStatus ||
       this.app && this.app.get('aclErrorStatus') ||
       401;
     expect(this.res.statusCode).to.equal(expectedStatus);

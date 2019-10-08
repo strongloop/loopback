@@ -4,25 +4,25 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var async = require('async');
-var debug = require('debug')('test');
-var extend = require('util')._extend;
-var loopback = require('../');
-var expect = require('./helpers/expect');
-var supertest = require('supertest');
+const async = require('async');
+const debug = require('debug')('test');
+const extend = require('util')._extend;
+const loopback = require('../');
+const expect = require('./helpers/expect');
+const supertest = require('supertest');
 
 describe('Replication over REST', function() {
   this.timeout(10000);
 
-  var ALICE = {id: 'a', username: 'alice', email: 'a@t.io', password: 'p'};
-  var PETER = {id: 'p', username: 'peter', email: 'p@t.io', password: 'p'};
-  var EMERY = {id: 'e', username: 'emery', email: 'e@t.io', password: 'p'};
+  const ALICE = {id: 'a', username: 'alice', email: 'a@t.io', password: 'p'};
+  const PETER = {id: 'p', username: 'peter', email: 'p@t.io', password: 'p'};
+  const EMERY = {id: 'e', username: 'emery', email: 'e@t.io', password: 'p'};
 
   /* eslint-disable one-var */
-  var serverApp, serverUrl, ServerUser, ServerCar, serverCars;
-  var aliceId, peterId, aliceToken, peterToken, emeryToken, request;
-  var clientApp, LocalUser, LocalCar, RemoteUser, RemoteCar, clientCars;
-  var conflictedCarId;
+  let serverApp, serverUrl, ServerUser, ServerCar, serverCars;
+  let aliceId, peterId, aliceToken, peterToken, emeryToken, request;
+  let clientApp, LocalUser, LocalCar, RemoteUser, RemoteCar, clientCars;
+  let conflictedCarId;
   /* eslint-enable one-var */
 
   before(setupServer);
@@ -177,7 +177,7 @@ describe('Replication over REST', function() {
   });
 
   describe('conflict resolution with model-level permissions', function() {
-    var LocalConflict, RemoteConflict;
+    let LocalConflict, RemoteConflict;
 
     before(function setupConflictModels() {
       LocalConflict = LocalCar.getChangeModel().Conflict;
@@ -189,7 +189,7 @@ describe('Replication over REST', function() {
     describe('as anonymous user', function() {
       it('rejects resolve() on the client', function(done) {
         // simulate replication Client->Server
-        var conflict = new LocalConflict(
+        const conflict = new LocalConflict(
           conflictedCarId,
           LocalCar,
           RemoteCar
@@ -199,7 +199,7 @@ describe('Replication over REST', function() {
 
       it('rejects resolve() on the server', function(done) {
         // simulate replication Server->Client
-        var conflict = new RemoteConflict(
+        const conflict = new RemoteConflict(
           conflictedCarId,
           RemoteCar,
           LocalCar
@@ -215,7 +215,7 @@ describe('Replication over REST', function() {
 
       it('allows resolve() on the client', function(done) {
         // simulate replication Client->Server
-        var conflict = new LocalConflict(
+        const conflict = new LocalConflict(
           conflictedCarId,
           LocalCar,
           RemoteCar
@@ -225,7 +225,7 @@ describe('Replication over REST', function() {
 
       it('rejects resolve() on the server', function(done) {
         // simulate replication Server->Client
-        var conflict = new RemoteConflict(
+        const conflict = new RemoteConflict(
           conflictedCarId,
           RemoteCar,
           LocalCar
@@ -332,7 +332,7 @@ describe('Replication over REST', function() {
         if (conflicts.length) return done(conflictError(conflicts));
 
         LocalUser.find(function(err, users) {
-          var userNames = users.map(function(u) { return u.username; });
+          const userNames = users.map(function(u) { return u.username; });
           expect(userNames).to.eql([ALICE.username]);
 
           done();
@@ -413,11 +413,11 @@ describe('Replication over REST', function() {
     }
   });
 
-  var USER_PROPS = {
+  const USER_PROPS = {
     id: {type: 'string', id: true},
   };
 
-  var USER_OPTS = {
+  const USER_OPTS = {
     base: 'User',
     plural: 'Users', // use the same REST path in all models
     trackChanges: true,
@@ -427,13 +427,13 @@ describe('Replication over REST', function() {
     saltWorkFactor: 4,
   };
 
-  var CAR_PROPS = {
+  const CAR_PROPS = {
     id: {type: 'string', id: true, defaultFn: 'guid'},
     model: {type: 'string', required: true},
     maker: {type: 'string'},
   };
 
-  var CAR_OPTS = {
+  const CAR_OPTS = {
     base: 'PersistedModel',
     plural: 'Cars', // use the same REST path in all models
     trackChanges: true,
@@ -477,7 +477,7 @@ describe('Replication over REST', function() {
 
     // Setup a custom access-token model that is not shared
     // with the client app
-    var ServerToken = serverApp.registry.createModel('ServerToken', {}, {
+    const ServerToken = serverApp.registry.createModel('ServerToken', {}, {
       base: 'AccessToken',
       relations: {
         user: {
@@ -531,7 +531,7 @@ describe('Replication over REST', function() {
     // model. This causes the in-process replication to work differently
     // than client-server replication.
     // As a workaround, we manually setup unique Checkpoint for ClientModel.
-    var ClientCheckpoint = clientApp.registry.createModel({
+    const ClientCheckpoint = clientApp.registry.createModel({
       name: 'ClientCheckpoint',
       base: 'Checkpoint',
     });
@@ -545,7 +545,7 @@ describe('Replication over REST', function() {
     LocalCar.Change.Checkpoint = ClientCheckpoint;
     clientApp.model(LocalCar, {dataSource: 'db'});
 
-    var remoteOpts = createRemoteModelOpts(USER_OPTS);
+    let remoteOpts = createRemoteModelOpts(USER_OPTS);
     RemoteUser = clientApp.registry.createModel('RemoteUser', USER_PROPS, remoteOpts);
     clientApp.model(RemoteUser, {dataSource: 'remote'});
 
@@ -690,7 +690,7 @@ describe('Replication over REST', function() {
   }
 
   function conflictError(conflicts) {
-    var err = new Error('Unexpected conflicts\n' +
+    const err = new Error('Unexpected conflicts\n' +
       conflicts.map(JSON.stringify).join('\n'));
     err.name = 'ConflictError';
   }

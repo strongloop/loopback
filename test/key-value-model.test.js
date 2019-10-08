@@ -4,15 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var expect = require('./helpers/expect');
-var http = require('http');
-var loopback = require('..');
-var supertest = require('supertest');
+const expect = require('./helpers/expect');
+const http = require('http');
+const loopback = require('..');
+const supertest = require('supertest');
 
-var AN_OBJECT_VALUE = {name: 'an-object'};
+const AN_OBJECT_VALUE = {name: 'an-object'};
 
 describe('KeyValueModel', function() {
-  var request, app, CacheItem;
+  let request, app, CacheItem;
   beforeEach(setupAppAndCacheItem);
 
   describe('REST API', function() {
@@ -156,7 +156,7 @@ describe('KeyValueModel', function() {
     app.model(CacheItem, {dataSource: 'kv'});
   }
 
-  var _server, _requestHandler; // eslint-disable-line one-var
+  let _server, _requestHandler; // eslint-disable-line one-var
   function setupSharedHttpServer(done) {
     _server = http.createServer(function(req, res) {
       app(req, res);

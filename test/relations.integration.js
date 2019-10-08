@@ -4,15 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../');
-var lt = require('./helpers/loopback-testing-helper');
-var path = require('path');
-var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
-var app = require(path.join(SIMPLE_APP, 'server/server.js'));
-var assert = require('assert');
-var expect = require('./helpers/expect');
-var debug = require('debug')('loopback:test:relations.integration');
-var async = require('async');
+const loopback = require('../');
+const lt = require('./helpers/loopback-testing-helper');
+const path = require('path');
+const SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
+const app = require(path.join(SIMPLE_APP, 'server/server.js'));
+const assert = require('assert');
+const expect = require('./helpers/expect');
+const debug = require('debug')('loopback:test:relations.integration');
+const async = require('async');
 
 describe('relations - integration', function() {
   lt.beforeEach.withApp(app);
@@ -32,9 +32,9 @@ describe('relations - integration', function() {
 
   describe('polymorphicHasMany', function() {
     before(function defineProductAndCategoryModels() {
-      var Team = app.registry.createModel('Team', {name: 'string'});
-      var Reader = app.registry.createModel('Reader', {name: 'string'});
-      var Picture = app.registry.createModel('Picture',
+      const Team = app.registry.createModel('Team', {name: 'string'});
+      const Reader = app.registry.createModel('Reader', {name: 'string'});
+      const Picture = app.registry.createModel('Picture',
         {name: 'string', imageableId: 'number', imageableType: 'string'});
 
       app.model(Team, {dataSource: 'db'});
@@ -56,7 +56,7 @@ describe('relations - integration', function() {
     });
 
     before(function createEvent(done) {
-      var test = this;
+      const test = this;
       app.models.Team.create({name: 'Team 1'},
         function(err, team) {
           if (err) return done(err);
@@ -80,7 +80,7 @@ describe('relations - integration', function() {
     });
 
     it('includes the related child model', function(done) {
-      var url = '/api/readers/' + this.reader.id;
+      const url = '/api/readers/' + this.reader.id;
       this.get(url)
         .query({'filter': {'include': 'pictures'}})
         .expect(200, function(err, res) {
@@ -97,7 +97,7 @@ describe('relations - integration', function() {
     });
 
     it('includes the related parent model', function(done) {
-      var url = '/api/pictures';
+      const url = '/api/pictures';
       this.get(url)
         .query({'filter': {'include': 'imageable'}})
         .expect(200, function(err, res) {
@@ -112,7 +112,7 @@ describe('relations - integration', function() {
     });
 
     it('includes related models scoped to the related parent model', function(done) {
-      var url = '/api/pictures';
+      const url = '/api/pictures';
       this.get(url)
         .query({'filter': {'include': {
           'relation': 'imageable',
@@ -227,7 +227,7 @@ describe('relations - integration', function() {
 
     describe('PUT /api/store/:id/widgets/:fk', function() {
       beforeEach(function(done) {
-        var self = this;
+        const self = this;
         this.store.widgets.create({
           name: this.widgetName,
         }, function(err, widget) {
@@ -237,7 +237,7 @@ describe('relations - integration', function() {
         });
       });
       it('does not add default properties to request body', function(done) {
-        var self = this;
+        const self = this;
         self.request.put(self.url)
           .send({active: true})
           .end(function(err) {
@@ -254,7 +254,7 @@ describe('relations - integration', function() {
 
   describe('/stores/:id/widgets/:fk - 200', function() {
     beforeEach(function(done) {
-      var self = this;
+      const self = this;
       this.store.widgets.create({
         name: this.widgetName,
       }, function(err, widget) {
@@ -328,7 +328,7 @@ describe('relations - integration', function() {
 
   describe('/widgets/:id/store', function() {
     beforeEach(function(done) {
-      var self = this;
+      const self = this;
       this.store.widgets.create({
         name: this.widgetName,
       }, function(err, widget) {
@@ -348,7 +348,7 @@ describe('relations - integration', function() {
 
   describe('hasMany through', function() {
     function setup(connecting, cb) {
-      var root = {};
+      const root = {};
 
       async.series([
         // Clean up models
@@ -401,7 +401,7 @@ describe('relations - integration', function() {
 
     describe('PUT /physicians/:id/patients/rel/:fk', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(false, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
@@ -419,7 +419,7 @@ describe('relations - integration', function() {
         });
 
         it('should create a record in appointment', function(done) {
-          var self = this;
+          const self = this;
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 1);
             assert.equal(apps[0].patientId, self.patient.id);
@@ -429,7 +429,7 @@ describe('relations - integration', function() {
         });
 
         it('should connect physician to patient', function(done) {
-          var self = this;
+          const self = this;
           self.physician.patients(function(err, patients) {
             assert.equal(patients.length, 1);
             assert.equal(patients[0].id, self.patient.id);
@@ -442,7 +442,7 @@ describe('relations - integration', function() {
 
     describe('PUT /physicians/:id/patients/rel/:fk with data', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(false, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
@@ -452,8 +452,8 @@ describe('relations - integration', function() {
         });
       });
 
-      var NOW = Date.now();
-      var data = {date: new Date(NOW)};
+      const NOW = Date.now();
+      const data = {date: new Date(NOW)};
 
       lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', data, function() {
         it('should succeed with statusCode 200', function() {
@@ -464,7 +464,7 @@ describe('relations - integration', function() {
         });
 
         it('should create a record in appointment', function(done) {
-          var self = this;
+          const self = this;
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 1);
             assert.equal(apps[0].patientId, self.patient.id);
@@ -476,7 +476,7 @@ describe('relations - integration', function() {
         });
 
         it('should connect physician to patient', function(done) {
-          var self = this;
+          const self = this;
           self.physician.patients(function(err, patients) {
             assert.equal(patients.length, 1);
             assert.equal(patients[0].id, self.patient.id);
@@ -489,7 +489,7 @@ describe('relations - integration', function() {
 
     describe('HEAD /physicians/:id/patients/rel/:fk', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(true, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
@@ -508,7 +508,7 @@ describe('relations - integration', function() {
 
     describe('HEAD /physicians/:id/patients/rel/:fk that does not exist', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(true, function(err, root) {
           self.url = '/api/physicians/' + root.physician.id +
             '/patients/rel/' + '999';
@@ -528,7 +528,7 @@ describe('relations - integration', function() {
 
     describe('DELETE /physicians/:id/patients/rel/:fk', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(true, function(err, root) {
           self.url = root.relUrl;
           self.patient = root.patient;
@@ -539,7 +539,7 @@ describe('relations - integration', function() {
       });
 
       it('should create a record in appointment', function(done) {
-        var self = this;
+        const self = this;
         app.models.appointment.find(function(err, apps) {
           assert.equal(apps.length, 1);
           assert.equal(apps[0].patientId, self.patient.id);
@@ -549,7 +549,7 @@ describe('relations - integration', function() {
       });
 
       it('should connect physician to patient', function(done) {
-        var self = this;
+        const self = this;
         self.physician.patients(function(err, patients) {
           assert.equal(patients.length, 1);
           assert.equal(patients[0].id, self.patient.id);
@@ -564,7 +564,7 @@ describe('relations - integration', function() {
         });
 
         it('should remove the record in appointment', function(done) {
-          var self = this;
+          const self = this;
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 0);
 
@@ -573,7 +573,7 @@ describe('relations - integration', function() {
         });
 
         it('should remove the connection between physician and patient', function(done) {
-          var self = this;
+          const self = this;
           // Need to refresh the cache
           self.physician.patients(true, function(err, patients) {
             assert.equal(patients.length, 0);
@@ -586,7 +586,7 @@ describe('relations - integration', function() {
 
     describe('GET /physicians/:id/patients/:fk', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(true, function(err, root) {
           self.url = '/api/physicians/' + root.physician.id +
             '/patients/' + root.patient.id;
@@ -607,7 +607,7 @@ describe('relations - integration', function() {
 
     describe('DELETE /physicians/:id/patients/:fk', function() {
       before(function(done) {
-        var self = this;
+        const self = this;
         setup(true, function(err, root) {
           self.url = '/api/physicians/' + root.physician.id +
             '/patients/' + root.patient.id;
@@ -624,7 +624,7 @@ describe('relations - integration', function() {
         });
 
         it('should remove the record in appointment', function(done) {
-          var self = this;
+          const self = this;
           app.models.appointment.find(function(err, apps) {
             assert.equal(apps.length, 0);
 
@@ -633,7 +633,7 @@ describe('relations - integration', function() {
         });
 
         it('should remove the connection between physician and patient', function(done) {
-          var self = this;
+          const self = this;
           // Need to refresh the cache
           self.physician.patients(true, function(err, patients) {
             assert.equal(patients.length, 0);
@@ -643,7 +643,7 @@ describe('relations - integration', function() {
         });
 
         it('should remove the record in patient', function(done) {
-          var self = this;
+          const self = this;
           app.models.patient.find(function(err, patients) {
             assert.equal(patients.length, 0);
 
@@ -659,11 +659,11 @@ describe('relations - integration', function() {
       // Disable "Warning: overriding remoting type product"
       this.app.remotes()._typeRegistry._options.warnWhenOverridingType = false;
 
-      var product = app.registry.createModel(
+      const product = app.registry.createModel(
         'product',
         {id: 'string', name: 'string'}
       );
-      var category = app.registry.createModel(
+      const category = app.registry.createModel(
         'category',
         {id: 'string', name: 'string'}
       );
@@ -677,7 +677,7 @@ describe('relations - integration', function() {
     lt.beforeEach.givenModel('category');
 
     beforeEach(function createProductsInCategory(done) {
-      var test = this;
+      const test = this;
       this.category.products.create({
         name: 'a-product',
       }, function(err, product) {
@@ -704,7 +704,7 @@ describe('relations - integration', function() {
 
     it.skip('allows to find related objects via where filter', function(done) {
       // TODO https://github.com/strongloop/loopback-datasource-juggler/issues/94
-      var expectedProduct = this.product;
+      const expectedProduct = this.product;
       this.get('/api/products?filter[where][categoryId]=' + this.category.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -721,7 +721,7 @@ describe('relations - integration', function() {
     });
 
     it('allows to find related object via URL scope', function(done) {
-      var expectedProduct = this.product;
+      const expectedProduct = this.product;
       this.get('/api/categories/' + this.category.id + '/products')
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -738,8 +738,8 @@ describe('relations - integration', function() {
     });
 
     it('includes requested related models in `find`', function(done) {
-      var expectedProduct = this.product;
-      var url = '/api/categories/findOne?filter[where][id]=' +
+      const expectedProduct = this.product;
+      const url = '/api/categories/findOne?filter[where][id]=' +
         this.category.id + '&filter[include]=products';
 
       this.get(url)
@@ -760,9 +760,9 @@ describe('relations - integration', function() {
 
     it.skip('includes requested related models in `findById`', function(done) {
       // TODO https://github.com/strongloop/loopback-datasource-juggler/issues/93
-      var expectedProduct = this.product;
+      const expectedProduct = this.product;
       // Note: the URL format is not final
-      var url = '/api/categories/' + this.category.id + '?include=products';
+      const url = '/api/categories/' + this.category.id + '?include=products';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -783,14 +783,14 @@ describe('relations - integration', function() {
 
   describe('embedsOne', function() {
     before(function defineGroupAndPosterModels() {
-      var group = app.registry.createModel(
+      const group = app.registry.createModel(
         'group',
         {name: 'string'},
         {plural: 'groups'}
       );
       app.model(group, {dataSource: 'db'});
 
-      var poster = app.registry.createModel(
+      const poster = app.registry.createModel(
         'poster',
         {url: 'string'}
       );
@@ -800,7 +800,7 @@ describe('relations - integration', function() {
     });
 
     before(function createImage(done) {
-      var test = this;
+      const test = this;
       app.models.group.create({name: 'Group 1'},
         function(err, group) {
           if (err) return done(err);
@@ -816,7 +816,7 @@ describe('relations - integration', function() {
     });
 
     it('creates an embedded model', function(done) {
-      var url = '/api/groups/' + this.group.id + '/cover';
+      const url = '/api/groups/' + this.group.id + '/cover';
 
       this.post(url)
         .send({url: 'http://image.url'})
@@ -830,7 +830,7 @@ describe('relations - integration', function() {
     });
 
     it('includes the embedded models', function(done) {
-      var url = '/api/groups/' + this.group.id;
+      const url = '/api/groups/' + this.group.id;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -846,7 +846,7 @@ describe('relations - integration', function() {
     });
 
     it('returns the embedded model', function(done) {
-      var url = '/api/groups/' + this.group.id + '/cover';
+      const url = '/api/groups/' + this.group.id + '/cover';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -861,7 +861,7 @@ describe('relations - integration', function() {
     });
 
     it('updates an embedded model', function(done) {
-      var url = '/api/groups/' + this.group.id + '/cover';
+      const url = '/api/groups/' + this.group.id + '/cover';
 
       this.put(url)
         .send({url: 'http://changed.url'})
@@ -873,7 +873,7 @@ describe('relations - integration', function() {
     });
 
     it('returns the updated embedded model', function(done) {
-      var url = '/api/groups/' + this.group.id + '/cover';
+      const url = '/api/groups/' + this.group.id + '/cover';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -888,26 +888,26 @@ describe('relations - integration', function() {
     });
 
     it('deletes an embedded model', function(done) {
-      var url = '/api/groups/' + this.group.id + '/cover';
+      const url = '/api/groups/' + this.group.id + '/cover';
       this.del(url).expect(204, done);
     });
 
     it('deleted the embedded model', function(done) {
-      var url = '/api/groups/' + this.group.id + '/cover';
+      const url = '/api/groups/' + this.group.id + '/cover';
       this.get(url).expect(404, done);
     });
   });
 
   describe('embedsMany', function() {
     before(function defineProductAndCategoryModels() {
-      var todoList = app.registry.createModel(
+      const todoList = app.registry.createModel(
         'todoList',
         {name: 'string'},
         {plural: 'todo-lists'}
       );
       app.model(todoList, {dataSource: 'db'});
 
-      var todoItem = app.registry.createModel(
+      const todoItem = app.registry.createModel(
         'todoItem',
         {content: 'string'}, {forceId: false}
       );
@@ -917,7 +917,7 @@ describe('relations - integration', function() {
     });
 
     before(function createTodoList(done) {
-      var test = this;
+      const test = this;
       app.models.todoList.create({name: 'List A'},
         function(err, list) {
           if (err) return done(err);
@@ -934,7 +934,7 @@ describe('relations - integration', function() {
     });
 
     it('includes the embedded models', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id;
+      const url = '/api/todo-lists/' + this.todoList.id;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -951,7 +951,7 @@ describe('relations - integration', function() {
     });
 
     it('returns the embedded models', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -967,7 +967,7 @@ describe('relations - integration', function() {
     });
 
     it('filters the embedded models', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      let url = '/api/todo-lists/' + this.todoList.id + '/items';
       url += '?filter[where][id]=2';
 
       this.get(url)
@@ -983,9 +983,9 @@ describe('relations - integration', function() {
     });
 
     it('creates embedded models', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items';
 
-      var expected = {content: 'Todo 3', id: 3};
+      const expected = {content: 'Todo 3', id: 3};
 
       this.post(url)
         .send({content: 'Todo 3'})
@@ -997,7 +997,7 @@ describe('relations - integration', function() {
     });
 
     it('includes the created embedded model', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1014,7 +1014,7 @@ describe('relations - integration', function() {
     });
 
     it('returns an embedded model by (internal) id', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items/3';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1029,8 +1029,8 @@ describe('relations - integration', function() {
     });
 
     it('removes an embedded model', function(done) {
-      var expectedProduct = this.product;
-      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      const expectedProduct = this.product;
+      const url = '/api/todo-lists/' + this.todoList.id + '/items/2';
 
       this.del(url)
         .expect(200, function(err, res) {
@@ -1039,7 +1039,7 @@ describe('relations - integration', function() {
     });
 
     it('returns the embedded models - verify', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1055,7 +1055,7 @@ describe('relations - integration', function() {
     });
 
     it('returns a 404 response when embedded model is not found', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items/2';
       this.get(url).expect(404, function(err, res) {
         if (err) return done(err);
 
@@ -1068,7 +1068,7 @@ describe('relations - integration', function() {
     });
 
     it.skip('checks if an embedded model exists - ok', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items/3';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items/3';
 
       this.head(url)
         .expect(200, function(err, res) {
@@ -1077,7 +1077,7 @@ describe('relations - integration', function() {
     });
 
     it.skip('checks if an embedded model exists - fail', function(done) {
-      var url = '/api/todo-lists/' + this.todoList.id + '/items/2';
+      const url = '/api/todo-lists/' + this.todoList.id + '/items/2';
 
       this.head(url)
         .expect(404, function(err, res) {
@@ -1088,19 +1088,19 @@ describe('relations - integration', function() {
 
   describe('referencesMany', function() {
     before(function defineProductAndCategoryModels() {
-      var recipe = app.registry.createModel(
+      const recipe = app.registry.createModel(
         'recipe',
         {name: 'string'}
       );
       app.model(recipe, {dataSource: 'db'});
 
-      var ingredient = app.registry.createModel(
+      const ingredient = app.registry.createModel(
         'ingredient',
         {name: 'string'}
       );
       app.model(ingredient, {dataSource: 'db'});
 
-      var photo = app.registry.createModel(
+      const photo = app.registry.createModel(
         'photo',
         {name: 'string'}
       );
@@ -1114,7 +1114,7 @@ describe('relations - integration', function() {
     });
 
     before(function createRecipe(done) {
-      var test = this;
+      const test = this;
       app.models.recipe.create({name: 'Recipe'},
         function(err, recipe) {
           if (err) return done(err);
@@ -1130,7 +1130,7 @@ describe('relations - integration', function() {
     });
 
     before(function createIngredient(done) {
-      var test = this;
+      const test = this;
       app.models.ingredient.create({name: 'Sugar'}, function(err, ing) {
         test.ingredient2 = ing.id;
 
@@ -1139,7 +1139,7 @@ describe('relations - integration', function() {
     });
 
     after(function(done) {
-      var app = this.app;
+      const app = this.app;
       app.models.recipe.destroyAll(function() {
         app.models.ingredient.destroyAll(function() {
           app.models.photo.destroyAll(done);
@@ -1148,8 +1148,8 @@ describe('relations - integration', function() {
     });
 
     it('keeps an array of ids', function(done) {
-      var url = '/api/recipes/' + this.recipe.id;
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id;
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1163,8 +1163,8 @@ describe('relations - integration', function() {
     });
 
     it('creates referenced models', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      const test = this;
 
       this.post(url)
         .send({name: 'Butter'})
@@ -1177,8 +1177,8 @@ describe('relations - integration', function() {
     });
 
     it('has created models', function(done) {
-      var url = '/api/ingredients';
-      var test = this;
+      const url = '/api/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1195,8 +1195,8 @@ describe('relations - integration', function() {
     });
 
     it('returns the referenced models', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1212,9 +1212,9 @@ describe('relations - integration', function() {
     });
 
     it('filters the referenced models', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients';
       url += '?filter[where][name]=Butter';
-      var test = this;
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1229,9 +1229,9 @@ describe('relations - integration', function() {
     });
 
     it('includes the referenced models', function(done) {
-      var url = '/api/recipes/findOne?filter[where][id]=' + this.recipe.id;
+      let url = '/api/recipes/findOne?filter[where][id]=' + this.recipe.id;
       url += '&filter[include]=ingredients';
-      var test = this;
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1250,9 +1250,9 @@ describe('relations - integration', function() {
     });
 
     it('returns a referenced model by id', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients/';
       url += this.ingredient3;
-      var test = this;
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1267,10 +1267,10 @@ describe('relations - integration', function() {
     });
 
     it('keeps an array of ids - verify', function(done) {
-      var url = '/api/recipes/' + this.recipe.id;
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id;
+      const test = this;
 
-      var expected = [test.ingredient1, test.ingredient3];
+      const expected = [test.ingredient1, test.ingredient3];
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1284,8 +1284,8 @@ describe('relations - integration', function() {
     });
 
     it('destroys a referenced model', function(done) {
-      var expectedProduct = this.product;
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      const expectedProduct = this.product;
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients/';
       url += this.ingredient3;
 
       this.del(url)
@@ -1295,8 +1295,8 @@ describe('relations - integration', function() {
     });
 
     it('has destroyed a referenced model', function(done) {
-      var url = '/api/ingredients';
-      var test = this;
+      const url = '/api/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1312,8 +1312,8 @@ describe('relations - integration', function() {
     });
 
     it('returns the referenced models without the deleted one', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1328,9 +1328,9 @@ describe('relations - integration', function() {
     });
 
     it('creates/links a reference by id', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients';
       url += '/rel/' + this.ingredient2;
-      var test = this;
+      const test = this;
 
       this.put(url)
         .expect(200, function(err, res) {
@@ -1343,8 +1343,8 @@ describe('relations - integration', function() {
     });
 
     it('returns the referenced models - verify', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1360,9 +1360,9 @@ describe('relations - integration', function() {
     });
 
     it('removes/unlinks a reference by id', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients';
       url += '/rel/' + this.ingredient1;
-      var test = this;
+      const test = this;
 
       this.del(url)
         .expect(200, function(err, res) {
@@ -1371,8 +1371,8 @@ describe('relations - integration', function() {
     });
 
     it('returns the referenced models without the unlinked one', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients';
-      var test = this;
+      const url = '/api/recipes/' + this.recipe.id + '/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1387,8 +1387,8 @@ describe('relations - integration', function() {
     });
 
     it('has not destroyed an unlinked model', function(done) {
-      var url = '/api/ingredients';
-      var test = this;
+      const url = '/api/ingredients';
+      const test = this;
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1404,7 +1404,7 @@ describe('relations - integration', function() {
     });
 
     it('uses a custom relation path', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/image';
+      const url = '/api/recipes/' + this.recipe.id + '/image';
 
       this.get(url)
         .expect(200, function(err, res) {
@@ -1418,7 +1418,7 @@ describe('relations - integration', function() {
     });
 
     it.skip('checks if a referenced model exists - ok', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients/';
       url += this.ingredient1;
 
       this.head(url)
@@ -1428,7 +1428,7 @@ describe('relations - integration', function() {
     });
 
     it.skip('checks if an referenced model exists - fail', function(done) {
-      var url = '/api/recipes/' + this.recipe.id + '/ingredients/';
+      let url = '/api/recipes/' + this.recipe.id + '/ingredients/';
       url += this.ingredient3;
 
       this.head(url)
@@ -1442,35 +1442,35 @@ describe('relations - integration', function() {
     let accessOptions;
 
     before(function defineModels() {
-      var Book = app.registry.createModel(
+      const Book = app.registry.createModel(
         'Book',
         {name: 'string'},
         {plural: 'books'}
       );
       app.model(Book, {dataSource: 'db'});
 
-      var Page = app.registry.createModel(
+      const Page = app.registry.createModel(
         'Page',
         {name: 'string'},
         {plural: 'pages'}
       );
       app.model(Page, {dataSource: 'db'});
 
-      var Image = app.registry.createModel(
+      const Image = app.registry.createModel(
         'Image',
         {name: 'string'},
         {plural: 'images'}
       );
       app.model(Image, {dataSource: 'db'});
 
-      var Note = app.registry.createModel(
+      const Note = app.registry.createModel(
         'Note',
         {text: 'string'},
         {plural: 'notes'}
       );
       app.model(Note, {dataSource: 'db'});
 
-      var Chapter = app.registry.createModel(
+      const Chapter = app.registry.createModel(
         'Chapter',
         {name: 'string'},
         {plural: 'chapters'}
@@ -1523,7 +1523,7 @@ describe('relations - integration', function() {
     });
 
     before(function createBook(done) {
-      var test = this;
+      const test = this;
       app.models.Book.create({name: 'Book 1'},
         function(err, book) {
           if (err) return done(err);
@@ -1545,7 +1545,7 @@ describe('relations - integration', function() {
     });
 
     before(function createChapters(done) {
-      var test = this;
+      const test = this;
       test.book.chapters.create({name: 'Chapter 1'},
         function(err, chapter) {
           if (err) return done(err);
@@ -1560,7 +1560,7 @@ describe('relations - integration', function() {
     });
 
     before(function createCover(done) {
-      var test = this;
+      const test = this;
       app.models.Image.create({name: 'Cover 1', book: test.book},
         function(err, image) {
           if (err) return done(err);
@@ -1572,7 +1572,7 @@ describe('relations - integration', function() {
     });
 
     it('has regular relationship routes - pages', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/books/' + test.book.id + '/pages')
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -1586,7 +1586,7 @@ describe('relations - integration', function() {
     });
 
     it('has regular relationship routes - notes', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -1601,13 +1601,13 @@ describe('relations - integration', function() {
     });
 
     it('has a basic error handler', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/books/unknown/pages/' + test.page.id + '/notes')
         .expect(404, function(err, res) {
           if (err) return done(err);
 
           expect(res.body.error).to.be.an('object');
-          var expected = 'could not find a model with id unknown';
+          const expected = 'could not find a model with id unknown';
           expect(res.body.error.message).to.equal(expected);
           expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
 
@@ -1616,7 +1616,7 @@ describe('relations - integration', function() {
     });
 
     it('enables nested relationship routes - belongsTo find', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/images/' + test.image.id + '/book/pages')
         .end(function(err, res) {
           if (err) return done(err);
@@ -1630,7 +1630,7 @@ describe('relations - integration', function() {
     });
 
     it('enables nested relationship routes - belongsTo findById', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/images/' + test.image.id + '/book/pages/' + test.page.id)
         .expect(200)
         .end(function(err, res) {
@@ -1644,7 +1644,7 @@ describe('relations - integration', function() {
     });
 
     it('enables nested relationship routes - hasMany find', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes')
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -1658,7 +1658,7 @@ describe('relations - integration', function() {
     });
 
     it('enables nested relationship routes - hasMany findById', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + test.page.id + '/notes/' + test.note.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -1681,13 +1681,13 @@ describe('relations - integration', function() {
     });
 
     it('should nest remote hooks of ModelTo - hasMany findById', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/books/' + test.book.id + '/chapters/' + test.chapter.id + '/notes/' + test.cnote.id)
         .expect(200, function(err, res) {
           if (err) return done(err);
 
-          expect(res.headers['x-before']).to.empty();
-          expect(res.headers['x-after']).to.empty();
+          expect(res.headers['x-before']).to.be.undefined();
+          expect(res.headers['x-after']).to.be.undefined();
 
           done();
         });
@@ -1696,7 +1696,7 @@ describe('relations - integration', function() {
     it('should have proper http.path for remoting', function() {
       [app.models.Book, app.models.Image].forEach(function(Model) {
         Model.sharedClass.methods().forEach(function(method) {
-          var http = Array.isArray(method.http) ? method.http : [method.http];
+          const http = Array.isArray(method.http) ? method.http : [method.http];
           http.forEach(function(opt) {
             // destroyAll has been shared but missing http property
             if (opt.path === undefined) return;
@@ -1708,7 +1708,7 @@ describe('relations - integration', function() {
     });
 
     it('should catch error if nested function throws', function(done) {
-      var test = this;
+      const test = this;
       this.get('/api/books/' + test.book.id + '/pages/' + this.page.id + '/throws')
         .end(function(err, res) {
           if (err) return done(err);
@@ -1725,10 +1725,10 @@ describe('relations - integration', function() {
   });
 
   describe('hasOne', function() {
-    var cust;
+    let cust;
 
     before(function createCustomer(done) {
-      var test = this;
+      const test = this;
       app.models.customer.create({name: 'John'}, function(err, c) {
         if (err) return done(err);
 
@@ -1739,7 +1739,7 @@ describe('relations - integration', function() {
     });
 
     after(function(done) {
-      var self = this;
+      const self = this;
       this.app.models.customer.destroyAll(function(err) {
         if (err) return done(err);
 
@@ -1748,7 +1748,7 @@ describe('relations - integration', function() {
     });
 
     it('should create the referenced model', function(done) {
-      var url = '/api/customers/' + cust.id + '/profile';
+      const url = '/api/customers/' + cust.id + '/profile';
 
       this.post(url)
         .send({points: 10})
@@ -1763,7 +1763,7 @@ describe('relations - integration', function() {
     });
 
     it('should find the referenced model', function(done) {
-      var url = '/api/customers/' + cust.id + '/profile';
+      const url = '/api/customers/' + cust.id + '/profile';
       this.get(url)
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -1776,7 +1776,7 @@ describe('relations - integration', function() {
     });
 
     it('should not create the referenced model twice', function(done) {
-      var url = '/api/customers/' + cust.id + '/profile';
+      const url = '/api/customers/' + cust.id + '/profile';
       this.post(url)
         .send({points: 20})
         .expect(500, function(err, res) {
@@ -1785,7 +1785,7 @@ describe('relations - integration', function() {
     });
 
     it('should update the referenced model', function(done) {
-      var url = '/api/customers/' + cust.id + '/profile';
+      const url = '/api/customers/' + cust.id + '/profile';
       this.put(url)
         .send({points: 100})
         .expect(200, function(err, res) {
@@ -1799,7 +1799,7 @@ describe('relations - integration', function() {
     });
 
     it('should delete the referenced model', function(done) {
-      var url = '/api/customers/' + cust.id + '/profile';
+      const url = '/api/customers/' + cust.id + '/profile';
       this.del(url)
         .expect(204, function(err, res) {
           done(err);
@@ -1807,7 +1807,7 @@ describe('relations - integration', function() {
     });
 
     it('should not find the referenced model', function(done) {
-      var url = '/api/customers/' + cust.id + '/profile';
+      const url = '/api/customers/' + cust.id + '/profile';
       this.get(url)
         .expect(404, function(err, res) {
           done(err);

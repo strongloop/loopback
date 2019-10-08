@@ -4,17 +4,17 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var expect = require('./helpers/expect');
-var sinon = require('sinon');
-var loopback = require('../');
+const expect = require('./helpers/expect');
+const sinon = require('sinon');
+const loopback = require('../');
 
 describe('PersistedModel.createChangeStream()', function() {
   describe('configured to source changes locally', function() {
     before(function() {
-      var test = this;
-      var app = loopback({localRegistry: true});
-      var ds = app.dataSource('ds', {connector: 'memory'});
-      var Score = app.registry.createModel('Score');
+      const test = this;
+      const app = loopback({localRegistry: true});
+      const ds = app.dataSource('ds', {connector: 'memory'});
+      const Score = app.registry.createModel('Score');
       this.Score = app.model(Score, {
         dataSource: 'ds',
         changeDataSource: false, // use only local observers
@@ -24,7 +24,7 @@ describe('PersistedModel.createChangeStream()', function() {
     afterEach(verifyObserversRemoval);
 
     it('should detect create', function(done) {
-      var Score = this.Score;
+      const Score = this.Score;
 
       Score.createChangeStream(function(err, changes) {
         changes.on('data', function(change) {
@@ -38,7 +38,7 @@ describe('PersistedModel.createChangeStream()', function() {
     });
 
     it('should detect update', function(done) {
-      var Score = this.Score;
+      const Score = this.Score;
       Score.create({team: 'foo'}, function(err, newScore) {
         Score.createChangeStream(function(err, changes) {
           changes.on('data', function(change) {
@@ -55,7 +55,7 @@ describe('PersistedModel.createChangeStream()', function() {
     });
 
     it('should detect delete', function(done) {
-      var Score = this.Score;
+      const Score = this.Score;
       Score.create({team: 'foo'}, function(err, newScore) {
         Score.createChangeStream(function(err, changes) {
           changes.on('data', function(change) {
@@ -103,9 +103,9 @@ describe('PersistedModel.createChangeStream()', function() {
     });
 
     it('should not emit changes after destroy', function(done) {
-      var Score = this.Score;
+      const Score = this.Score;
 
-      var spy = sinon.spy();
+      const spy = sinon.spy();
 
       Score.createChangeStream(function(err, changes) {
         changes.on('data', function() {
@@ -123,7 +123,7 @@ describe('PersistedModel.createChangeStream()', function() {
     });
 
     function verifyObserversRemoval() {
-      var Score = this.Score;
+      const Score = this.Score;
       expect(Score._observers['after save']).to.be.empty();
       expect(Score._observers['after delete']).to.be.empty();
     }
@@ -132,10 +132,10 @@ describe('PersistedModel.createChangeStream()', function() {
   // TODO(ritch) implement multi-server support
   describe.skip('configured to source changes using pubsub', function() {
     before(function() {
-      var test = this;
-      var app = loopback({localRegistry: true});
-      var db = app.dataSource('ds', {connector: 'memory'});
-      var ps = app.dataSource('ps', {
+      const test = this;
+      const app = loopback({localRegistry: true});
+      const db = app.dataSource('ds', {connector: 'memory'});
+      const ps = app.dataSource('ps', {
         host: 'localhost',
         port: '12345',
         connector: 'pubsub',
@@ -148,7 +148,7 @@ describe('PersistedModel.createChangeStream()', function() {
     });
 
     it('should detect a change', function(done) {
-      var Score = this.Score;
+      const Score = this.Score;
 
       Score.createChangeStream(function(err, changes) {
         changes.on('data', function(change) {

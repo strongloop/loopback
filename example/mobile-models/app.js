@@ -4,20 +4,20 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var g = require('../../lib/globalize');
-var models = require('../../lib/models');
-var loopback = require('../../');
-var app = loopback();
+const g = require('../../lib/globalize');
+const models = require('../../lib/models');
+const loopback = require('../../');
+const app = loopback();
 
 app.use(loopback.rest());
 
-var dataSource = loopback.createDataSource('db', {connector: loopback.Memory});
+const dataSource = loopback.createDataSource('db', {connector: loopback.Memory});
 
-var Application = models.Application(dataSource);
+const Application = models.Application(dataSource);
 
 app.model(Application);
 
-var data = {
+const data = {
   pushSettings: [{
     'platform': 'apns',
     'apns': {

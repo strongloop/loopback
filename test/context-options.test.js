@@ -5,12 +5,12 @@
 
 'use strict';
 
-var expect = require('chai').expect;
-var loopback = require('..');
-var supertest = require('supertest');
+const expect = require('chai').expect;
+const loopback = require('..');
+const supertest = require('supertest');
 
 describe('OptionsFromRemotingContext', function() {
-  var app, request, accessToken, userId, Product, actualOptions;
+  let app, request, accessToken, userId, Product, actualOptions;
 
   beforeEach(setupAppAndRequest);
   beforeEach(resetActualOptions);
@@ -133,7 +133,7 @@ describe('OptionsFromRemotingContext', function() {
   // despite the fact that under the hood a method on "modelTo" is called.
 
   context('hasManyThrough', function() {
-    var Category, ThroughModel;
+    let Category, ThroughModel;
 
     beforeEach(givenCategoryHasManyProductsThroughAnotherModel);
     beforeEach(givenCategoryAndProduct);
@@ -242,7 +242,7 @@ describe('OptionsFromRemotingContext', function() {
   });
 
   context('hasOne', function() {
-    var Category;
+    let Category;
 
     beforeEach(givenCategoryHasOneProduct);
     beforeEach(givenCategoryId1);
@@ -313,7 +313,7 @@ describe('OptionsFromRemotingContext', function() {
   });
 
   context('belongsTo', function() {
-    var Category;
+    let Category;
 
     beforeEach(givenCategoryBelongsToProduct);
 
@@ -382,7 +382,7 @@ describe('OptionsFromRemotingContext', function() {
   }
 
   function observeOptionsBeforeSave() {
-    var Model = arguments[0] || Product;
+    const Model = arguments[0] || Product;
     Model.observe('before save', function(ctx, next) {
       actualOptions = ctx.options;
       next();
@@ -390,7 +390,7 @@ describe('OptionsFromRemotingContext', function() {
   }
 
   function observeOptionsBeforeDelete() {
-    var Model = arguments[0] || Product;
+    const Model = arguments[0] || Product;
     Model.observe('before delete', function(ctx, next) {
       actualOptions = ctx.options;
       next();
@@ -398,7 +398,7 @@ describe('OptionsFromRemotingContext', function() {
   }
 
   function observeOptionsOnAccess() {
-    var Model = arguments[0] || Product;
+    const Model = arguments[0] || Product;
     Model.observe('access', function(ctx, next) {
       actualOptions = ctx.options;
       next();

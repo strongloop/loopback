@@ -4,15 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var g = require('../../lib/globalize');
-var loopback = require('../../');
-var app = loopback();
+const g = require('../../lib/globalize');
+const loopback = require('../../');
+const app = loopback();
 
 app.use(loopback.rest());
 
-var dataSource = app.dataSource('db', {adapter: 'memory'});
+const dataSource = app.dataSource('db', {adapter: 'memory'});
 
-var Color = dataSource.define('color', {
+const Color = dataSource.define('color', {
   'name': String,
 });
 

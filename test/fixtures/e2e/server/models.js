@@ -4,8 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../../../index');
-var PersistedModel = loopback.PersistedModel;
+const loopback = require('../../../../index');
+const PersistedModel = loopback.PersistedModel;
 
 exports.TestModel = PersistedModel.extend('TestModel', {}, {
   trackChanges: true,

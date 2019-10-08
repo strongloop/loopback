@@ -3,8 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-/* global module:false */
 'use strict';
+
 module.exports = function(grunt) {
   // Do not report warnings from unit-tests exercising deprecated paths
   process.env.NO_DEPRECATION = 'loopback';
@@ -218,8 +218,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('e2e-server', function() {
-    var done = this.async();
-    var app = require('./test/fixtures/e2e/app');
+    const done = this.async();
+    const app = require('./test/fixtures/e2e/app');
     app.listen(0, function() {
       process.env.PORT = this.address().port;
       done();

@@ -4,15 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var expect = require('./helpers/expect');
-var loopback = require('../');
-var net = require('net');
+const expect = require('./helpers/expect');
+const loopback = require('../');
+const net = require('net');
 
 describe('loopback application', function() {
   it('pauses request stream during authentication', function(done) {
     // This test reproduces the issue reported in
     //   https://github.com/strongloop/loopback-storage-service/issues/7
-    var app = loopback();
+    const app = loopback();
     setupAppWithStreamingMethod();
 
     app.listen(0, function() {
@@ -37,7 +37,7 @@ describe('loopback application', function() {
       app.dataSource('db', {
         connector: loopback.Memory,
       });
-      var db = app.datasources.db;
+      const db = app.datasources.db;
 
       loopback.User.attachTo(db);
       loopback.AccessToken.attachTo(db);
@@ -45,10 +45,10 @@ describe('loopback application', function() {
       loopback.ACL.attachTo(db);
       loopback.User.hasMany(loopback.AccessToken, {as: 'accessTokens'});
 
-      var Streamer = app.registry.createModel('Streamer');
+      const Streamer = app.registry.createModel('Streamer');
       app.model(Streamer, {dataSource: 'db'});
       Streamer.read = function(req, res, cb) {
-        var body = new Buffer(0);
+        let body = new Buffer(0);
         req.on('data', function(chunk) {
           body += chunk;
         });
@@ -75,8 +75,8 @@ describe('loopback application', function() {
     }
 
     function sendHttpRequestInOnePacket(port, reqString, cb) {
-      var socket = net.createConnection(port);
-      var response = new Buffer(0);
+      const socket = net.createConnection(port);
+      let response = new Buffer(0);
 
       socket.on('data', function(chunk) {
         response += chunk;

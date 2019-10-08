@@ -4,15 +4,15 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../');
-var lt = require('./helpers/loopback-testing-helper');
-var path = require('path');
-var ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
-var app = require(path.join(ACCESS_CONTROL_APP, 'server/server.js'));
-var assert = require('assert');
-var USER = {email: 'test@test.test', password: 'test'};
-var CURRENT_USER = {email: 'current@test.test', password: 'test'};
-var debug = require('debug')('loopback:test:access-control.integration');
+const loopback = require('../');
+const lt = require('./helpers/loopback-testing-helper');
+const path = require('path');
+const ACCESS_CONTROL_APP = path.join(__dirname, 'fixtures', 'access-control');
+const app = require(path.join(ACCESS_CONTROL_APP, 'server/server.js'));
+const assert = require('assert');
+const USER = {email: 'test@test.test', password: 'test'};
+const CURRENT_USER = {email: 'current@test.test', password: 'test'};
+const debug = require('debug')('loopback:test:access-control.integration');
 
 describe('access control - integration', function() {
   lt.beforeEach.withApp(app);
@@ -110,7 +110,7 @@ describe('access control - integration', function() {
             this.res.statusCode,
             this.res.headers,
             this.res.text);
-          var user = this.res.body;
+          const user = this.res.body;
           assert.equal(user.password, undefined);
         });
       });
@@ -137,7 +137,7 @@ describe('access control - integration', function() {
       return '/api/users/' + this.randomUser.id;
     }
 
-    var userCounter;
+    var userCounter; // eslint-disable-line no-var
     function newUserData() {
       userCounter = userCounter ? ++userCounter : 1;
 
@@ -149,14 +149,14 @@ describe('access control - integration', function() {
   });
 
   describe('/banks', function() {
-    var SPECIAL_USER = {email: 'special@test.test', password: 'test'};
+    const SPECIAL_USER = {email: 'special@test.test', password: 'test'};
 
     // define dynamic role that would only grant access when the authenticated user's email is equal to
     // SPECIAL_USER's email
 
     before(function() {
-      var roleModel = app.registry.getModel('Role');
-      var userModel = app.registry.getModel('user');
+      const roleModel = app.registry.getModel('Role');
+      const userModel = app.registry.getModel('user');
 
       roleModel.registerResolver('$dynamic-role', function(role, context, callback) {
         if (!(context && context.accessToken && context.accessToken.userId)) {
@@ -164,7 +164,7 @@ describe('access control - integration', function() {
             if (callback) callback(null, false);
           });
         }
-        var accessToken = context.accessToken;
+        const accessToken = context.accessToken;
         userModel.findById(accessToken.userId, function(err, user) {
           if (err) {
             return callback(err, false);
@@ -210,9 +210,9 @@ describe('access control - integration', function() {
   });
 
   describe('/accounts with replaceOnPUT true', function() {
-    var count = 0;
+    let count = 0;
     before(function() {
-      var roleModel = loopback.getModelByType(loopback.Role);
+      const roleModel = loopback.getModelByType(loopback.Role);
       roleModel.registerResolver('$dummy', function(role, context, callback) {
         process.nextTick(function() {
           if (context.remotingContext) {
@@ -250,9 +250,9 @@ describe('access control - integration', function() {
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'PATCH', urlForAccount);
 
     lt.describe.whenLoggedInAsUser(CURRENT_USER, function() {
-      var actId;
+      let actId;
       beforeEach(function(done) {
-        var self = this;
+        const self = this;
         // Create an account under the given user
         app.models.accountWithReplaceOnPUTtrue.create({
           userId: self.user.id,
@@ -314,9 +314,9 @@ describe('access control - integration', function() {
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'PATCH', urlForAccount);
 
     lt.describe.whenLoggedInAsUser(CURRENT_USER, function() {
-      var actId;
+      let actId;
       beforeEach(function(done) {
-        var self = this;
+        const self = this;
         // Create an account under the given user
         app.models.accountWithReplaceOnPUTfalse.create({
           userId: self.user.id,

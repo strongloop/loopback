@@ -4,8 +4,8 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var loopback = require('../../lib/loopback');
+const assert = require('assert');
+const loopback = require('../../lib/loopback');
 
 /**
  * Resource owner grants/delegates permissions to client applications
@@ -21,7 +21,7 @@ var loopback = require('../../lib/loopback');
 module.exports = function(Scope) {
   Scope.resolveRelatedModels = function() {
     if (!this.aclModel) {
-      var reg = this.registry;
+      const reg = this.registry;
       this.aclModel = reg.getModelByType(loopback.ACL);
     }
   };
@@ -38,7 +38,7 @@ module.exports = function(Scope) {
    */
   Scope.checkPermission = function(scope, model, property, accessType, callback) {
     this.resolveRelatedModels();
-    var aclModel = this.aclModel;
+    const aclModel = this.aclModel;
     assert(aclModel,
       'ACL model must be defined before Scope.checkPermission is called');
 

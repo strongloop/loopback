@@ -24,7 +24,7 @@ module.exports = status;
  * @header loopback.status()
  */
 function status() {
-  var started = new Date();
+  const started = new Date();
 
   return function(req, res) {
     res.send({

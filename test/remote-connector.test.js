@@ -4,18 +4,18 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var assert = require('assert');
-var loopback = require('../');
-var defineModelTestsWithDataSource = require('./util/model-tests');
+const assert = require('assert');
+const loopback = require('../');
+const defineModelTestsWithDataSource = require('./util/model-tests');
 
 describe('RemoteConnector', function() {
   this.timeout(10000);
 
-  var remoteApp, remote;
+  let remoteApp, remote;
 
   defineModelTestsWithDataSource({
     beforeEach: function(done) {
-      var test = this;
+      const test = this;
       remoteApp = loopback();
       remoteApp.set('remoting', {
         errorHandler: {debug: true, log: false},
@@ -40,7 +40,7 @@ describe('RemoteConnector', function() {
     enableRemoteReplication: true,
 
     onDefine: function(Model) {
-      var ServerModel = Model.extend('Server' + Model.modelName, {}, {
+      const ServerModel = Model.extend('Server' + Model.modelName, {}, {
         plural: Model.pluralModelName,
         // This is the model running on the server & attached to a real
         // datasource, that's the place where to keep track of changes
@@ -54,13 +54,13 @@ describe('RemoteConnector', function() {
   });
 
   beforeEach(function(done) {
-    var test = this;
+    const test = this;
     remoteApp = this.remoteApp = loopback();
     remoteApp.set('remoting', {
       types: {warnWhenOverridingType: false},
     });
     remoteApp.use(loopback.rest());
-    var ServerModel = this.ServerModel = loopback.PersistedModel.extend('TestModel');
+    const ServerModel = this.ServerModel = loopback.PersistedModel.extend('TestModel');
 
     remoteApp.model(ServerModel);
 
@@ -76,11 +76,11 @@ describe('RemoteConnector', function() {
   });
 
   it('should support the save method', function(done) {
-    var calledServerCreate = false;
-    var RemoteModel = loopback.PersistedModel.extend('TestModel');
+    let calledServerCreate = false;
+    const RemoteModel = loopback.PersistedModel.extend('TestModel');
     RemoteModel.attachTo(this.remote);
 
-    var ServerModel = this.ServerModel;
+    const ServerModel = this.ServerModel;
 
     ServerModel.create = function(data, options, cb) {
       calledServerCreate = true;
@@ -90,7 +90,7 @@ describe('RemoteConnector', function() {
 
     ServerModel.setupRemoting();
 
-    var m = new RemoteModel({foo: 'bar'});
+    const m = new RemoteModel({foo: 'bar'});
     m.save(function(err, inst) {
       if (err) return done(err);
 

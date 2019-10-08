@@ -4,11 +4,11 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var g = require('../../lib/globalize');
-var loopback = require('../../');
-var client = loopback();
-var CartItem = require('./models').CartItem;
-var remote = loopback.createDataSource({
+const g = require('../../lib/globalize');
+const loopback = require('../../');
+const client = loopback();
+const CartItem = require('./models').CartItem;
+const remote = loopback.createDataSource({
   connector: loopback.Remote,
   url: 'http://localhost:3000',
 });

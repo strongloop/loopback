@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 'use strict';
-var loopback = require('../../');
+const loopback = require('../../');
 
 module.exports = describe;
 
