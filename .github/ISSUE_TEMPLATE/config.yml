@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://loopback.io/doc/en/contrib/Reporting-issues.html#security-issues
+    about: Do not report security vulnerabilities using GitHub issues. Please send an email to `reachsl@us.ibm.com` instead.
+  - name: Get help on StackOverflow
+    url: https://stackoverflow.com/tags/loopbackjs
+    about: Please ask and answer questions on StackOverflow.
+  - name: Join our mailing list
+    url: https://groups.google.com/forum/#!forum/loopbackjs
+    about: You can also post your question to our mailing list.
