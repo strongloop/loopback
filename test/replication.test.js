@@ -30,7 +30,7 @@ describe('Replication / Change APIs', function() {
     SourceModel = this.SourceModel = PersistedModel.extend(
       'SourceModel-' + tid,
       {id: {id: true, type: String, defaultFn: 'guid'}},
-      {trackChanges: true}
+      {trackChanges: true},
     );
 
     SourceModel.attachTo(dataSource);
@@ -38,7 +38,7 @@ describe('Replication / Change APIs', function() {
     TargetModel = this.TargetModel = PersistedModel.extend(
       'TargetModel-' + tid,
       {id: {id: true, type: String, defaultFn: 'guid'}},
-      {trackChanges: true}
+      {trackChanges: true},
     );
 
     // NOTE(bajtos) At the moment, all models share the same Checkpoint
@@ -85,7 +85,7 @@ describe('Replication / Change APIs', function() {
         Model = this.Model = PersistedModel.extend(
           'Model-' + tid,
           {id: {id: true, type: String, defaultFn: 'guid'}},
-          {trackChanges: true, changeCleanupInterval: -1}
+          {trackChanges: true, changeCleanupInterval: -1},
         );
 
         Model.attachTo(dataSource);
@@ -105,7 +105,7 @@ describe('Replication / Change APIs', function() {
         Model = this.Model = PersistedModel.extend(
           'Model-' + tid,
           {id: {id: true, type: String, defaultFn: 'guid'}},
-          {trackChanges: true, changeCleanupInterval: 10000}
+          {trackChanges: true, changeCleanupInterval: 10000},
         );
 
         Model.attachTo(dataSource);
@@ -542,7 +542,7 @@ describe('Replication / Change APIs', function() {
               });
 
               cb();
-            }
+            },
           );
         },
       ], done);
@@ -586,7 +586,7 @@ describe('Replication / Change APIs', function() {
                 expect(changes).to.have.length(0);
 
                 done();
-              }
+              },
             );
           });
         },
@@ -609,7 +609,7 @@ describe('Replication / Change APIs', function() {
                   TargetModel.modelName,
                   '1',
                   {name: '3rd-party'},
-                  cb
+                  cb,
                 );
               } else {
                 // 2.x connectors require `options`
@@ -618,7 +618,7 @@ describe('Replication / Change APIs', function() {
                   '1',
                   {name: '3rd-party'},
                   {}, // options
-                  cb
+                  cb,
                 );
               }
             });
@@ -633,7 +633,7 @@ describe('Replication / Change APIs', function() {
 
                 // resolve the conflict using ours
                 conflicts[0].resolve(next);
-              }
+              },
             );
           },
 
@@ -654,7 +654,7 @@ describe('Replication / Change APIs', function() {
                 connector.create(
                   TargetModel.modelName,
                   {id: '1', name: '3rd-party'},
-                  cb
+                  cb,
                 );
               } else {
                 // 2.x connectors require `options`
@@ -662,7 +662,7 @@ describe('Replication / Change APIs', function() {
                   TargetModel.modelName,
                   {id: '1', name: '3rd-party'},
                   {}, // options
-                  cb
+                  cb,
                 );
               }
             });
@@ -677,7 +677,7 @@ describe('Replication / Change APIs', function() {
 
                 // resolve the conflict using ours
                 conflicts[0].resolve(next);
-              }
+              },
             );
           },
 
@@ -701,7 +701,7 @@ describe('Replication / Change APIs', function() {
                   TargetModel.modelName,
                   '1',
                   {name: '3rd-party'},
-                  cb
+                  cb,
                 );
               } else {
                 // 2.x connectors require `options`
@@ -710,7 +710,7 @@ describe('Replication / Change APIs', function() {
                   '1',
                   {name: '3rd-party'},
                   {}, // options
-                  cb
+                  cb,
                 );
               }
             });
@@ -725,7 +725,7 @@ describe('Replication / Change APIs', function() {
 
                 // resolve the conflict using ours
                 conflicts[0].resolve(next);
-              }
+              },
             );
           },
 
@@ -748,7 +748,7 @@ describe('Replication / Change APIs', function() {
                 connector.destroy(
                   TargetModel.modelName,
                   '1',
-                  cb
+                  cb,
                 );
               } else {
                 // 2.x connectors require `options`
@@ -756,7 +756,7 @@ describe('Replication / Change APIs', function() {
                   TargetModel.modelName,
                   '1',
                   {}, // options
-                  cb
+                  cb,
                 );
               }
             });
@@ -1078,7 +1078,7 @@ describe('Replication / Change APIs', function() {
           function(err) {
             if (err) return done(err);
             assertChangeRecordedForId(inst.id, done);
-          }
+          },
         );
       });
     });
@@ -1116,7 +1116,7 @@ describe('Replication / Change APIs', function() {
           if (err) return done(err);
 
           assertChangeRecordedForId(inst.id, done);
-        }
+        },
       );
     });
 
@@ -1153,7 +1153,7 @@ describe('Replication / Change APIs', function() {
             if (err) return done(err);
 
             assertChangeRecordedForId(inst.id, done);
-          }
+          },
         );
       });
     });
@@ -1249,7 +1249,7 @@ describe('Replication / Change APIs', function() {
       AnotherModel = this.AnotherModel = PersistedModel.extend(
         'AnotherModel-' + tid,
         {id: {id: true, type: String, defaultFn: 'guid'}},
-        {trackChanges: true}
+        {trackChanges: true},
       );
 
       // NOTE(bajtos) At the moment, all models share the same Checkpoint
@@ -1409,7 +1409,7 @@ describe('Replication / Change APIs', function() {
             function resolveUsingOurs(conflict, cb) {
               conflict.resolveUsingSource(cb);
             },
-            done
+            done,
           );
         });
 
@@ -1421,7 +1421,7 @@ describe('Replication / Change APIs', function() {
                 .to.equal(ClientB.modelName);
               conflict.resolveUsingTarget(cb);
             },
-            done
+            done,
           );
         });
 
@@ -1430,7 +1430,7 @@ describe('Replication / Change APIs', function() {
             function resolveManually(conflict, cb) {
               conflict.resolveManually({name: 'manual'}, cb);
             },
-            done
+            done,
           );
         });
 
@@ -1439,7 +1439,7 @@ describe('Replication / Change APIs', function() {
             function resolveUsingOurs(conflict, cb) {
               conflict.resolveUsingSource(cb);
             },
-            done
+            done,
           );
         });
 
@@ -1451,7 +1451,7 @@ describe('Replication / Change APIs', function() {
                 .to.equal(ClientB.modelName);
               conflict.resolveUsingTarget(cb);
             },
-            done
+            done,
           );
         });
 
@@ -1460,7 +1460,7 @@ describe('Replication / Change APIs', function() {
             function resolveManually(conflict, cb) {
               conflict.resolveManually(null, cb);
             },
-            done
+            done,
           );
         });
 
@@ -1469,7 +1469,7 @@ describe('Replication / Change APIs', function() {
             function resolveManually(conflict, cb) {
               conflict.resolveManually({name: 'manual'}, cb);
             },
-            done
+            done,
           );
         });
       });
@@ -1613,7 +1613,7 @@ describe('Replication / Change APIs', function() {
       OptionsSourceModel = PersistedModel.extend(
         'OptionsSourceModel-' + tid,
         {id: {id: true, type: String, defaultFn: 'guid'}},
-        {trackChanges: true}
+        {trackChanges: true},
       );
 
       OptionsSourceModel.attachTo(dataSource);
@@ -1698,7 +1698,7 @@ describe('Replication / Change APIs', function() {
       SourceModel = this.SourceModel = PersistedModel.extend(
         'SourceModel-' + tid,
         {id: {id: true, type: String, defaultFn: 'guid'}},
-        {trackChanges: true, replicationChunkSize: 1}
+        {trackChanges: true, replicationChunkSize: 1},
       );
 
       SourceModel.attachTo(dataSource);
@@ -1706,7 +1706,7 @@ describe('Replication / Change APIs', function() {
       TargetModel = this.TargetModel = PersistedModel.extend(
         'TargetModel-' + tid,
         {id: {id: true, type: String, defaultFn: 'guid'}},
-        {trackChanges: true, replicationChunkSize: 1}
+        {trackChanges: true, replicationChunkSize: 1},
       );
 
       const TargetChange = TargetModel.Change;
@@ -1746,7 +1746,7 @@ describe('Replication / Change APIs', function() {
       SourceModel = this.SourceModel = PersistedModel.extend(
         'SourceModel-' + tid,
         {id: {id: true, type: String, defaultFn: 'guid'}},
-        {trackChanges: true}
+        {trackChanges: true},
       );
 
       SourceModel.attachTo(dataSource);
@@ -1754,7 +1754,7 @@ describe('Replication / Change APIs', function() {
       TargetModel = this.TargetModel = PersistedModel.extend(
         'TargetModel-' + tid,
         {id: {id: true, type: String, defaultFn: 'guid'}},
-        {trackChanges: true}
+        {trackChanges: true},
       );
 
       const TargetChange = TargetModel.Change;
@@ -1960,7 +1960,7 @@ describe('Replication / Change APIs with custom change properties', function() {
       {
         trackChanges: true,
         additionalChangeModelProperties: {customProperty: {type: 'string'}},
-      }
+      },
     );
 
     SourceModel.createChangeFilter = function(since, modelFilter) {
@@ -1991,7 +1991,7 @@ describe('Replication / Change APIs with custom change properties', function() {
       {
         trackChanges: true,
         additionalChangeModelProperties: {customProperty: {type: 'string'}},
-      }
+      },
     );
 
     const ChangeModelForTarget = TargetModel.Change;
@@ -2031,7 +2031,7 @@ describe('Replication / Change APIs with custom change properties', function() {
             },
           });
           done();
-        }
+        },
       );
     });
 
@@ -2043,7 +2043,7 @@ describe('Replication / Change APIs with custom change properties', function() {
           expect(changes).to.have.length(1);
           expect(changes[0]).to.have.property('customProperty', '123');
           done();
-        }
+        },
       );
     });
 

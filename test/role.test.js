@@ -92,7 +92,7 @@ describe('role model', function() {
                 });
               },
             ], done);
-          }
+          },
         );
       });
     });
@@ -224,7 +224,7 @@ describe('role model', function() {
                     // but the matchin role object instead
                     assert(!!inRole);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -235,7 +235,7 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!inRole);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -246,7 +246,7 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!inRole);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -260,7 +260,7 @@ describe('role model', function() {
                       role.id,
                     ]);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -275,7 +275,7 @@ describe('role model', function() {
                       role.name,
                     ]);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -288,7 +288,7 @@ describe('role model', function() {
                       Role.EVERYONE,
                     ]);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -301,7 +301,7 @@ describe('role model', function() {
                       Role.EVERYONE,
                     ]);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -314,7 +314,7 @@ describe('role model', function() {
                       Role.EVERYONE,
                     ]);
                     next();
-                  }
+                  },
                 );
               },
             ], done);
@@ -400,7 +400,7 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!!inRole);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -411,7 +411,7 @@ describe('role model', function() {
                     if (err) return next(err);
                     assert(!inRole);
                     next();
-                  }
+                  },
                 );
               },
               function(next) {
@@ -425,7 +425,7 @@ describe('role model', function() {
                       role.id,
                     ]);
                     next();
-                  }
+                  },
                 );
               },
             ], done);
@@ -469,7 +469,7 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -480,7 +480,7 @@ describe('role model', function() {
               if (err) next(err);
               assert(yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -491,7 +491,7 @@ describe('role model', function() {
               if (err) next(err);
               assert(!yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -502,7 +502,7 @@ describe('role model', function() {
               if (err) return next(err);
               assert(!yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -513,7 +513,7 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -524,7 +524,7 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -535,7 +535,7 @@ describe('role model', function() {
               if (err) return next(err);
               assert(yes);
               next();
-            }
+            },
           );
         },
         function(next) {
@@ -668,7 +668,7 @@ describe('role model', function() {
         },
         // passing {ownerRelations: true} will enable the new $owner role resolver
         // and hence resolve false when no belongsTo relation is defined
-        {ownerRelations: true}
+        {ownerRelations: true},
       );
       app.model(Album, {dataSource: 'db'});
 
@@ -693,7 +693,7 @@ describe('role model', function() {
       // with any belongsTo relation allowing to resolve truthy
       const Message = givenModelWithSenderReceiverRelations(
         'ModelWithAllRelations',
-        {ownerRelations: true}
+        {ownerRelations: true},
       );
 
       return givenUsers()
@@ -729,7 +729,7 @@ describe('role model', function() {
       // with a specified list of belongsTo relations allowing to resolve truthy
         const Message = givenModelWithSenderReceiverRelations(
           'ModelWithCoercedRelations',
-          {ownerRelations: ['receiver']}
+          {ownerRelations: ['receiver']},
         );
 
         return givenUsers()
@@ -806,7 +806,7 @@ describe('role model', function() {
       const Model = app.registry.createModel(
         name,
         {content: String},
-        options
+        options,
       );
       app.model(Model, {dataSource: 'db'});
       return Model;
@@ -1091,7 +1091,7 @@ describe('role model', function() {
                   function(err, p) {
                     if (err) return callback(err);
                     callback(p);
-                  }
+                  },
                 );
               },
               function(callback) {
@@ -1100,7 +1100,7 @@ describe('role model', function() {
                   function(err, p) {
                     if (err) return callback(err);
                     callback(p);
-                  }
+                  },
                 );
               }],
             function(err, principles) {

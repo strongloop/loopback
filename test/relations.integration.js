@@ -661,11 +661,11 @@ describe('relations - integration', function() {
 
       const product = app.registry.createModel(
         'product',
-        {id: 'string', name: 'string'}
+        {id: 'string', name: 'string'},
       );
       const category = app.registry.createModel(
         'category',
-        {id: 'string', name: 'string'}
+        {id: 'string', name: 'string'},
       );
       app.model(product, {dataSource: 'db'});
       app.model(category, {dataSource: 'db'});
@@ -786,13 +786,13 @@ describe('relations - integration', function() {
       const group = app.registry.createModel(
         'group',
         {name: 'string'},
-        {plural: 'groups'}
+        {plural: 'groups'},
       );
       app.model(group, {dataSource: 'db'});
 
       const poster = app.registry.createModel(
         'poster',
-        {url: 'string'}
+        {url: 'string'},
       );
       app.model(poster, {dataSource: 'db'});
 
@@ -822,7 +822,7 @@ describe('relations - integration', function() {
         .send({url: 'http://image.url'})
         .expect(200, function(err, res) {
           expect(res.body).to.be.eql(
-            {url: 'http://image.url'}
+            {url: 'http://image.url'},
           );
 
           done();
@@ -838,7 +838,7 @@ describe('relations - integration', function() {
 
           expect(res.body.name).to.be.equal('Group 1');
           expect(res.body.poster).to.be.eql(
-            {url: 'http://image.url'}
+            {url: 'http://image.url'},
           );
 
           done();
@@ -853,7 +853,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            {url: 'http://image.url'}
+            {url: 'http://image.url'},
           );
 
           done();
@@ -880,7 +880,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            {url: 'http://changed.url'}
+            {url: 'http://changed.url'},
           );
 
           done();
@@ -903,13 +903,13 @@ describe('relations - integration', function() {
       const todoList = app.registry.createModel(
         'todoList',
         {name: 'string'},
-        {plural: 'todo-lists'}
+        {plural: 'todo-lists'},
       );
       app.model(todoList, {dataSource: 'db'});
 
       const todoItem = app.registry.createModel(
         'todoItem',
-        {content: 'string'}, {forceId: false}
+        {content: 'string'}, {forceId: false},
       );
       app.model(todoItem, {dataSource: 'db'});
 
@@ -1021,7 +1021,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            {content: 'Todo 3', id: 3}
+            {content: 'Todo 3', id: 3},
           );
 
           done();
@@ -1090,19 +1090,19 @@ describe('relations - integration', function() {
     before(function defineProductAndCategoryModels() {
       const recipe = app.registry.createModel(
         'recipe',
-        {name: 'string'}
+        {name: 'string'},
       );
       app.model(recipe, {dataSource: 'db'});
 
       const ingredient = app.registry.createModel(
         'ingredient',
-        {name: 'string'}
+        {name: 'string'},
       );
       app.model(ingredient, {dataSource: 'db'});
 
       const photo = app.registry.createModel(
         'photo',
-        {name: 'string'}
+        {name: 'string'},
       );
       app.model(photo, {dataSource: 'db'});
 
@@ -1259,7 +1259,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            {name: 'Butter', id: test.ingredient3}
+            {name: 'Butter', id: test.ingredient3},
           );
 
           done();
@@ -1335,7 +1335,7 @@ describe('relations - integration', function() {
       this.put(url)
         .expect(200, function(err, res) {
           expect(res.body).to.be.eql(
-            {name: 'Sugar', id: test.ingredient2}
+            {name: 'Sugar', id: test.ingredient2},
           );
 
           done();
@@ -1445,35 +1445,35 @@ describe('relations - integration', function() {
       const Book = app.registry.createModel(
         'Book',
         {name: 'string'},
-        {plural: 'books'}
+        {plural: 'books'},
       );
       app.model(Book, {dataSource: 'db'});
 
       const Page = app.registry.createModel(
         'Page',
         {name: 'string'},
-        {plural: 'pages'}
+        {plural: 'pages'},
       );
       app.model(Page, {dataSource: 'db'});
 
       const Image = app.registry.createModel(
         'Image',
         {name: 'string'},
-        {plural: 'images'}
+        {plural: 'images'},
       );
       app.model(Image, {dataSource: 'db'});
 
       const Note = app.registry.createModel(
         'Note',
         {text: 'string'},
-        {plural: 'notes'}
+        {plural: 'notes'},
       );
       app.model(Note, {dataSource: 'db'});
 
       const Chapter = app.registry.createModel(
         'Chapter',
         {name: 'string'},
-        {plural: 'chapters'}
+        {plural: 'chapters'},
       );
       app.model(Chapter, {dataSource: 'db'});
 

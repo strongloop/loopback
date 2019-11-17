@@ -192,7 +192,7 @@ describe('Replication over REST', function() {
         const conflict = new LocalConflict(
           conflictedCarId,
           LocalCar,
-          RemoteCar
+          RemoteCar,
         );
         conflict.resolveUsingSource(expectHttpError(401, done));
       });
@@ -202,7 +202,7 @@ describe('Replication over REST', function() {
         const conflict = new RemoteConflict(
           conflictedCarId,
           RemoteCar,
-          LocalCar
+          LocalCar,
         );
         conflict.resolveUsingSource(expectHttpError(401, done));
       });
@@ -218,7 +218,7 @@ describe('Replication over REST', function() {
         const conflict = new LocalConflict(
           conflictedCarId,
           LocalCar,
-          RemoteCar
+          RemoteCar,
         );
         conflict.resolveUsingSource(done);
       });
@@ -228,7 +228,7 @@ describe('Replication over REST', function() {
         const conflict = new RemoteConflict(
           conflictedCarId,
           RemoteCar,
-          LocalCar
+          LocalCar,
         );
         conflict.resolveUsingSource(expectHttpError(401, done));
       });
@@ -407,7 +407,7 @@ describe('Replication over REST', function() {
         LocalUser.updateAll(
           {id: aliceId},
           {fullname: 'Alice Smith'},
-          done
+          done,
         );
       });
     }
@@ -611,7 +611,7 @@ describe('Replication over REST', function() {
             serverCars = cars.map(carToString);
 
             next();
-          }
+          },
         );
       },
     ], done);
@@ -631,7 +631,7 @@ describe('Replication over REST', function() {
             clientCars = cars.map(carToString);
 
             next();
-          }
+          },
         );
       },
     ], done);

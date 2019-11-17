@@ -215,7 +215,7 @@ describe('OptionsFromRemotingContext', function() {
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true}
+        {forceId: false, replaceOnPUT: true},
       );
 
       app.model(Category, {dataSource: 'db'});
@@ -288,7 +288,7 @@ describe('OptionsFromRemotingContext', function() {
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true}
+        {forceId: false, replaceOnPUT: true},
       );
 
       app.model(Category, {dataSource: 'db'});
@@ -333,7 +333,7 @@ describe('OptionsFromRemotingContext', function() {
       Category = app.registry.createModel(
         'Category',
         {name: String},
-        {forceId: false, replaceOnPUT: true}
+        {forceId: false, replaceOnPUT: true},
       );
 
       app.model(Category, {dataSource: 'db'});
@@ -364,7 +364,7 @@ describe('OptionsFromRemotingContext', function() {
     Product = app.registry.createModel(
       'Product',
       {name: String},
-      {forceId: false, replaceOnPUT: true}
+      {forceId: false, replaceOnPUT: true},
     );
 
     Product.createOptionsFromRemotingContext = function(ctx) {

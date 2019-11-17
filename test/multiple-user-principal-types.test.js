@@ -101,7 +101,7 @@ describe('Multiple users with custom principalType', function() {
           },
           function onError(err) {
             expect(err).to.have.property('code', 'LOGIN_FAILED');
-          }
+          },
         );
     });
   });
@@ -285,7 +285,7 @@ describe('Multiple users with custom principalType', function() {
     describe('role.users()', function() {
       it('returns users when using custom user principalType', function() {
         return userRole.principals.create(
-          {principalType: OneUser.modelName, principalId: userFromOneModel.id}
+          {principalType: OneUser.modelName, principalId: userFromOneModel.id},
         )
           .then(function() {
             return userRole.users({where: {principalType: OneUser.modelName}});
@@ -298,7 +298,7 @@ describe('Multiple users with custom principalType', function() {
 
       it('returns empty array when using invalid principalType', function() {
         return userRole.principals.create(
-          {principalType: 'invalidModelName', principalId: userFromOneModel.id}
+          {principalType: 'invalidModelName', principalId: userFromOneModel.id},
         )
           .then(function() {
             return userRole.users({where: {principalType: 'invalidModelName'}});
@@ -312,7 +312,7 @@ describe('Multiple users with custom principalType', function() {
     describe('principal.user()', function() {
       it('returns the correct user instance', function() {
         return userRole.principals.create(
-          {principalType: OneUser.modelName, principalId: userFromOneModel.id}
+          {principalType: OneUser.modelName, principalId: userFromOneModel.id},
         ).then(function(principal) {
           return principal.user();
         }).then(function(user) {
@@ -322,7 +322,7 @@ describe('Multiple users with custom principalType', function() {
 
       it('returns null when created with invalid principalType', function() {
         return userRole.principals.create(
-          {principalType: 'invalidModelName', principalId: userFromOneModel.id}
+          {principalType: 'invalidModelName', principalId: userFromOneModel.id},
         ).then(function(principal) {
           return principal.user();
         }).then(function(user) {
@@ -346,7 +346,7 @@ describe('Multiple users with custom principalType', function() {
 
       it('supports getRoles()', function() {
         return Role.getRoles(
-          userOneBaseContext
+          userOneBaseContext,
         ).then(function(roles) {
           expect(roles).to.eql([
             Role.AUTHENTICATED,
@@ -487,7 +487,7 @@ describe('Multiple users with custom principalType', function() {
           // with any belongsTo relation allowing to resolve truthy
             const Message = createModelWithOptions(
               'ModelWithAllRelations',
-              {ownerRelations: true}
+              {ownerRelations: true},
             );
 
             const messages = [
@@ -587,7 +587,7 @@ describe('Multiple users with custom principalType', function() {
         const Model = app.registry.createModel(
           name,
           {content: String, senderType: String},
-          options
+          options,
         );
         app.model(Model, {dataSource: 'db'});
         return Model;
@@ -616,7 +616,7 @@ describe('Multiple users with custom principalType', function() {
               function onError(err) {
                 expect(err).to.have.property('statusCode', 400);
                 expect(err).to.have.property('code', 'INVALID_PRINCIPAL_TYPE');
-              }
+              },
             );
         });
 

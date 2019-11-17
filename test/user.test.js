@@ -96,7 +96,7 @@ describe('User', function() {
     // create 2 users: with and without verified email
     return Promise.map(
       [validCredentials, validCredentialsEmailVerified],
-      credentials => User.create(credentials)
+      credentials => User.create(credentials),
     ).then(users => {
       validCredentialsUser = user = users[0];
       validCredentialsEmailVerifiedUser = users[1];
@@ -147,7 +147,7 @@ describe('User', function() {
             expect(err.statusCode).to.equal(422);
             expect(err.details.context).to.equal(User.modelName);
             expect(err.details.codes.email).to.deep.equal(['presence']);
-          }
+          },
         );
     });
 
@@ -161,7 +161,7 @@ describe('User', function() {
             expect(err.statusCode).to.equal(422);
             expect(err.details.context).to.equal(User.modelName);
             expect(err.details.codes.email).to.deep.equal(['presence']);
-          }
+          },
         );
     });
 
@@ -549,7 +549,7 @@ describe('User', function() {
               code: 'PASSWORD_TOO_LONG',
               statusCode: 422,
             });
-          }
+          },
         );
     });
 
@@ -569,7 +569,7 @@ describe('User', function() {
               code: 'PASSWORD_TOO_LONG',
               statusCode: 422,
             });
-          }
+          },
         );
     });
   });
@@ -1014,7 +1014,7 @@ describe('User', function() {
               userId: validCredentialsUser.pk,
             },
           });
-        }
+        },
       );
     });
 
@@ -1498,7 +1498,7 @@ describe('User', function() {
             code: 'INVALID_PASSWORD',
             statusCode: 400,
           });
-        }
+        },
       );
     });
 
@@ -1514,7 +1514,7 @@ describe('User', function() {
             code: 'USER_NOT_FOUND',
             statusCode: 401,
           });
-        }
+        },
       );
     });
 
@@ -1602,7 +1602,7 @@ describe('User', function() {
             code: 'USER_NOT_FOUND',
             statusCode: 401,
           });
-        }
+        },
       );
     });
 
@@ -2639,7 +2639,7 @@ describe('User', function() {
         function(err, userInstance) {
           if (err) return done(err);
           assertNoAccessTokens(done);
-        }
+        },
       );
     });
 
@@ -2757,7 +2757,7 @@ describe('User', function() {
               if (err) return next(err);
               userPartial = partialInstance;
               next();
-            }
+            },
           );
         },
         function loginPartiallUser(next) {
@@ -2773,7 +2773,7 @@ describe('User', function() {
             function(err, info) {
               if (err) return next(err);
               next();
-            }
+            },
           );
         },
         function verifyTokensOfPartialUser(next) {
@@ -2793,7 +2793,7 @@ describe('User', function() {
         function(err, userInstance) {
           if (err) return done(err);
           assertPreservedTokens(done);
-        }
+        },
       );
     });
 
@@ -2829,9 +2829,9 @@ describe('User', function() {
                       if (err) return next(err);
                       next();
                     });
-                }
+                },
               );
-            }
+            },
           );
         },
         function(next) {
@@ -2870,7 +2870,7 @@ describe('User', function() {
               if (err) return next(err);
               userSpecial = specialInstance;
               next();
-            }
+            },
           );
         },
         function loginSpecialUser(next) {
@@ -2885,7 +2885,7 @@ describe('User', function() {
             {email: 'superspecial@example.com'}, function(err, info) {
               if (err) return next(err);
               next();
-            }
+            },
           );
         },
         function verifyTokensOfSpecialUser(next) {

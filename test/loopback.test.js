@@ -161,7 +161,7 @@ describe('loopback', function() {
         {
           returns: {arg: 'stats', type: 'array'},
           http: {path: '/info', verb: 'get'},
-        }
+        },
       );
 
       assert.equal(Product.stats.returns.arg, 'stats');

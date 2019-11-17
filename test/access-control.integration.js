@@ -75,11 +75,11 @@ describe('access control - integration', function() {
     lt.it.shouldBeDeniedWhenCalledByUser(CURRENT_USER, 'GET', urlForUser);
 
     lt.it.shouldBeAllowedWhenCalledAnonymously(
-      'POST', '/api/users', newUserData()
+      'POST', '/api/users', newUserData(),
     );
 
     lt.it.shouldBeAllowedWhenCalledByUser(
-      CURRENT_USER, 'POST', '/api/users', newUserData()
+      CURRENT_USER, 'POST', '/api/users', newUserData(),
     );
 
     lt.it.shouldBeAllowedWhenCalledByUser(CURRENT_USER, 'POST', '/api/users/logout');

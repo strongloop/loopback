@@ -29,7 +29,7 @@ describe('loopback application', function() {
           expect(res).to.match(/\nX$/);
 
           done();
-        }
+        },
       );
     });
 

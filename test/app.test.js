@@ -245,7 +245,7 @@ describe('app', function() {
           expect(steps).to.eql(['/scope', '/scope/item']);
 
           done();
-        }
+        },
       );
     });
 
@@ -261,7 +261,7 @@ describe('app', function() {
           expect(steps).to.eql(['/a', '/b']);
 
           done();
-        }
+        },
       );
     });
 
@@ -277,7 +277,7 @@ describe('app', function() {
           expect(steps).to.eql(['/a', '/b', '/scope']);
 
           done();
-        }
+        },
       );
     });
 
@@ -562,7 +562,7 @@ describe('app', function() {
         {
           phase: 'initial',
           paths: ['/scope', /^\/(a|b)/],
-        }
+        },
       );
 
       async.eachSeries(
@@ -574,7 +574,7 @@ describe('app', function() {
           expect(steps).to.eql(['/a', '/b', '/scope']);
 
           done();
-        }
+        },
       );
     });
   });
@@ -719,14 +719,14 @@ describe('app', function() {
       const Book = app.registry.createModel(
         'Book',
         {name: 'string'},
-        {plural: 'books'}
+        {plural: 'books'},
       );
       app.model(Book, {dataSource: 'db'});
 
       const Page = app.registry.createModel(
         'Page',
         {name: 'string'},
-        {plural: 'pages'}
+        {plural: 'pages'},
       );
       app.model(Page, {dataSource: 'db'});
 
@@ -1089,11 +1089,11 @@ describe('app', function() {
     const UserAccount = app.registry.createModel(
       'UserAccount',
       {name: 'string'},
-      options
+      options,
     );
     const UserRole = app.registry.createModel(
       'UserRole',
-      {name: 'string'}
+      {name: 'string'},
     );
     app.model(UserAccount, {dataSource: 'db'});
     app.model(UserRole, {dataSource: 'db'});
