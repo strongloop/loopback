@@ -233,7 +233,7 @@ module.exports = function(AccessToken) {
     try {
       assert(
         this.created && typeof this.created.getTime === 'function',
-        'token.created must be a valid Date'
+        'token.created must be a valid Date',
       );
       assert(this.ttl !== 0, 'token.ttl must be not be 0');
       assert(this.ttl, 'token.ttl must exist');

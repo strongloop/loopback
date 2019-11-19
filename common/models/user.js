@@ -766,14 +766,14 @@ module.exports = function(User) {
         throw new Error(
           'Cannot build user verification URL, ' +
           'the default confirm method is not public. ' +
-          'Please provide the URL in verifyOptions.verifyHref.'
+          'Please provide the URL in verifyOptions.verifyHref.',
         );
       }
 
       const urlPath = joinUrlPath(
         verifyOptions.restApiRoot,
         userModel.http.path,
-        confirmMethod.http.path
+        confirmMethod.http.path,
       );
 
       verifyOptions.verifyHref =
@@ -1148,7 +1148,7 @@ module.exports = function(User) {
             '{{(`include=user`)}}\n\n'),
         },
         http: {verb: 'post'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1167,7 +1167,7 @@ module.exports = function(User) {
           },
         ],
         http: {verb: 'all'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1179,7 +1179,7 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
         ],
         http: {verb: 'post'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1192,7 +1192,7 @@ module.exports = function(User) {
           {arg: 'redirect', type: 'string'},
         ],
         http: {verb: 'get', path: '/confirm'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1203,7 +1203,7 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', required: true, http: {source: 'body'}},
         ],
         http: {verb: 'post', path: '/reset'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1217,7 +1217,7 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
         ],
         http: {verb: 'POST', path: '/change-password'},
-      }
+      },
     );
 
     const setPasswordScopes = UserModel.settings.restrictResetPasswordTokenScope ?
@@ -1234,7 +1234,7 @@ module.exports = function(User) {
         ],
         accessScopes: setPasswordScopes,
         http: {verb: 'POST', path: '/reset-password'},
-      }
+      },
     );
 
     function getUserIdFromRequestContext(ctx) {
@@ -1337,7 +1337,7 @@ module.exports = function(User) {
         // This is a programmer's error, use the default status code 500
         return next(new Error(
           'Invalid use of "options.setPassword". Only "password" can be ' +
-          'changed when using this option.'
+          'changed when using this option.',
         ));
       }
 
@@ -1350,7 +1350,7 @@ module.exports = function(User) {
 
     const err = new Error(
       'Changing user password via patch/replace API is not allowed. ' +
-      'Use changePassword() or setPassword() instead.'
+      'Use changePassword() or setPassword() instead.',
     );
     err.statusCode = 401;
     err.code = 'PASSWORD_CHANGE_NOT_ALLOWED';

@@ -613,7 +613,7 @@ describe.onServer('Remote Methods', function() {
           // should match the given property
           assert(
             p.type.name === o.name ||
-            p.type.name === o
+            p.type.name === o,
           );
         }
       });
@@ -706,7 +706,7 @@ describe.onServer('Remote Methods', function() {
           const remoteMethod = {name: methodName};
           assert.equal(
             User._getAccessTypeForMethod(remoteMethod),
-            expectedAccessType
+            expectedAccessType,
           );
         });
       });

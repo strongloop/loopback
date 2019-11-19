@@ -144,7 +144,7 @@ describe('loopback.token(options)', function() {
       const app = createTestApp(
         this.token,
         {token: {searchDefaultTokenKeys: false}},
-        done
+        done,
       );
       const agent = request.agent(app);
 
@@ -615,7 +615,7 @@ describe('AccessToken', function() {
           param: function(name) { return this._params[name]; },
           header: function(name) { return this.headers[name]; },
         },
-        opts
+        opts,
       );
     }
   });

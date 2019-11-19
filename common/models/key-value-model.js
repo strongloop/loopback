@@ -226,7 +226,7 @@ function throwNotAttached(modelName, methodName) {
       'The %s method has not been setup. ' +
       'The {{KeyValueModel}} has not been correctly attached ' +
       'to a {{DataSource}}!',
-    modelName, methodName, methodName
+    modelName, methodName, methodName,
   ));
 }
 

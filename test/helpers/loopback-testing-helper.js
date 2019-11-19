@@ -76,7 +76,7 @@ _beforeEach.givenModel = function(modelName, attrs, optionalHandler) {
         ' without attached dataSource');
     assert(
       typeof model.create === 'function',
-      modelName + ' does not have a create method'
+      modelName + ' does not have a create method',
     );
 
     model.create(attrs, function(err, result) {

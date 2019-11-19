@@ -222,7 +222,7 @@ describe('Change', function() {
           change = ch;
 
           done(err);
-        }
+        },
       );
     });
 

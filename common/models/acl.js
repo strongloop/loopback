@@ -607,12 +607,12 @@ module.exports = function(ACL) {
         break;
       case ACL.USER:
         this.userModel.findOne(
-          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb
+          {where: {or: [{username: id}, {email: id}, {id: id}]}}, cb,
         );
         break;
       case ACL.APP:
         this.applicationModel.findOne(
-          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb
+          {where: {or: [{name: id}, {email: id}, {id: id}]}}, cb,
         );
         break;
       default:
@@ -621,7 +621,7 @@ module.exports = function(ACL) {
         if (userModel) {
           userModel.findOne(
             {where: {or: [{username: id}, {email: id}, {id: id}]}},
-            cb
+            cb,
           );
         } else {
           process.nextTick(function() {

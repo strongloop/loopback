@@ -487,7 +487,7 @@ module.exports = function(Role) {
       if (promise && typeof promise.then === 'function') {
         promise.then(
           function(result) { callback(null, result); },
-          callback
+          callback,
         );
       }
       return callback.promise;

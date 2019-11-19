@@ -573,7 +573,7 @@ describe('authorized roles propagation in RemotingContext', function() {
             $everyone: true,
             $authenticated: true,
             myRole: true,
-          }
+          },
         );
       });
   });
@@ -591,7 +591,7 @@ describe('authorized roles propagation in RemotingContext', function() {
           {
             $everyone: true,
             myRole: true,
-          }
+          },
         );
       });
   });
@@ -610,7 +610,7 @@ describe('authorized roles propagation in RemotingContext', function() {
         const ctx = models.MyTestModel.lastRemotingContext;
         expect(ctx.args.options.authorizedRoles).to.eql(
         // '$everyone' is not expected as default permission is DENY
-          {myRole: true}
+          {myRole: true},
         );
       });
   });

@@ -55,7 +55,7 @@ describe('role-mapping model', function() {
           expect(user.id).to.equal(oneUser.id);
           done();
         });
-      }
+      },
     );
   });
 
@@ -79,7 +79,7 @@ describe('role-mapping model', function() {
           expect(app.id).to.equal(anApp.id);
           done();
         });
-      }
+      },
     );
   });
 
@@ -103,7 +103,7 @@ describe('role-mapping model', function() {
           expect(role.id).to.equal(aRole.id);
           done();
         });
-      }
+      },
     );
   });
 

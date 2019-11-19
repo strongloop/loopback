@@ -14,7 +14,7 @@ describe('hidden properties', function() {
     const Product = this.Product = loopback.PersistedModel.extend(
       'product',
       {},
-      {hidden: ['secret']}
+      {hidden: ['secret']},
     );
     Product.attachTo(loopback.memory());
 
