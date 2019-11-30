@@ -1810,6 +1810,11 @@ describe('relations - integration', function() {
       const url = '/api/customers/' + cust.id + '/profile';
       this.get(url)
         .expect(404, function(err, res) {
+          const expected = 'No "profile" instance(s) found';
+          expect(res.body.error.message).to.be.equal(
+            expected,
+          );
+          expect(res.body.error.code).to.be.equal('MODEL_NOT_FOUND');
           done(err);
         });
     });
