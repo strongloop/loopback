@@ -4,13 +4,13 @@
 [![Module LTS Adopted'](https://img.shields.io/badge/Module%20LTS-Adopted-brightgreen.svg?style=flat)](http://github.com/CloudNativeJS/ModuleLTS)
 [![IBM Support](https://img.shields.io/badge/IBM%20Support-Frameworks-brightgreen.svg?style=flat)](http://ibm.biz/node-support)
 
-**This module is in Active LTS mode, new features are no longer accepted.**
-<br/>(See [Module Long Term Support Policy](#module-long-term-support-policy)
-below.)
+**⚠️ LoopBack 3 is in Maintenance LTS mode, only critical bugs and critical
+security fixes will be provided. (See
+[Module Long Term Support Policy](#module-long-term-support-policy) below.)**
 
-LoopBack 3 users looking for new features are encouraged to upgrade
-to LoopBack 4. Refer to
-[loopback-next#1849](https://github.com/strongloop/loopback-next/issues/1849)
+We urge all LoopBack 3 users to migrate their applications to LoopBack 4 as
+soon as possible. Refer to our
+[Migration Guide](https://loopback.io/doc/en/lb4/migration-overview.html)
 for more information on how to upgrade.
 
 ## Overview
@@ -44,9 +44,9 @@ This module adopts the [Module Long Term Support (LTS)](http://github.com/CloudN
 
 | Version    | Status          | Published | EOL                  |
 | ---------- | --------------- | --------- | -------------------- |
-| LoopBack 4 | Current         | Oct 2018  | Apr 2021 _(minimum)_ |
-| LoopBack 3 | Active LTS | Dec 2016  | Dec 2020             |
-| LoopBack 2 | End-of-Life LTS | Jul 2014  | Apr 2019             |
+| LoopBack 4 | Current         | Oct 2018  | Apr 2022 _(minimum)_ |
+| LoopBack 3 | Maintenance LTS | Dec 2016  | Dec 2020             |
+| LoopBack 2 | End-of-Life     | Jul 2014  | Apr 2019             |
 
 Learn more about our LTS plan in [docs](https://loopback.io/doc/en/contrib/Long-term-support.html).
 
