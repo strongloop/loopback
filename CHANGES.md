@@ -1,3 +1,39 @@
+2020-03-06, Version 3.27.0
+==========================
+
+ * Update LTS status in README (Miroslav Bajtoš)
+
+ * chore: update copyright year (Diana Lau)
+
+ * feat: change hasone relation error message (Sujesh T)
+
+ * chore: disable security issue reporting (Nora)
+
+ * chore: fix eslint violations (Nora)
+
+ * fixup! manual fixes (Miroslav Bajtoš)
+
+ * fixup! eslint --fix . (Miroslav Bajtoš)
+
+ * chore: update eslint & eslint-config to latest (Miroslav Bajtoš)
+
+ * chore: update dev-dependencies (Miroslav Bajtoš)
+
+ * chore: update chai to v4, dirty-chai to v2 (Miroslav Bajtoš)
+
+ * Updated "ismail" package to v3.2 (Stanislav Sarbinski)
+
+ * Introduce issue templates for bugs, features, etc. (Miroslav Bajtoš)
+
+ * Improve PULL_REQUEST_TEMPLATE (Miroslav Bajtoš)
+
+ * test: use Chromium (not Chrome) when available (Miroslav Bajtoš)
+
+ * test: disable Chrome sandboxing when inside Docker (Miroslav Bajtoš)
+
+ * test: switch from PhantomJS to HeadlessChrome (Miroslav Bajtoš)
+
+
 2019-05-31, Version 3.26.0
 ==========================
 
