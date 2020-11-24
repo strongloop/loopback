@@ -52,7 +52,7 @@
     "loopback-datasource-juggler": "^3.28.0",
     "loopback-filters": "^1.0.0",
     "loopback-phase": "^3.0.0",
-    "nodemailer": "^4.0.1",
+    "nodemailer": "^6.4.16",
     "nodemailer-direct-transport": "^3.3.2",
     "nodemailer-stub-transport": "^1.1.0",
     "serve-favicon": "^2.2.0",
