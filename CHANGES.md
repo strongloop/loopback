@@ -1,3 +1,15 @@
+2020-11-25, Version 3.28.0
+==========================
+
+ * upgrade nodemailer to greater than 6.4.16 (jannyHou)
+
+ * chore: sync LoopBack 4 with Node.js v14 EOL (Rifa Achrinza)
+
+ * chore: add Node.js 14 to travis (Diana Lau)
+
+ * Remove "major" and "p1" from stalebot (Miroslav Bajtoš)
+
+
 2020-03-06, Version 3.27.0
 ==========================
 
