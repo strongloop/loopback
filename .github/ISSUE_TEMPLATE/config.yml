@@ -2,7 +2,12 @@ blank_issues_enabled: false
 contact_links:
   - name: Report a security vulnerability
     url: https://loopback.io/doc/en/contrib/Reporting-issues.html#security-issues
-    about: Do not report security vulnerabilities using GitHub issues. Please send an email to `reachsl@us.ibm.com` instead.
+    about: >
+      LoopBack 3 has reached End-of-Life. No new security fixes will be provided
+      or accepted.
+      
+      Do not report security vulnerabilities using GitHub issues. Please send an
+      email to `reachsl@us.ibm.com` instead.
   - name: Get help on StackOverflow
     url: https://stackoverflow.com/tags/loopbackjs
     about: Please ask and answer questions on StackOverflow.
