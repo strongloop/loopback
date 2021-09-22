@@ -145,6 +145,27 @@ describe('app', function() {
           done();
         });
       });
+    
+    it('allows handlers to be wrapped by shimmer (ex: opentelemetry) on express stack',
+      function(done) {
+        const myHandler = namedHandler('my-handler');
+        const wrappedHandler = function(req, res, next) {
+          myHandler(req, res, next);
+        };
+        wrappedHandler['__wrapped'] = true;
+        wrappedHandler['__original'] = myHandler;
+        app.middleware('routes:before', wrappedHandler);
+        const found = app._findLayerByHandler(myHandler);
+        expect(found).to.be.an('object');
+        expect(found).have.property('phase', 'routes:before');
+        executeMiddlewareHandlers(app, function(err) {
+          if (err) return done(err);
+
+          expect(steps).to.eql(['my-handler']);
+
+          done();
+        });
+      });
 
     it('allows handlers to be wrapped as a property on express stack',
       function(done) {
