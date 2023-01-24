@@ -91,14 +91,14 @@ describe('remoting - integration', function() {
         'upsert(data:object:store):store PATCH /stores',
         'upsert(data:object:store):store PUT /stores',
         'replaceOrCreate(data:object:store):store POST /stores/replaceOrCreate',
-        'exists(id:any):boolean GET /stores/:id/exists',
+        'exists(id:number):boolean GET /stores/:id/exists',
         'findById(id:any,filter:object):store GET /stores/:id',
         'prototype.updateAttributes(data:object:store):store PUT /stores/:id',
-        'replaceById(id:any,data:object:store):store POST /stores/:id/replace',
+        'replaceById(id:number,data:object:store):store POST /stores/:id/replace',
         'find(filter:object):store GET /stores',
         'findOne(filter:object):store GET /stores/findOne',
         'updateAll(where:object,data:object:store):object POST /stores/update',
-        'deleteById(id:any):object DELETE /stores/:id',
+        'deleteById(id:number):object DELETE /stores/:id',
         'count(where:object):number GET /stores/count',
         'prototype.updateAttributes(data:object:store):store PATCH /stores/:id',
         'createChangeStream(options:object):ReadableStream POST /stores/change-stream',
@@ -143,11 +143,11 @@ describe('remoting - integration', function() {
         var methods = getFormattedPrototypeMethods(physicianClass.methods);
 
         var expectedMethods = [
-              'prototype.__findById__widgets(fk:any):widget ' +
+              'prototype.__findById__widgets(fk:number):widget ' +
               'GET /stores/:id/widgets/:fk',
-              'prototype.__destroyById__widgets(fk:any) ' +
+              'prototype.__destroyById__widgets(fk:number) ' +
               'DELETE /stores/:id/widgets/:fk',
-              'prototype.__updateById__widgets(fk:any,data:object:widget):widget ' +
+              'prototype.__updateById__widgets(fk:number,data:object:widget):widget ' +
               'PUT /stores/:id/widgets/:fk',
               'prototype.__get__widgets(filter:object):widget ' +
               'GET /stores/:id/widgets',
@@ -167,17 +167,17 @@ describe('remoting - integration', function() {
         var methods = getFormattedPrototypeMethods(physicianClass.methods);
 
       var expectedMethods = [
-          'prototype.__findById__patients(fk:any):patient ' +
+          'prototype.__findById__patients(fk:number):patient ' +
           'GET /physicians/:id/patients/:fk',
-          'prototype.__destroyById__patients(fk:any) ' +
+          'prototype.__destroyById__patients(fk:number) ' +
           'DELETE /physicians/:id/patients/:fk',
-          'prototype.__updateById__patients(fk:any,data:object:patient):patient ' +
+          'prototype.__updateById__patients(fk:number,data:object:patient):patient ' +
           'PUT /physicians/:id/patients/:fk',
-          'prototype.__link__patients(fk:any,data:object:appointment):appointment ' +
+          'prototype.__link__patients(fk:number,data:object:appointment):appointment ' +
           'PUT /physicians/:id/patients/rel/:fk',
-          'prototype.__unlink__patients(fk:any) ' +
+          'prototype.__unlink__patients(fk:number) ' +
           'DELETE /physicians/:id/patients/rel/:fk',
-          'prototype.__exists__patients(fk:any):boolean ' +
+          'prototype.__exists__patients(fk:number):boolean ' +
           'HEAD /physicians/:id/patients/rel/:fk',
           'prototype.__get__patients(filter:object):patient ' +
           'GET /physicians/:id/patients',
@@ -220,14 +220,14 @@ describe('With model.settings.replaceOnPUT false', function() {
       'upsert(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PATCH /stores-updating',
       'replaceOrCreate(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating/replaceOrCreate',
       'upsertWithWhere(where:object,data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating/upsertWithWhere',
-      'exists(id:any):boolean GET /stores-updating/:id/exists',
-      'exists(id:any):boolean HEAD /stores-updating/:id',
-      'findById(id:any,filter:object):storeWithReplaceOnPUTfalse GET /stores-updating/:id',
-      'replaceById(id:any,data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating/:id/replace',
+      'exists(id:number):boolean GET /stores-updating/:id/exists',
+      'exists(id:number):boolean HEAD /stores-updating/:id',
+      'findById(id:number,filter:object):storeWithReplaceOnPUTfalse GET /stores-updating/:id',
+      'replaceById(id:number,data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse POST /stores-updating/:id/replace',
       'find(filter:object):storeWithReplaceOnPUTfalse GET /stores-updating',
       'findOne(filter:object):storeWithReplaceOnPUTfalse GET /stores-updating/findOne',
       'updateAll(where:object,data:object:storeWithReplaceOnPUTfalse):object POST /stores-updating/update',
-      'deleteById(id:any):object DELETE /stores-updating/:id',
+      'deleteById(id:number):object DELETE /stores-updating/:id',
       'count(where:object):number GET /stores-updating/count',
       'prototype.updateAttributes(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PUT /stores-updating/:id',
       'prototype.updateAttributes(data:object:storeWithReplaceOnPUTfalse):storeWithReplaceOnPUTfalse PATCH /stores-updating/:id',
@@ -254,8 +254,8 @@ describe('With model.settings.replaceOnPUT true', function() {
       'upsert(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PATCH /stores-replacing',
       'replaceOrCreate(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue POST /stores-replacing/replaceOrCreate',
       'replaceOrCreate(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PUT /stores-replacing',
-      'replaceById(id:any,data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue POST /stores-replacing/:id/replace',
-      'replaceById(id:any,data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PUT /stores-replacing/:id',
+      'replaceById(id:number,data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue POST /stores-replacing/:id/replace',
+      'replaceById(id:number,data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PUT /stores-replacing/:id',
       'prototype.updateAttributes(data:object:storeWithReplaceOnPUTtrue):storeWithReplaceOnPUTtrue PATCH /stores-replacing/:id',
     ];
 

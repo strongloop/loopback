@@ -55,6 +55,7 @@ module.exports = function defineModelTestsWithDataSource(options) {
         enableRemoteReplication: options.enableRemoteReplication,
       });
 
+      User.setup();
       User.attachTo(dataSource);
       User.handleChangeError = function(err) {
         console.warn('WARNING: unhandled change-tracking error');
@@ -183,11 +184,11 @@ module.exports = function defineModelTestsWithDataSource(options) {
 
     describe('Model.upsert(data, callback)', function() {
       it('Update when record with id=data.id found, insert otherwise', function(done) {
-        User.upsert({first: 'joe', id: 7}, function(err, user) {
+        User.upsert({first: 'joe', id: '7'}, function(err, user) {
           assert(!err);
           assert.equal(user.first, 'joe');
 
-          User.upsert({first: 'bob', id: 7}, function(err, updatedUser) {
+          User.upsert({first: 'bob', id: '7'}, function(err, updatedUser) {
             assert(!err);
             assert.equal(updatedUser.first, 'bob');
 
@@ -236,9 +237,9 @@ module.exports = function defineModelTestsWithDataSource(options) {
 
     describe('Model.findById(id, callback)', function() {
       it('Find an instance by id', function(done) {
-        User.create({first: 'michael', last: 'jordan', id: 23}, function() {
-          User.findById(23, function(err, user) {
-            assert.equal(user.id, 23);
+        User.create({first: 'michael', last: 'jordan', id: '23'}, function() {
+          User.findById('23', function(err, user) {
+            assert.equal(user.id, '23');
             assert.equal(user.first, 'michael');
             assert.equal(user.last, 'jordan');
 
